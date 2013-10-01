@@ -2446,14 +2446,18 @@ function saveGraph() {
 				showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
 
 			}
-			refresh();
+			if (result === 'SUCCESS') {
+				Ext.getCmp('newGraphWin').close();
+				refresh();
+			}
+			
 		},
 		failure : function(response, request) {
 			showDialog(400, 100, 'Error', 'Error saving graph!', Ext.Msg.OK,
 					null);
 		}
 	});
-	Ext.getCmp('newGraphWin').close();
+	
 } else{
 	showDialog(400, 100, 'Info', 'No changes to save.', Ext.Msg.OK,
 			null);
@@ -3514,7 +3518,9 @@ function saveScope(node, button, event) {
 	var node = directoryTree.getSelectionModel().getSelectedNode();
 
 	var scope = obj.findField('scope').getValue();
-	if(node.attributes.properties['Name'] !== scope)
+	if(node.attributes.properties !== undefined)
+		{
+	if(scope !== node.attributes.properties['Name'])
 	{
 	// newScope();
 	Ext.Ajax.request({
@@ -3530,17 +3536,48 @@ function saveScope(node, button, event) {
 				showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
 
 			}
-			refresh();
+			if (result === 'SUCCESS') {
+				Ext.getCmp('newScopeWin').close();
+				refresh();
+			}
+		
 		},
 		failure : function(response, request) {
 			showDialog(400, 100, 'Error', 'Error saving scope!', Ext.Msg.OK,
 					null);
 		}
 	});
-	Ext.getCmp('newScopeWin').close();
+
 	} else{
 		showDialog(400, 100, 'Info', 'No changes to save.', Ext.Msg.OK,
 				null);
+	}
+		}
+	else{
+		Ext.Ajax.request({
+			url : 'newScope?' + form,
+			method : 'POST',
+			timeout : 120000,
+			success : function(response, request) {
+				var result = Ext.decode(response.responseText);
+				if (result === 'ERROR') {
+					var message = 'Scope name ' + '"' + scope + '"'
+							+ ' already exists' + '.';
+					+response.responseText;
+					showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+
+				}
+				if (result === 'SUCCESS') {
+					Ext.getCmp('newScopeWin').close();
+					refresh();
+				}
+				
+			},
+			failure : function(response, request) {
+				showDialog(400, 100, 'Error', 'Error saving scope!', Ext.Msg.OK,
+						null);
+			}
+		});
 	}
 }
 
@@ -3980,15 +4017,17 @@ function saveApp(node, button, event) {
 					if (oldScope == '') {
 						oldScope = scope;
 					}
-					var message = 'Application name ' + '"' + application + '"'
+					var message = 'Application name ' + '"' + appDisplay + '"'
 							+ ' already exists in scope ' + '"' + oldScope
 							+ '"' + '.';
 					+response.responseText;
 					showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
 
 				}
+				if (result === 'SUCCESS') {
 				Ext.getCmp('newAppWin').close();
 				refresh();
+				}
 			},
 			failure : function(response, request) {
 				showDialog(400, 100, 'Error', 'Error saving application!',
