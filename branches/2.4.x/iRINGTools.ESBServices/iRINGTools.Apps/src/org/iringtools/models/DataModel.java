@@ -836,7 +836,7 @@ public class DataModel
             Field field = new Field();
 
             String fieldName;
-//            String fieldDataIndex;
+            String fieldDataIndex;
 
             if (classIndex != 0)
             {
@@ -847,13 +847,13 @@ public class DataModel
               fieldName = className + '.' + template.getName() + "." + role.getName();
             }
 
-//            if (classPath != null && classPath.trim().length() != 0)
-//              fieldDataIndex = className + '$' + classPath + "." + template.getName() + "." + role.getName();
-//            else
-//              fieldDataIndex = className + '.' + template.getName() + "." + role.getName();
+            if (classPath != null && classPath.trim().length() != 0)
+              fieldDataIndex = className + '$' + classPath + "." + template.getName() + "." + role.getName();
+            else
+              fieldDataIndex = className + '.' + template.getName() + "." + role.getName();
 
             field.setName(fieldName);
-            field.setDataIndex(fieldName);
+            field.setDataIndex(fieldDataIndex);
 
             field.setWidth(MIN_FIELD_WIDTH);
 
