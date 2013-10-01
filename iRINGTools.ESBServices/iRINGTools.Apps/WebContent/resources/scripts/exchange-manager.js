@@ -2492,6 +2492,9 @@ function onRefreshCache() {
 	if ((timeout === "") || (timeout === "Infinite")) {
 		timeout = '0';
 	}
+	else {
+		timeout *= 60000;
+	}
 
 	var node = Ext.getCmp('directory-tree').getSelectionModel()
 			.getSelectedNode();
@@ -2568,6 +2571,9 @@ function onImportCache() {
 
 	if ((timeout === "") || (timeout === "Infinite")) {
 		timeout = '0';
+	}
+	else {
+		timeout *= 60000;
 	}
 
 	var cacheUri = form.findField("CacheUri").getValue();
