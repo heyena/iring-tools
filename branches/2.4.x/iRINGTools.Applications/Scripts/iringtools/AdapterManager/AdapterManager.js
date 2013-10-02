@@ -91,7 +91,8 @@ Ext.onReady(function () {
     collapsible: false,
     closable: true,
     enableTabScroll: true,
-    border: true,
+    border: false,
+    frame: false,
     split: true
   });
 
@@ -103,6 +104,7 @@ Ext.onReady(function () {
     closable: true,
     enableTabScroll: true,
     border: true,
+    frame: false,
     split: true,
     items: [searchPanel, contentPanel]
   });

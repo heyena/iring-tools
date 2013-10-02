@@ -107,43 +107,23 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       type: 'ScopesNode'
     });
 
-    this.propertyPanel = new Ext.grid.PropertyGrid({
+    this.propertyPanel = new AdapterManager.NameValueGrid({
       title: 'Details',
       region: 'south',
-      layout: 'fit',
       height: 250,
-      stripeRows: true,
-      collapsible: true,
-      autoScroll: true,
-      border: 0,
       frame: false,
-      selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-      // bodyStyle: 'padding-bottom:15px;background:#eee;',
-      source: {},
-      listeners: {
-        beforeedit: function (e) {
-          e.cancel = true;
-        },
-        // to copy but not edit content of property grid				
-        afteredit: function (e) {
-          e.grid.getSelectionModel().selections.items[0].data.value = e.originalValue;
-          e.record.data.value = e.originalValue;
-          e.value = e.originalValue;
-          e.grid.getView().refresh();
-        }
-      }
-    });
+      border: true,
+      split: true,
+      collapsible: true
+    }),
 
     this.directoryPanel = new Ext.tree.TreePanel({
       enableDrag: true,
       id: 'Directory-Panel',
-      //forceLayout: true,
       ddGroup: 'propertyGroup',
       region: 'center',
       border: false,
       expandAll: true,
-      // draggable: true,
-      // ddScroll: true,
       rootVisible: true,
       animate: true,
       enableDD: false,
@@ -151,8 +131,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       pathSeparator: '>',
       lines: true,
       tbar: undefined,
-      autoScroll: true,
-      //singleExpand: true,     
+      autoScroll: true,   
       loader: this.treeLoader,
       root: this.rootNode,
       stateEvents: ['collapsenode', 'expandnode'],

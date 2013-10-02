@@ -140,7 +140,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         this.mappingPanel.on('contextmenu', this.showContextMenu, this);
         this.mappingPanel.on('click', this.onClick, this);
 
-        this.propertyPanel = new Ext.grid.PropertyGrid({
+        /*this.propertyPanel = new Ext.grid.PropertyGrid({
             title: 'Details',
             region: 'east',
             width: 350,
@@ -162,7 +162,17 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                     e.grid.getView().refresh();
                 }
             }
-        });
+        });*/
+
+        this.propertyPanel = new AdapterManager.NameValueGrid({
+            title: 'Details',
+            region: 'east',
+            width: 350,
+            frame: false,
+            border: true,
+            split: true,
+            collapsible: true
+        }),
 
         this.items = [
           this.propertyPanel,

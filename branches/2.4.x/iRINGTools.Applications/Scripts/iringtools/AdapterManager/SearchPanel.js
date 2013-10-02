@@ -6,7 +6,8 @@
 AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   title: 'Reference Data Search',
   layout: 'border',
-  border: true,
+  border: false,
+  frame: false,
   split: true,
   searchUrl: null,
   limit: 500,
@@ -24,40 +25,22 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     this.contextClassMenu = new Ext.menu.Menu();
     this.contextClassMenu.add(this.buildClassContextMenu());
 
-    this.propertyPanel = new Ext.grid.PropertyGrid({
-      title: 'Details',
-      region: 'east',
-      // layout: 'fit',
-      stripeRows: true,
-      collapsible: true,
-      autoScroll: true,
-      width: 350,
-      split: true,
-      bodyBorder: true,
-      collapsed: false,
-      border: 0,
-      selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-      frame: false,
-      source: {},
-      clicksToEdit: 2,
-      listeners: {
-        beforepropertychange: function (source, recordid, v, oldValue) {
-          return false;
-        },
-        // to copy but not edit content of property grid				
-        afteredit: function (e) {
-          e.grid.getSelectionModel().selections.items[0].data.value = e.originalValue;
-          e.record.data.value = e.originalValue;
-          e.value = e.originalValue;
-          e.grid.getView().refresh();
-        }
-      }
-    });
+    this.propertyPanel = new AdapterManager.NameValueGrid({
+        title: 'Details',
+        region: 'east',
+        width: 350,
+        frame: false,
+        border: true,
+        split: true,
+        collapsible: true
+    }),
 
     this.refClassTabPanel = new Ext.TabPanel({
       id: 'content-pane',
       deferredRender: false,
       enableTabScroll: true,
+      frame: false,
+      border: true,
       activeItem: 0,
       iconCls: 'tabsClass'
     });
@@ -65,26 +48,19 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     this.mainPanel = new Ext.Panel({
       region: 'center',
       autoScroll: true,
+      frame: false,
+      border: false,
       layout: 'fit',
       items: [this.refClassTabPanel]
-
     });
-    //    this.contextButton = new Ext.Toolbar.Button({
-    //      pressed: true,
-    //      enableToggle: false,
-    //      text: 'ContextMenu',
-    //      menu: new Ext.menu.Menu()
-    //    });
 
     this.tbar = new Ext.Toolbar();
     this.tbar.add(this.buildToolbar());
-    //    this.tbar.add(this.contextButton);
-
     this.items = [this.mainPanel, this.propertyPanel];
 
-    // super
     AdapterManager.SearchPanel.superclass.initComponent.call(this);
-  },
+},
+
   buildToolbar: function () {
     var that = this;
     return [

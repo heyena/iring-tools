@@ -6,13 +6,69 @@ Ext.Ajax.on('requestexception', function(conn, response, options) {
 	}
 });
 
-function copyToClipboard(celldata) {
-	/*
-	 * if (window.clipboardData) // Internet Explorer
-	 * window.clipboardData.setData ("Text", celldata);
-	 */
-	window.prompt("Copy to clipboard: Ctrl+C, Enter", celldata);
-}
+org.iringtools.apps.xmgr.NameValueGrid = Ext.extend(Ext.Panel, {
+    layout: 'fit',
+    store: null,
+    autoScroll: true,
+    source: null,
+
+    initComponent: function () {
+        this.store = new Ext.data.ArrayStore({
+            fields: [
+               { name: 'name' }, { name: 'value' }
+            ]
+        });
+        
+        this.setSource(this.source);
+
+        var grid = new Ext.grid.EditorGridPanel({
+            stripeRows: true,
+            clicksToEdit: 1,
+            frame: false,
+            border: false,
+            store: this.store,
+            colModel: new Ext.grid.ColumnModel({
+                defaults: {
+                    sortable: true,
+                    align: 'left'
+                },
+                columns: [{
+                    header: 'Name',
+                    dataIndex: 'name'
+                }, {
+                    header: 'Value',
+                    dataIndex: 'value',
+                    editor: new Ext.form.TextField({
+                        readOnly: true
+                    })
+                }]
+            }),
+
+            viewConfig: {
+                forceFit: true
+            }
+        });
+
+        this.items = [grid];
+
+        org.iringtools.apps.xmgr.NameValueGrid.superclass.initComponent.call(this);
+    },
+
+    setSource: function (nameValuePairs) {
+    	if (nameValuePairs != null) {
+	        var data = [];
+	
+	        for (var name in nameValuePairs) {
+	            var value = nameValuePairs[name];
+	
+	            if (typeof(value) != 'object')
+	                data.push([name, value]);
+	        }
+	
+	        this.store.loadData(data);
+    	}
+    }
+});
 
 function storeSort(field, dir) {
 	if (field == '&nbsp;')
@@ -114,37 +170,7 @@ function createGridPane(store, pageSize, viewConfig, withResizer) {
 		selModel : selModel,
 		enableColLock : false,
 		plugins : [ filters ],
-		bbar : pagingToolbar,
-
-		listeners : {
-			cellclick : function(ts, td, cellIndex, record, tr, rowIndex, e,
-					eOpts) {
-				val = record.target.innerText;
-			},
-			/*
-			 * celldblclick: function(ts, td, cellIndex, record, tr, rowIndex,
-			 * e, eOpts ){ val = record.target.innerText; copyToClipboard(val); },
-			 */
-			beforeedit : function(e) {
-				e.cancel = true;
-			},
-			keydown : function(evnt) {
-				var keyPressed = evnt.getKey();
-				if (evnt.ctrlKey) {
-					/*
-					 * After trial and error, the ctrl+c combination seems to be
-					 * code 67
-					 */
-					if (67 == 67)// if (keyPressed == 67)
-					{
-						// var celldata =
-						// gridPane.getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
-						copyToClipboard(val);
-
-					}
-				}
-			}
-		}
+		bbar : pagingToolbar
 	});
 
 	return gridPane;
@@ -204,24 +230,6 @@ function createXlogsPane(context, xlogsContainer, xlabel) {
 										cellclick : function(ts, td, cellIndex,
 												record, tr, rowIndex, e, eOpts) {
 											cellValue = record.target.innerText;
-										},
-										keydown : function(evnt) {
-											var keyPressed = evnt.getKey();
-											if (evnt.ctrlKey) {
-												/*
-												 * After trial and error, the
-												 * ctrl+c combination seems to
-												 * be code 67
-												 */
-												if (67 == 67)// if
-												// (keyPressed
-												// == 67)
-												{
-													// var celldata =
-													// Ext.getCmp('property-pane').getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
-													copyToClipboard(cellValue);
-												}
-											}
 										}
 									}
 								});
@@ -728,72 +736,6 @@ function navigate(bcItemIndex) {
 	dtoContentPane.getLayout().setActiveItem(contentItemIndex);
 }
 
-function showChangedItemsInfo() {
-	var dtoTab = Ext.getCmp('content-pane').getActiveTab();
-	var label = dtoTab.id.substring(4);
-	// var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' +
-	// label];
-	var dtoContentPane = dtoTab.items.map['dto-' + label];
-	var dtoGrid = dtoContentPane.getLayout().activeItem;
-
-	var rowData = dtoGrid.selModel.selections.map[dtoGrid.selModel.last].data;
-	delete rowData['&nbsp;']; // remove info field
-	var tansferType = {};
-	var parsedRowData = {};
-	for ( var colData in rowData) {
-		if (colData == 'Transfer Type') {
-			tansferType = FindTransferType(rowData[colData]);
-		}
-	}
-	if (tansferType == 'change') {
-		for ( var colData in rowData) {
-			var value = findChangedValue(rowData[colData]);
-			if (value != "")
-				parsedRowData[colData] = value;
-		}
-
-		var propertyGrid = new Ext.grid.PropertyGrid({
-			region : 'center',
-			title : 'Properties of Changed Fields',
-			split : true,
-			stripeRows : true,
-			autoScroll : true,
-			source : parsedRowData,
-			listeners : {
-				beforeedit : function(e) {
-					e.cancel = true;
-				}
-			}
-		});
-
-		var win = new Ext.Window({
-			closable : true,
-			resizable : true,
-			// id: 'newwin-' + node.id,
-			modal : true,
-			// autoHeight:true,
-			layout : 'fit',
-			shadow : false,
-			title : 'Transfer type of selected row is "'
-					+ tansferType.toUpperCase() + '"',
-			// iconCls: 'tabsApplication',
-			height : 300,
-			width : 600,
-			plain : true,
-			items : [ propertyGrid ]
-		/*
-		 * listeners: { beforelayout: function (pane) { //alert('before
-		 * layout..'); Ext.getBody().unmask(); } }
-		 */
-		});
-		win.show();
-		dtoContentPane.add(win);
-	} else {
-		alert("Selected row is '" + tansferType.toUpperCase() + "'");
-		dtoContentPane.add(alert);
-	}
-}
-
 function showIndividualInfo(individual, classIdentifier, relatedClasses) {
 	var dtoTab = Ext.getCmp('content-pane').getActiveTab();
 	var label = dtoTab.id.substring(4);
@@ -834,39 +776,15 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses) {
 				&& propertyName !== 'Status')
 			parsedRowData[propertyName] = removeHTMLTag(rowData[colData]);
 	}
-	var propertyGrid = new Ext.grid.PropertyGrid(
-			{
-				region : 'center',
-				title : 'Properties',
-				split : true,
-				stripeRows : true,
-				autoScroll : true,
-				source : parsedRowData,
-				listeners : {
-					beforeedit : function(e) {
-						e.cancel = true;
-					},
-					click : function() {
-					},
-					keydown : function(evnt) {
-						var keyPressed = evnt.getKey();
-						if (evnt.ctrlKey) {
-							/*
-							 * After trial and error, the ctrl+c combination
-							 * seems to be code 67
-							 */
-							if (67 == 67)// if (keyPressed == 67)
-							{
-								var celldata = Ext.getCmp('property-pane')
-										.getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
-								copyToClipboard(celldata);
-
-							}
-						}
-					}
-				}
-
-			});
+	
+	var propertyGrid = new org.iringtools.apps.xmgr.NameValueGrid({
+		title: 'Details',
+        region : 'center',
+        frame: false,
+        border: true,
+        split: true,
+        source : parsedRowData
+    });	
 
 	var relatedItemPane = new Ext.Panel({
 		title : 'Related Items',
@@ -2934,7 +2852,7 @@ function showExchangeHistory() {
 
 		store.load({});
 		store.on('exception', function(store, records, options) {
-			var msg = 'No History found for this Exchange';
+			var msg = 'No history found for this exchange.';
 			showDialog(400, 200, 'Error', msg, Ext.Msg.OK, null);
 		}, this);
 
@@ -5810,66 +5728,20 @@ Ext
 							},
 							contextmenu : function(node, event) {
 								onTreeItemContextMenu(node, event);
-							},
-							keydown : function(evnt) {
-								// alert('keydown...');
-								var keyPressed = evnt.getKey();
-								if (evnt.ctrlKey) {
-									/*
-									 * After trial and error, the ctrl+c combination seems to be
-									 * code 67
-									 */
-									if (67 == 67)// if (keyPressed == 67)
-									{
-										var celldata = Ext.getCmp(
-												'property-pane')
-												.getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
-										copyToClipboard(celldata);
-									}
-								}
 							}
 						}
 					});
-
-			var propertyPane = new Ext.grid.PropertyGrid(
-					{
+					
+					var propertyPane = new org.iringtools.apps.xmgr.NameValueGrid({
 						id : 'property-pane',
-						title : 'Details',
-						region : 'south',
+				        title: 'Details',
+				        region : 'south',
 						height : 250,
-						layout : 'fit',
-						collapsible : true,
-						stripeRows : true,
-						autoScroll : true,
-						border : false,
-						split : true,
-						source : {},
-						listeners : {
-							beforeedit : function(e) {
-								e.cancel = true;
-							},
-							click : function() {
-								// alert('clicked...');
-							},
-							keydown : function(evnt) {
-								var keyPressed = evnt.getKey();
-								if (evnt.ctrlKey) {
-									/*
-									 * After trial and error, the ctrl+c combination seems to be
-									 * code 67
-									 */
-									if (67 == 67)// if (keyPressed == 67)
-									{
-										var celldata = Ext.getCmp(
-												'property-pane')
-												.getSelectionModel().events.beforecellselect.obj.selection.record.data.value;
-										copyToClipboard(celldata);
-
-									}
-								}
-							}
-						}
-					});
+				        frame: false,
+				        border: true,
+				        split: true,
+				        collapsible: true
+				    });
 
 			var directoryPane = new Ext.Panel({
 				region : 'west',
@@ -5882,7 +5754,6 @@ Ext
 				minSize : 175,
 				maxSize : 400,
 				collapsible : true,
-				// margins: '0 0 0 4',
 				layout : 'border',
 				items : [ directoryTreePane, propertyPane ]
 			});
