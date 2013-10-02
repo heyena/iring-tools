@@ -138,12 +138,13 @@ function createGridPane(store, pageSize, viewConfig) {
 		plugins: [filters, pagingResizer]
 	});
 
-	var gridPane = new Ext.grid.GridPanel({
+    var gridPane = new Ext.grid.EditorGridPanel({
 		identifier: store.reader.identifier,
 		description: store.reader.description,
 		layout: 'fit',
 		minColumnWidth: 80,
 		loadMask: true,
+		clicksToEdit: 1,
 		store: store,
 		stripeRows: true,
 		viewConfig: viewConfig,
@@ -261,7 +262,10 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
 				dataIndex: field.dataIndex,
 				sortable: field.sortable,
 				renderer: renderer,
-				align: align
+				align: align,
+				editor: new Ext.form.TextField({
+				    readOnly: true
+				})
 			};
 
 			if (field.fixed) {

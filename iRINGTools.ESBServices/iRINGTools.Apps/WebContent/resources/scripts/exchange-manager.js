@@ -156,7 +156,7 @@ function createGridPane(store, pageSize, viewConfig, withResizer) {
 		plugins : plugins
 	});
 
-	var gridPane = new Ext.grid.GridPanel({
+	var gridPane = new Ext.grid.EditorGridPanel({
 		identifier : store.reader.identifier,
 		description : store.reader.description,
 		layout : 'fit',
@@ -165,6 +165,7 @@ function createGridPane(store, pageSize, viewConfig, withResizer) {
 		loadMask : true,
 		store : store,
 		stripeRows : true,
+		clicksToEdit: 1,
 		viewConfig : viewConfig,
 		cm : colModel,
 		selModel : selModel,

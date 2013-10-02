@@ -87,7 +87,10 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
         dataIndex: field.dataIndex,
         sortable: field.sortable,
         renderer: renderer,
-        align: align
+        align: align,
+        editor: new Ext.form.TextField({
+            readOnly: true
+        })
       };
       
       if (field.fixed) {
