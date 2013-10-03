@@ -16,6 +16,7 @@ import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
 import org.iringtools.library.directory.DirectoryProvider;
 import org.iringtools.utility.HttpClient;
+import org.iringtools.utility.HttpUtils;
 import org.iringtools.widgets.tree.LeafNode;
 import org.iringtools.widgets.tree.Node;
 import org.iringtools.widgets.tree.Tree;
@@ -24,9 +25,11 @@ import org.iringtools.widgets.tree.TreeNode;
 public class DirectoryModel 
 {
   private DirectoryProvider provider;
+  private Map<String, Object> settings;
   
   public DirectoryModel(Map<String, Object> settings)
   {
+    this.settings = settings;
     provider = new DirectoryProvider(settings);
   }
   
@@ -153,6 +156,7 @@ public class DirectoryModel
     try
     {
       HttpClient client = new HttpClient(dxfrUri);
+      HttpUtils.addHttpHeaders(settings, client);
       client.setTimeout(Integer.parseInt(timeout));
       response = client.get(Response.class, scope + "/" + app + "/" + graph + "/refresh");
     }
@@ -174,6 +178,7 @@ public class DirectoryModel
     try
     {
       HttpClient client = new HttpClient(dxfrUri);
+      HttpUtils.addHttpHeaders(settings, client);
       client.setTimeout(Integer.parseInt(timeout));
       response = client.get(Response.class, scope + "/" + app + "/" + graph + "/import?baseUri=" + cacheUri);
     }

@@ -210,6 +210,15 @@ namespace org.iringtools.adapter
         IDictionary keyRing = identityLayer.GetKeyRing();
         _kernel.Bind<IDictionary>().ToConstant(keyRing).Named("KeyRing");
 
+        if (keyRing != null)
+        {
+          _logger.Debug("Identity attributes:");
+          foreach (var key in keyRing.Keys)
+          {
+            _logger.Debug(key.ToString() + ": " + keyRing[key]);
+          }
+        }
+
         _settings.AppendKeyRing(keyRing);
       }
       catch (Exception ex)
