@@ -92,7 +92,9 @@
     </AppsDeployment>
 
     <UtilitiesDeployment
-      Include="Utilities\EncryptCredentials\bin\release\*.exe;
+      Include="Utilities\FillClassPaths\bin\release\*.exe;
+               Utilities\FillClassPaths\bin\release\*.config;
+               Utilities\EncryptCredentials\bin\release\*.exe;
                Utilities\EncryptCredentials\bin\release\*.dll;
                Utilities\ConfigurationTool\bin\release\*.exe;
                Utilities\ConfigurationTool\bin\release\*.dll;
