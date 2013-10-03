@@ -2062,7 +2062,8 @@ function fillShowUpdateCache() {
 					form.setValues({
 						laseUpdate : dateTime,
 						CacheUri : importUrl,
-						timeOut : timeoutvalue
+						timeOut : timeoutvalue,
+						timeOutDisplay : timeoutvalue+ " Minutes"
 					});
 
 					centerPanel.getEl().unmask();
@@ -2100,6 +2101,9 @@ function onShowUpdateCache() {
 			name : 'CacheUri'
 		}, {
 			fieldLabel : 'Time out',
+			name : 'timeOutDisplay'
+		},{
+			xtype : 'hidden',			
 			name : 'timeOut'
 		}, {
 			fieldLabel : 'Last Update',
