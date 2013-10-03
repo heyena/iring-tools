@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/dxfr/content"
+ targetNamespace="http://www.iringtools.org/dxfr/content" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+ jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
+ <xs:annotation>
+  <xs:appinfo>
+   <jaxb:bindings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jxb="http://java.sun.com/xml/ns/jaxb">
+    <jxb:bindings schemaLocation="content.xsd">
+     <jxb:bindings node="//xsd:element[@name='contentObject']/xsd:complexType/xsd:sequence/xsd:element[@name='content']">
+      <jxb:inlineBinaryData />
+     </jxb:bindings>
+    </jxb:bindings>
+   </jaxb:bindings>
+  </xs:appinfo>
+ </xs:annotation>
+
+ <xs:element name="contentObjects">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element ref="contentObject" maxOccurs="unbounded" />
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+
+ <xs:element name="contentObject">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="identifier" type="xs:string" />
+    <xs:element name="mimeType" type="xs:string" minOccurs="0" />
+    <xs:element name="content" type="xs:base64Binary" minOccurs="0" />
+    <xs:element name="hashType" type="xs:string" minOccurs="0" />
+    <xs:element name="hashValue" type="xs:string" minOccurs="0" />
+    <xs:element name="URL" type="xs:string" minOccurs="0" />
+    <xs:element ref="attributes" minOccurs="0" />
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+ 
+ <xs:element name="attributes">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element ref="attribute" maxOccurs="unbounded" />
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+ 
+ <xs:element name="attribute">
+  <xs:complexType>
+   <xs:sequence>
+    <xs:element name="name" type="xs:string" />
+    <xs:element name="value" type="xs:string" minOccurs="0" />
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+ 
+</xs:schema>

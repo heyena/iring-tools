@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ns.ids-adi.org/qxf/schema#"
+  targetNamespace="http://ns.ids-adi.org/qxf/schema#" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
+  <xs:annotation>
+    <xs:appinfo>
+      <jaxb:globalBindings>
+        <xjc:simple/>
+      </jaxb:globalBindings>
+    </xs:appinfo>
+  </xs:annotation>
+
+  <xs:element name="qxf" type="QXF"/>
+
+  <xs:complexType name="QXF">
+    <xs:sequence>
+      <xs:element name="relationship" type="Relationship" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Relationship">
+    <xs:sequence>
+      <xs:element name="property" type="Property" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="instance-of" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="Property">
+    <xs:attribute name="instance-of" type="xs:string" />
+    <xs:attribute name="reference" type="xs:string" />
+    <xs:attribute name="lang" type="xs:string" />
+    <xs:attribute name="as" type="xs:string" />
+  </xs:complexType>
+ 
+</xs:schema>
