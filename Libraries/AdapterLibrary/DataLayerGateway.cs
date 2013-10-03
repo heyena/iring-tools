@@ -1139,6 +1139,30 @@ namespace org.iringtools.adapter
                 idataObject = _dataLayer.Create(objectType.objectName, new List<string>() { sdo.Id }).First();
               }
 
+              if (idataObject == null)
+              {
+                response.Messages.Add("Data object can not be null.");
+                continue;
+              }
+
+              //
+              // create identifier for data object
+              // 
+              if (string.IsNullOrEmpty(sdo.Id))
+              {
+                StringBuilder builder = new StringBuilder();
+                string delimiter = objectType.keyDelimeter ?? string.Empty;
+
+                foreach (KeyProperty keyProp in objectType.keyProperties)
+                {
+                  string propName = keyProp.keyPropertyName;
+                  string propValue = idataObject.GetPropertyValue(propName).ToString();
+                  builder.Append(delimiter + propValue);
+                }
+
+                sdo.Id = builder.ToString().Remove(0, delimiter.Length);
+              }
+
               // copy properies
               for (int i = 0; i < sdo.Dictionary.Keys.Count; i++)
               {
@@ -1148,6 +1172,11 @@ namespace org.iringtools.adapter
                 if (value != null)
                 {
                   DataProperty prop = objectType.dataProperties.Find(x => x.propertyName.ToLower() == key.ToLower());
+
+                  if (prop == null)
+                  {
+                    throw new Exception("Property [" + key + "] not found in data dictionary.");
+                  }
 
                   if (prop.dataType == DataType.Date || prop.dataType == DataType.DateTime)
                   {

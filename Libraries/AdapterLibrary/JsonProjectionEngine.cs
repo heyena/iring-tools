@@ -330,7 +330,10 @@ namespace org.iringtools.adapter.projection
             //
             if (objectType.keyProperties.Count == 1)
             {
-              dataObject.SetPropertyValue(objectType.keyProperties[0].keyPropertyName, dataItem.id);
+              if (!string.IsNullOrEmpty(dataItem.id))
+              {
+                dataObject.SetPropertyValue(objectType.keyProperties[0].keyPropertyName, dataItem.id);
+              }
             }
             else if (objectType.keyProperties.Count > 1)
             {
@@ -341,7 +344,10 @@ namespace org.iringtools.adapter.projection
                 string keyProp = objectType.keyProperties[i].keyPropertyName;
                 string keyValue = idParts[i];
 
-                dataObject.SetPropertyValue(keyProp, keyValue);
+                if (!string.IsNullOrEmpty(keyValue))
+                {
+                  dataObject.SetPropertyValue(keyProp, keyValue);
+                }
               }
             }
 
