@@ -428,6 +428,7 @@ function loadPageDto(type, action, context, label) {
 																							modal : true,
 																							layout : 'column',
 																							width : 500,
+																							bodyStyle: 'background:#fff;padding:10px',
 																							defaults : {
 																								border : false
 																							},
