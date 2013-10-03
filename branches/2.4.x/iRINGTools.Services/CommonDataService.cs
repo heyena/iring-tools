@@ -241,26 +241,21 @@ namespace org.iringtools.services
     {
       try
       {
-        format = MapContentType(project, app, format);
-
-        // if format is one of the part 7 formats
-        if (format == "rdf" || format == "dto")
+        // get list of contents is not allowed in this service
+        if (string.IsNullOrEmpty(format) || !(format.ToLower() == "dto" || format.ToLower() == "rdf" ||
+          format.ToLower().Contains("xml") || format.ToLower().Contains("json")))
         {
-          // id is clazz, related is individual
-          object content = _adapterProvider.GetItem(project, app, resource, id, related, ref format, false);
-          _adapterProvider.FormatOutgoingMessage(content, format);
+          format = "json";
         }
-        else
-        {
-          NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
-          bool fullIndex = false;
-          if (indexStyle != null && indexStyle.ToUpper() == "FULL")
-            fullIndex = true;
+        NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
-          XDocument xDocument = _adapterProvider.GetRelatedList(project, app, resource, id, related, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
-          _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
-        }
+        bool fullIndex = false;
+        if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+          fullIndex = true;
+
+        XDocument xDocument = _adapterProvider.GetRelatedList(project, app, resource, id, related, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+        _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
       {
@@ -272,18 +267,9 @@ namespace org.iringtools.services
     {
       try
       {
-        format = MapContentType(project, app, format);
-
-        // if format is one of the part 7 formats
-        if (format == "rdf" || format == "dto")
-        {
-          throw new Exception("Not supported.");
-        }
-        else
-        {
-          XDocument xDocument = _adapterProvider.GetRelatedItem(project, app, resource, id, related, relatedId, ref format);
-          _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
-        }
+        //format = MapContentType(project, app, format);
+        XDocument xDocument = _adapterProvider.GetRelatedItem(project, app, resource, id, related, relatedId, ref format);
+        _adapterProvider.FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
       {
@@ -676,26 +662,6 @@ namespace org.iringtools.services
       {
         return format;
       }
-
-      //// otherwise determine the appropriate format
-      //if (!string.IsNullOrEmpty(project) && !string.IsNullOrEmpty(app))
-      //{
-      //  string basePath = AppDomain.CurrentDomain.BaseDirectory;
-      //  string appConfigPath = string.Format(@"{0}\{1}\{2}.{3}.config", basePath, "App_Data", project, app);
-
-      //  if (File.Exists(appConfigPath))
-      //  {
-      //    StaticDust.Configuration.AppSettingsReader appConfig =
-      //      new StaticDust.Configuration.AppSettingsReader(appConfigPath);
-
-      //    string defaultFormat = Convert.ToString(appConfig["DefaultFormat"]);
-
-      //    if (!string.IsNullOrEmpty(defaultFormat))
-      //    {
-      //      format = defaultFormat.ToLower();
-      //    }
-      //  }
-      //}
 
       if (string.IsNullOrEmpty(format))
       {
