@@ -62,32 +62,15 @@ namespace org.iringtools.utility.FillClassPaths
             {
               if (graphMap != null && graphMap.classTemplateMaps != null)
               {
-                foreach (ClassTemplateMap ctm in graphMap.classTemplateMaps)
+                
+                graphMap.SetClassPath();
+
+                IList<ClassMap> classMaps = (from ctm in graphMap.classTemplateMaps
+                                             select ctm.classMap).ToList();
+
+                foreach (var classMap in classMaps)
                 {
-                  if (ctm != null && ctm.classMap != null && ctm.templateMaps != null)
-                  {
-                    foreach (TemplateMap templateMap in ctm.templateMaps)
-                    {
-                      if (templateMap != null && templateMap.roleMaps != null)
-                      {
-                        foreach (RoleMap roleMap in templateMap.roleMaps)
-                        {
-                          if (roleMap.classMap != null)
-                          {
-                            string path = graphMap.BuildClassPath(ctm.classMap, templateMap, roleMap);
-                            roleMap.classMap.path = path;
-
-                            ClassMap relatedClassMap = GetClassMap(graphMap, roleMap.classMap.id, roleMap.classMap.index);
-
-                            if (relatedClassMap != null)
-                            {
-                              relatedClassMap.path = path;
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  graphMap.RearrangeClassMapIndex(classMap.id);
                 }
               }
             }
