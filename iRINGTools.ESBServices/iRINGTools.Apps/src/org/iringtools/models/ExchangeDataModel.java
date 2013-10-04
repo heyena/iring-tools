@@ -24,7 +24,6 @@ import org.iringtools.directory.Directory;
 import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Scope;
 import org.iringtools.dxfr.dti.DataTransferIndex;
-import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dti.TransferType;
 import org.iringtools.dxfr.dto.DataTransferObject;
@@ -45,7 +44,6 @@ import org.iringtools.history.History;
 import org.iringtools.library.NameValueList;
 import org.iringtools.library.RequestStatus;
 import org.iringtools.library.directory.DirectoryProvider;
-import org.iringtools.library.exchange.Constants;
 import org.iringtools.library.exchange.ExchangeProvider;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
@@ -629,8 +627,8 @@ public class ExchangeDataModel extends DataModel
     {
       List<Expression> transferTypeExpressions = new ArrayList<Expression>();
 
-      DataFilter preFilter = exchange.getDataFilter();
-      DataFilter filter = separateTransferTypeExpressions(preFilter, transferTypeExpressions);
+      DataFilter presetFilter = exchange.getDataFilter();
+      DataFilter filter = separateTransferTypeExpressions(presetFilter, transferTypeExpressions);
 
       DxiRequest dxiRequest = new DxiRequest();
       dxiRequest.setManifest(manifest);
@@ -651,93 +649,34 @@ public class ExchangeDataModel extends DataModel
 
     return dtis;
   }
-
-  protected DataTransferIndices getFilteredDtis(Exchange exchange, DataTransferIndices fullDtis, Manifest manifest,
-      DataFilter uiFilter)
+  
+  protected DataTransferIndices getFilteredDtis(Exchange exchange, Manifest manifest, DataFilter uiFilter)
+      throws Exception
   {
-    DataTransferIndices dtis = new DataTransferIndices();
+    DataTransferIndices dtis = null;
 
     try
-    {
+    {      
       List<Expression> transferTypeExpressions = new ArrayList<Expression>();
+      
+      DataFilter presetFilter = exchange.getDataFilter();
+      DataFilter filter = mergeDataFilters(presetFilter, uiFilter, transferTypeExpressions);
+      
+      DxiRequest dxiRequest = new DxiRequest();
+      dxiRequest.setManifest(manifest);
+      dxiRequest.setDataFilter(filter);
+      
+      dtis = provider.getDataTransferIndices(exchange, dxiRequest);
 
-      DataFilter preFilter = exchange.getDataFilter();
-      DataFilter filter = mergeDataFilters(preFilter, uiFilter, transferTypeExpressions);
-
-      //
-      // if filter contains only transfer type expression(s), then no need
-      // to fetch data but use the full DTIs
-      //
-      if (filter == null
-          || (filter.getExpressions().getItems().size() == 0 && filter.getOrderExpressions().getItems().size() == 0))
+      if (transferTypeExpressions.size() > 0)
       {
-        dtis = getFullDtis(exchange, manifest);
-      }
-      else
-      {
-        DxiRequest dxiRequest = new DxiRequest();
-        dxiRequest.setManifest(manifest);
-        dxiRequest.setDataFilter(filter);
-
-        List<String> ids = provider.getIdentifiers(exchange, dxiRequest);
-
-        if (ids != null)
-        {
-          DataTransferIndexList dtiList = new DataTransferIndexList();
-          dtis.setDataTransferIndexList(dtiList);
-
-          for (String id : ids)
-          {
-            for (DataTransferIndex dti : fullDtis.getDataTransferIndexList().getItems())
-            {
-              if (dti.getInternalIdentifier().equalsIgnoreCase(id)) // handle add, delete, sync
-              {                
-                dtiList.getItems().add(dti);
-                break;
-              }
-              else if (dti.getInternalIdentifier().contains(Constants.CHANGE_TOKEN)) // handle change
-              {
-                String[] internalIds = dti.getInternalIdentifier().split(Constants.CHANGE_TOKEN);
-
-                if (id.equals(internalIds[0]) || id.equals(internalIds[1]))
-                {
-                  dtiList.getItems().add(dti);
-                  break;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      List<DataTransferIndex> indices = dtis.getDataTransferIndexList().getItems();
-      if (uiFilter != null)
-      {
-        if (uiFilter.getExpressions() != null)
-        {
-          for (int i = 0; i < indices.size(); i++)
-          {
-            String transferType = indices.get(i).getTransferType().toString();
-
-            for (Expression expression : uiFilter.getExpressions().getItems())
-            {
-              if (expression.getPropertyName().equalsIgnoreCase("Transfer Type"))
-              {
-                String value = expression.getValues().getItems().get(0);
-                if (!value.equalsIgnoreCase(transferType))
-                {
-                  indices.remove(i--);
-                  break;
-                }
-              }
-            }
-          }
-        }
+        applyTransferTypeFilterToDtis(dtis, transferTypeExpressions);
       }
     }
     catch (Exception ex)
     {
       logger.error("Error getting data transfer indices: " + ex.toString());
+      throw new Exception(ex.getMessage());
     }
 
     return dtis;
@@ -784,8 +723,7 @@ public class ExchangeDataModel extends DataModel
           else
           {
             DataFilter uiFilter = createDataFilter(filter, sortBy, sortOrder);
-            DataTransferIndices fullDtis = (DataTransferIndices) session.get(fullDtiKey);
-            dtis = getFilteredDtis(exchange, fullDtis, manifest, uiFilter);
+            dtis = getFilteredDtis(exchange, manifest, uiFilter);
             session.put(dtiKey, dtis);
           }
         }
