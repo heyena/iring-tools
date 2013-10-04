@@ -1531,6 +1531,8 @@ Ext.define('AM.controller.NHibernate', {
     }
 
     panel = nhibernatePanel.down('#nhibernateContent');
+    var enableSummary = dirNode.data.record.dbDict.enableSummary;
+    form.down('#enableSummary').setValue(enableSummary);
 
     panel.removeAll();
     panel.doLayout();
