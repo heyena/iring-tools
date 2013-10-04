@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" xmlns:dir="http://www.iringtools.org/directory" name="dxoIn">
+	<log level="custom">
+		<property name="DXO_IN" expression="*" />
+	</log>
+	
+  <xslt key="dxiSplit" />
+	<property name="dxi" expression="//dti:dxi" type="OM" xmlns:dti="http://www.iringtools.org/dxfr/dti" />
+  
+  <property name="relativeUri" expression="fn:substring-after(get-property('To'), 'dxo/')"/>
+  <property name="scope" expression="fn:substring-before(get-property('relativeUri'), '/')"/>
+  <property name="exchangeId" expression="fn:substring-after(get-property('relativeUri'), '/')"/>
+  <sequence key="conf:/repository/synapse/sequences/exchangeDefinition"/>
+  
+  <header name="To" expression="fn:concat(get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/manifest')" />
+	<class name="org.iringtools.mediators.RESTCalloutMediator">
+    <property name="endpointEntry" value=""/>
+    <property name="serviceURL" value="" />
+    <property name="method" value="" />
+    <property name="axis2ConfigFile" value="" />
+    <property name="contentType" value="" />    
+  </class>
+
+	<script language="js"><![CDATA[
+    var sourceUrl = mc.getProperty('sourceUri') + '/' + mc.getProperty('sourceScopeName') + '/' + mc.getProperty('sourceAppName') + '/' + mc.getProperty('sourceGraphName') + '/xfr/page';
+    var targetUrl = mc.getProperty('targetUri') + '/' + mc.getProperty('targetScopeName') + '/' + mc.getProperty('targetAppName') + '/' + mc.getProperty('targetGraphName') + '/xfr/page';
+    var dxi = new XML(mc.getProperty('dxi'));
+    var manifest = mc.getPayloadXML().*;
+    mc.setPayloadXML(
+      <req:dtoAggregationRequest xmlns:req="http://wso2.org/request">
+        <req:sourceUrl>{sourceUrl}</req:sourceUrl>
+        <req:targetUrl>{targetUrl}</req:targetUrl>
+        <req:manifest xmlns="http://www.iringtools.org/dxfr/manifest">{manifest}</req:manifest>
+        <req:dxi>{dxi.*}</req:dxi>
+      </req:dtoAggregationRequest>);
+  ]]></script>
+
+	<property name="REST_URL_POSTFIX" value="dxoAggr" />
+	<class name="org.iringtools.mediators.RESTCalloutMediator">
+    <property name="endpointEntry" value="conf:/repository/synapse/endpoints/axis2Service"/>
+    <property name="serviceURL" value="" />
+    <property name="method" value="POST" />
+    <property name="axis2ConfigFile" value="" />
+    <property name="contentType" value="" />    
+  </class>
+
+	<class name="org.iringtools.mediators.DtoDiffMediator"/>
+	<sequence key="conf:/repository/synapse/sequences/restRespone"/>
+</sequence>
