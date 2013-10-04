@@ -184,6 +184,7 @@
             },
             "codeClass": null,
             "userConfig": {
+                "itemId": "enableSummary",
                 "fieldLabel": "Enable Summary:",
                 "labelWidth": 150,
                 "name": "enableSummary",
