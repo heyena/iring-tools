@@ -1204,6 +1204,46 @@ namespace org.iringtools.adapter
       return dtos;
     }
 
+    public DataTransferObjects GetPageDataTransferObjects(string scope, string app, string graph, DxiRequest dxiRequest, int start, int limit)
+    {
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+
+        _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
+        DataFilter presetFilter = GetPresetFilters(dtoProjectionEngine);
+
+        BuildCrossGraphMap(dxiRequest.Manifest, graph);
+
+        DataFilter filter = dxiRequest.DataFilter;
+        DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+
+        dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);
+        filter.AppendFilter(presetFilter);
+
+        long totalCount = 0;
+        List<IDataObject> tmpDataObjects = GetDataObjects(dataObject, filter, start, limit, out totalCount);
+        List<IDataObject> dataObjects = ProcessRollups(dataObject, tmpDataObjects, filter);
+
+        DataTransferObjects dtos = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
+
+        if (dtos != null)
+        {
+          dtos.TotalCount = totalCount;
+        }
+
+        return dtos;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting data transfer objects: " + ex);
+        throw ex;
+      }
+    }
+
     public string AsyncPostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dtos)
     {
       try
@@ -1807,6 +1847,16 @@ namespace org.iringtools.adapter
 
         _logger.Debug(string.Format("Paged data {0}-{1} completed.", offset, offset + pageSize));
       }
+
+      return dataObjects;
+    }
+
+    private List<IDataObject> GetDataObjects(DataObject objectType, DataFilter filter, 
+      int start, int limit, out long totalCount)
+    {
+      List<IDataObject> dataObjects = _dataLayerGateway.Get(objectType, filter, start, limit);
+
+      totalCount = _dataLayerGateway.GetCount(objectType, filter);
 
       return dataObjects;
     }

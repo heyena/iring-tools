@@ -13,6 +13,7 @@ public class Field implements Serializable
   protected boolean fixed = false;  // fixed width
   protected boolean filterable = true;
   protected boolean sortable = true;
+  protected int editMode = 0;
   
   public void setName(String name)
   {
@@ -82,5 +83,15 @@ public class Field implements Serializable
   public boolean getSortable()
   {
     return sortable;
+  } 
+  
+  public void setEditMode(int editMode)
+  {
+    this.editMode = editMode;
+  }
+  
+  public int getEditMode()
+  {
+    return editMode;
   } 
 }
