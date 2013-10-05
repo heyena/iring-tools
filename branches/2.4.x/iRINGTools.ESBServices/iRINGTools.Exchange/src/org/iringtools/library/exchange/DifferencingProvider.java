@@ -186,7 +186,7 @@ public class DifferencingProvider
         {
           sourceDti.setDuplicateCount(sourceDti.getDuplicateCount() + 1);
           
-          if (sourceDti.getDuplicateCount() > 1)
+          if (sourceDti.getDuplicateCount() > 0)
           {
             sourceDtiList.remove(sourceIndex--);
           }
@@ -267,7 +267,7 @@ public class DifferencingProvider
         {
           sourceDti.setDuplicateCount(sourceDti.getDuplicateCount() + 1);
           
-          if (sourceDti.getDuplicateCount() > 1)
+          if (sourceDti.getDuplicateCount() > 0)
           {
             sourceDtiList.remove(sourceIndex--);
           }
