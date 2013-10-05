@@ -87,15 +87,15 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
         dataIndex: field.dataIndex,
         sortable: field.sortable,
         renderer: renderer,
-        align: align,
-        editor: new Ext.form.TextField({
-            readOnly: true
-        })
+        align: align
       };
       
       if (field.fixed) {
         columns[i].fixed = true;
         columns[i].menuDisabled = true;
+      }
+      else {
+	columns[i].editor = new Ext.form.TextField({readOnly: true});
       }
     }
     

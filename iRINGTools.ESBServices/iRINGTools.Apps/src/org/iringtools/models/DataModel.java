@@ -358,7 +358,7 @@ public class DataModel
             else
             {
               rowData.add("<img src=\"resources/images/error.png\" width=16 "
-                  + "title=\"This row can not be exchanged due to [" + dto.getDuplicateCount() + "] duplicates.\">");
+                  + "title=\"This row can not be exchanged due to " + dto.getDuplicateCount() + " duplicates.\">");
             }
           }
 
@@ -742,24 +742,14 @@ public class DataModel
       transferField.setDataIndex("Transfer Type");
       transferField.setType("string");
       transferField.setWidth(TRANSFER_FIELD_WIDTH);
+      transferField.setFixed(true);
       transferField.setFilterable(true);
       transferField.setSortable(false);
       fields.add(0, transferField);
     }
 
     if (dataMode == DataMode.APP)
-    {
-      // duplicates field
-//      Field dupesField = new Field();
-//      dupesField.setName("Dupes");
-//      dupesField.setDataIndex("_dupes");
-//      dupesField.setType("string");
-//      dupesField.setWidth(DUPES_FIELD_WIDTH);
-//      dupesField.setFixed(true);
-//      dupesField.setFilterable(false);
-//      dupesField.setSortable(false);
-//      fields.add(0, dupesField);
-      
+    {      
       // content field
       Field contentField = new Field();
       contentField.setName("Content");
