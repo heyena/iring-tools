@@ -185,13 +185,14 @@ function createXlogsPane(context, xlogsContainer, xlabel) {
 			.on(
 					'load',
 					function() {
-						var xlogsPane = new Ext.grid.GridPanel(
+						var xlogsPane = new Ext.grid.EditorGridPanel(
 								{
 									id : 'xlogs-' + xlabel,
 									store : xlogsStore,
 									cellValue : '',
 									stripeRows : true,
 									loadMask : true,
+									clicksToEdit: 1,
 									cm : new Ext.grid.DynamicColumnModel(
 											xlogsStore),
 									selModel : new Ext.grid.CellSelectionModel(
@@ -2797,7 +2798,7 @@ function showExchangeHistory() {
 			var selModel = new Ext.grid.RowSelectionModel({
 				singleSelect : true
 			});
-			var gridPane = new Ext.grid.GridPanel({
+			var gridPane = new Ext.grid.EditorGridPanel({
 				identifier : store.reader.identifier,
 				description : store.reader.description,
 				layout : 'fit',
@@ -2808,6 +2809,7 @@ function showExchangeHistory() {
 				cm : colModel,
 				selModel : selModel,
 				stripeRows : true,
+				clicksToEdit: 1,
 				enableColLock : false
 			});
 			var xloggridpanel = new Ext.Panel({

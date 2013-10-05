@@ -349,6 +349,7 @@ public class ExchangeDataModel extends DataModel
       field.setDataIndex("Start Time");
       field.setType("string");
       field.setWidth(150);
+      field.setEditMode(1);
       fields.add(field);
 
       field = new Field();
@@ -356,6 +357,7 @@ public class ExchangeDataModel extends DataModel
       field.setDataIndex("End Time");
       field.setType("string");
       field.setWidth(150);
+      field.setEditMode(1);
       fields.add(field);
 
       field = new Field();
@@ -363,6 +365,7 @@ public class ExchangeDataModel extends DataModel
       field.setDataIndex("Sender");
       field.setType("string");
       field.setWidth(180);
+      field.setEditMode(1);
       fields.add(field);
 
       field = new Field();
@@ -370,6 +373,7 @@ public class ExchangeDataModel extends DataModel
       field.setDataIndex("Receiver");
       field.setType("string");
       field.setWidth(180);
+      field.setEditMode(1);
       fields.add(field);
 
       field = new Field();
@@ -377,6 +381,7 @@ public class ExchangeDataModel extends DataModel
       field.setDataIndex("Result");
       field.setType("string");
       field.setWidth(260);
+      field.setEditMode(1);
       fields.add(field);
 
       for (ExchangeResponse xr : xrs)
@@ -432,12 +437,14 @@ public class ExchangeDataModel extends DataModel
     Field field = new Field();
     field.setName("Identifier");
     field.setDataIndex("Identifier");
+    field.setEditMode(1);
     field.setType("string");
     fields.add(field);
 
     field = new Field();
     field.setName("Result");
     field.setWidth(120);
+    field.setEditMode(1);
     field.setDataIndex("Result");
     field.setType("string");
     fields.add(field);
