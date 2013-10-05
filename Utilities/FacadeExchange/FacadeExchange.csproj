@@ -125,13 +125,13 @@
     <Resource Include="Resources\info_22.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
+    <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary</Name>
+      <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
+    <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
-      <Name>UtilityLibrary</Name>
+      <Name>UtilityLibrary.Desktop</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -146,9 +146,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

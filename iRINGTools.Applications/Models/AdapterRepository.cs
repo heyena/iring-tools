@@ -16,6 +16,7 @@ using System.Net;
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.ServiceModel.Web;
 
 
 namespace iRINGTools.Web.Models
@@ -315,14 +316,15 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public XElement GetBinding(string scope, string application)
+    public org.iringtools.library.Configuration GetConfig(string scope, string application)
     {
-      XElement obj = null;
+      org.iringtools.library.Configuration config = null;
 
       try
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);        
-        obj = client.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
+        XElement element =  client.Get<XElement>(string.Format("/{0}/{1}/config", scope, application), true);
+        config = SerializationExtensions.ToObject<org.iringtools.library.Configuration>(element);
       }
       catch (Exception ex)
       {
@@ -330,7 +332,25 @@ namespace iRINGTools.Web.Models
         throw ex;
       }
 
-      return obj;
+      return config;
+    }
+
+    public XElement GetBinding(string scope, string application)
+    {
+      XElement binding = null;
+
+      try
+      {
+        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        binding = client.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        throw ex;
+      }
+
+      return binding;
     }
 
     public string UpdateBinding(string scope, string application, string dataLayer)
@@ -385,7 +405,7 @@ namespace iRINGTools.Web.Models
       return dataLayer;
     }
 
-    public string AddScope(string name, string description)
+    public string AddScope(string name, string description, string cacheDBConnStr)
     {
       string obj = null;
 
@@ -394,8 +414,19 @@ namespace iRINGTools.Web.Models
         ScopeProject scope = new ScopeProject()
         {
           Name = name,
-          Description = description
+          Description = description,
+          Configuration = new org.iringtools.library.Configuration() { AppSettings = new AppSettings()}
         };
+
+        if (!String.IsNullOrWhiteSpace(cacheDBConnStr))
+        {
+          scope.Configuration.AppSettings.Settings = new List<Setting>(){
+            new Setting(){
+                  Key = "iRINGCacheConnStr",
+                  Value = cacheDBConnStr
+              }
+          };
+        }
 
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
         obj = client.Post<ScopeProject>("/scopes", scope, true);
@@ -408,7 +439,7 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string UpdateScope(string name, string displayName, string newDescription)
+    public string UpdateScope(string name, string displayName, string newDescription, string cacheDBConnStr)
     {
       string obj = null;
 
@@ -418,8 +449,19 @@ namespace iRINGTools.Web.Models
         {
           Name = name,
           DisplayName = displayName,
-          Description = newDescription
+          Description = newDescription,
+          Configuration = new org.iringtools.library.Configuration() { AppSettings = new AppSettings() }
         };
+
+        if (!String.IsNullOrWhiteSpace(cacheDBConnStr))
+        {
+          scope.Configuration.AppSettings.Settings = new List<Setting>(){
+            new Setting(){
+                  Key = "iRINGCacheConnStr",
+                  Value = cacheDBConnStr
+              }
+          };
+        }
 
         string uri = string.Format("/scopes/{0}", name);
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
@@ -624,17 +666,17 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
-    public Response RefreshCache(string scope, string application)
+    public Response RefreshCache(string scope, string app, int timeout)
     {
       Response response = null;
 
       try
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
-        client.Timeout = 3600000;
+        client.Timeout = timeout;
 
         string isAsync = _settings["Async"];
-        string url = string.Format("/{0}/{1}/cache/refresh", scope, application);
+        string url = string.Format("/{0}/{1}/cache/refresh", scope, app);
 
         if (isAsync != null && isAsync.ToLower() == "true")
         {
@@ -667,7 +709,7 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
-    public Response RefreshCache(string scope, string application, string dataObjectName)
+    public Response RefreshCache(string scope, string app, string dataObjectName)
     {
       Response response = null;
 
@@ -677,7 +719,7 @@ namespace iRINGTools.Web.Models
         client.Timeout = 3600000;
 
         string isAsync = _settings["Async"];
-        string url = string.Format("/{0}/{1}/{2}/cache/refresh", scope, application, dataObjectName);
+        string url = string.Format("/{0}/{1}/{2}/cache/refresh", scope, app, dataObjectName);
 
         if (isAsync != null && isAsync.ToLower() == "true")
         {
@@ -710,17 +752,17 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
-    public Response ImportCache(string scope, string application, string cacheUri)
+    public Response ImportCache(string scope, string app, string importURI, int timeout)
     {
       Response response = null;
 
       try
       {
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
-        client.Timeout = 3600000;
+        client.Timeout = timeout;
 
         string isAsync = _settings["Async"];
-        string url = string.Format("/{0}/{1}/cache/import?baseUri={2}", scope, application, cacheUri);
+        string url = string.Format("/{0}/{1}/cache/import?baseUri={2}", scope, app, importURI);
 
         if (isAsync != null && isAsync.ToLower() == "true")
         {
@@ -794,30 +836,13 @@ namespace iRINGTools.Web.Models
       return response;
     }
 
-    public string SaveVirtualProperties(string scope, string application, string tree)
-    {
-      VirtualProperties virtualProperties = Utility.FromJson<VirtualProperties>(tree);
-      string postResult = null;
-      try
-      {
-        WebHttpClient client = CreateWebClient(_adapterServiceUri);
-        postResult = client.Post<VirtualProperties>(String.Format("/{0}/{1}/virtualProperties", scope, application), virtualProperties, true);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in posting VirtualProperties." + ex);
-      }
-      return postResult;
-    }
-
-    public VirtualProperties GetVirtualProperties(string scope, string application)
+    public CacheInfo GetCacheInfo(string scope, string app)
     {
       WebHttpClient client = CreateWebClient(_adapterServiceUri);
-      VirtualProperties virtualProperties = client.Get<VirtualProperties>(String.Format("/{0}/{1}/virtualProperties", scope, application));
-      return virtualProperties;
+      string relativePath = string.Format("/{0}/{1}/cacheinfo", scope, app);
+      return client.Get<CacheInfo>(relativePath);
     }
 
-    
     #region NHibernate Configuration Wizard support methods
     public DataProviders GetDBProviders()
     {
@@ -1003,8 +1028,7 @@ namespace iRINGTools.Web.Models
               type = "keyProperty",
               properties = properties,
               iconCls = "treeKey",
-              leaf = true,
-              property = properties,
+              leaf = true
             };
 
             keyPropertiesNode.children.Add(keyPropertyNode);
@@ -1018,8 +1042,7 @@ namespace iRINGTools.Web.Models
               iconCls = "treeProperty",
               leaf = true,
               hidden = true,
-              properties = properties,
-              property = properties,
+              properties = properties
             };
 
             dataPropertiesNode.children.Add(dataPropertyNode);

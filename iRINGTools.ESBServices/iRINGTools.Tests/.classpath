@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/.svn/" kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/iRINGTools.Apps/WebContent/WEB-INF/classes"/>
+	<classpathentry kind="lib" path="/iRINGTools.Apps/WebContent/WEB-INF/lib"/>
+	<classpathentry kind="lib" path="/iRINGTools.Common/bin" sourcepath="/iRINGTools.Common/src"/>
+	<classpathentry kind="lib" path="/iRINGTools.Services/WebContent/WEB-INF/classes"/>
+	<classpathentry kind="lib" path="/iRINGTools.Services/WebContent/WEB-INF/lib"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/log4j-1.2.16"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-codec-1.4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

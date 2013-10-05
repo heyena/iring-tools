@@ -61,6 +61,9 @@ namespace org.iringtools.adapter
 
     [DataMember(Name = "senderAppName", Order = 5, EmitDefaultValue = false)]
     public string SenderAppName { get; set; }
+
+    [DataMember(Name = "totalCount", Order = 6, EmitDefaultValue = false)]
+    public long TotalCount { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "dataTransferObject")]
@@ -91,6 +94,7 @@ namespace org.iringtools.adapter
 
     [DataMember(Order = 6, Name = "internalIdentifier", EmitDefaultValue = false)]
     public string internalIdentifier { get; set; }
+
     public ClassObject GetClassObject(string classId)
     {
       foreach (ClassObject classObject in classObjects)

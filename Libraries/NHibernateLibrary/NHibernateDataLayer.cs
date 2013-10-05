@@ -56,18 +56,21 @@ namespace org.iringtools.adapter.datalayer
         _settings["Scope"]
       );
 
+      string keyFile = string.Format("{0}{1}.{2}.key",
+        _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
       if (File.Exists(_dbDictionaryPath))
       {
-        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, _settings["KeyFile"]);
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, keyFile);
       }
       else if (utility.Utility.isLdapConfigured && utility.Utility.FileExistInRepository<DatabaseDictionary>(_dbDictionaryPath))
       {
-          _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, _settings["KeyFile"]);
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_dbDictionaryPath, keyFile);
       }
+
       _dataDictionary = new DataDictionary();
       _dataDictionary.dataObjects = _dbDictionary.dataObjects;
       
-
       string relativePath = String.Format("{0}AuthorizationBindingConfiguration.{1}.xml",
         _settings["AppDataPath"],
         _settings["Scope"]
@@ -120,12 +123,12 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        DataObject objectDefinition = _dataDictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
+        DataObject objDef = _dataDictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
 
-        string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
-          ? String.Empty : (objectDefinition.objectNamespace + ".");
+        string ns = String.IsNullOrEmpty(objDef.objectNamespace)
+          ? String.Empty : (objDef.objectNamespace + ".");
 
-        Type type = Type.GetType(ns + objectDefinition.objectName + ", " + _settings["ExecutingAssemblyName"]);
+        Type type = Type.GetType(ns + objDef.objectName + ", " + _settings["ExecutingAssemblyName"]);
         IDataObject dataObject = null;
 
         if (identifiers != null)
@@ -136,7 +139,7 @@ namespace org.iringtools.adapter.datalayer
             {
               IQuery query = null;
 
-              if (objectDefinition.keyProperties.Count == 1)
+              if (objDef.keyProperties.Count == 1)
               {
                 query = session.CreateQuery("from " + objectType + " where Id = ?");
                 query.SetString(0, identifier);
@@ -144,12 +147,12 @@ namespace org.iringtools.adapter.datalayer
               else
               {
                 string conjunction = " and ";
-                string[] idParts = identifier.Split(objectDefinition.keyDelimeter.ToCharArray());
+                string[] idParts = identifier.Split(objDef.keyDelimeter.ToCharArray());
                 StringBuilder builder = new StringBuilder();
 
-                for (int i = 0; i < objectDefinition.keyProperties.Count; i++)
+                for (int i = 0; i < objDef.keyProperties.Count; i++)
                 {
-                  string propName = objectDefinition.keyProperties[i].keyPropertyName;
+                  string propName = objDef.keyProperties[i].keyPropertyName;
                   builder.Append(conjunction + propName + "='" + idParts[i] + "'");
                 }
 
@@ -168,7 +171,7 @@ namespace org.iringtools.adapter.datalayer
             }
             else
             {
-              dataObject = (IDataObject)Activator.CreateInstance(type);
+              dataObject = NewDataObject(objDef, type);
             }
 
             dataObjects.Add(dataObject);
@@ -176,7 +179,7 @@ namespace org.iringtools.adapter.datalayer
         }
         else
         {
-          dataObject = (IDataObject)Activator.CreateInstance(type);
+          dataObject = NewDataObject(objDef, type);
           dataObjects.Add(dataObject);
         }
 
@@ -580,17 +583,13 @@ namespace org.iringtools.adapter.datalayer
 
             if (dataObject != null)
             {
-              string identifier = String.Empty;
+              string identifier = Convert.ToString(dataObject.GetPropertyValue("Id"));
 
-              try
+              if (string.IsNullOrWhiteSpace(identifier))
               {
-                // NOTE: Id property is not available if it's not mapped and will cause exception
-                identifier = dataObject.GetPropertyValue("Id").ToString();
+                response.Messages.Add("Identifier can not be blank.");
+                continue;
               }
-              catch (Exception ex)
-              {
-                _logger.Error(string.Format("Error in Post: {0}", ex));
-              }  // no need to handle exception because identifier is only used for statusing
 
               status.Identifier = identifier;
 
@@ -745,6 +744,63 @@ namespace org.iringtools.adapter.datalayer
       {
         return new DataDictionary();
       }
+    }
+
+    public override Response Refresh(string objectType)
+    {
+
+      string keyFile = string.Format("{0}{1}.{2}.key",
+        _settings["AppDataPath"], _settings["ProjectName"], _settings["ApplicationName"]);
+
+      if (File.Exists(_settings["DBDictionaryPath"]))
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], keyFile);
+
+      if (_dbDictionary == null || _dbDictionary.dataObjects == null)
+      {
+        Response response = new Response()
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages() { "Dictionary is empty." },
+        };
+
+        return response;
+      }
+
+      return Generate(_settings["projectName"], _settings["applicationName"]);
+    }
+
+    public override Response RefreshAll()
+    {
+      return Refresh(null);
+    }
+
+    protected Response Generate(string scope, string app)
+    {
+      Response response = new Response();
+
+      try
+      {
+        EntityGenerator generator = _kernel.Get<EntityGenerator>();
+
+        string compilerVersion = "v4.0";
+        if (!string.IsNullOrEmpty(_settings["CompilerVersion"]))
+        {
+          compilerVersion = _settings["CompilerVersion"];
+        }
+
+        Response genRes = generator.Generate(compilerVersion, _dbDictionary, scope, app);
+
+        response.Append(genRes);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error refreshing dictionary {0}:", ex));
+
+        response.Level = StatusLevel.Error;
+        response.Messages.Add(ex.Message);
+      }
+
+      return response;
     }
 
     public override IList<IDataObject> GetRelatedObjects(IDataObject parentDataObject, string relatedObjectType)
@@ -907,6 +963,20 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error("Error authorizing: " + e);
         throw e;
       }
+    }
+
+    private IDataObject NewDataObject(DataObject objDef, Type type)
+    {
+      IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
+
+      // generate key property(properties)
+      foreach (KeyProperty keyProp in objDef.keyProperties)
+      {
+        string newId = Guid.NewGuid().ToString("N");
+        dataObject.SetPropertyValue(keyProp.keyPropertyName, newId);
+      }
+
+      return dataObject;
     }
     #endregion
   }

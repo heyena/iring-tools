@@ -24,6 +24,7 @@ namespace org.iringtools.adapter
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseProvider));
     public const string CACHE_CONNSTR = "iRINGCacheConnStr";
+    public const string CACHE_CONNSTR_LEVEL = "Adapter";
 
     protected IKernel _kernel = null;
     protected AdapterSettings _settings = null;
@@ -60,6 +61,8 @@ namespace org.iringtools.adapter
       }
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+      _settings[CACHE_CONNSTR_LEVEL] = "Adapter";
 
       #region initialize webHttpClient for converting old mapping
       string proxyHost = _settings["ProxyHost"];
@@ -115,6 +118,33 @@ namespace org.iringtools.adapter
         Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
 
+      // read scope configration file
+      
+      foreach (var scope in _scopes)
+      {
+        string scopeConfigPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope.Name);
+        if (File.Exists(scopeConfigPath))
+          scope.Configuration = Utility.Read<Configuration>(scopeConfigPath,false);
+        else
+          scope.Configuration = new Configuration() { AppSettings = new AppSettings()};
+
+        if (scope.Configuration != null && scope.Configuration.AppSettings != null && scope.Configuration.AppSettings.Settings != null)
+        {
+          var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
+                                   where setting.Key == CACHE_CONNSTR
+                                   select setting).SingleOrDefault();
+          if (connectionSetting != null)
+          {
+            if (Utility.IsBase64Encoded(connectionSetting.Value))
+            {
+              _settings[CACHE_CONNSTR_LEVEL] = "Scope";
+              string keyFile = string.Format("{0}{1}.key", _settings["AppDataPath"], scope.Name);
+              connectionSetting.Value = EncryptionUtility.Decrypt(connectionSetting.Value, keyFile);
+            }
+          }
+        }
+      }
+      
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
       // Ninject Extension requires fully qualified path.
@@ -180,6 +210,15 @@ namespace org.iringtools.adapter
         IDictionary keyRing = identityLayer.GetKeyRing();
         _kernel.Bind<IDictionary>().ToConstant(keyRing).Named("KeyRing");
 
+        if (keyRing != null)
+        {
+          _logger.Debug("Identity attributes:");
+          foreach (var key in keyRing.Keys)
+          {
+            _logger.Debug(key.ToString() + ": " + keyRing[key]);
+          }
+        }
+
         _settings.AppendKeyRing(keyRing);
       }
       catch (Exception ex)
@@ -187,6 +226,61 @@ namespace org.iringtools.adapter
         _logger.Error(string.Format("Error initializing identity: {0}", ex));
         throw ex;
       }
+    }
+
+    public ScopeProject GetScope(string scopeName)
+    {
+      foreach (ScopeProject scope in _scopes)
+      {
+        if (scope.Name.ToLower() == scopeName.ToLower())
+        {
+          foreach (ScopeApplication app in scope.Applications)
+          {
+            string bindingConfigPath =
+              string.Format("{0}BindingConfiguration.{1}.{2}.xml",
+              _settings["AppDataPath"], scope.Name, app.Name);
+
+            XElement binding = Utility.GetxElementObject(bindingConfigPath);
+
+            if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
+              app.DataMode = DataMode.Cache;
+          }
+
+          return scope;
+        }
+      }
+
+      throw new Exception("Scope [" + scopeName + "] not found.");
+    }
+
+    public ScopeApplication GetApplication(string scopeName, string appName)
+    {
+      foreach (ScopeProject scope in _scopes)
+      {
+        if (scope.Name.ToLower() == scopeName.ToLower())
+        {
+          foreach (ScopeApplication app in scope.Applications)
+          {
+            if (app.Name.ToLower() == appName.ToLower())
+            {
+              string bindingConfigPath =
+                string.Format("{0}BindingConfiguration.{1}.{2}.xml",
+                _settings["AppDataPath"], scope.Name, app.Name);
+
+              XElement binding = Utility.GetxElementObject(bindingConfigPath);
+
+              if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
+                app.DataMode = DataMode.Cache;
+
+              return app;
+            }
+          }
+
+          break;
+        }
+      }
+
+      throw new Exception("Application [" + scopeName + "." + appName + "] not found.");
     }
 
     protected void Impersonate()
@@ -216,7 +310,10 @@ namespace org.iringtools.adapter
         AppSettingsReader scopeSettings = new AppSettingsReader(scopeSettingsPath);
 
         if (scopeSettings.Contains(CACHE_CONNSTR))
+        {
+          _settings[CACHE_CONNSTR_LEVEL] = "Scope";
           _settings[CACHE_CONNSTR] = scopeSettings[CACHE_CONNSTR].ToString();
+        }
 
         _settings.AppendSettings(scopeSettings);
       }
@@ -352,22 +449,6 @@ namespace org.iringtools.adapter
 
         response.Level = StatusLevel.Success;
         response.Messages.Add("Data Mode switched successfully.");
-
-        // cache does not exist, create it
-        if (application.DataMode == DataMode.Cache && application.CacheTimestamp == null)
-        {
-          Impersonate();
-          InitializeDataLayer(false);
-
-          Response refreshResponse = _dataLayerGateway.RefreshCache(false);
-
-          if (response.Level == StatusLevel.Success)
-          {
-            UpdateCacheInfo(scope, app);
-          }
-
-          response.Append(refreshResponse);
-        }
       }
       catch (Exception ex)
       {
@@ -393,7 +474,7 @@ namespace org.iringtools.adapter
 
         if (response.Level == StatusLevel.Success)
         {
-          UpdateCacheInfo(scope, app);
+          UpdateCacheInfo(scope, app, null);
         }
       }
       catch (Exception ex)
@@ -416,11 +497,11 @@ namespace org.iringtools.adapter
         Impersonate();
         InitializeDataLayer(false);
 
-        response = _dataLayerGateway.RefreshCache(updateDictionary, objectType);
+        response = _dataLayerGateway.RefreshCache(updateDictionary, objectType, true);
 
         if (response.Level == StatusLevel.Success)
         {
-          UpdateCacheInfo(scope, app);
+          UpdateCacheInfo(scope, app, objectType);
         }
       }
       catch (Exception ex)
@@ -447,7 +528,7 @@ namespace org.iringtools.adapter
 
         if (response.Level == StatusLevel.Success)
         {
-          UpdateCacheInfo(scope, app);
+          UpdateCacheInfo(scope, app, null);
         }
       }
       catch (Exception ex)
@@ -470,11 +551,11 @@ namespace org.iringtools.adapter
         Impersonate();
         InitializeDataLayer(false);
 
-        response = _dataLayerGateway.ImportCache(objectType, url, updateDictionary);
+        response = _dataLayerGateway.ImportCache(objectType, url, updateDictionary, true);
 
         if (response.Level == StatusLevel.Success)
         {
-          UpdateCacheInfo(scope, app);
+          UpdateCacheInfo(scope, app, objectType);
         }
       }
       catch (Exception ex)
@@ -529,15 +610,69 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public void UpdateCacheInfo(string scope, string app)
+    protected void UpdateCacheInfo(ScopeApplication application, DataObject dataObject)
     {
-      ScopeProject project = _scopes.Find(x => x.Name.ToLower() == scope.ToLower());
-      ScopeApplication application = project.Applications.Find(x => x.Name.ToLower() == app.ToLower());
+      if (dataObject == null)
+      {
+        throw new Exception("Object type [" + dataObject.objectName + "] not known.");
+      }
 
-      application.DataMode = DataMode.Cache;
-      application.CacheTimestamp = DateTime.Now;
+      if (application.CacheInfo == null)
+      {
+        application.CacheInfo = new CacheInfo();
+      }
 
-      Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+      if (application.CacheInfo.CacheEntries == null)
+      {
+        application.CacheInfo.CacheEntries = new CacheEntries();
+      }
+
+      CacheEntry cacheEntry = application.CacheInfo.CacheEntries.Find(x => x.ObjectName.ToLower() == dataObject.objectName.ToLower());
+
+      if (cacheEntry == null)
+      {
+        cacheEntry = new CacheEntry()
+        {
+          ObjectName = dataObject.objectName,
+          LastUpdate = DateTime.Now
+        };
+
+        application.CacheInfo.CacheEntries.Add(cacheEntry);
+      }
+      else
+      {
+        cacheEntry.LastUpdate = DateTime.Now;
+      }
+    }
+
+    public void UpdateCacheInfo(string scope, string app, string objectType)
+    {
+      try
+      {
+        ScopeProject project = _scopes.Find(x => x.Name.ToLower() == scope.ToLower());
+        ScopeApplication application = project.Applications.Find(x => x.Name.ToLower() == app.ToLower());
+        DataDictionary dictionary = _dataLayerGateway.GetDictionary();
+
+        if (string.IsNullOrEmpty(objectType))
+        {
+          foreach (DataObject dataObject in dictionary.dataObjects)
+          {
+            UpdateCacheInfo(application, dataObject);
+          }
+        }
+        else
+        {
+          DataObject dataObject = dictionary.dataObjects.Find(x => x.objectName.ToLower() == objectType.ToLower());
+          UpdateCacheInfo(application, dataObject);
+        }
+
+        Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+      }
+      catch (Exception e)
+      {
+        _logger.Debug("Error updating cache information: ", e);
+        throw e;
+      }
     }
     #endregion
 

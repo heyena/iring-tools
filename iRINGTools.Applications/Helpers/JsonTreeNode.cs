@@ -5,6 +5,22 @@ using System.Web;
 
 namespace iRINGTools.Web.Helpers
 {
+  /*
+   [{
+        id: 1,
+        text: 'A leaf Node',
+        leaf: true
+    },{
+        id: 2,
+        text: 'A folder Node',
+        children: [{
+            id: 3,
+            text: 'A child Node',
+            leaf: true
+        }]
+   }]    
+  */
+
   public class JsonTreeNode
   {
     public JsonTreeNode()
@@ -21,7 +37,7 @@ namespace iRINGTools.Web.Helpers
     public bool leaf { get; set; }
     public bool expanded { get; set; }
     public bool hidden { get; set; }
-    public int identifierIndex { get; set; }
+    public int index { get; set; }
     public List<JsonTreeNode> children { get; set; }
     public string type { get; set; }
     public string nodeType { get; set; }
@@ -30,6 +46,6 @@ namespace iRINGTools.Web.Helpers
     public Dictionary<string, string> properties { get; set; }
     public string iconCls { get; set; }
     public string Namespace { get; set; }
-    public int propertiesCount { get; set; }
-  }
+      
+  }  
 }

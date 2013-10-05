@@ -229,7 +229,7 @@ namespace NUnit.Tests
     [Test]
     public void Search()
     {
-      RefDataEntities _entities = _refdataProvider.Search("possible individual",null);
+      RefDataEntities _entities = _refdataProvider.Search("possible individual");
       Assert.AreNotEqual(0, _entities.Total);
 
     }

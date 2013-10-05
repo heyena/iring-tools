@@ -389,8 +389,8 @@ namespace QMXFGenerator
           {
             var classSpecialization = ProcessClassSpecialization(name, sList);
 
-          if (classSpecialization.Count > 0)
-            classDefinition.specialization = classSpecialization;
+            if (classSpecialization.Count > 0)
+              classDefinition.specialization = classSpecialization;
           }
           load = String.Empty;
           idx++;
@@ -447,17 +447,20 @@ namespace QMXFGenerator
         //                           className
         //                         select specialization;
         //Get their details from the Class List
+ 
         var superclasses = new List<ArrayList>();
 
         foreach (var specialization in specializationList)
         {
           object subclass = specialization[(int) ClassSpecializationColumns.Subclass];
           object supclass = specialization[(int)ClassSpecializationColumns.Superclass];
+
           var supc = from @class in _classes
                    where Convert
                            .ToString(@class[(int)ClassColumns.Label])
                            .Trim() == supclass.ToString().Trim()
                    select @class;
+
           var sc = from @class in _classes
                       where Convert
                               .ToString(@class[(int) ClassColumns.Label])
@@ -466,12 +469,12 @@ namespace QMXFGenerator
           if (supc.Count() > 0 && supc.FirstOrDefault().Count > 0)
           {
             if (sc.Count() > 0 && sc.FirstOrDefault().Count > 0)
-          {
+            {
               superclasses.Add(sc.FirstOrDefault());
-          }
-          else
-          {
-            Utility.WriteString("\n " + subclass.ToString() + " Was Not Found in Class List", "error.log", true);
+            }
+            else
+            {
+              Utility.WriteString("\n " + subclass.ToString() + " Was Not Found in Class List", "error.log", true);
             }
           }
           else

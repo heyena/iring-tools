@@ -152,11 +152,11 @@ namespace org.iringtools.refdata
       return _repositories.Find(c => c.Name == name);
     }
 
-    public RefDataEntities Search(string query, string repositoryNamesString)
+    public RefDataEntities Search(string query)
     {
       try
       {
-          return SearchPage(query, 0, 0, repositoryNamesString);
+        return SearchPage(query, 0, 0);
       }
       catch (Exception ex)
       {
@@ -165,7 +165,7 @@ namespace org.iringtools.refdata
       }
     }
 
-    public RefDataEntities SearchPage(string query, int start, int limit, string repositoryNamesString)
+    public RefDataEntities SearchPage(string query, int start, int limit)
     {
         _logger.Debug("SearchPage");
 
@@ -176,10 +176,6 @@ namespace org.iringtools.refdata
       {
         var sparql = String.Empty;
         var relativeUri = String.Empty;
-
-          // ********************************* FOR TESTING ONLY
-        _searchHistory.Clear();
-          // ********************************* REMOVE THIS
 
         if (_searchHistory.ContainsKey(query))
         {
@@ -221,32 +217,7 @@ namespace org.iringtools.refdata
 
           _logger.Debug("SearchPage: Got JORD Bindings");
             
-          List<Repository> repositoryList = null;
-          if (repositoryNamesString != null)
-          {
-              string[] repositoryNames = repositoryNamesString.Split(',');
-              repositoryList = new List<Repository>();
-              foreach (var repository in _repositories)
-              {
-                  foreach (var repositoryName in repositoryNames)
-                  {
-                     if (repository.Name.Equals(repositoryName))
-                         repositoryList.Add(repository);
-                  }
-              }
-          }
-          else
-          {
-              repositoryList = _repositories;
-          }
-
-          if (repositoryList == null || repositoryList.Count() == 0)
-          {
-              _logger.Error("Did not find any repositories to search.");
-              throw new Exception("No repositories found for search.");
-          }
-
-          foreach (var repository in repositoryList)
+          foreach (var repository in _repositories)
           {
             if (repository.RepositoryType == RepositoryType.JORD)
             {
@@ -324,18 +295,18 @@ namespace org.iringtools.refdata
       }
     }
 
-    public RefDataEntities SearchReset(string query, string repositoryNamesString)
+    public RefDataEntities SearchReset(string query)
     {
       Reset(query);
 
-      return Search(query, repositoryNamesString);
+      return Search(query);
     }
 
-    public RefDataEntities SearchPageReset(string query, int start, int limit, string repositoryNamesString)
+    public RefDataEntities SearchPageReset(string query, int start, int limit)
     {
       Reset(query);
 
-      return SearchPage(query, start, limit, repositoryNamesString);
+      return SearchPage(query, start, limit);
     }
 
     private Entity GetLabel(string uri)
@@ -1955,8 +1926,7 @@ namespace org.iringtools.refdata
       catch (Exception ex)
       {
         _logger.Error(string.Format("Failed to read repository['{0}']", repository.Uri), ex);
-        throw ex;
-        //return new SparqlResultSet();
+        return new SparqlResultSet();
       }
     }
 
@@ -3019,9 +2989,9 @@ namespace org.iringtools.refdata
         _pred = work.CreateUriNode(rdfType);
         _obj = work.CreateUriNode(new Uri(objectId));
         work.Assert(new Triple(_subj, _pred, _obj));
-        //_pred = work.CreateUriNode(rdfType);
-        //_obj = work.CreateUriNode("owl:Class");
-        //work.Assert(new Triple(_subj, _pred, _obj));
+        _pred = work.CreateUriNode(rdfType);
+        _obj = work.CreateUriNode("owl:Class");
+        work.Assert(new Triple(_subj, _pred, _obj));
       }
     }
 
