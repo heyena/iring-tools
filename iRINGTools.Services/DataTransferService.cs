@@ -209,7 +209,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets data transfer indices of requested manifest with filter.")]
+    [Description("Gets data transfer indices of requested manifest and filter.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi/filter?hashAlgorithm={hashAlgorithm}")]
     public void GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
@@ -235,7 +235,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets internal identifiers for a given manifest with filter.")]
+    [Description("Gets internal identifiers for a given manifest and filter.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter")]
     public void GetInternalIdentifiers(string scope, string app, string graph, DxiRequest request)
     {
@@ -254,6 +254,23 @@ namespace org.iringtools.services
           HttpContext.Current.Response.ContentType = "application/xml";
           HttpContext.Current.Response.Write(Utility.SerializeDataContract<Identifiers>(identifiers));
         }
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+
+    [Description("Gets data transfer objects for a given manifest and filter.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dto?start={start}&limit={limit}")]
+    public void GetPageDataTransferObjects(string scope, string app, string graph, DxiRequest request, int start, int limit)
+    {
+      try
+      {
+        DataTransferObjects dtos = _dtoProvider.GetPageDataTransferObjects(scope, app, graph, request, start, limit);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
       }
       catch (Exception ex)
       {

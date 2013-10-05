@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="senderScopeName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="senderAppName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="totalCount" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -39,7 +40,8 @@ import javax.xml.bind.annotation.XmlType;
     "dataTransferObjectList",
     "version",
     "senderScopeName",
-    "senderAppName"
+    "senderAppName",
+    "totalCount"
 })
 @XmlRootElement(name = "dataTransferObjects")
 public class DataTransferObjects
@@ -53,6 +55,7 @@ public class DataTransferObjects
     protected String version;
     protected String senderScopeName;
     protected String senderAppName;
+    protected Integer totalCount;
 
     /**
      * Gets the value of the scopeName property.
@@ -196,6 +199,30 @@ public class DataTransferObjects
      */
     public void setSenderAppName(String value) {
         this.senderAppName = value;
+    }
+
+    /**
+     * Gets the value of the totalCount property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getTotalCount() {
+        return totalCount;
+    }
+
+    /**
+     * Sets the value of the totalCount property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setTotalCount(Integer value) {
+        this.totalCount = value;
     }
 
 }

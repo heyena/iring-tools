@@ -94,8 +94,9 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
         columns[i].fixed = true;
         columns[i].menuDisabled = true;
       }
-      else {
-	columns[i].editor = new Ext.form.TextField({readOnly: true});
+      
+      if (field.editMode == 1) {
+        columns[i].editor = new Ext.form.TextField({readOnly: true});
       }
     }
     

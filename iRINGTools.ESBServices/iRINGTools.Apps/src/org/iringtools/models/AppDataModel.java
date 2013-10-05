@@ -1,19 +1,15 @@
 package org.iringtools.models;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.dxfr.content.ContentObject;
 import org.iringtools.dxfr.content.ContentObjects;
-import org.iringtools.dxfr.dti.DataTransferIndex;
-import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.manifest.Graph;
 import org.iringtools.dxfr.manifest.Manifest;
+import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.HttpUtils;
@@ -51,10 +47,10 @@ public class AppDataModel extends DataModel
         if (graph != null)
         {
           DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);
-
+          
+          /*DataTransferIndices pageDtis = null;
           String dtiPath = graphPath + "/dti?start=" + start + "&limit=" + limit;
-          DataTransferIndices pageDtis = null;
-
+          
           if (dataFilter != null && (dataFilter.getExpressions() != null || dataFilter.getOrderExpressions() != null))
           {
             pageDtis = httpClient.post(DataTransferIndices.class, dtiPath, dataFilter);
@@ -63,8 +59,6 @@ public class AppDataModel extends DataModel
           {
             pageDtis = httpClient.get(DataTransferIndices.class, dtiPath);
           }
-
-          Grid dtoGrid = null;
 
           if (pageDtis != null && pageDtis.getDataTransferIndexList() != null
               && pageDtis.getDataTransferIndexList().getItems().size() > 0)
@@ -88,6 +82,26 @@ public class AppDataModel extends DataModel
           else
           {
             dtoGrid = createDtoGrid(serviceUri, graphPath, manifest, graph, null);
+          }*/
+        
+          DxiRequest dxiRequest = new DxiRequest();
+          dxiRequest.setManifest(manifest);
+          dxiRequest.setDataFilter(dataFilter);
+          
+          String relativePath = graphPath + "/dto?start=" + start + "&limit=" + limit;          
+          
+          DataTransferObjects pageDtos = httpClient.post(DataTransferObjects.class, relativePath, dxiRequest);
+          Grid dtoGrid = null;
+          
+          if (pageDtos != null && pageDtos.getDataTransferObjectList() != null &&
+              pageDtos.getDataTransferObjectList().getItems().size() > 0) 
+          {
+            dtoGrid = createDtoGrid(serviceUri, graphPath, manifest, graph, pageDtos);
+            dtoGrid.setTotal(pageDtos.getTotalCount());
+          }
+          else
+          {
+            dtoGrid = createDtoGrid(serviceUri, graphPath, manifest, graph, null);
           }
 
           return dtoGrid;
@@ -104,32 +118,42 @@ public class AppDataModel extends DataModel
     return null;
   }
 
-  // sort data transfer objects as data transfer indices
-  private List<DataTransferObject> sortDtos(List<DataTransferObject> dtos, List<DataTransferIndex> dtis)
+  public ContentObject getContent(String targetUri) throws HttpClientException
   {
-    List<DataTransferObject> sortedList = new ArrayList<DataTransferObject>();
+    HttpClient httpClient = new HttpClient(targetUri);
+    HttpUtils.addHttpHeaders(settings, httpClient);
 
-    for (DataTransferIndex dti : dtis)
-    {
-      for (DataTransferObject dto : dtos)
-      {
-        if (dti.getIdentifier().equalsIgnoreCase(dto.getIdentifier())
-            && dti.getInternalIdentifier().equalsIgnoreCase(dto.getInternalIdentifier()))
-        {
-          if (dti.getHasContent() != null)
-          {
-            dto.setHasContent(dti.getHasContent());
-          }
+    ContentObjects contentObjects = httpClient.get(ContentObjects.class);
 
-          dto.setDuplicateCount(dti.getDuplicateCount());
-          sortedList.add(dto);
-          break;
-        }
-      }
-    }
-
-    return sortedList;
+    return contentObjects.getContentObject().get(0);
   }
+
+//  // sort data transfer objects as data transfer indices
+//  private List<DataTransferObject> sortDtos(List<DataTransferObject> dtos, List<DataTransferIndex> dtis)
+//  {
+//    List<DataTransferObject> sortedList = new ArrayList<DataTransferObject>();
+//
+//    for (DataTransferIndex dti : dtis)
+//    {
+//      for (DataTransferObject dto : dtos)
+//      {
+//        if (dti.getIdentifier().equalsIgnoreCase(dto.getIdentifier())
+//            && dti.getInternalIdentifier().equalsIgnoreCase(dto.getInternalIdentifier()))
+//        {
+//          if (dti.getHasContent() != null)
+//          {
+//            dto.setHasContent(dti.getHasContent());
+//          }
+//
+//          dto.setDuplicateCount(dti.getDuplicateCount());
+//          sortedList.add(dto);
+//          break;
+//        }
+//      }
+//    }
+//
+//    return sortedList;
+//  }
 
   // TODO: complete implementation
   // public Grid getRelatedDtoGrid(String serviceUri, String scopeName, String appName, String graphName, String
@@ -159,14 +183,4 @@ public class AppDataModel extends DataModel
   //
   // return pageDtoGrid;
   // }
-
-  public ContentObject getContent(String targetUri) throws HttpClientException
-  {
-    HttpClient httpClient = new HttpClient(targetUri);
-    HttpUtils.addHttpHeaders(settings, httpClient);
-
-    ContentObjects contentObjects = httpClient.get(ContentObjects.class);
-
-    return contentObjects.getContentObject().get(0);
-  }
 }

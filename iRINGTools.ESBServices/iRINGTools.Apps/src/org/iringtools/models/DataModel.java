@@ -338,10 +338,6 @@ public class DataModel
           {
             String transferType = dto.getTransferType().toString();
             rowData.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
-
-            // rowData.add("<input type=\"image\" src=\"resources/images/" + transferType.toLowerCase()
-            // + ".png\" width=15 heigt=15 " + "  onMouseOver= 'javascript:showMessage(\""
-            // + transferType.toLowerCase() + "\")' " + "onClick='javascript:showChangedItemsInfo()'>");
           }
 
           if (dataMode == DataMode.EXCHANGE)
@@ -369,8 +365,6 @@ public class DataModel
 
             processClassObject(manifest, graph, dto, dtoIndex, fields, classObject, dtoGrid, rowData, relatedClasses);
           }
-
-          // setting color icon if the row contain Dup's
 
           if (dataMode == DataMode.APP)
           {
@@ -400,16 +394,6 @@ public class DataModel
             {
               rowData.set(1, "");
             }
-            
-            // set duplicate
-//            if (dto.getDuplicateCount() == null || dto.getDuplicateCount() == 0)
-//            {
-//              rowData.set(2, "No");
-//            }
-//            else
-//            {
-//              rowData.set(2, "Yes");
-//            }
           }
 
           // update info field
@@ -742,7 +726,6 @@ public class DataModel
       transferField.setDataIndex("Transfer Type");
       transferField.setType("string");
       transferField.setWidth(TRANSFER_FIELD_WIDTH);
-      transferField.setFixed(true);
       transferField.setFilterable(true);
       transferField.setSortable(false);
       fields.add(0, transferField);
@@ -844,7 +827,7 @@ public class DataModel
 
             field.setName(fieldName);
             field.setDataIndex(fieldDataIndex);
-
+            field.setEditMode(1);
             field.setWidth(MIN_FIELD_WIDTH);
 
             // adjust field width
