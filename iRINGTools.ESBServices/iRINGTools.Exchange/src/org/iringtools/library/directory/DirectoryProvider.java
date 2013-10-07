@@ -87,7 +87,7 @@ public class DirectoryProvider {
           for (Commodity commodity : commodityList) {
             if (name.equalsIgnoreCase(commodity.getName())) {
               List<Exchange> exchangeList = commodity.getExchange();
-              int maxid = calculateMaxIdInScope(s, directory);
+              int maxid = calculateMaxIdInScope(commodityList);
               exchange.setId(Integer.toString(maxid + 1));
               exchangeList.add(exchange);
 
@@ -108,13 +108,10 @@ public class DirectoryProvider {
 
     return exchange;
   }
-  public int calculateMaxIdInScope(Scope s, Directory directory )
+  public int calculateMaxIdInScope(List<Commodity> commodityList)
   {
     int maxid = 0;
     try {
-        DataExchanges exchangeData = s.getDataExchanges();
-        List<Commodity> commodityList = exchangeData.getCommodity();
-
         for (Commodity commodity : commodityList) {
           List<Exchange> exchangeList = commodity.getExchange();         
 
