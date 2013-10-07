@@ -1866,13 +1866,19 @@ namespace org.iringtools.adapter
       DataTransferIndices dataTransferIndices = new DataTransferIndices();
       DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
 
+      _logger.Debug("Data object: " + dataObject.objectName);
+
       long total = _dataLayerGateway.GetCount(dataObject, filter);
       int maxThreads = int.Parse(_settings["MaxThreads"]);
+
+      _logger.Debug("Total count [" + total + "].");
 
       if (total > 0)
       {
         long numOfThreads = Math.Min(total, maxThreads);
         int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
+
+        _logger.Debug("Items per thread [" + itemsPerThread + "].");
 
         List<ManualResetEvent> doneEvents = new List<ManualResetEvent>();
         List<DtiTask> dtiTasks = new List<DtiTask>();
@@ -1898,7 +1904,6 @@ namespace org.iringtools.adapter
         }
 
         _logger.Debug("Number of threads [" + threadCount + "].");
-        _logger.Debug("Items per thread [" + itemsPerThread + "].");
         _logger.Debug("DTI tasks started!");
 
         // wait for all tasks to complete
