@@ -272,9 +272,10 @@ public class ExchangeDataModel extends DataModel
     if (xRes.getLevel() == Level.SUCCESS)
     {
       String dtiKeyPrefix = DTI_PREFIX + "." + scope + "." + xId;
+      String preSummaryPrefix = PRE_SUMMARY_PREFIX + "." + scope + "." + xId;
 
       for (String key : session.keySet())
-        if (key.startsWith(dtiKeyPrefix))
+        if (key.startsWith(dtiKeyPrefix) || key.startsWith(preSummaryPrefix))
           session.remove(key);
     }
 
@@ -700,7 +701,7 @@ public class ExchangeDataModel extends DataModel
 
       if (graph != null)
       {
-        String fullDtiKey = DTI_PREFIX + "." + scope + "." + xId;
+        /*String fullDtiKey = DTI_PREFIX + "." + scope + "." + xId;
 
         if (!session.containsKey(fullDtiKey))
         {
@@ -717,7 +718,7 @@ public class ExchangeDataModel extends DataModel
           dtis = (DataTransferIndices) session.get(fullDtiKey);
         }
         else
-        {
+        {*/
           String dtiKey = DTI_PREFIX + "." + scope + "." + xId + "." + filter + "." + sortOrder + "." + sortBy;
 
           //
@@ -733,7 +734,7 @@ public class ExchangeDataModel extends DataModel
             dtis = getFilteredDtis(exchange, manifest, uiFilter);
             session.put(dtiKey, dtis);
           }
-        }
+        //}
       }
     }
 
