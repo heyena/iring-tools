@@ -87,7 +87,7 @@ public class DirectoryProvider {
           for (Commodity commodity : commodityList) {
             if (name.equalsIgnoreCase(commodity.getName())) {
               List<Exchange> exchangeList = commodity.getExchange();
-              int maxid = calculateMaxIdInScope(scope);
+              int maxid = calculateMaxIdInScope(s, directory);
               exchange.setId(Integer.toString(maxid + 1));
               exchangeList.add(exchange);
 
@@ -106,18 +106,12 @@ public class DirectoryProvider {
       logger.error(message);
     }
 
-    return exchangeValues;
+    return exchange;
   }
-  public int calculateMaxIdInScope(String scope)
+  public int calculateMaxIdInScope(Scope s, Directory directory )
   {
     int maxid = 0;
     try {
-      Directory directory = JaxbUtils.read(Directory.class, path);
-      List<Scope> scopes = directory.getScope();
- 
-
-    for (Scope s : scopes) {
-      if (scope.equalsIgnoreCase(s.getName())) {
         DataExchanges exchangeData = s.getDataExchanges();
         List<Commodity> commodityList = exchangeData.getCommodity();
 
@@ -132,11 +126,8 @@ public class DirectoryProvider {
             }
           }
         }
-        break;
-      }
-    }
-    } catch (Exception e) {
-      String message = "Error creating xid for exchange definition of [" + scope + "]: " + e;
+    }catch (Exception e) {
+      String message = "Error creating xid for exchange definition " + e;
       logger.error(message);
     }
     return maxid;
