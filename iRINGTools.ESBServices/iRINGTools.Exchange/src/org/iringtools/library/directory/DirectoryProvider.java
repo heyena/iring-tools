@@ -1,9 +1,12 @@
 package org.iringtools.library.directory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
@@ -84,15 +87,7 @@ public class DirectoryProvider {
           for (Commodity commodity : commodityList) {
             if (name.equalsIgnoreCase(commodity.getName())) {
               List<Exchange> exchangeList = commodity.getExchange();
-              int maxid = 0;
-
-              for (Exchange exchangefile : exchangeList) {
-                String sid = exchangefile.getId();
-                int id = Integer.parseInt(sid);
-                if (id > maxid) {
-                  maxid = id;
-                }
-              }
+              int maxid = calculateMaxIdInScope(scope);
               exchange.setId(Integer.toString(maxid + 1));
               exchangeList.add(exchange);
 
@@ -100,6 +95,7 @@ public class DirectoryProvider {
               Collections.sort(exchangeList, exchangeDefSort);
             }
           }
+          break;
         }
       }
 
@@ -110,7 +106,40 @@ public class DirectoryProvider {
       logger.error(message);
     }
 
-    return exchange;
+    return exchangeValues;
+  }
+  public int calculateMaxIdInScope(String scope)
+  {
+    int maxid = 0;
+    try {
+      Directory directory = JaxbUtils.read(Directory.class, path);
+      List<Scope> scopes = directory.getScope();
+ 
+
+    for (Scope s : scopes) {
+      if (scope.equalsIgnoreCase(s.getName())) {
+        DataExchanges exchangeData = s.getDataExchanges();
+        List<Commodity> commodityList = exchangeData.getCommodity();
+
+        for (Commodity commodity : commodityList) {
+          List<Exchange> exchangeList = commodity.getExchange();         
+
+          for (Exchange exchange : exchangeList) {
+            String sid = exchange.getId();
+            int id = Integer.parseInt(sid);
+            if (id > maxid) {
+              maxid = id;
+            }
+          }
+        }
+        break;
+      }
+    }
+    } catch (Exception e) {
+      String message = "Error creating xid for exchange definition of [" + scope + "]: " + e;
+      logger.error(message);
+    }
+    return maxid;
   }
 
   public void editExchangeDefinition(Exchange exchange, String scope,
