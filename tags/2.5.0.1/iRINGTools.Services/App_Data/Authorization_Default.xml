@@ -1,4 +1,0 @@
-<authorizedUsers xmlns="http://www.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-	<userId>BechtelUserName</userId> <!--Bechtel User-->
-	<userId>EmailAddress</userId> <!--External User-->
-</authorizedUsers>
