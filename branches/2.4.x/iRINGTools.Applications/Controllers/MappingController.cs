@@ -410,13 +410,15 @@ namespace org.iringtools.web.controllers
         TemplateMap tMap = ctm.templateMaps[index];
         RoleMap rMap = tMap.roleMaps.FirstOrDefault(c => c.name == roleName);
 
+        string nodeContext = context + "/" + tMap.name + "(" + tMap.index + ")";
+
         if (rMap != null)
         {
           rMap.type = RoleType.Possessor;
           rMap.propertyName = null;
           rMap.valueListName = null;
           rMap.value = null;
-          JsonTreeNode roleNode = CreateRoleNode(context, rMap);
+          JsonTreeNode roleNode = CreateRoleNode(nodeContext, rMap);
           roleNode.text.Replace(unMappedToken, "");
           nodes.Add(roleNode);
         }
@@ -503,13 +505,15 @@ namespace org.iringtools.web.controllers
       if (!templateMap.id.Contains(":"))
         templateMap.id = string.Format("tpl:{0}", templateMap.id);
 
+      string nodeContext = context + "/" + templateMap.name + "(" + templateIndex + ")";
+
       JsonTreeNode templateNode = new JsonTreeNode
       {
         nodeType = "async",
         identifier = templateMap.id,
         type = "TemplateMapNode",
         icon = "Content/img/template-map.png",
-        id = context + "/" + templateMap.name + "(" + templateIndex + ")",
+        id = nodeContext,
         text = templateMap.name,
         expanded = false,
         leaf = false,
@@ -519,21 +523,21 @@ namespace org.iringtools.web.controllers
 
       foreach (RoleMap roleMap in templateMap.roleMaps)
       {
-        JsonTreeNode roleNode = CreateRoleNode(context, roleMap);
+        JsonTreeNode roleNode = CreateRoleNode(nodeContext, roleMap);
         templateNode.children.Add(roleNode);
       }
 
       return templateNode;
     }
 
-    private JsonTreeNode CreateRoleNode(string context, RoleMap role)
+    private JsonTreeNode CreateRoleNode(string nodeContext, RoleMap role)
     {
       JsonTreeNode roleNode = new JsonTreeNode
       {
         nodeType = "async",
         type = "RoleMapNode",
         icon = "Content/img/role-map.png",
-        id = context + "/" + role.name,
+        id = nodeContext + "/" + role.name,
         text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
                                  string.Format("{0}{1}", role.name, unMappedToken),
         expanded = false,
