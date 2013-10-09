@@ -49,16 +49,25 @@
                     "codeClass": "Ext.tree.plugin.TreeViewDragDrop",
                     "userConfig": {
                         "dragField": "text",
+                        "copy": null,
                         "ddGroup": "refdataGroup",
                         "dragText": "{0}",
                         "dropGroup": null,
                         "enableDrop": false
+                    },
+                    "configAlternates": {
+                        "copy": "boolean"
                     },
                     "designerId": "b24d2969-142f-4f19-840a-04d2703e6834",
                     "customConfigs": [
                         {
                             "group": "(Custom Properties)",
                             "name": "dragField",
+                            "type": "string"
+                        },
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "copy",
                             "type": "string"
                         }
                     ]
