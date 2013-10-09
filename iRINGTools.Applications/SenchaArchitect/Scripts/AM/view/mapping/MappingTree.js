@@ -202,7 +202,7 @@ Ext.define('AM.view.mapping.MappingTree', {
     else {
       return false;
     }
-    //return false;
+    return false;
 
   },
 
