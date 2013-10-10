@@ -82,7 +82,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.graphMenu.add(this.buildGraphMenu());
 
     this.treeLoader = new Ext.tree.TreeLoader({
-      timeout: 1800000,  // 30 minutes
+      timeout: 3600000,  // 1 hour for long running process like refreshing data dictionary
       baseParams: { type: null, related: null, datalayer: null, refresh: false },
       url: this.navigationUrl
     });

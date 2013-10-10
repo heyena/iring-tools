@@ -112,7 +112,7 @@ function createGridStore(container, url) {
 					var message = 'Request URL: /' + request.url
 							+ '.\n\nError description: '
 							+ response.responseText;
-					showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+					showDialog(550, 250, 'Error', message, Ext.Msg.OK, null);
 				}
 			}
 		}
@@ -354,9 +354,9 @@ function loadPageDto(type, action, context, label) {
 																				xidIndex);
 																var xid = context
 																		.substring(xidIndex + 5);
-																var msg = 'Are you sure you want to exchange data \r\n['
+																var msg = 'Are you sure you want to exchange data \r\n'
 																		+ label
-																		+ ']?';
+																		+ '?';
 																var processUserResponse = submitExchange
 																		.createDelegate([
 																				label,
@@ -364,7 +364,7 @@ function loadPageDto(type, action, context, label) {
 																				xid,
 																				true ]);
 																showDialog(
-																		460,
+																		450,
 																		125,
 																		'Exchange Confirmation',
 																		msg,
@@ -941,10 +941,10 @@ function submitExchange(userResponse) {
 						+ responseText;
 
 				if (message.length < 300)
-					showDialog(460, 125, 'Exchange Result', message,
+					showDialog(450, 125, 'Exchange Result', message,
 							Ext.Msg.OK, null);
 				else
-					showDialog(660, 300, 'Exchange Result', message,
+					showDialog(550, 250, 'Exchange Result', message,
 							Ext.Msg.OK, null);
 			},
 			failure : function(response, request) {
@@ -961,7 +961,7 @@ function submitExchange(userResponse) {
 					if (responseText)
 						message += responseText;
 
-					showDialog(660, 300, title, message, Ext.Msg.OK, null);
+					showDialog(550, 250, title, message, Ext.Msg.OK, null);
 				}
 			}
 		});
@@ -2368,7 +2368,7 @@ function saveGraph() {
 						+ ' already exists in scope ' + '["' + oldScope + '.'
 						+ oldapp + '"]' + '.';
 
-				showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+				showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
 
 			}
 			if (result === 'SUCCESS') {
@@ -2460,11 +2460,11 @@ function onRefreshCache() {
 
 					if (responseObj.level == 'SUCCESS') {
 						Ext.getCmp('showUpdateCacheWin').close();
-						showDialog(450, 100, 'Refresh Cache Result',
+						showDialog(450, 125, 'Refresh Cache Result',
 								'Cache refreshed successfully.', Ext.Msg.OK,
 								null);
 					} else {
-						showDialog(500, 160, 'Refresh Cache Error',
+						showDialog(550, 250, 'Refresh Cache Error',
 								responseObj.messages.items.join('\n'),
 								Ext.Msg.OK, null);
 					}
@@ -2480,11 +2480,11 @@ function onRefreshCache() {
 
 						if (responseObj.level == 'SUCCESS') {
 							Ext.getCmp('showUpdateCacheWin').close();
-							showDialog(450, 100, 'Refresh Cache Result',
+							showDialog(450, 125, 'Refresh Cache Result',
 									'Cache refreshed successfully.',
 									Ext.Msg.OK, null);
 						} else {
-							showDialog(500, 160, 'Refresh Cache Error',
+							showDialog(550, 250, 'Refresh Cache Error',
 									responseObj.messages.items.join('\n'),
 									Ext.Msg.OK, null);
 						}
@@ -2492,7 +2492,7 @@ function onRefreshCache() {
 						var errMsg = 'Failure Type: ' + request.failureType
 								+ '. Status text: '
 								+ request.response.statusText + '.';
-						showDialog(500, 160, 'Refresh Cache Error', errMsg,
+						showDialog(550, 250, 'Refresh Cache Error', errMsg,
 								Ext.Msg.OK, null);
 					}
 				}
@@ -2540,11 +2540,11 @@ function onImportCache() {
 
 					if (responseObj.level == 'SUCCESS') {
 						Ext.getCmp('showUpdateCacheWin').close();
-						showDialog(450, 100, 'Import Cache Result',
+						showDialog(450, 125, 'Import Cache Result',
 								'Cache imported successfully.', Ext.Msg.OK,
 								null);
 					} else {
-						showDialog(500, 160, 'Import Cache Error',
+						showDialog(550, 250, 'Import Cache Error',
 								responseObj.messages.items.join('\n'),
 								Ext.Msg.OK, null);
 					}
@@ -2560,11 +2560,11 @@ function onImportCache() {
 
 						if (responseObj.level == 'SUCCESS') {
 							Ext.getCmp('showUpdateCacheWin').close();
-							showDialog(450, 100, 'Import Cache Result',
+							showDialog(450, 125, 'Import Cache Result',
 									'Cache imported successfully.', Ext.Msg.OK,
 									null);
 						} else {
-							showDialog(500, 160, 'Import Cache Error',
+							showDialog(550, 250, 'Import Cache Error',
 									responseObj.messages.items.join('\n'),
 									Ext.Msg.OK, null);
 						}
@@ -2572,7 +2572,7 @@ function onImportCache() {
 						var errMsg = 'Failure Type: ' + request.failureType
 								+ '. Status text: '
 								+ request.response.statusText + '.';
-						showDialog(500, 160, 'Import Cache Error', errMsg,
+						showDialog(550, 250, 'Import Cache Error', errMsg,
 								Ext.Msg.OK, null);
 					}
 				}
@@ -2762,7 +2762,7 @@ function runExchange() {
 	var msg = 'Are you sure you want exchange data \r\n[' + exchange + ']?';
 	var processUserResponse = submitExchange.createDelegate([ exchange, scope,
 			xid, reviewed ]);
-	showDialog(460, 125, 'Exchange Confirmation', msg, Ext.Msg.OKCANCEL,
+	showDialog(450, 125, 'Exchange Confirmation', msg, Ext.Msg.OKCANCEL,
 			processUserResponse);
 }
 
@@ -2861,7 +2861,7 @@ function showExchangeHistory() {
 		store.load({});
 		store.on('exception', function(store, records, options) {
 			var msg = 'No history found for this exchange.';
-			showDialog(400, 200, 'Error', msg, Ext.Msg.OK, null);
+			showDialog(450, 125, 'Error', msg, Ext.Msg.OK, null);
 		}, this);
 
 	} else {
@@ -2955,7 +2955,7 @@ function ConfigureManifest() {
 				// container.getEl().unmask();
 				var message = 'Request URL: /' + treePanel.dataUrl
 						+ '.\n\nError description: ' + response.responseText;
-				showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+				showDialog(550, 250, 'Error', message, Ext.Msg.OK, null);
 			}
 		});
 
@@ -3023,7 +3023,7 @@ function resetManifest(scope, xid) {
 			centerPanel.getEl().unmask();
 			var message = 'Error in rest manifest: ' + response.statusText
 					+ '.\n\nError description: ' + response.responseText;
-			showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+			showDialog(550, 250, 'Error', message, Ext.Msg.OK, null);
 		}
 	});
 }
@@ -3044,7 +3044,7 @@ function reloadManifest(scope, xid) {
 			centerPanel.getEl().unmask();
 			var message = 'Error in reload manifest: ' + response.statusText
 					+ '.\n\nError description: ' + response.responseText;
-			showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+			showDialog(550, 250, 'Error', message, Ext.Msg.OK, null);
 		}
 	});
 }
@@ -3059,14 +3059,14 @@ function saveManifest(scope, xid) {
 		success : function(response, request) {
 			var application = Ext.decode(response.responseText);
 			centerPanel.getEl().unmask();
-			showDialog(400, 90, 'Success', 'Manifest saved successfully.',
+			showDialog(400, 100, 'Success', 'Manifest saved successfully.',
 					Ext.Msg.OK, null);
 		},
 		failure : function(response, request) {
 			centerPanel.getEl().unmask();
 			var message = 'Error in save manifest: ' + response.statusText
 					+ '.\n\nError description: ' + response.responseText;
-			showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+			showDialog(550, 250, 'Error', message, Ext.Msg.OK, null);
 		}
 	});
 }
@@ -3112,7 +3112,7 @@ function deleteTemplate(scope, xid) {
 			centerPanel.getEl().unmask();
 			var message = 'Error in delete template: ' + response.statusText
 					+ '.\n\nError description: ' + response.responseText;
-			showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+			showDialog(550, 250, 'Error', message, Ext.Msg.OK, null);
 		}
 	});
 }
@@ -3150,7 +3150,7 @@ function includeTemplate(scope, xid) {
 			centerPanel.getEl().unmask();
 			var message = 'Error in include template: ' + response.statusText
 					+ '.\n\nError description: ' + response.responseText;
-			showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+			showDialog(550, 250, 'Error', message, Ext.Msg.OK, null);
 		}
 	});
 }
@@ -3459,7 +3459,7 @@ function saveScope(node, button, event) {
 				var message = 'Scope name ' + '"' + scope + '"'
 						+ ' already exists' + '.';
 				+response.responseText;
-				showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+				showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
 
 			}
 			if (result === 'SUCCESS') {
@@ -3490,7 +3490,7 @@ function saveScope(node, button, event) {
 					var message = 'Scope name ' + '"' + scope + '"'
 							+ ' already exists' + '.';
 					+response.responseText;
-					showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+					showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
 
 				}
 				if (result === 'SUCCESS') {
@@ -3579,7 +3579,7 @@ function saveComm(node, button, event) {
 								+ ' already exists in scope ' + '"' + scope
 								+ '"' + '.';
 						+response.responseText;
-						showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+						showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
 
 					}
 					refresh();
@@ -3947,7 +3947,7 @@ function saveApp(node, button, event) {
 							+ ' already exists in scope ' + '"' + oldScope
 							+ '"' + '.';
 					+response.responseText;
-					showDialog(400, 90, 'Error', message, Ext.Msg.OK, null);
+					showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
 
 				}
 				if (result === 'SUCCESS') {
