@@ -133,21 +133,37 @@ namespace org.iringtools.adapter.datalayer
 
         if (identifiers != null)
         {
+          _logger.Debug("Preparing to create [" + identifiers.Count + "] data objects...");
           foreach (string identifier in identifiers)
           {
             if (!String.IsNullOrEmpty(identifier))
             {
+              _logger.Debug("Creating data object with identifier [" + identifier + "] from [" +
+                objDef.keyProperties.Count + "] key properties...");
               IQuery query = null;
-
+              
               if (objDef.keyProperties.Count == 1)
               {
                 query = session.CreateQuery("from " + objectType + " where Id = ?");
                 query.SetString(0, identifier);
               }
+              else if (String.IsNullOrEmpty(objDef.keyDelimeter))
+              {
+                throw new Exception("Object type [" + objDef.objectName + 
+                  "] uses composite key but has no key delimiter.");
+              }
               else
               {
                 string conjunction = " and ";
                 string[] idParts = identifier.Split(objDef.keyDelimeter.ToCharArray());
+
+                if (idParts.Length != objDef.keyProperties.Count)
+                {
+                  throw new Exception("Inequality number of identifier parts [" + idParts.Length + 
+                    "] with number of key properties [" + objDef.keyProperties.Count + 
+                    "]. This is most likely due to one or more key properties not being mapped.");
+                }
+
                 StringBuilder builder = new StringBuilder();
 
                 for (int i = 0; i < objDef.keyProperties.Count; i++)
@@ -159,6 +175,7 @@ namespace org.iringtools.adapter.datalayer
                 builder.Remove(0, conjunction.Length);
 
                 query = session.CreateQuery("from " + objectType + " where " + builder.ToString());
+                _logger.Debug("Create query [" + query + "].");
               }
               
               dataObject = query.List<IDataObject>().FirstOrDefault<IDataObject>();
@@ -171,6 +188,7 @@ namespace org.iringtools.adapter.datalayer
             }
             else
             {
+              _logger.Debug("Creating empty data object...");
               dataObject = NewDataObject(objDef, type);
             }
 
