@@ -1955,8 +1955,8 @@ namespace org.iringtools.refdata
       catch (Exception ex)
       {
         _logger.Error(string.Format("Failed to read repository['{0}']", repository.Uri), ex);
-        throw ex;
-        //return new SparqlResultSet();
+        //throw ex;
+        return new SparqlResultSet();
       }
     }
 
@@ -2749,6 +2749,42 @@ namespace org.iringtools.refdata
       return response;      
     }
 
+    public Response ClearAll(QMXF qmxf)
+    {
+      var response = new Response();
+      response.Level = StatusLevel.Success;
+      try
+      {
+        var repository = GetRepository(qmxf.targetRepository);
+        if (repository == null || repository.IsReadOnly)
+        {
+          var status = new Status();
+          status.Level = StatusLevel.Error;
+          if (repository == null)
+            status.Messages.Add("Repository not found!");
+          else
+            status.Messages.Add("Repository [" + qmxf.targetRepository + "] is read-only!");
+          response.Append(status);
+        }
+        else
+        {
+          sparqlBuilder.AppendLine("CLEAR  ALL");
+          var sparql = sparqlBuilder.ToString();
+          var postResponse = PostToRepository(repository, sparql);
+          response.Append(postResponse);
+        }
+      }
+      catch (Exception ex)
+      {
+        var errMsg = "Error in PostClass: " + ex;
+        var status = new Status();
+        response.Level = StatusLevel.Error;
+        status.Messages.Add(errMsg);
+        response.Append(status);
+        _logger.Error(errMsg);
+      }
+      return response;
+    }
 
 
     public List<Entity> Find(string queryString)
@@ -3139,5 +3175,6 @@ namespace org.iringtools.refdata
       _obj = work.CreateUriNode(new Uri(objId));
       work.Assert(new Triple(_subj, _pred, _obj));
     }
+    
   }
 }
