@@ -524,6 +524,7 @@ function setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dat
                 width: 240,
                 height: 370,
                 store: availItems,
+                legend: 'Available Tables',
                 displayField: 'tableName',
                 valueField: 'tableValue',
                 border: 0
@@ -531,6 +532,7 @@ function setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dat
                 width: 240,
                 height: 370,
                 store: selectItems,
+                legend: 'Selected Tables',
                 displayField: 'tableName',
                 valueField: 'tableValue',
                 border: 0

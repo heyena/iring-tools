@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.directory.Exchange;
 import org.iringtools.dxfr.dti.DataTransferIndex;
@@ -321,47 +322,62 @@ public class ExchangeProvider
   }
 
   public ExchangeResponse submitExchange(boolean async, String scope, String id, Exchange exchange, ExchangeRequest xReq)
-  {
-    logger.debug("Processing data exchange [" + scope + "." + id + "]...");
+  {    
+    ExchangeResponse exchangeResponse = null;
     
-    String requestId = UUID.randomUUID().toString().replace("-", "");
-    RequestStatus requestStatus = new RequestStatus();
-    requestStatus.setState(State.IN_PROGRESS);
-    requests.put(requestId, requestStatus);
-    exchangeRequestIds.put( scope + "." + id , requestId);
+    try
+    {
+      logger.debug("Processing data exchange [" + scope + "." + id + "]...");
+      
+      String requestId = UUID.randomUUID().toString().replace("-", "");
+      RequestStatus requestStatus = new RequestStatus();
+      requestStatus.setState(State.IN_PROGRESS);
+      requests.put(requestId, requestStatus);
+      exchangeRequestIds.put( scope + "." + id , requestId);
+      
+      logger.debug("Exchange Request ID [" + requestId + "].");
+      
+      if (async)
+      {
+        logger.debug("Running exchange in asynchronous mode...");        
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, exchange, xReq, requestStatus);
+        executor.execute(exchangeTask);
+        executor.shutdown();
+  
+        exchangeResponse = exchangeTask.getExchangeResponse();
+      }
+      else
+      {
+        logger.debug("Running exchange in synchronous mode...");
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, exchange, xReq, requestStatus);
+        executor.execute(exchangeTask);
+        executor.shutdown();
+  
+        try
+        {
+          executor.awaitTermination(24, TimeUnit.HOURS);
+        }
+        catch (InterruptedException e)
+        {
+          logger.error("Exchange Task Executor interrupted: " + e.getMessage());
+        }
+  
+        exchangeResponse = exchangeTask.getExchangeResponse();
+      }
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      logger.error("Error executing data exchange: " + e.getMessage());
+      exchangeResponse = new ExchangeResponse();
+      exchangeResponse.setLevel(Level.ERROR);
+      exchangeResponse.setSummary("Error executing data exchange: " + e.getMessage());
+    }
     
-    if (async)
-    {
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, exchange, xReq, requestStatus);
-      executor.execute(exchangeTask);
-      executor.shutdown();
-
-      ExchangeResponse exchangeResponse = exchangeTask.getExchangeResponse();
-      return exchangeResponse;
-    }
-    else
-    {
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      ExchangeTask exchangeTask = new ExchangeTask(settings, scope, id, exchange, xReq, requestStatus);
-      executor.execute(exchangeTask);
-      executor.shutdown();
-
-      try
-      {
-        executor.awaitTermination(24, TimeUnit.HOURS);
-      }
-      catch (InterruptedException e)
-      {
-        logger.error("Exchange Task Executor interrupted: " + e.getMessage());
-      }
-
-      ExchangeResponse exchangeResponse = exchangeTask.getExchangeResponse();
-      return exchangeResponse;
-    }
-
+    return exchangeResponse;
   }
-
   
   public History getExchangeHistory(String scope, String id) throws Exception
   {

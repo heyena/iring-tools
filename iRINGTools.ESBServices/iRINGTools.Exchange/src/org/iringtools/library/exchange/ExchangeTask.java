@@ -89,6 +89,7 @@ public class ExchangeTask implements Runnable
       //
       // create exchange response
       //
+      logger.debug("Initializing exchange response...");
       xRes = new ExchangeResponse();
       xRes.setExchangeId(id);
       xRes.setLevel(Level.SUCCESS);
@@ -111,6 +112,7 @@ public class ExchangeTask implements Runnable
       }
 
       String exchangeFile = xpath + "/" + startTime;
+      logger.debug("Exchange result file [" + exchangeFile + "].");
 
       //
       // check exchange request
@@ -121,18 +123,22 @@ public class ExchangeTask implements Runnable
         String message = "Exchange request is empty.";
         StringBuilder summary = new StringBuilder(xRes.getSummary());
         xRes.setSummary(summary.append(message).toString());
-        // return can't return here because then there would be no exchange response post against the requestStatus
+        // can't return here because then there would be no exchange response post against the requestStatus
       }
       else
       {
         Manifest manifest = xReq.getManifest();
         DataTransferIndices dtis = xReq.getDataTransferIndices();
 
+        logger.debug("Collecting data transfer indices...");
+        
         //
         // check data transfer indices
         //
         if (dtis == null)
         {
+          logger.debug("No data transfer indices found.");
+          
           xRes.setLevel(Level.WARNING);
           String message = "No data transfer indices found.";
           StringBuilder summary = new StringBuilder(xRes.getSummary());
