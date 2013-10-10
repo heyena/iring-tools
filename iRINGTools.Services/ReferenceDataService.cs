@@ -353,6 +353,20 @@ namespace org.iringtools.services
       return _referenceDataProvider.PostClass(qmxf);
     }
 
+    ///<summary>
+    /// Clear all data in a repository
+    ///</summary>
+    //[XmlSerializerFormat]
+    [Description("Clear all in a repository")]
+    [WebInvoke(UriTemplate = "/clearall")]
+    public Response ClearAll(QMXF qmxf)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.ClearAll(qmxf);
+    }
+
     /// <summary>
     /// members on a class
     /// </summary>
