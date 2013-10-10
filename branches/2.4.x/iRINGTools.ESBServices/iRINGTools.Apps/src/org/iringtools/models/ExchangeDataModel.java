@@ -252,7 +252,7 @@ public class ExchangeDataModel extends DataModel
 
     try
     {
-      xRes = provider.submitExchange(isAsync, scope, xId, exchange, xReq);
+      xRes = provider.submitExchange(false, scope, xId, exchange, xReq);
     }
     catch (Exception ex)
     {
@@ -269,7 +269,7 @@ public class ExchangeDataModel extends DataModel
     //
     // TODO: refresh only updated DTI cache entries
     //
-    if (xRes.getLevel() == Level.SUCCESS)
+    if (xRes != null && xRes.getLevel() == Level.SUCCESS)
     {
       String dtiKeyPrefix = DTI_PREFIX + "." + scope + "." + xId;
       String preSummaryPrefix = PRE_SUMMARY_PREFIX + "." + scope + "." + xId;

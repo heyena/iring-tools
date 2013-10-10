@@ -333,9 +333,9 @@ function setDataObject(editPane, node, dbDict, dataObjectsPane, scopeName, appNa
 	        value: node.attributes.properties.tableName,
 	        disabled: true
 	    }, {
+                xtype: 'hidden',
 	        name: 'objectNamespace',
-	        fieldLabel: 'Object Namespace',
-	        value: node.attributes.properties.objectNamespace
+	        value: node.attributes.properties.objectNamespace            
 	    }, {
 	        name: 'objectName',
 	        fieldLabel: 'Object Name',

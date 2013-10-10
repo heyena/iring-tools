@@ -30,7 +30,7 @@ public class HttpClient
 {
   private static final Logger logger = Logger.getLogger(HttpClient.class);
 
-  private String baseUri;
+  private String baseUri = "";
   private int timeout = 0;
   private NetworkCredentials networkCredentials = null;
   private Map<String, String> headers = new HashMap<String, String>();
@@ -43,7 +43,7 @@ public class HttpClient
 
   public HttpClient()
   {
-    this(null, null);
+    this("", null);
   }
 
   public HttpClient(String baseUri)
