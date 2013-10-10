@@ -436,6 +436,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
 
         _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
         DataFilter filter = GetPresetFilters(dtoProjectionEngine);
@@ -900,6 +901,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
 
         _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
         DataFilter presetFilter = GetPresetFilters(dtoProjectionEngine);
@@ -937,6 +939,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
 
         _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
         DataFilter presetFilter = GetPresetFilters(dtoProjectionEngine);
@@ -1002,6 +1005,7 @@ namespace org.iringtools.adapter
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
+        
         DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
 
         if (filter != null)
@@ -1048,6 +1052,8 @@ namespace org.iringtools.adapter
         List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
+        
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
 
         if (dtoDoc != null && dtoDoc.Root != null)
@@ -1192,6 +1198,7 @@ namespace org.iringtools.adapter
           }
 
           DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+          dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
           dtos = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
         }
         catch (Exception ex)
@@ -1212,6 +1219,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
 
         _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
         DataFilter presetFilter = GetPresetFilters(dtoProjectionEngine);
@@ -1350,6 +1358,8 @@ namespace org.iringtools.adapter
           {
             _logger.Debug("Single threaded post DTOs.");
             DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+            dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
+            
             List<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap, ref dataTransferObjects);
 
             Response postResponse = _dataLayerGateway.Update(objectType, dataObjects);
@@ -1892,6 +1902,8 @@ namespace org.iringtools.adapter
 
           int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+          projectionLayer.dataLayerGateway = _dataLayerGateway;
+          
           ManualResetEvent doneEvent = new ManualResetEvent(false);
 
           DtiTask dtiTask = new DtiTask(doneEvent, projectionLayer, _dataLayerGateway, _dictionary,
@@ -2008,6 +2020,9 @@ namespace org.iringtools.adapter
 
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
           IDataLayer dataLayer = _kernel.Get<IDataLayer>();
+
+          projectionLayer.dataLayerGateway = _dataLayerGateway;
+
           ManualResetEvent doneEvent = new ManualResetEvent(false);
           DataTransferObjectsTask dtoTask = new DataTransferObjectsTask(doneEvent, projectionLayer, dataLayerGateway, _graphMap, objectType, dtos);
           ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, threadCount);
