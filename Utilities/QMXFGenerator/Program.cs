@@ -23,10 +23,12 @@ namespace QMXFGenerator
     private static string _proxyCredentials = String.Empty;
     private static string _classRegistryBase = String.Empty;
     private static string _templateRegistryBase = String.Empty;
-    private static string _targetRepository = string.Empty;
+    private static string _targetRepositoryForClass = string.Empty;
+    private static string _targetRepositoryForTemplate = string.Empty;
     private static string _updateRun = string.Empty;
+    private static string _clearAllBeforeUpdate = string.Empty;
+    
     private static SpreadsheetDocumentWrapper _document = null;
-
     private static WorksheetPartWrapper _classWorksheet = null;
     private static WorksheetPartWrapper _classSpecializationWorksheet = null;
     private static WorksheetPartWrapper _baseTemplateWorksheet = null;
@@ -82,6 +84,13 @@ namespace QMXFGenerator
             var error = false;
             if (!string.IsNullOrEmpty(_updateRun))
             {
+
+              if (!string.IsNullOrEmpty(_clearAllBeforeUpdate))
+              {
+                ClearRepository(_targetRepositoryForClass);
+                ClearRepository(_targetRepositoryForTemplate);
+              }
+            
               foreach (var cls in qmxf.classDefinitions)
               {
                 try
@@ -91,7 +100,7 @@ namespace QMXFGenerator
                     Utility.WriteString("Cannot Post Example namespace " + cls.identifier + "\n", "error.log", true);
                     continue;
                   }
-                  var q = new QMXF {targetRepository = _targetRepository};
+                  var q = new QMXF {targetRepository = _targetRepositoryForClass};
                   q.classDefinitions.Add(cls);
                   var resp = _refdataClient.Post<QMXF, Response>("/classes", q, true);
                   if (resp.Level == StatusLevel.Error)
@@ -135,7 +144,7 @@ namespace QMXFGenerator
                     error = false;
                     break;
                   }
-                  var q = new QMXF {targetRepository = _targetRepository};
+                  var q = new QMXF {targetRepository = _targetRepositoryForTemplate};
                   q.templateDefinitions.Add(t);
                   var resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
                   if (resp.Level == StatusLevel.Error)
@@ -177,7 +186,7 @@ namespace QMXFGenerator
                     error = false;
                     break;
                   }
-                  var q = new QMXF {targetRepository = _targetRepository};
+                  var q = new QMXF { targetRepository = _targetRepositoryForTemplate };
                   q.templateQualifications.Add(t);
                   var resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
                   if (resp.Level == StatusLevel.Error)
@@ -263,9 +272,11 @@ namespace QMXFGenerator
         if (args.Length < 2)
         {
           _excelFilePath = System.Configuration.ConfigurationManager.AppSettings["ExcelFilePath"];
-          _targetRepository = System.Configuration.ConfigurationManager.AppSettings["TargetRepositoryName"];
+          _targetRepositoryForClass = System.Configuration.ConfigurationManager.AppSettings["TargetRepositoryNameForClass"];
+          _targetRepositoryForTemplate = System.Configuration.ConfigurationManager.AppSettings["TargetRepositoryNameForTemplate"];
           _refdataServiceUri = System.Configuration.ConfigurationManager.AppSettings["RefdataServiceUri"];
           _updateRun = System.Configuration.ConfigurationManager.AppSettings["UpdateRun"];
+          _clearAllBeforeUpdate = System.Configuration.ConfigurationManager.AppSettings["ClearAllBeforeUpdate"];          
         }
         else
         {
@@ -930,6 +941,27 @@ namespace QMXFGenerator
         Utility.WriteString("\n" + ex.ToString() + "\n", "error.log", true);
         throw ex;
       }
+    }
+
+    private static void ClearRepository(String repositoryName)
+    {
+      try
+      {
+        var q = new QMXF { targetRepository = repositoryName };
+        var resp = _refdataClient.Post<QMXF, Response>("/clearall", q, true);
+        if (resp.Level == StatusLevel.Error)
+        {
+          Console.WriteLine("Error in clearing repository: " + repositoryName);
+          Utility.WriteString("Error in clearing repository: " + repositoryName + "\n", "error.log", true);
+        }
+        else
+          Console.WriteLine("Success: cleared repository: " + repositoryName);
+      }
+      catch (Exception ex)
+      {
+        Utility.WriteString("Error in clearing repository: " + repositoryName + "\n", "error.log", true);
+      }
+ 
     }
   }
 }
