@@ -27,6 +27,8 @@ namespace QMXFGenerator
     private static string _targetRepositoryForTemplate = string.Empty;
     private static string _updateRun = string.Empty;
     private static string _clearAllBeforeUpdate = string.Empty;
+    private static string _autoCloseOnComplete = string.Empty;
+    
     
     private static SpreadsheetDocumentWrapper _document = null;
     private static WorksheetPartWrapper _classWorksheet = null;
@@ -213,7 +215,10 @@ namespace QMXFGenerator
         Console.WriteLine("Failure: See log file: error.log");
       }
 
-      Console.ReadKey();
+      if (string.IsNullOrEmpty(_autoCloseOnComplete))
+      {
+        Console.ReadKey();
+      }
     }
 
     private static bool CheckUri(string uri)
@@ -276,7 +281,8 @@ namespace QMXFGenerator
           _targetRepositoryForTemplate = System.Configuration.ConfigurationManager.AppSettings["TargetRepositoryNameForTemplate"];
           _refdataServiceUri = System.Configuration.ConfigurationManager.AppSettings["RefdataServiceUri"];
           _updateRun = System.Configuration.ConfigurationManager.AppSettings["UpdateRun"];
-          _clearAllBeforeUpdate = System.Configuration.ConfigurationManager.AppSettings["ClearAllBeforeUpdate"];          
+          _clearAllBeforeUpdate = System.Configuration.ConfigurationManager.AppSettings["ClearAllBeforeUpdate"];
+          _autoCloseOnComplete = System.Configuration.ConfigurationManager.AppSettings["AutoCloseOnComplete"];        
         }
         else
         {
