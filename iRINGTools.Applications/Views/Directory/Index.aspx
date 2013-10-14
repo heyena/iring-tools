@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<org.iringtools.library.ScopeProjects>" %>
+﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<List<iRINGTools.Web.Models.Scope>>" %>
 
 <asp:Content ID="Title" ContentPlaceHolderID="TitleContent" runat="server">
 	Upcoming Nerd Dinners

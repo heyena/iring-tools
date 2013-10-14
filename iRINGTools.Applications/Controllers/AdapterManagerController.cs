@@ -5,6 +5,7 @@ using iRINGTools.Web.Helpers;
 using iRINGTools.Web.Models;
 using log4net;
 using org.iringtools.library;
+using Newtonsoft.Json;
 
 namespace org.iringtools.web.controllers
 {
@@ -25,6 +26,23 @@ namespace org.iringtools.web.controllers
     public ActionResult Index()
     {
       return View();
+    }
+
+    public ActionResult CacheInfo(FormCollection form)
+    {
+      try
+      {
+        CacheInfo cacheInfo = _repository.GetCacheInfo(form["scope"], form["app"]);        
+        
+        // NOTE: default ASP .NET serializer has issue with datetime fields, use JSON. NET library
+        string json = JsonConvert.SerializeObject(cacheInfo);
+        return Content(json);
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.ToString());
+        throw e;
+      }
     }
 
     public ActionResult DBProviders()
@@ -201,12 +219,11 @@ namespace org.iringtools.web.controllers
 
     public JsonResult RefreshCache(FormCollection form)
     {
-      string context = form["nodeid"];
-      string[] names = context.Split('/');
-      string scope = names[0];
-      string application = names[1];
-      
-      Response response = _repository.RefreshCache(scope, application);
+      string scope = form["scope"];
+      string app = form["app"];
+      int timeout = int.Parse(form["timeout"]);
+
+      Response response = _repository.RefreshCache(scope, app, timeout);
 
       return Json(response, JsonRequestBehavior.AllowGet);
     }
@@ -226,13 +243,12 @@ namespace org.iringtools.web.controllers
 
     public JsonResult ImportCache(FormCollection form)
     {
-      string context = form["nodeid"];
-      string cacheURI = form["cacheURI"];
-      string[] names = context.Split('/');
-      string scope = names[0];
-      string application = names[1];
+      string scope = form["scope"];
+      string app = form["app"];
+      string importURI = form["importURI"];
+      int timeout = int.Parse(form["timeout"]);
 
-      Response response = _repository.ImportCache(scope, application, cacheURI);
+      Response response = _repository.ImportCache(scope, app, importURI, timeout);
 
       return Json(response, JsonRequestBehavior.AllowGet);
     }
@@ -248,48 +264,6 @@ namespace org.iringtools.web.controllers
       Response response = _repository.DeleteCache(scope, application);
 
       return Json(response, JsonRequestBehavior.AllowGet);
-    }
-
-    public JsonResult SaveVirtualProperties(FormCollection form)
-    {
-      try
-      {
-        string response = string.Empty;
-
-        response = _repository.SaveVirtualProperties(form["scope"], form["app"], form["tree"]);
-
-        if (response != null)
-        {
-          response = response.ToLower();
-          if (response.Contains("error"))
-          {
-            int inds = response.IndexOf("<message>");
-            int inde = response.IndexOf("</message>");
-            string msg = response.Substring(inds + 9, inde - inds - 9);
-            return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
-          }
-        }
-        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.ToString());
-        throw e;
-      }
-    }
-
-    public ActionResult VirtualProperties(FormCollection form)
-    {
-      try
-      {
-        VirtualProperties virtualProperties = _repository.GetVirtualProperties(form["scope"], form["app"]);
-        return Json(virtualProperties, JsonRequestBehavior.AllowGet);
-      }
-      catch (Exception e)
-      {
-        _logger.Error(e.ToString());
-        throw e;
-      }
     }
 
     public class DBProvider

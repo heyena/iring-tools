@@ -78,11 +78,14 @@ namespace org.iringtools.nhibernate
 
             string connStrProp = "connection.connection_string";
             string connStr = cfg.Properties[connStrProp];
-
-            if (connStr.ToUpper().Contains("DATA SOURCE"))
+            string keyFile = string.Format("{0}{1}.key", path, context);
+              
+            if (!Utility.IsBase64Encoded(connStr))
             {
+              //
               // connection string is not encrypted, encrypt and write it back
-              string encryptedConnStr = EncryptionUtility.Encrypt(connStr);
+              //
+              string encryptedConnStr = EncryptionUtility.Encrypt(connStr, keyFile);
               cfg.Properties[connStrProp] = encryptedConnStr;
               SaveConfiguration(cfg, cfgPath);
 
@@ -91,7 +94,7 @@ namespace org.iringtools.nhibernate
             }
             else
             {
-              cfg.Properties[connStrProp] = EncryptionUtility.Decrypt(connStr);
+              cfg.Properties[connStrProp] = EncryptionUtility.Decrypt(connStr, keyFile);
             }
 
             ISessionFactory sessionFactory = cfg.AddFile(mappingPath).BuildSessionFactory();

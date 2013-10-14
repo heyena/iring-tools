@@ -298,6 +298,14 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets the JSON for Service API.")]
+    [WebGet(UriTemplate = "/{app}/{project}/endpoints")]
+    public void publishEndpoints(string app, string project)
+    {
+        _commonService.publish(app, project);
+    }
+
+
     #region Async request queue
     [Description("Gets status of a asynchronous request.")]
     [WebGet(UriTemplate = "/requests/{id}")]

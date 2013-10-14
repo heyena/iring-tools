@@ -76,6 +76,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ServiceModel.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\WCFRESTStarterKit\Microsoft.ServiceModel.Web.dll</HintPath>
@@ -160,9 +161,13 @@
     <Compile Include="WindowsIdentityProvider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\iRINGLibrary\iRINGLibrary.csproj">
+    <ProjectReference Include="..\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary</Name>
+      <Name>iRINGLibrary.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
+      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
+      <Name>UtilityLibrary.Desktop</Name>
     </ProjectReference>
     <ProjectReference Include="..\NHibernateExtension\NHibernateExtension.csproj">
       <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
@@ -175,10 +180,6 @@
     <ProjectReference Include="..\SpreadsheetDatalayer\SpreadsheetDatalayer.csproj">
       <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
       <Name>SpreadsheetDatalayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UtilityLibrary\UtilityLibrary.csproj">
-      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
-      <Name>UtilityLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\WADLLibrary\WADLLibrary.csproj">
       <Project>{B6362A98-B4C0-4729-AFE8-04F93F1B6C79}</Project>

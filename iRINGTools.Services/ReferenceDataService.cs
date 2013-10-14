@@ -111,51 +111,52 @@ namespace org.iringtools.services
     /// Does a fuzzy search by label and returns a list of Entity objects.
     /// </summary>
     [Description("Does a fuzzy search by label and returns a list of Entity objects.")]
-    [WebGet(UriTemplate = "/search/{query}?repositories={repositories}")]
-    public RefDataEntities Search(string query, string repositories)
+    [WebGet(UriTemplate = "/search/{query}")]
+    public RefDataEntities Search(string query)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _referenceDataProvider.Search(query, repositories);
+      return _referenceDataProvider.Search(query);
     }
 
     /// <summary>
     /// do a search and return a specific page
     /// </summary>
     [Description("do a search and return a specific page")]
-    [WebGet(UriTemplate = "/search/{query}/{start}/{limit}?repositories={repositories}")]
-    public RefDataEntities SearchPage(string query, string start, string limit, string repositories)
+    [WebGet(UriTemplate = "/search/{query}/{start}/{limit}")]
+    public RefDataEntities SearchPage(string query, string start, string limit)
     {
       int startIdx = 0;
       int pageLimit = 0;
       int.TryParse(start, out startIdx);
       int.TryParse(limit, out pageLimit);
+
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _referenceDataProvider.SearchPage(query, startIdx, pageLimit, repositories);
+      return _referenceDataProvider.SearchPage(query, startIdx, pageLimit);
     }
 
     /// <summary>
     /// do a search, ignoring cached results
     /// </summary>
     [Description("do a search, ignoring cached results")]
-    [WebGet(UriTemplate = "/search/{query}/reset/?repositories={repositories}")]
-    public RefDataEntities SearchReset(string query, string repositories)
+    [WebGet(UriTemplate = "/search/{query}/reset")]
+    public RefDataEntities SearchReset(string query)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _referenceDataProvider.SearchReset(query,repositories);
+      return _referenceDataProvider.SearchReset(query);
     }
 
     /// <summary>
     /// do a search, ignoring cached results, and return a specific page
     /// </summary>
     [Description("do a search, ignoring cached results, and return a specific page")]
-    [WebGet(UriTemplate = "/search/{query}/{start}/{limit}/reset?repositories={repositories}")]
-    public RefDataEntities SearchPageReset(string query, string start, string limit, string repositories)
+    [WebGet(UriTemplate = "/search/{query}/{start}/{limit}/reset")]
+    public RefDataEntities SearchPageReset(string query, string start, string limit)
     {
       int startIdx = 0;
       int pageLimit = 0;
@@ -165,7 +166,7 @@ namespace org.iringtools.services
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _referenceDataProvider.SearchPageReset(query, startIdx, pageLimit, repositories);
+      return _referenceDataProvider.SearchPageReset(query, startIdx, pageLimit);
     }
 
     /// <summary>
@@ -351,20 +352,6 @@ namespace org.iringtools.services
       context.ContentType = "application/xml";
 
       return _referenceDataProvider.PostClass(qmxf);
-    }
-
-    ///<summary>
-    /// Clear all data in a repository
-    ///</summary>
-    //[XmlSerializerFormat]
-    [Description("Clear all in a repository")]
-    [WebInvoke(UriTemplate = "/clearall")]
-    public Response ClearAll(QMXF qmxf)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _referenceDataProvider.ClearAll(qmxf);
     }
 
     /// <summary>

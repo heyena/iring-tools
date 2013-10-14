@@ -1082,7 +1082,12 @@ namespace org.iringtools.adapter.projection
 
       foreach (ClassObject classObject in dto.classObjects)
       {
-        if (classObject.classId == classId && (String.IsNullOrWhiteSpace(classObject.path) ? String.IsNullOrWhiteSpace(path) : classObject.path == path))
+        //if (classObject.classId == classId && 
+        // (String.IsNullOrWhiteSpace(classObject.path) 
+        //    ? String.IsNullOrWhiteSpace(path) : classObject.path == path))
+        if (classObject.classId == classId && 
+          (String.IsNullOrWhiteSpace(classObject.path) ||
+            (!String.IsNullOrWhiteSpace(path) && classObject.path == path)))
         {
           classObjects.Add(classObject);
         }

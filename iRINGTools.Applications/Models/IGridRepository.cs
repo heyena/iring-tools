@@ -10,7 +10,7 @@ namespace iRINGTools.Web.Models
 {
   public interface IGridRepository
   {
-      StoreViewModel GetGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit);
+		Grid GetGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit);
 		string GetResponse();
   }
 }

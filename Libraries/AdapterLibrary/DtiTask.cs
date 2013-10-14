@@ -42,23 +42,30 @@ namespace org.iringtools.adapter
 
     public void ThreadPoolCallback(object threadContext)
     {
-      _logger.Debug(string.Format("Starting worker process for getting paged data {0}-{1}.", _startIndex, _startIndex + _pageSize));
-        
-      int threadIndex = (int)threadContext;
-      DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
-
-      List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, _filter, _startIndex, _pageSize);
-
-      _logger.Debug(string.Format("Worker process for getting paged data {0}-{1} received {2} data objects", _startIndex, _startIndex + _pageSize, dataObjects.Count));
-
-      if (dataObjects != null)
+      try
       {
-        _dataTransferIndices = _projectionLayer.GetDataTransferIndices(_graphMap, dataObjects, string.Empty);
+        _logger.Debug(string.Format("Starting DTI worker process {0}-{1}.", _startIndex, _startIndex + _pageSize));
+
+        int threadIndex = (int)threadContext;
+        DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
+
+        List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, _filter, _startIndex, _pageSize);
+
+        _logger.Debug(string.Format("DTI worker process {0}-{1} received {2} data objects", _startIndex, _startIndex + _pageSize, dataObjects.Count));
+
+        if (dataObjects != null)
+        {
+          _dataTransferIndices = _projectionLayer.GetDataTransferIndices(_graphMap, dataObjects, string.Empty);
+        }
+
+        _logger.Debug(string.Format("DTI worker process {0}-{1} completed.", _startIndex, _startIndex + _pageSize));
+
+        _doneEvent.Set();
       }
-
-      _logger.Debug(string.Format("Worker process for getting paged data {0}-{1} completed.", _startIndex, _startIndex + _pageSize));
-
-      _doneEvent.Set();
+      catch (Exception e)
+      {
+        _logger.Error("Error occurred in DTI worker process: ", e);
+      }
     }
 
     public DataTransferIndices DataTransferIndices
