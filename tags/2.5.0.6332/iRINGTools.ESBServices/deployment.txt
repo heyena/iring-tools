@@ -1,9 +1,0 @@
-- Place iringtools.war in $TOMCAT_HOME/webapps folder
-- Restart tomcat service
-- Some configurations:
-  - $TOMCAT_HOME/webapps/iringtools/WEB-INF/classes/log4j.properties: log file path
-  - $TOMCAT_HOME/webapps/iringtools/WEB-INF/web.xml:
-    - directoryServiceUri
-    - differencingServiceUri
-    - poolSize
-- Exchange scenarios: exchange-<scope>-<id>.xml

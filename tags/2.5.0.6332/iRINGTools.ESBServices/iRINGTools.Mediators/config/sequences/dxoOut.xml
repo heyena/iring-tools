@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sequence xmlns="http://ws.apache.org/ns/synapse" name="dxoOut">
-	<log level="custom">
-		<property name="DXO_OUT" expression="*" />
-	</log>
-	<send />
-</sequence>
