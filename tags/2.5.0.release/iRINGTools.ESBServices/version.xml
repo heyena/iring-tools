@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="version">
+  <property name="version" value="2.5.0" />
+  <property name="version.outfile" value="./version" />
+
+  <path id="svnant.classpath">
+    <fileset dir="${basedir}/libraries/svnant-1.3.0">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>  
+  
+  <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
+
+  <path id="ant-contrib.classpath">
+    <fileset dir="${basedir}/libraries/ant-contrib">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
+  <target name="build">
+    <svn javahl="false" svnkit="false">
+      <status path="${basedir}" revisionProperty="revision" />
+    </svn>
+    <echo message="${version}.${revision}" file="${version.outfile}" />
+  </target>
+</project>
+  

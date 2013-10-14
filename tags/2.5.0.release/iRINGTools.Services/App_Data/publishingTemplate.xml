@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Locator xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/library">
+  <version>113</version>
+  <name>Documents</name>
+  <instances>
+    <Instance>
+      <released>true</released>
+      <server>ashs95128.becpsn.com</server>
+      <shortName>documents</shortName>
+      <endpoints>
+        <Endpoint>
+          <path>/contexts</path>
+          <operations>
+            <Operation>
+              <httpMethod>GET</httpMethod>
+              <supports xmlns:d8p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+                <d8p1:string>application/json</d8p1:string>
+              </supports>
+              <responseClass>void</responseClass>
+              <updated>2013-09-05T13:39:09.1724239+05:30</updated>
+              <created>2013-09-05T13:39:09.1734239+05:30</created>
+              <Private>false</Private>
+              <parameters>
+                <Parameter>
+                  <name>start</name>
+                  <Enum i:nil="true" />
+                  <dataType>int</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The API pages results by default.  This parameter indicates which item to start with for the current page.  Defaults to 0 or start with the first item.</description>
+                  <paramType>query</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>limit</name>
+                  <Enum i:nil="true" />
+                  <dataType>int</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The API pages results by default.  This parameter indicates how many items to include in the resulting page.  Defaults to 25 items per page.</description>
+                  <paramType>query</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>format</name>
+                  <Enum i:nil="true" />
+                  <dataType>string</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>API response format supplied as a query string.  Valid choices for this parameter are: JSON, HTML &amp; XML (defaults to JSON)</description>
+                  <paramType>query</paramType>
+                </Parameter>
+              </parameters>
+              <summary>Gets the list of contexts. A context could be a Bechtel project, GBU, or other name that identifies a set of data.</summary>
+              <nickname>Awesome API</nickname>
+            </Operation>
+          </operations>
+          <Private>false</Private>
+          <description>Awesome API</description>
+        </Endpoint>
+        <Endpoint>
+          <path>/{{contextName}}/{0}</path>
+          <operations>
+            <Operation>
+              <httpMethod>GET</httpMethod>
+              <supports xmlns:d8p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+                <d8p1:string>application/json</d8p1:string>
+              </supports>
+              <responseClass>void</responseClass>
+              <updated>2013-09-05T13:39:09.1734239+05:30</updated>
+              <created>2013-09-05T13:39:09.1734239+05:30</created>
+              <Private>false</Private>
+              <parameters>
+                <Parameter>
+                  <name>contextName</name>
+                  <Enum i:nil="true" />
+                  <dataType>string</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories.</description>
+                  <paramType>path</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>start</name>
+                  <Enum i:nil="true" />
+                  <dataType>int</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The API pages results by default.  This parameter indicates which item to start with for the current page.  Defaults to 0 or start with the first item.</description>
+                  <paramType>query</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>limit</name>
+                  <Enum i:nil="true" />
+                  <dataType>int</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The API pages results by default.  This parameter indicates how many items to include in the resulting page.  Defaults to 25 items per page.</description>
+                  <paramType>query</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>format</name>
+                  <Enum i:nil="true" />
+                  <dataType>string</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>API response format supplied as a query string.  Valid choices for this parameter are: JSON, HTML &amp; XML (defaults to JSON)</description>
+                  <paramType>query</paramType>
+                </Parameter>
+              </parameters>
+              <summary>Gets a list of {0} data.  Data is returned according to the context specific configuration.  In addition to paging and sorting, results can be filtered by using property names as query paramters in the form: ?{{propertyName}}={{value}}.</summary>
+              <nickname>Awesome operation</nickname>
+            </Operation>
+          </operations>
+          <Private>false</Private>
+          <description>Awesome API</description>
+        </Endpoint>
+        <Endpoint>
+          <path>/{{contextName}}/{0}/search</path>
+          <operations>
+            <Operation>
+              <httpMethod>GET</httpMethod>
+              <supports xmlns:d8p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+                <d8p1:string>application/json</d8p1:string>
+              </supports>
+              <responseClass>void</responseClass>
+              <updated>2013-09-05T13:39:09.1734239+05:30</updated>
+              <created>2013-09-05T13:39:09.1734239+05:30</created>
+              <Private>false</Private>
+              <parameters>
+                <Parameter>
+                  <name>contextName</name>
+                  <Enum i:nil="true" />
+                  <dataType>string</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories.</description>
+                  <paramType>path</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>q</name>
+                  <Enum i:nil="true" />
+                  <dataType>string</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>Enter full or partial text to search for (minimum 2 characters). The specific properties searched, and whether content is searched, will depend on the repository configuration.</description>
+                  <paramType>query</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>start</name>
+                  <Enum i:nil="true" />
+                  <dataType>int</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The API pages results by default.  This parameter indicates which item to start with for the current page.  Defaults to 0 or start with the first item.</description>
+                  <paramType>query</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>limit</name>
+                  <Enum i:nil="true" />
+                  <dataType>int</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The API pages results by default.  This parameter indicates how many items to include in the resulting page.  Defaults to 25 items per page.</description>
+                  <paramType>query</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>format</name>
+                  <Enum i:nil="true" />
+                  <dataType>string</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>API response format supplied as a query string.  Valid choices for this parameter are: JSON, HTML &amp; XML (defaults to JSON)</description>
+                  <paramType>query</paramType>
+                </Parameter>
+              </parameters>
+              <summary>Searches the  {0} data for the specified context.  The specific properties searched, and whether content is searched, will depend on the context configuration.  In addition to paging and sorting, results can be filtered by using property names as query paramters in the form: ?{{propertyName}}={{value}}</summary>
+              <nickname>Awesome operation</nickname>
+            </Operation>
+          </operations>
+          <Private>false</Private>
+          <description>Awesome API</description>
+        </Endpoint>
+        <Endpoint>
+          <path>/{{contextName}}/{0}/{{identifier}}</path>
+          <operations>
+            <Operation>
+              <httpMethod>GET</httpMethod>
+              <supports xmlns:d8p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+                <d8p1:string>application/json</d8p1:string>
+              </supports>
+              <responseClass>void</responseClass>
+              <updated>2013-09-05T13:39:09.1734239+05:30</updated>
+              <created>2013-09-05T13:39:09.1734239+05:30</created>
+              <Private>false</Private>
+              <parameters>
+                <Parameter>
+                  <name>contextName</name>
+                  <Enum i:nil="true" />
+                  <dataType>string</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories.</description>
+                  <paramType>path</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>identifier</name>
+                  <Enum i:nil="true" />
+                  <dataType>string</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The identifier of the {0} that you would like to fetch.</description>
+                  <paramType>path</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>start</name>
+                  <Enum i:nil="true" />
+                  <dataType>int</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The API pages results by default.  This parameter indicates which item to start with for the current page.  Defaults to 0 or start with the first item.</description>
+                  <paramType>query</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>limit</name>
+                  <Enum i:nil="true" />
+                  <dataType>int</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>The API pages results by default.  This parameter indicates how many items to include in the resulting page.  Defaults to 25 items per page.</description>
+                  <paramType>query</paramType>
+                </Parameter>
+                <Parameter>
+                  <name>format</name>
+                  <Enum i:nil="true" />
+                  <dataType>string</dataType>
+                  <required>false</required>
+                  <Private>false</Private>
+                  <description>API response format supplied as a query string.  Valid choices for this parameter are: JSON, HTML &amp; XML (defaults to JSON)</description>
+                  <paramType>query</paramType>
+                </Parameter>
+              </parameters>
+              <summary>Gets a list containing the specified {0} data. This is a dynamic data object. Data is returned according to the context specific configuration.  In addition to paging and sorting, results can be filtered by using property names as query paramters in the form: ?{{propertyName}}={{value}}.</summary>
+              <nickname>Awesome operation</nickname>
+            </Operation>
+          </operations>
+          <Private>false</Private>
+          <description>Awesome API</description>
+        </Endpoint>
+      </endpoints>
+      <path>
+        <Internal>http://iringtools.okr.becpsn.com/services/data/documents/</Internal>
+        <external>https://api.mypsn.com/svc3/v2/documents/</external>
+      </path>
+      <platform>custom</platform>
+      <Private>false</Private>
+      <beta>false</beta>
+      <updated>2013-09-05T13:39:09.1734239+05:30</updated>
+      <created>2013-09-05T13:39:09.1734239+05:30</created>
+      <certificates i:nil="true" />
+      <version>1.0.0</version>
+      <type>production</type>
+    </Instance>
+  </instances>
+  <tags i:nil="true" />
+  <Private>false</Private>
+  <resource>true</resource>
+  <updated>2013-09-05T13:39:09.1744239+05:30</updated>
+  <created>2013-09-05T13:39:09.1744239+05:30</created>
+  <description>The Documents service provides read/write access to Bechtel's Document Management Systems. Use this API to search and list documents and folders, download content, and list the document classes.</description>
+  <authors xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+    <d2p1:string>rpdecarl@bechtel.com</d2p1:string>
+    <d2p1:string>hxgakhar@bechtel.com</d2p1:string>
+    <d2p1:string>gdhamija@bechtel.com</d2p1:string>
+  </authors>
+</Locator>
