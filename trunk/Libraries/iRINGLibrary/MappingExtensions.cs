@@ -497,23 +497,23 @@ namespace org.iringtools.mapping
       return Cardinality.OneToOne;
     }
 
-    public static IList<String> GetMappedProperties(this GraphMap graphMap, String templateId, int templateIndex, String parentClassId, int parentClassIndex, IList<String> propertyList =null)
+    public static IList<String> GetMappedProperties(this GraphMap graphMap, String templateId, int templateIndex, String parentClassId, int parentClassIndex, IList<String> propertyList = null)
     {
-      if(propertyList == null)
+      if (propertyList == null)
         propertyList = new List<String>();
-      
-      var classTemplateMap = graphMap.GetClassTemplateMap(parentClassId,parentClassIndex);
+
+      var classTemplateMap = graphMap.GetClassTemplateMap(parentClassId, parentClassIndex);
 
       if (classTemplateMap != null)
       {
         var template = classTemplateMap.templateMaps.SingleOrDefault(x => (x.id == templateId && x.index == templateIndex));
-        if(template != null)
+        if (template != null)
         {
           foreach (var role in template.roleMaps.Where(x => !String.IsNullOrWhiteSpace(x.propertyName)))
-          {           
-              propertyList.Add(role.propertyName);
+          {
+            propertyList.Add(role.propertyName);
           }
-          foreach (var role in template.roleMaps.Where(x => x.classMap !=null))
+          foreach (var role in template.roleMaps.Where(x => x.classMap != null))
           {
             var classTemplate = graphMap.GetClassTemplateMap(role.classMap.id, role.classMap.index);
             foreach (var tmpl in classTemplate.templateMaps)

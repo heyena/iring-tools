@@ -74,6 +74,159 @@ namespace org.iringtools.adapter
       throw new Exception(error);
     }
 
+    public NameValueList GetScopeList()
+    {
+      NameValueList list = new NameValueList();
+
+      try
+      {
+        if (_scopes != null)
+        {
+          foreach (ScopeProject scope in _scopes)
+          {
+            list.Add(new ListItem()
+            {
+              Name = scope.DisplayName,
+              Value = scope.Name
+            });
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting scope list: " + ex);
+        throw ex;
+      }
+
+      return list;
+    }
+
+    public NameValueList GetAppList(string scopeName)
+    {
+      NameValueList list = new NameValueList();
+
+      try
+      {
+        if (_scopes != null)
+        {
+          foreach (ScopeProject scope in _scopes)
+          {
+            if (scope.Name.ToLower() == scopeName.ToLower())
+            {
+              foreach (ScopeApplication app in scope.Applications)
+              {
+                list.Add(new ListItem()
+                {
+                  Name = app.DisplayName,
+                  Value = app.Name
+                });
+              }
+
+              break;
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting application list: " + ex);
+        throw ex;
+      }
+
+      return list;
+    }
+
+    public NameValueList GetGraphList(string scope, string app)
+    {
+      NameValueList list = new NameValueList();
+
+      try
+      {
+        InitializeScope(scope, app, true);
+
+        if (_mapping != null)
+        {
+          foreach (GraphMap graph in _mapping.graphMaps)
+          {
+            list.Add(new ListItem()
+            {
+              Name = graph.name,
+              Value = graph.name
+            });
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting graph list: " + ex);
+        throw ex;
+      }
+
+      return list;
+    }
+
+    public string GetDataMode(string scope, string app)
+    {
+      try
+      {
+        InitializeScope(scope, app);
+
+        ScopeApplication application = GetApplication(scope, app);
+
+        return application.DataMode.ToString();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting application data mode: " + ex);
+        throw ex;
+      }
+    }
+
+    public CacheInfo GetCacheInfo(string scope, string app, string graph)
+    {
+      CacheInfo cacheInfo = new CacheInfo()
+      {
+         CacheEntries = new CacheEntries()
+      };
+
+      try
+      {
+        InitializeScope(scope, app);
+        
+        GraphMap graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
+
+        if (graphMap == null)
+        {
+          throw new Exception("Graph [" + graph + "] not found.");
+        }
+
+        string objectName = graphMap.dataObjectName;
+        ScopeApplication application = GetApplication(scope, app);
+
+        if (application.CacheInfo != null && application.CacheInfo.CacheEntries != null)
+        {
+          foreach (CacheEntry cacheEntry in application.CacheInfo.CacheEntries)
+          {
+            if (cacheEntry.ObjectName.ToLower() == objectName.ToLower())
+            {
+              cacheInfo.ImportURI = application.CacheInfo.ImportURI;
+              cacheInfo.Timeout = application.CacheInfo.Timeout;
+              cacheInfo.CacheEntries.Add(cacheEntry);
+
+              break;
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting application cache information: " + ex);
+        throw ex;
+      }
+
+      return cacheInfo;
+    }
+
     public Manifest GetManifest(string scope, string app, string graph)
     {
       Manifest manifest = new Manifest()
@@ -283,6 +436,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
 
         _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
         DataFilter filter = GetPresetFilters(dtoProjectionEngine);
@@ -747,6 +901,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
 
         _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
         DataFilter presetFilter = GetPresetFilters(dtoProjectionEngine);
@@ -784,6 +939,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
 
         _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
         DataFilter presetFilter = GetPresetFilters(dtoProjectionEngine);
@@ -849,6 +1005,7 @@ namespace org.iringtools.adapter
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
+        
         DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
 
         if (filter != null)
@@ -895,6 +1052,8 @@ namespace org.iringtools.adapter
         List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
+        
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
 
         if (dtoDoc != null && dtoDoc.Root != null)
@@ -1039,6 +1198,7 @@ namespace org.iringtools.adapter
           }
 
           DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+          dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
           dtos = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
         }
         catch (Exception ex)
@@ -1049,6 +1209,47 @@ namespace org.iringtools.adapter
       }
 
       return dtos;
+    }
+
+    public DataTransferObjects GetPageDataTransferObjects(string scope, string app, string graph, DxiRequest dxiRequest, int start, int limit)
+    {
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
+
+        _graphMap = _mapping.graphMaps.Find(x => x.name.ToLower() == graph.ToLower());
+        DataFilter presetFilter = GetPresetFilters(dtoProjectionEngine);
+
+        BuildCrossGraphMap(dxiRequest.Manifest, graph);
+
+        DataFilter filter = dxiRequest.DataFilter;
+        DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+
+        dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);
+        filter.AppendFilter(presetFilter);
+
+        long totalCount = 0;
+        List<IDataObject> tmpDataObjects = GetDataObjects(dataObject, filter, start, limit, out totalCount);
+        List<IDataObject> dataObjects = ProcessRollups(dataObject, tmpDataObjects, filter);
+
+        DataTransferObjects dtos = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
+
+        if (dtos != null)
+        {
+          dtos.TotalCount = totalCount;
+        }
+
+        return dtos;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting data transfer objects: " + ex);
+        throw ex;
+      }
     }
 
     public string AsyncPostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dtos)
@@ -1157,6 +1358,8 @@ namespace org.iringtools.adapter
           {
             _logger.Debug("Single threaded post DTOs.");
             DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+            dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
+            
             List<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap, ref dataTransferObjects);
 
             Response postResponse = _dataLayerGateway.Update(objectType, dataObjects);
@@ -1292,7 +1495,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    public Response RefreshGraphCache(string scope, string app, string graph)
+    public Response RefreshCache(string scope, string app, string graph)
     {
       Response response = new Response();
 
@@ -1337,7 +1540,7 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response ImportGraphCache(string scope, string app, string graph, string baseUri)
+    public Response ImportCache(string scope, string app, string graph, string baseUri)
     {
       Response response = new Response();
 
@@ -1410,9 +1613,14 @@ namespace org.iringtools.adapter
         {
           ClassMap mappingClass = mappingClassTemplatesMap.classMap;
 
-          if (mappingClass.id == manifestClass.id && (String.IsNullOrWhiteSpace(mappingClass.path) 
-            ? String.IsNullOrWhiteSpace(manifestClass.path) 
-            : mappingClass.path == manifestClass.path))
+          //if (mappingClass.id == manifestClass.id && (String.IsNullOrWhiteSpace(mappingClass.path) 
+          //  ? String.IsNullOrWhiteSpace(manifestClass.path) 
+          //  : mappingClass.path == manifestClass.path))
+
+          if (mappingClass.id == manifestClass.id && 
+             (String.IsNullOrWhiteSpace(mappingClass.path) ||
+              (!String.IsNullOrWhiteSpace(manifestClass.path) &&
+                mappingClass.path == manifestClass.path)))
           {
             RecurBuildCrossGraphMap(ref manifestGraph, manifestClass, mappingGraph, mappingClass);
             break;
@@ -1448,10 +1656,15 @@ namespace org.iringtools.adapter
       // get manifest templates from the manifest class
       foreach (ClassTemplates manifestClassTemplates in manifestGraph.classTemplatesList)
       {
-        if (manifestClassTemplates.@class.id == manifestClass.id 
-            && (String.IsNullOrWhiteSpace(manifestClassTemplates.@class.path) 
-          ? String.IsNullOrWhiteSpace(manifestClass.path) 
-          : manifestClassTemplates.@class.path == manifestClass.path))
+        //if (manifestClassTemplates.@class.id == manifestClass.id 
+        //    && (String.IsNullOrWhiteSpace(manifestClassTemplates.@class.path) 
+        //  ? String.IsNullOrWhiteSpace(manifestClass.path) 
+        //  : manifestClassTemplates.@class.path == manifestClass.path))
+
+        if (manifestClassTemplates.@class.id == manifestClass.id &&
+            (String.IsNullOrWhiteSpace(manifestClassTemplates.@class.path) ||
+              (!String.IsNullOrWhiteSpace(manifestClass.path) &&
+               manifestClassTemplates.@class.path == manifestClass.path)))
         {
           manifestTemplates = manifestClassTemplates.templates;
           break;
@@ -1466,7 +1679,15 @@ namespace org.iringtools.adapter
           ClassMap localMappingClass = pair.classMap;
           List<TemplateMap> mappingTemplates = pair.templateMaps;
 
-          if (localMappingClass.id == manifestClass.id && (String.IsNullOrWhiteSpace(localMappingClass.path) ? String.IsNullOrWhiteSpace(manifestClass.path) : localMappingClass.path == manifestClass.path))
+          //if (localMappingClass.id == manifestClass.id && 
+          //  (String.IsNullOrWhiteSpace(localMappingClass.path) 
+          //    ? String.IsNullOrWhiteSpace(manifestClass.path) 
+          //    : localMappingClass.path == manifestClass.path))
+
+          if (localMappingClass.id == manifestClass.id && 
+            (String.IsNullOrWhiteSpace(localMappingClass.path) || 
+              (!String.IsNullOrWhiteSpace(manifestClass.path) && 
+                localMappingClass.path == manifestClass.path)))
           {
             ClassMap crossedClass = localMappingClass.CrossClassMap(mappingGraph, manifestClass);
             TemplateMaps crossedTemplates = new TemplateMaps();
@@ -1549,10 +1770,15 @@ namespace org.iringtools.adapter
                   {
                     foreach (RoleMap mappingRole in crossedTemplate.roleMaps)
                     {
-                      if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id 
-                          && (String.IsNullOrWhiteSpace(mappingRole.classMap.path) 
-                        ? String.IsNullOrWhiteSpace(manifestRole.@class.path) 
-                        : mappingRole.classMap.path == manifestRole.@class.path))
+                      //if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id 
+                      //    && (String.IsNullOrWhiteSpace(mappingRole.classMap.path) 
+                      //  ? String.IsNullOrWhiteSpace(manifestRole.@class.path) 
+                      //  : mappingRole.classMap.path == manifestRole.@class.path))
+
+                      if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id &&
+                          (String.IsNullOrWhiteSpace(mappingRole.classMap.path) ||
+                             (!String.IsNullOrWhiteSpace(manifestRole.@class.path) &&
+                                 mappingRole.classMap.path == manifestRole.@class.path)))
                       {
                         Cardinality cardinality = mappingGraph.GetCardinality(mappingRole, _dictionary, _fixedIdentifierBoundary);
 
@@ -1569,10 +1795,15 @@ namespace org.iringtools.adapter
                         Class childManifestClass = manifestRole.@class;
                         foreach (ClassTemplates anyClassTemplates in manifestGraph.classTemplatesList)
                         {
-                          if (manifestRole.@class.id == anyClassTemplates.@class.id && 
-                                (String.IsNullOrWhiteSpace(manifestRole.@class.path) 
-                            ? String.IsNullOrWhiteSpace(anyClassTemplates.@class.path) 
-                            : manifestRole.@class.path == anyClassTemplates.@class.path))
+                          //if (manifestRole.@class.id == anyClassTemplates.@class.id && 
+                          //      (String.IsNullOrWhiteSpace(manifestRole.@class.path) 
+                          //  ? String.IsNullOrWhiteSpace(anyClassTemplates.@class.path) 
+                          //  : manifestRole.@class.path == anyClassTemplates.@class.path))
+
+                          if (manifestRole.@class.id == anyClassTemplates.@class.id &&
+                            (String.IsNullOrWhiteSpace(manifestRole.@class.path) ||
+                              (!String.IsNullOrWhiteSpace(anyClassTemplates.@class.path) &&
+                                manifestRole.@class.path == anyClassTemplates.@class.path)))
                           {
                             childManifestClass = anyClassTemplates.@class;
                           }
@@ -1630,18 +1861,34 @@ namespace org.iringtools.adapter
       return dataObjects;
     }
 
+    private List<IDataObject> GetDataObjects(DataObject objectType, DataFilter filter, 
+      int start, int limit, out long totalCount)
+    {
+      List<IDataObject> dataObjects = _dataLayerGateway.Get(objectType, filter, start, limit);
+
+      totalCount = _dataLayerGateway.GetCount(objectType, filter);
+
+      return dataObjects;
+    }
+
     private DataTransferIndices MultiGetDataTransferIndices(DataFilter filter)
     {
       DataTransferIndices dataTransferIndices = new DataTransferIndices();
       DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
 
+      _logger.Debug("Data object: " + dataObject.objectName);
+
       long total = _dataLayerGateway.GetCount(dataObject, filter);
       int maxThreads = int.Parse(_settings["MaxThreads"]);
+
+      _logger.Debug("Total count [" + total + "].");
 
       if (total > 0)
       {
         long numOfThreads = Math.Min(total, maxThreads);
         int itemsPerThread = (int)Math.Ceiling((double)total / numOfThreads);
+
+        _logger.Debug("Items per thread [" + itemsPerThread + "].");
 
         List<ManualResetEvent> doneEvents = new List<ManualResetEvent>();
         List<DtiTask> dtiTasks = new List<DtiTask>();
@@ -1655,6 +1902,8 @@ namespace org.iringtools.adapter
 
           int pageSize = (offset + itemsPerThread > total) ? (int)(total - offset) : itemsPerThread;
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+          projectionLayer.dataLayerGateway = _dataLayerGateway;
+          
           ManualResetEvent doneEvent = new ManualResetEvent(false);
 
           DtiTask dtiTask = new DtiTask(doneEvent, projectionLayer, _dataLayerGateway, _dictionary,
@@ -1667,7 +1916,6 @@ namespace org.iringtools.adapter
         }
 
         _logger.Debug("Number of threads [" + threadCount + "].");
-        _logger.Debug("Items per thread [" + itemsPerThread + "].");
         _logger.Debug("DTI tasks started!");
 
         // wait for all tasks to complete
@@ -1772,6 +2020,9 @@ namespace org.iringtools.adapter
 
           DtoProjectionEngine projectionLayer = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
           IDataLayer dataLayer = _kernel.Get<IDataLayer>();
+
+          projectionLayer.dataLayerGateway = _dataLayerGateway;
+
           ManualResetEvent doneEvent = new ManualResetEvent(false);
           DataTransferObjectsTask dtoTask = new DataTransferObjectsTask(doneEvent, projectionLayer, dataLayerGateway, _graphMap, objectType, dtos);
           ThreadPool.QueueUserWorkItem(dtoTask.ThreadPoolCallback, threadCount);

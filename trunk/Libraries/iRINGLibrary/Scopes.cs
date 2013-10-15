@@ -50,6 +50,9 @@ namespace org.iringtools.library
 
     [DataMember(Name = "displayName", Order = 3, EmitDefaultValue = false)]
     public string DisplayName { get; set; }
+
+    [DataMember(Name = "configuration", Order = 4, EmitDefaultValue = false)]
+    public Configuration Configuration { get; set; }
   }
 
   [DataContract(Name = "application", Namespace = "http://www.iringtools.org/library")]
@@ -85,8 +88,34 @@ namespace org.iringtools.library
     [DataMember(Name = "dataMode", Order = 5, EmitDefaultValue = false)]
     public DataMode DataMode { get; set; }
 
-    [DataMember(Name = "cacheTimestamp", Order = 6, EmitDefaultValue = false)]
-    public DateTime? CacheTimestamp { get; set; }
+    [DataMember(Name = "cacheInfo", Order = 6, EmitDefaultValue = false)]
+    public CacheInfo CacheInfo { get; set; }
+  }
+
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "cacheInfo")]
+  public class CacheInfo
+  {
+    [DataMember(Name = "importURI", Order = 0, EmitDefaultValue = false)]
+    public string ImportURI { get; set; }
+
+    [DataMember(Name = "timeout", Order = 1, EmitDefaultValue = false)]
+    public long Timeout { get; set; }
+    
+    [DataMember(Name = "cacheEntries", Order = 2, EmitDefaultValue = false)]
+    public CacheEntries CacheEntries { get; set; }
+  }
+
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "cacheEntries")]
+  public class CacheEntries : List<CacheEntry> { }
+
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "cacheEntry")]
+  public class CacheEntry
+  {
+    [DataMember(Name = "objectName", Order = 0)]
+    public string ObjectName { get; set; }
+
+    [DataMember(Name = "lastUpdate", Order = 1, EmitDefaultValue = false)]
+    public DateTime? LastUpdate { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/library")]
@@ -95,8 +124,6 @@ namespace org.iringtools.library
     [EnumMember]
     Live, 
     [EnumMember]
-    Cache,
-    [EnumMember]
-    CacheOnly
-  };
+    Cache
+  }
 }

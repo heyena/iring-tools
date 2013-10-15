@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using log4net;
+using System.Text.RegularExpressions;
 
 namespace org.iringtools.utility
 {

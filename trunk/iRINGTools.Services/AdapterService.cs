@@ -53,7 +53,7 @@ namespace org.iringtools.services
       return _adapterProvider.GetScopes();
     }
 
-    [Description("Gets the scopes (project and application combinations) available from the service.")]
+    [Description("Gets a specific scope information.")]
     [WebGet(UriTemplate = "/scopes/{scopeName}")]
     public ScopeProject GetScope(string scopeName)
     {
@@ -61,6 +61,26 @@ namespace org.iringtools.services
       context.ContentType = "application/xml";
 
       return _adapterProvider.GetScope(scopeName);
+    }
+
+    [Description("Gets cache information for an application.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/cacheinfo")]
+    public CacheInfo GetCacheInfo(string scope, string app)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _adapterProvider.GetCacheInfo(scope, app);
+    }
+
+    [Description("Gets a specific application information.")]
+    [WebGet(UriTemplate = "/scopes/{scopeName}/apps/{appName}")]
+    public ScopeApplication GetApplication(string scopeName, string appName)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _adapterProvider.GetApplication(scopeName, appName);
     }
 
     [Description("Gets datalayer resource data.")]
@@ -198,6 +218,13 @@ namespace org.iringtools.services
       {
         return PrepareErrorResponse(ex);
       }
+    }
+
+    [Description("Gets app settings of an application.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/config")]
+    public XElement GetConfig(string scope, string app)
+    {
+      return _adapterProvider.GetConfig(scope, app);
     }
 
     [Description("Gets the Ninject binding configuration for the specified scope.")]
@@ -495,45 +522,6 @@ namespace org.iringtools.services
       Response response = _adapterProvider.DeleteCache(scope, app, objectType);
       FormatOutgoingMessage<Response>(response, true);
     }
-
-    #region Virtual Properties related services
-    
-    /// <summary>
-    /// Gets the Virtual Properties for the specified scope and application.
-    /// </summary>
-    /// <param name="scope">Project name</param>
-    /// <param name="app">Application name</param>
-    /// <returns>Returns a VirtualProperties object.</returns>
-    [Description("Gets the Virtual Properties for the specified scope and application.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/virtualProperties")]
-    public VirtualProperties GetVirtualProperties(string scope, string app)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      VirtualProperties virtualProperties = _adapterProvider.GetVirtualProperties(scope, app);
-      return virtualProperties;
-    }
-
-    /// <summary>
-    /// Save the Virtual properties for the specified scope and application.
-    /// </summary>
-    /// <returns>Returns a Response object.</returns>
-    [Description("Save the Virtual properties for the specified scope and application.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/virtualProperties")]
-    public Response PostVirtualProperties(string scope, string app, VirtualProperties virtualProperties)
-    {
-      try
-      {
-        return _adapterProvider.PostVirtualProperties(scope, app, virtualProperties);
-      }
-      catch (Exception ex)
-      {
-        return PrepareErrorResponse(ex);
-      }
-    }
-
-    #endregion
 
     private void FormatOutgoingMessage<T>(T graph, bool useDataContractSerializer)
     {

@@ -33,7 +33,9 @@ namespace org.iringtools.utility
             server = ConfigurationManager.AppSettings["ldapserver"];
             portNumber = int.Parse(ConfigurationManager.AppSettings["ldapportnumber"]);
             userName = ConfigurationManager.AppSettings["ldapusername"];
-            password = EncryptionUtility.Decrypt(ConfigurationManager.AppSettings["ldappassword"]);
+            string tmpPassword = ConfigurationManager.AppSettings["ldappassword"];
+            string keyFile = ConfigurationManager.AppSettings["keyfile"];
+            password = EncryptionUtility.Decrypt(tmpPassword, keyFile);
         }
 
         /// <summary>

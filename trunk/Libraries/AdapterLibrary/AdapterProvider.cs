@@ -88,31 +88,6 @@ namespace org.iringtools.adapter
       return _scopes;
     }
 
-    public ScopeProject GetScope(string scopeName)
-    {
-      foreach (ScopeProject scope in _scopes)
-      {
-        if (scope.Name.ToLower() == scopeName.ToLower())
-        {
-          foreach (ScopeApplication app in scope.Applications)
-          {
-            string bindingConfigPath = 
-              string.Format("{0}BindingConfiguration.{1}.{2}.xml", 
-              _settings["AppDataPath"], scope.Name, app.Name);
-
-            XElement binding = Utility.GetxElementObject(bindingConfigPath);
-
-            if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
-              app.DataMode = DataMode.CacheOnly;
-          }
-
-          return scope;
-        }
-      }
-
-      return null;
-    }
-
     public VersionInfo GetVersion()
     {
       Version version = this.GetType().Assembly.GetName().Version;
@@ -139,6 +114,19 @@ namespace org.iringtools.adapter
           if (string.IsNullOrEmpty(scope.DisplayName))
             scope.DisplayName = scope.Name;
 
+          if (scope.Configuration.AppSettings.Settings != null)
+          {
+            var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
+                                    where setting.Key == CACHE_CONNSTR
+                                    select setting).First();
+
+            if (connectionSetting != null)
+            {
+              string keyFile = string.Format("{0}{1}.key", _settings["AppDataPath"], scope.Name);
+              connectionSetting.Value = EncryptionUtility.Encrypt(connectionSetting.Value, keyFile);
+            }
+          }
+
           _scopes.Add(scope);
           _scopes.Sort(new ScopeComparer());
 
@@ -146,6 +134,10 @@ namespace org.iringtools.adapter
           {
             proj.Applications.Sort(new ApplicationComparer());
           }
+          
+          //save configration
+          string scopeConfigPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope.Name);
+          Utility.Write<Configuration>(scope.Configuration, scopeConfigPath, false);
 
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
           response.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
@@ -188,6 +180,22 @@ namespace org.iringtools.adapter
           sc.DisplayName = scope.DisplayName;
             sc.Description = scope.Description;
           _scopes.Sort(new ScopeComparer());
+
+          if (scope.Configuration.AppSettings.Settings != null)
+          {
+            var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
+                                     where setting.Key == CACHE_CONNSTR
+                                     select setting).First();
+
+            if (connectionSetting != null)
+            {
+              string keyFile = string.Format("{0}{1}.key", _settings["AppDataPath"], scope.Name);
+              connectionSetting.Value = EncryptionUtility.Encrypt(connectionSetting.Value, keyFile);
+            }
+          }
+
+          string scopeConfigPath = string.Format("{0}{1}.config", _settings["AppDataPath"], scope.Name);
+          Utility.Write<Configuration>(scope.Configuration, scopeConfigPath, false);
 
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
           status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
@@ -237,6 +245,12 @@ namespace org.iringtools.adapter
 
           // remove scope from scope list
           _scopes.Remove(sc);
+
+          string scopeConfigPath = string.Format("{0}{1}.config", _settings["AppDataPath"], sc.Name);
+          if (File.Exists(scopeConfigPath))
+          {
+            File.Delete(scopeConfigPath);
+          }
 
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
           status.Messages.Add(String.Format("Scope [{0}] deleted successfully.", scopeName));
@@ -451,12 +465,17 @@ namespace org.iringtools.adapter
           application.DisplayName = updatedApp.DisplayName;
           application.Description = updatedApp.Description;
           application.DataMode = updatedApp.DataMode;
-          application.Configuration.AppSettings = updatedApp.Configuration.AppSettings;
+
+          if (application.CacheInfo == null)
+            application.CacheInfo = new CacheInfo();
+
+          application.CacheInfo.ImportURI = updatedApp.CacheInfo.ImportURI;
+          application.CacheInfo.Timeout = updatedApp.CacheInfo.Timeout;
 
           scope.Applications.Sort(new ApplicationComparer());
 
           string appConfigPath = string.Format("{0}{1}.{2}.config", _settings["AppDataPath"], scope.Name, application.Name);
-          Utility.Write<Configuration>(application.Configuration, appConfigPath, false);
+          Utility.Write<Configuration>(updatedApp.Configuration, appConfigPath, false);
         }
         else  // application does not exist, stop processing
         {
@@ -648,6 +667,39 @@ namespace org.iringtools.adapter
         File.Delete(SpreadSheetDataPath);
       }
     }
+    
+    public CacheInfo GetCacheInfo(string scope, string app)
+    {
+      CacheInfo cacheInfo = null;
+
+      try
+      {
+        InitializeScope(scope, app);
+
+        ScopeApplication application = GetApplication(scope, app);
+
+        if (application == null)
+        {
+          throw new Exception("Application [" + scope + "." + app + "] not found.");
+        }
+
+        if (application.CacheInfo == null)
+        {
+          cacheInfo = new CacheInfo();
+        }
+        else
+        {
+          cacheInfo = application.CacheInfo;
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting application cache information: " + ex);
+        throw ex;
+      }
+
+      return cacheInfo;
+    }
 
     #region Generate methods
     public Response Generate()
@@ -813,6 +865,30 @@ namespace org.iringtools.adapter
     }
     #endregion Generate methods
 
+    public XElement GetConfig(string project, string application)
+    {
+      Configuration config = null;
+
+      try
+      {
+        string configPath = (project.ToLower() != "all")
+          ? string.Format("{0}{1}.{2}.config", _settings["AppDataPath"], project, application)
+          : string.Format("{0}All.{1}.config", _settings["AppDataPath"], application);
+
+        if (File.Exists(configPath))
+        {
+          config = Utility.Read<Configuration>(configPath, false);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error getting application configuration: {0}", ex));
+        throw ex;
+      }
+
+      return config.ToXElement();
+    }
+
     public XElement GetBinding(string project, string application)
     {
       XElement binding = null;
@@ -824,7 +900,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
+        _logger.Error(string.Format("Error getting application binding configuration: {0}", ex));
         throw ex;
       }
 
@@ -2352,45 +2428,6 @@ namespace org.iringtools.adapter
       }
     }
 
-    
-    public VirtualProperties GetVirtualProperties(string scope, string app)
-    {
-      try
-      {
-        string path = String.Format("{0}VirtualProperties.{1}.{2}.xml", _settings["AppDataPath"], scope, app);
-        VirtualProperties virtualProperties = Utility.Read<VirtualProperties>(path);
-        return virtualProperties;
-
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error getting Virtual Properties: {0}", ex));
-        throw new Exception(string.Format("Error getting Virtual Properties: {0}", ex));
-      }      
-    }
-
-    public Response PostVirtualProperties(string scope, string app, VirtualProperties virtualProperties)
-    {
-      try
-      {
-        Response response = new Response();
-        Status status = new Status();
-
-        string path = String.Format("{0}VirtualProperties.{1}.{2}.xml", _settings["AppDataPath"], scope, app);
-        Utility.Write<VirtualProperties>(virtualProperties, path, true);
-
-        status.Messages.Add("Virtual Properties saved successfully");
-        return response;
-
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in saving Virtual Properties: {0}", ex));
-        throw new Exception(string.Format("Error in saving Virtual Properties: {0}", ex));
-      } 
-    }
-
-
     private bool IsNumeric(DataProperty dataProperty)
     {
       return (dataProperty.dataType == DataType.Byte ||
@@ -2800,7 +2837,7 @@ namespace org.iringtools.adapter
     }
 
     public XDocument GetRelatedList(
-            string project, string application, string resource, string id, string relatedresource,
+            string project, string application, string resource, string id, string relatedResource,
             ref string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex, NameValueCollection parameters)
     {
       try
@@ -2809,14 +2846,40 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         InitializeProjection(resource, ref format, false);
 
-        AddURIsInSettingCollection(project, application, resource, id, relatedresource);
+        if (_projectionEngine == null)
+        {
+          throw new Exception("Initializing projection failed. This is most likely due to invalid format/content-type.");
+        }
+
+        AddURIsInSettingCollection(project, application, resource, id, relatedResource);
 
         id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
         IDataObject parentDataObject = _dataLayerGateway.Get(_dataObjDef, new List<string> { id }).FirstOrDefault<IDataObject>();
         if (parentDataObject == null) return new XDocument();
 
-        DataRelationship dataRelationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedresource.ToLower());
-        DataObject relatedObjectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == dataRelationship.relatedObjectName.ToLower());
+        DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
+
+        if (objectType == null)
+        {
+          throw new Exception("Primary resource [" + resource + "] not found.");
+        }
+
+        DataRelationship relationship = objectType.dataRelationships.Find(c => c.relationshipName.ToLower() == relatedResource.ToLower());
+
+        //
+        // if relationship is null, check if provided related resource by name
+        //
+        if (relationship == null)
+        {
+          relationship = objectType.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
+        }
+
+        DataObject relatedType = _dictionary.dataObjects.Find(c => c.objectName == relationship.relatedObjectName);
+
+        if (relatedType == null)
+        {
+          throw new Exception("Relationship between parent and child resource not found.");
+        }
 
         if (limit == 0)
         {
@@ -2828,36 +2891,43 @@ namespace org.iringtools.adapter
         _projectionEngine.FullIndex = fullIndex;
 
         _projectionEngine.BaseURI = (project.ToLower() == "all")
-            ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedresource)
-            : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedresource);
-
-        //_projectionEngine.Count = _dataLayerGateway.GetRelatedCount(parentDataObject, relatedObjectType);
+            ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedResource)
+            : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedResource);
 
         DataFilter filter = CreateDataFilter(parameters, sortOrder, sortBy);
 
-        foreach (PropertyMap propMap in dataRelationship.propertyMaps)
+        if (relatedType.isRelatedOnly)
         {
-          filter.Expressions.Add(new Expression()
+          // NOTE: this path strictly supports legacy data layers with related only support.
+          _dataObjects = _dataLayerGateway.GetRelatedObjects(parentDataObject, relatedType, filter, limit, start);
+          _projectionEngine.Count = _dataLayerGateway.GetRelatedCount(parentDataObject, relatedType, filter);
+        }
+        else
+        {
+          foreach (PropertyMap propMap in relationship.propertyMaps)
           {
-            PropertyName = propMap.relatedPropertyName,
-            RelationalOperator = RelationalOperator.EqualTo,
-            LogicalOperator = LogicalOperator.And,
-            Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
-          });
+            filter.Expressions.Add(new Expression()
+            {
+              PropertyName = propMap.relatedPropertyName,
+              RelationalOperator = RelationalOperator.EqualTo,
+              LogicalOperator = LogicalOperator.And,
+              Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
+            });
+          }
+
+          try
+          {
+            _dataObjects = _dataLayerGateway.Get(relatedType, filter, start, limit);
+          }
+          catch (NotImplementedException nie)
+          {
+            throw nie;
+          }
+
+          _projectionEngine.Count = _dataObjects.Count;
         }
 
-        try
-        {
-          _dataObjects = _dataLayerGateway.Get(relatedObjectType, filter, start, limit);
-        }
-        catch (NotImplementedException nie)
-        {
-          //_dataObjects = _dataLayerGateway.Get(relatedObjectType, filter, start, limit);
-          throw nie;
-        }
-        _projectionEngine.Count = _dataObjects.Count;
-
-        XDocument xdoc = _projectionEngine.ToXml(relatedObjectType.objectName, ref _dataObjects);
+        XDocument xdoc = _projectionEngine.ToXml(relatedType.objectName, ref _dataObjects);
         return xdoc;
       }
       catch (Exception ex)
@@ -2868,7 +2938,7 @@ namespace org.iringtools.adapter
     }
 
     public XDocument GetRelatedItem(string project, string application, string resource, string id,
-      string relatedresource, string relatedId, ref string format)
+      string relatedResource, string relatedId, ref string format)
     {
       try
       {
@@ -2876,27 +2946,52 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         InitializeProjection(resource, ref format, false);
 
-        AddURIsInSettingCollection(project, application, resource, id, relatedresource, relatedId);
+        if (_projectionEngine == null)
+        {
+          throw new Exception("Initializing projection failed. This is most likely due to invalid format/content-type.");
+        }
+
+        AddURIsInSettingCollection(project, application, resource, id, relatedResource, relatedId);
 
         id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
         IDataObject parentDataObject = _dataLayerGateway.Get(_dataObjDef, new List<string> { id }).FirstOrDefault<IDataObject>();
         if (parentDataObject == null) return new XDocument();
 
         _projectionEngine.BaseURI = (project.ToLower() == "all")
-            ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedresource)
-            : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedresource);
+            ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedResource)
+            : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedResource);
 
-        DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedresource.ToLower());
-        DataObject relatedObjectType = _dictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
+        DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
 
-        _dataObjects = _dataLayerGateway.Get(relatedObjectType, new List<string> { relatedId });
+        if (objectType == null)
+        {
+          throw new Exception("Primary resource [" + resource + "] not found.");
+        }
+
+        DataRelationship relationship = objectType.dataRelationships.Find(c => c.relationshipName.ToLower() == relatedResource.ToLower());
+
+        //
+        // if relationship is null, check if provided related resource by name
+        //
+        if (relationship == null)
+        {
+          relationship = objectType.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
+        }
+
+        DataObject relatedType = _dictionary.dataObjects.Find(c => c.objectName == relationship.relatedObjectName);
+
+        if (relatedType == null)
+        {
+          throw new Exception("Relationship between parent and child resource not found.");
+        }
+        _dataObjects = _dataLayerGateway.Get(relatedType, new List<string> { relatedId });
 
         if (_dataObjects != null)
         {
           _projectionEngine.Count = _dataObjects.Count;
         }
 
-        XDocument xdoc = _projectionEngine.ToXml(relatedObjectType.objectName, ref _dataObjects);
+        XDocument xdoc = _projectionEngine.ToXml(relatedType.objectName, ref _dataObjects);
         return xdoc;
       }
       catch (Exception ex)
@@ -3187,6 +3282,11 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         InitializeProjection(resource, ref format, false);
 
+        if (_projectionEngine == null)
+        {
+          throw new Exception("Initializing projection failed. This is most likely due to invalid format/content-type.");
+        }
+
         if (_dataObjDef.isReadOnly || _settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
         {
           string message = "Can not perform post on read-only data layer of [" + project + "." + application + "].";
@@ -3204,14 +3304,53 @@ namespace org.iringtools.adapter
           throw new Exception("Operation not supported.");
         }
 
-        DataObject relatedObjectType = _dictionary.dataObjects.First(c => c.objectName.ToLower() == relatedResource.ToLower());
+        DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
 
-        /// TODO: set property maps from parent resource in the posted xml
-        List<IDataObject> childDataObjects = _projectionEngine.ToDataObjects(relatedResource, ref xml);
-        SetObjectState(action, childDataObjects);
+        if (objectType == null)
+        {
+          throw new Exception("Primary resource [" + resource + "] not found.");
+        }
 
-        response = _dataLayerGateway.Update(relatedObjectType, childDataObjects);
+        DataRelationship relationship = objectType.dataRelationships.Find(c => c.relationshipName.ToLower() == relatedResource.ToLower());
 
+        //
+        // if relationship is null, check if provided related resource by name
+        //
+        if (relationship == null)
+        {
+          relationship = objectType.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
+        }
+
+        DataObject relatedType = _dictionary.dataObjects.Find(c => c.objectName == relationship.relatedObjectName);
+
+        if (relatedType == null)
+        {
+          throw new Exception("Relationship between parent and child resource not found.");
+        }
+
+        //
+        // get parent object and set property maps from parent resource in the posted xml
+        //
+        IDataObject parentObject = _dataLayerGateway.Get(objectType, new List<string> { id }).FirstOrDefault();
+
+        if (parentObject == null)
+        {
+          throw new Exception("Parent object with id [" + id + "] not found.");
+        }
+
+        List<IDataObject> childObjects = _projectionEngine.ToDataObjects(relatedType.objectName, ref xml);
+        SetObjectState(action, childObjects);
+
+        foreach (IDataObject childObject in childObjects)
+        {
+          foreach (PropertyMap propMap in relationship.propertyMaps)
+          {
+            object value = parentObject.GetPropertyValue(propMap.dataPropertyName);
+            childObject.SetPropertyValue(propMap.relatedPropertyName, value);
+          }
+        }
+
+        response = _dataLayerGateway.Update(relatedType, childObjects);
         response.DateTimeStamp = DateTime.Now;
 
         string baseUri = _settings["GraphBaseUri"] +
@@ -3619,7 +3758,7 @@ namespace org.iringtools.adapter
           _isProjectionPart7 = true;
         }
 
-        if (typeof(BasePart7ProjectionEngine).IsAssignableFrom(_projectionEngine.GetType()))
+        if (_projectionEngine != null && typeof(BasePart7ProjectionEngine).IsAssignableFrom(_projectionEngine.GetType()))
           ((BasePart7ProjectionEngine)_projectionEngine).dataLayerGateway = _dataLayerGateway;
       }
       catch (Exception ex)
@@ -4715,6 +4854,75 @@ namespace org.iringtools.adapter
 
       return dataObjects;
     }
+
+    public Locator Publish(string project, string application)
+    {
+        string path = _settings["AppDataPath"] + "publishingTemplate.xml";
+        var xmlDoc = new XmlDocument{ XmlResolver = null };
+        if (File.Exists(path))
+        {
+            xmlDoc.Load(path);
+        }
+        else
+            throw new Exception("Publishing template not found.");
+
+        DataDictionary dictionary = GetDictionary(project, application);
+
+        Locator locator = (Locator)Utility.Deserialize<Locator>(xmlDoc.InnerXml, true);
+
+        if (dictionary != null)
+        {
+            locator.updated = DateTime.Now;
+            if (!string.IsNullOrEmpty(dictionary.description))
+                locator.description = dictionary.description;
+
+            foreach (Instance Inst in locator.instances)
+            {
+                Inst.updated = DateTime.Now;
+                List<Endpoint> newEndpoints = new List<Endpoint>();
+                bool IsContextsEndpoint = false;
+                foreach (DataObject objects in dictionary.dataObjects)
+                {
+                    foreach (Endpoint epoint in Inst.endpoints)
+                    {
+                        Endpoint newepoint = Utility.CloneDataContractObject<Endpoint>(epoint);
+                        if (!newepoint.path.Contains("0") && IsContextsEndpoint)
+                            continue;
+                        if (!newepoint.path.Contains("0"))
+                            IsContextsEndpoint = true;
+
+
+                        newepoint.path = string.Format(newepoint.path, objects.objectName);
+                        if (!string.IsNullOrEmpty(objects.description))
+                        {
+                            newepoint.description = objects.description;
+                        }
+                        else
+                        {
+                            newepoint.description = string.Format(newepoint.description, objects.objectName);
+                        }
+
+                        foreach (Operation opers in newepoint.operations)
+                        {
+                            opers.summary = string.Format(opers.summary, objects.objectName);
+                            opers.updated = DateTime.Now;
+
+                            foreach (Parameter param in opers.parameters)
+                            {
+                                param.description = string.Format(param.description, objects.objectName);
+                            }
+                        }
+                        newEndpoints.Add(newepoint);
+                    }
+                }
+                Inst.endpoints.Clear();
+                Inst.endpoints.AddRange(newEndpoints);
+            }
+        }
+        return locator;
+    }
+
+
   }
 
   public enum PostAction { Create, Update }
