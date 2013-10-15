@@ -34,7 +34,6 @@ namespace org.iringtools.library
 {
   [Serializable]
   [DataContract(Name = "dataDictionary", Namespace = "http://www.iringtools.org/library")]
-  [KnownType(typeof(VirtualProperty))]
   public class DataDictionary
   {
     public DataDictionary()
@@ -56,7 +55,10 @@ namespace org.iringtools.library
     public bool enableSummary { get; set; }
 
     [DataMember(Order = 4)]
-    public string dataVersion { get; set; }    
+    public string dataVersion { get; set; }
+
+    [DataMember(Order = 5, EmitDefaultValue = false)]
+    public string description { get; set; }   
 
     public static bool IsNumeric(DataType dataType)
     {
@@ -257,74 +259,6 @@ namespace org.iringtools.library
 
     [DataMember(IsRequired = false, Order = 14, EmitDefaultValue = false)]
     public bool isVirtual { get; set; }
-  }
-
-  [Serializable]
-  [DataContract(Name = "virtualProperty", Namespace = "http://www.iringtools.org/library")]
-  public class VirtualProperty : DataProperty
-  {
-    public VirtualProperty()
-    {
-      delimiter = "_";
-      virtualPropertyValues = new List<VirtualPropertyValue>();
-    }
-    //[DataMember(IsRequired = true, EmitDefaultValue = false)]
-  //  public string expression { get; set; }
-
-    [DataMember(IsRequired = true, EmitDefaultValue = true)]
-    public string objectName { get; set; }
-
-    [DataMember(IsRequired = true, EmitDefaultValue = true)]
-    public string delimiter { get; set; }
-
-    [DataMember(IsRequired = true, EmitDefaultValue = true)]
-    public IList<VirtualPropertyValue> virtualPropertyValues { get; set; }
-
-  }
-
-  [Serializable]
-  [DataContract(Name = "virtualPropertyValue", Namespace = "http://www.iringtools.org/library")]
-  public class VirtualPropertyValue
-  {
-    public VirtualPropertyValue()
-    {
-      length = -1;
-    }
-
-    [DataMember(IsRequired = true, EmitDefaultValue = true)]
-    public VirtualPropertyValueType type { get; set; }
-
-    [DataMember(IsRequired = false, EmitDefaultValue = false)]
-    public string valueText { get; set; }
-
-    [DataMember(IsRequired = false, EmitDefaultValue = false)]
-    public string propertyName { get; set; }
-
-    [DataMember(IsRequired = false, EmitDefaultValue = false)]
-    public int length { get; set; }
-  }
-
-  
-  [Serializable]
-  [DataContract(Name = "virtualProperties", Namespace = "http://www.iringtools.org/library")]
-  public class VirtualProperties
-  {
-    public VirtualProperties()
-    {
-      virtualProperties = new List<VirtualProperty>();
-    }
-
-    [DataMember(IsRequired = true, EmitDefaultValue = false)]
-    public IList<VirtualProperty> virtualProperties { get; set; }
-  }
-
-  [DataContract(Namespace = "http://www.iringtools.org/library")]
-  public enum VirtualPropertyValueType
-  {
-    [EnumMember]
-    Constant,
-    [EnumMember]
-    Property,
   }
 
   [Serializable]

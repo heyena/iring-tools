@@ -21,9 +21,11 @@ namespace org.iringtools.nhibernate
 
       if (connStr != null)
       {
-        if (connStr.ToUpper().Contains("DATA SOURCE"))
+        if (!Utility.IsBase64Encoded(connStr))
         {
+          //
           // connection string is not encrypted, encrypt and write it back
+          //
           dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr, keyFile);
           Utility.Write<DatabaseDictionary>(dbDictionary, path);
 
@@ -49,7 +51,7 @@ namespace org.iringtools.nhibernate
 
       if (connStr != null)
       {
-        if (connStr.ToUpper().Contains("DATA SOURCE"))
+        if (Utility.IsBase64Encoded(connStr))
         {
           // connection string is not encrypted, encrypt it
           dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr, keyFile);

@@ -93,6 +93,9 @@ namespace org.iringtools.web.controllers
 
               foreach (ScopeApplication application in scope.Applications)
               {
+                Configuration config = _repository.GetConfig(scope.Name, application.Name);
+                application.Configuration = config;
+
                 DataLayer dataLayer = _repository.GetDataLayer(scope.Name, application.Name);
 
                 if (dataLayer != null)
@@ -114,7 +117,9 @@ namespace org.iringtools.web.controllers
                       Description = application.Description,
                       DataLayer = dataLayer.Name,
                       Assembly = dataLayer.Assembly,
-                      Configuration = application.Configuration
+                      Configuration = application.Configuration,
+                      CacheImportURI = application.CacheInfo == null ? "" : application.CacheInfo.ImportURI,
+                      CacheTimeout = application.CacheInfo == null ? "" : Convert.ToString(application.CacheInfo.Timeout)
                     }
                   };
                   
@@ -163,11 +168,6 @@ namespace org.iringtools.web.controllers
                 if (application != null)
                 {
                   dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
-
-                  if (application.DataMode == DataMode.Cache)
-                  {
-                    dataObjectsNode.property.Add("Last Cache Update", application.CacheTimestamp.ToString());
-                  }
                 }
               }
 
@@ -578,11 +578,11 @@ namespace org.iringtools.web.controllers
 
       if (form["state"]=="new")//if (String.IsNullOrEmpty(form["scope"]))
       {
-          success = _repository.AddScope(form["displayName"], form["description"]);
+          success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"]);
       }
       else
       {
-          success = _repository.UpdateScope(form["contextName"], form["displayName"], form["description"]);
+          success = _repository.UpdateScope(form["contextName"], form["displayName"], form["description"],form["cacheDBConnStr"]);
       }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -592,6 +592,9 @@ namespace org.iringtools.web.controllers
     {
       string success = String.Empty;
       string scopeName = form["Scope"];
+      string cacheImportURI = form["cacheImportURI"];
+      long cacheTimeout = String.IsNullOrWhiteSpace(form["cacheTimeout"])?0:Convert.ToInt64(form["cacheTimeout"]);
+     
       library.Configuration configuration = new Configuration
       {
         AppSettings = new AppSettings 
@@ -600,19 +603,18 @@ namespace org.iringtools.web.controllers
         }
       };
 
+      CacheInfo cacheInfo = new CacheInfo
+      {
+        ImportURI = cacheImportURI,
+        Timeout =  cacheTimeout
+      };
+
       for (int i = 0; i < form.AllKeys.Length; i++)
       {
-          //if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val")
-          if (form.GetKey(i).Contains("key"))
+          if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && 
+            form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val"
+            && form.GetKey(i).ToLower() != "cacheimporturi" && form.GetKey(i).ToLower() != "cachetimeout")
           {
-              //if (configuration.AppSettings == null)
-              //{
-              //    configuration.AppSettings = new AppSettings();
-              //}
-              //if (configuration.AppSettings.Settings == null)
-              //{
-              //    configuration.AppSettings.Settings = new List<Setting>();
-              //}
               String key = form[i];
               if (i + 1 < form.AllKeys.Length)
               {
@@ -632,7 +634,8 @@ namespace org.iringtools.web.controllers
         Name = form["Name"],
         Description = form["Description"],
         Assembly = form["assembly"],
-        Configuration = configuration
+        Configuration = configuration,
+        CacheInfo = cacheInfo
       };
 
       if (String.IsNullOrEmpty(form["Application"]))

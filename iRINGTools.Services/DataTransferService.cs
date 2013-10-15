@@ -73,6 +73,91 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets list of scopes at this endpoint.")]
+    [WebGet(UriTemplate = "/scopes")]
+    public void GetScopeList()
+    {
+      try
+      {
+        NameValueList scopeList = _dtoProvider.GetScopeList();
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<NameValueList>(scopeList));
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+
+    [Description("Gets list of scopes at this endpoint.")]
+    [WebGet(UriTemplate = "/scopes/{scope}/apps")]
+    public void GetAppList(string scope)
+    {
+      try
+      {
+        NameValueList appList = _dtoProvider.GetAppList(scope);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<NameValueList>(appList));
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+    
+    [Description("Gets list of scopes at this endpoint.")]
+    [WebGet(UriTemplate = "/scopes/{scope}/apps/{app}/graphs")]
+    public void GetGraphList(string scope, string app)
+    {
+      try
+      {
+        NameValueList graphList = _dtoProvider.GetGraphList(scope, app);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<NameValueList>(graphList));
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+
+    [Description("Gets data mode cache/live for an application.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/datamode")]
+    public void GetDataMode(string scope, string app)
+    {
+      try
+      {
+        string dataMode = _dtoProvider.GetDataMode(scope, app);
+
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(dataMode);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+
+    [Description("Gets cache information for an application.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/cacheinfo")]
+    public void GetCacheInfo(string scope, string app, string graph)
+    {
+      try
+      {
+        CacheInfo cacheInfo = _dtoProvider.GetCacheInfo(scope, app, graph);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<CacheInfo>(cacheInfo));
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+
     [Description("Gets manifest of an application.")]
     [WebGet(UriTemplate = "/{scope}/{app}/manifest")]
     public void GetManifest(string scope, string app)
@@ -124,7 +209,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets data transfer indices of requested manifest with filter.")]
+    [Description("Gets data transfer indices of requested manifest and filter.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi/filter?hashAlgorithm={hashAlgorithm}")]
     public void GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
@@ -150,7 +235,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets internal identifiers for a given manifest with filter.")]
+    [Description("Gets internal identifiers for a given manifest and filter.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter")]
     public void GetInternalIdentifiers(string scope, string app, string graph, DxiRequest request)
     {
@@ -169,6 +254,23 @@ namespace org.iringtools.services
           HttpContext.Current.Response.ContentType = "application/xml";
           HttpContext.Current.Response.Write(Utility.SerializeDataContract<Identifiers>(identifiers));
         }
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
+    }
+
+    [Description("Gets data transfer objects for a given manifest and filter.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dto?start={start}&limit={limit}")]
+    public void GetPageDataTransferObjects(string scope, string app, string graph, DxiRequest request, int start, int limit)
+    {
+      try
+      {
+        DataTransferObjects dtos = _dtoProvider.GetPageDataTransferObjects(scope, app, graph, request, start, limit);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
       }
       catch (Exception ex)
       {
@@ -352,11 +454,12 @@ namespace org.iringtools.services
 
     [Description("Creates/rebuilds graph data cache.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/refresh")]
-    public void RefreshGraphCache(string scope, string app, string graph)
+    public void RefreshCache(string scope, string app, string graph)
     {
       try
       {
-        Response response = _dtoProvider.RefreshGraphCache(scope, app, graph);
+        Response response = _dtoProvider.RefreshCache(scope, app, graph);
+
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
       }
@@ -368,11 +471,19 @@ namespace org.iringtools.services
 
     [Description("Imports graph data cache. Cache files are baseUri followed by <object type>.dat is required.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/import?baseuri={baseUri}")]
-    public void ImportGraphCache(string scope, string app, string graph, string baseUri)
+    public void ImportCache(string scope, string app, string graph, string baseUri)
     {
-      Response response = _dtoProvider.ImportGraphCache(scope, app, graph, baseUri);
-      HttpContext.Current.Response.ContentType = "application/xml";
-      HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+      try
+      {
+        Response response = _dtoProvider.ImportCache(scope, app, graph, baseUri);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+      }
+      catch (Exception ex)
+      {
+        ExceptionHander(ex);
+      }
     } 
         
     [Description("Gets status of a asynchronous request.")]
