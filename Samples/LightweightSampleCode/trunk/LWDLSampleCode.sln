@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LWDLSampleCode", "LWDLSampleCode\LWDLSampleCode.csproj", "{E308C6DA-243F-4CB4-86DC-E0D5949D43B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LWDLSampleCode.Test", "LWDLSampleCode.Test\LWDLSampleCode.Test.csproj", "{E65C4EF0-F4ED-44B1-A783-D64B46AB9DB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnit.Runner", "NUnit.Runner\NUnit.Runner.csproj", "{25F7C776-6C3B-4E18-B2AB-39C692E53455}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E308C6DA-243F-4CB4-86DC-E0D5949D43B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E308C6DA-243F-4CB4-86DC-E0D5949D43B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E308C6DA-243F-4CB4-86DC-E0D5949D43B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E308C6DA-243F-4CB4-86DC-E0D5949D43B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E65C4EF0-F4ED-44B1-A783-D64B46AB9DB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E65C4EF0-F4ED-44B1-A783-D64B46AB9DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E65C4EF0-F4ED-44B1-A783-D64B46AB9DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E65C4EF0-F4ED-44B1-A783-D64B46AB9DB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25F7C776-6C3B-4E18-B2AB-39C692E53455}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25F7C776-6C3B-4E18-B2AB-39C692E53455}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25F7C776-6C3B-4E18-B2AB-39C692E53455}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25F7C776-6C3B-4E18-B2AB-39C692E53455}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

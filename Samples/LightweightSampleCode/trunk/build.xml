@@ -1,0 +1,139 @@
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
+  <PropertyGroup>
+    <ZipCmd>"$(MSBuildProjectDirectory)\lib\7-zip\7z.exe"</ZipCmd>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\LWDLSampleCode\Properties\AssemblyInfo.cs</AssemblyInfoFile>
+    <NUnit-ToolPath>$(MSBuildProjectDirectory)\lib\Nunit\</NUnit-ToolPath>
+    <SolutionFile>LWDLSampleCode.sln</SolutionFile>
+    <BinDir>$(MSBuildProjectDirectory)\LWDLSampleCode\bin\Release</BinDir>
+    <ConfDir>$(MSBuildProjectDirectory)\conf</ConfDir>
+    <DistDir>$(MSBuildProjectDirectory)\dist</DistDir>
+    <DocsDir>$(MSBuildProjectDirectory)\docs</DocsDir>
+    <InstallDir>$(MSBuildProjectDirectory)\install</InstallDir>
+    <DropLocation>$(MSBuildProjectDirectory)\dist</DropLocation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <BinFiles
+      Include="$(BinDir)\*.dll;
+               $(BinDir)\*.exe;"
+      Exclude="$(BinDir)\iRINGLibrary.dll;
+               $(BinDir)\log4net.dll;
+               $(BinDir)\Ninject.dll;
+               $(BinDir)\StaticDust.Configuration.dll;
+               $(BinDir)\UtilityLibrary.dll;
+               $(BinDir)\Ionic.Zip.dll;
+               $(BinDir)\Newtonsoft.Json.dll">
+    </BinFiles>
+
+    <ConfFiles Include="$(ConfDir)\*"> </ConfFiles>
+    <InstallFiles Include="$(InstallDir)\*"></InstallFiles>
+    <DocsFiles Include="$(DocsDir)\*"> </DocsFiles>
+
+    <TestResults
+      Include="$(MSBuildProjectDirectory)\LWDLSampleCode.Test\TestResult.xml">
+    </TestResults>
+  </ItemGroup>
+
+   <ItemGroup>
+    <DeploymentPackage Include="*.*">
+      <Options>a -tzip -y -r</Options>
+      <OutputDir></OutputDir>
+      <ZipFile>$(DistDir)\SPRDataLayer-</ZipFile>
+      <FileSet>$(DistDir)\bin</FileSet>
+      <FileSet>$(DistDir)\bin $(DistDir)\conf</FileSet>
+    </DeploymentPackage>
+  </ItemGroup>
+
+   <Target Name="Versioning">
+    <Message Text="Updating assembly info ..." />
+    <XmlRead
+      XPath="/version/major"
+      XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Major" />
+    </XmlRead>
+
+    <XmlRead
+      XPath="/version/minor"
+      XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Minor" />
+    </XmlRead>
+
+    <XmlRead
+      XPath="/version/build"
+      XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Build" />
+    </XmlRead>
+
+   <XmlUpdate XPath="/version/revision" XmlFileName="version.xml" value="$(BUILD_NUMBER)"/>
+
+     <XmlRead XPath="/version/revision" XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="revision" />
+     </XmlRead>
+
+   <FileUpdate
+      Files="$(AssemblyInfoFile)"
+      Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*"
+      ReplacementText="$(Major).$(Minor).$(Build).$(BUILD_NUMBER)"/>
+
+  </Target>
+
+
+
+  <Target Name="CleanBuild">
+    <Message Text="Performing MSBuild clean-up ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
+  </Target>
+
+  <Target Name="CreateDist">
+    <Message Text="Cleaning up old dist folder..." />
+    <Exec Command="RmDir /S /Q $(DistDir)" />
+    <MakeDir Directories="$(DistDir);"/>
+
+    <Message Text="Creating distribution ..." />
+    <Copy SourceFiles="@(BinFiles)"
+          DestinationFiles="@(BinFiles ->'$(DistDir)\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(ConfFiles)"
+          DestinationFiles="@(ConfFiles ->'$(DistDir)\conf\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <Target Name="CreatePackages" DependsOnTargets="CreateDist">
+   <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile)$(Major).$(Minor).$(Build).$(Revision).zip %(DeploymentPackage.FileSet)" />
+    <RemoveDir Directories="$(DistDir)\conf;$(DistDir)\bin" />
+    <Copy SourceFiles="@(InstallFiles)"
+          DestinationFiles="@(InstallFiles ->'$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(DocsFiles)"
+	      DestinationFiles="@(DocsFiles ->'$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(TestResults)"
+          DestinationFiles="@(TestResults ->'$(DistDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <Target Name="Test">
+    <Exec Command="$(NUnit-ToolPath)nunit-console-x86.exe /nologo /noshadow LWDLSampleCode.Test\LWDLSampleCode.Test.csproj /xml=@(TestResults)" />
+  </Target>
+
+  <Target Name="Build" >
+    <Message Text="Performing MSBuild ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
+  </Target>
+
+  <Target Name="Commit">
+    <!-- Use svn commit dashdashFORCEdashLOG to commit versioned file as a log message in SVN -->
+    <Exec command="svn commit -m $(Major).$(Minor).$(Build).$(Revision) $(MSBuildProjectDirectory)\version.xml" />
+  </Target>
+
+
+  <Target  Name="Drop">
+    <ItemGroup>
+      <PublishedOutput Include="dist\**\*.*"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(PublishedOutput)" DestinationFiles="@(PublishedOutput->'$(DropLocation)\$(Major).$(Minor).$(Build).$(Revision)\Release\%(RecursiveDir)%(Filename)%(Extension)')"/>
+  </Target>
+
+
+  <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
+
+ <Target Name="All" DependsOnTargets="Versioning; Rebuild; CreatePackages; Drop"/>
+
+</Project>

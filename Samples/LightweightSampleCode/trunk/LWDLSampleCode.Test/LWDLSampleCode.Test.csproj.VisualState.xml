@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VisualState xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ShowCheckBoxes="false">
+  <TopNode>[0-1000]C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode.Test\LWDLSampleCode.Test.csproj</TopNode>
+  <SelectedNode>[0-1000]C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode.Test\LWDLSampleCode.Test.csproj</SelectedNode>
+  <ExcludeCategories>false</ExcludeCategories>
+  <Nodes>
+    <Node UniqueName="[0-1000]C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode.Test\LWDLSampleCode.Test.csproj" Expanded="true" />
+    <Node UniqueName="[0-1004]C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode.Test\bin\Debug\LWDLSampleCode.Test.dll" Expanded="true" />
+    <Node UniqueName="[0-1005]LWDLSampleCode" Expanded="true" />
+    <Node UniqueName="[0-1006]LWDLSampleCode.Test" Expanded="true" />
+    <Node UniqueName="[0-1001]LWDLSampleCode.Test.Test" Expanded="true" />
+  </Nodes>
+</VisualState>

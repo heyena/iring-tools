@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode.Test\LWDLSampleCode.Test.csproj" total="2" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2013-10-10" time="19:57:43">
+  <environment nunit-version="2.5.9.10348" clr-version="4.0.30319.1008" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\Codes\LightweightSampleCode\LWDLSampleCode\NUnit.Runner\bin\Debug" machine-name="NDHD202638" user="pksingh" user-domain="IEAMS" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="Project" name="C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode.Test\LWDLSampleCode.Test.csproj" executed="True" result="Success" success="True" time="4.405" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode.Test\bin\Debug\LWDLSampleCode.Test.dll" executed="True" result="Success" success="True" time="4.363" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="LWDLSampleCode" executed="True" result="Success" success="True" time="4.362" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Test" executed="True" result="Success" success="True" time="4.358" asserts="0">
+                <results>
+                  <test-suite type="TestFixture" name="Test" executed="True" result="Success" success="True" time="4.356" asserts="0">
+                    <results>
+                      <test-case name="LWDLSampleCode.Test.Test.TestCreateDictionary" executed="True" result="Success" success="True" time="1.165" asserts="1" />
+                      <test-case name="LWDLSampleCode.Test.Test.TestGet" executed="True" result="Success" success="True" time="1.426" asserts="1" />
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
