@@ -1,0 +1,37 @@
+{
+    "type": "Ext.grid.property.Grid",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "viewConfig": [
+            "{\"stripeRows\":true}"
+        ],
+        "border": true,
+        "height": null,
+        "width": null,
+        "designer|userClassName": "common.PropertyPanel",
+        "designer|userAlias": "propertypanel",
+        "autoScroll": true,
+        "collapsed": false,
+        "collapsible": true,
+        "title": "Details",
+        "source": [
+            "{}"
+        ]
+    },
+    "configAlternates": {
+        "border": "boolean",
+        "viewConfig": "object"
+    },
+    "designerId": "c7d5b81d-b855-40e2-947f-dd51935bc9e0",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "viewConfig",
+            "type": "object"
+        }
+    ]
+}

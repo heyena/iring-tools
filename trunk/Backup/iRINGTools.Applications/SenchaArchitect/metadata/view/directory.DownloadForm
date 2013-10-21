@@ -1,0 +1,71 @@
+{
+    "type": "Ext.form.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "height": null,
+        "width": null,
+        "designer|userClassName": "directory.DownloadForm",
+        "designer|userAlias": "downloadform",
+        "layout": "fit",
+        "bodyPadding": null,
+        "header": false,
+        "title": null
+    },
+    "designerId": "432c1ae6-f4e2-40e7-a3e6-5a7f25c5079b",
+    "cn": [
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "flex": null,
+                "height": null,
+                "width": null
+            },
+            "designerId": "23e2a2b6-ceb1-48d6-9527-3ee6211d8f38",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "flex",
+                    "type": "string"
+                }
+            ],
+            "masterInstanceId": "891a8b6b-bd32-4cc1-860b-f08fe769b0d3"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "scopeId",
+                "fieldLabel": null,
+                "name": "scope"
+            },
+            "designerId": "a2152569-92b0-4b57-9a2b-b328b6954607"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "applicationId",
+                "fieldLabel": null,
+                "name": "application"
+            },
+            "designerId": "3e3e9372-e611-4d12-81af-a5253d0040f3"
+        }
+    ]
+}

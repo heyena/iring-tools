@@ -1,0 +1,195 @@
+{
+    "type": "Ext.form.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "height": 88,
+        "width": 471,
+        "designer|userClassName": "directory.ImportCacheForm",
+        "designer|userAlias": "importcacheform",
+        "bodyPadding": 10,
+        "header": false,
+        "title": "My Form",
+        "method": "post",
+        "url": "AdapterManager/ImportCache"
+    },
+    "designerId": "f30f4a0c-cd5b-40ff-9f77-c8f20a5f51bd",
+    "cn": [
+        {
+            "type": "Ext.form.field.Text",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "margin": "10 0 0 0",
+                "fieldLabel": "Cache URI",
+                "name": "cacheUri",
+                "allowBlank": false
+            },
+            "designerId": "6c8b3ce9-b6c6-4ca8-853b-728ec4900811"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "fieldLabel": null,
+                "name": "nodeid"
+            },
+            "designerId": "f9f5ceb6-9c61-4bb1-a70a-2f702edcacbf"
+        },
+        {
+            "type": "Ext.toolbar.Toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "bottom",
+                "container|pack": "end"
+            },
+            "designerId": "1d42acc7-dddc-4e41-87b6-5e9dcb213f49",
+            "cn": [
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "text": "Submit"
+                    },
+                    "designerId": "695e23db-2ce5-4ee6-a34f-82c19c63a31e",
+                    "cn": [
+                        {
+                            "type": "fixedfunction",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "handler",
+                                "designer|params": [
+                                    "button",
+                                    "event"
+                                ],
+                                "implHandler": [
+                                    "me.onSubmit();"
+                                ]
+                            },
+                            "designerId": "2c6b1c0d-22da-473f-86a8-1aaccacbd3ca"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "text": "Close"
+                    },
+                    "designerId": "ba0c1f04-5c75-4ae5-bd86-2d2b965ce0f6",
+                    "cn": [
+                        {
+                            "type": "fixedfunction",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "handler",
+                                "designer|params": [
+                                    "button",
+                                    "event"
+                                ],
+                                "implHandler": [
+                                    "me.onClose();"
+                                ]
+                            },
+                            "designerId": "7e111968-5db3-46f1-be9d-33281239a433"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onSubmit",
+                "implHandler": [
+                    "\r",
+                    "var me = this;\r",
+                    "var win = me.up('window');\r",
+                    "var form = me.getForm();\r",
+                    "var message;\r",
+                    "if(me.getForm().isValid()) {\r",
+                    "  me.getForm().submit({\r",
+                    "    waitMsg: 'Importing Cache...',\r",
+                    "    success: function (response, request) {\r",
+                    "      var responseObj = Ext.decode(response.responseText);\r",
+                    "      if (responseObj.Level == 0) {\r",
+                    "        showDialog(450, 100, 'Import Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);\r",
+                    "      }\r",
+                    "      else {\r",
+                    "        showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);\r",
+                    "      }\r",
+                    "      win.fireEvent('save', me);\r",
+                    "    },\r",
+                    "    failure: function (result, request) {\r",
+                    "      message = 'Import Cache Error';\r",
+                    "      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "    }\r",
+                    "  });\r",
+                    "} else {\r",
+                    "  message = 'Form is not complete';\r",
+                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   \r",
+                    "}\r",
+                    ""
+                ]
+            },
+            "designerId": "3a074e93-6fea-46c4-8a2c-0a6411e15d9c"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onClose",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var win = me.up('window');\r",
+                    "//me.getForm().reset();\r",
+                    "win.destroy();"
+                ]
+            },
+            "designerId": "20073d93-2935-4841-abd0-01f71d152a8f"
+        }
+    ]
+}

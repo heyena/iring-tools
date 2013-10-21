@@ -1,0 +1,79 @@
+<tips>
+    <id>T0296</id>
+    <guid>RB16718DF3D96486BA0C3C3BFFB6F9CFC</guid>
+    <name>Lines</name>
+    <description>Indication of angle relative to a horizontal plane, always a positive value; sometimes stated as a ratio like 5-12</description>
+    <synonyms></synonyms>
+    <remarks>20120919 Scott</remarks>
+    <commodity_Tip>
+        <tip_Id>T0296</tip_Id>
+        <commodity_Id>103</commodity_Id>
+    </commodity_Tip>
+    <commodity_Tip>
+        <tip_Id>T0296</tip_Id>
+        <commodity_Id>104</commodity_Id>
+    </commodity_Tip>
+    <commodity_Tip>
+        <tip_Id>T0296</tip_Id>
+        <commodity_Id>105</commodity_Id>
+    </commodity_Tip>
+    <parameters>
+        <Id>P0672</Id>
+        <guid>R0C67555D6B87454DA3F4A627B230C839</guid>
+        <name>Tag</name>
+        <typical_Value>12</typical_Value>
+        <synonyms></synonyms>
+        <tipId>T0296</tipId>
+        <isMapped>true</isMapped>
+		<dataPropertyName>LINES.TAG</dataPropertyName>
+    </parameters>
+	    <parameters>
+        <Id>P0673</Id>
+        <guid>R0C67555D6B87454DA3F4A627B230C819</guid>
+        <name>Area</name>
+        <typical_Value>12</typical_Value>
+        <synonyms></synonyms>
+        <tipId>T0296</tipId>
+        <isMapped>true</isMapped>
+		<dataPropertyName>LINES.AREA</dataPropertyName>
+    </parameters>
+	    <parameters>
+        <Id>P0674</Id>
+        <guid>R0C67555D6B87454DA3F4A627B230C829</guid>
+        <name>IdentificationNumber</name>
+        <typical_Value>12</typical_Value>
+        <synonyms></synonyms>
+        <tipId>T0296</tipId>
+        <isMapped>true</isMapped>
+		<dataPropertyName>LINES.PIDNUMBER</dataPropertyName>
+    </parameters>
+	    <parameters>
+        <Id>P0675</Id>
+        <guid>R0C67555D6B87454DA3F4A627B230C833</guid>
+        <name>UOMNominalDiameter</name>
+        <typical_Value>12</typical_Value>
+        <synonyms></synonyms>
+        <tipId>T0296</tipId>
+        <isMapped>true</isMapped>
+		<dataPropertyName>LINES.UOM_NOMDIAMETER</dataPropertyName>
+    </parameters>
+	    <parameters>
+        <Id>P0676</Id>
+        <guid>R0C67555D6B87454DA3F4A627B230C844</guid>
+        <name>NominalDiameter</name>
+        <typical_Value>12</typical_Value>
+        <synonyms></synonyms>
+        <tipId>T0296</tipId>
+        <isMapped>true</isMapped>
+		<dataPropertyName>LINES.NOMDIAMETER</dataPropertyName>
+    </parameters>
+	<statusId>3</statusId>
+    <commodityStatusId>3</commodityStatusId>
+    <mappingStatusId>3</mappingStatusId>
+    <combinedStatus>3</combinedStatus>
+</tips>
+
+
+
+
+

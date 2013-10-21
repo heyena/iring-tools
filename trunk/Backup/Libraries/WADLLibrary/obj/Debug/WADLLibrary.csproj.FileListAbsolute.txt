@@ -1,0 +1,5 @@
+C:\IRINGTools\Adapter\Libraries\WADLLibrary\bin\Debug\APITools.dll
+C:\IRINGTools\Adapter\Libraries\WADLLibrary\bin\Debug\APITools.pdb
+C:\IRINGTools\Adapter\Libraries\WADLLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\IRINGTools\Adapter\Libraries\WADLLibrary\obj\Debug\APITools.dll
+C:\IRINGTools\Adapter\Libraries\WADLLibrary\obj\Debug\APITools.pdb
