@@ -311,7 +311,8 @@ namespace org.iringtools.web.controllers
                       templateNode.properties.Add("propertyName_" + i, mappedProperties[i]);
                       count++;
                   }
-                  templateNode.propertiesCount = count;
+                  //templateNode.propertiesCount = count;
+                  templateNode.properties.Add("propertiesCount", count.ToString());
                   foreach (var role in templateMap.roleMaps)
                   {
                     roleNode = new JsonTreeNode
@@ -720,7 +721,7 @@ namespace org.iringtools.web.controllers
         children = new List<JsonTreeNode>(),
         record = templateMap,
         properties = new Dictionary<string,string>(),
-        propertiesCount = 0
+        //propertiesCount = 0
       };
 
       return templateNode;
