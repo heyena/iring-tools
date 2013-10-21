@@ -253,8 +253,9 @@ Ext.define('AM.controller.Mapping', {
 
       mapTree.on('itemclick', function (tablepanel, record, item, index, e) {
         var tempProperty, dataObject, prop;
-        if(record.data.type == 'TemplateMapNode' && record.data.propertiesCount>0){
-          for(var kk=0;kk<record.data.propertiesCount;kk++){
+        var propertiesCount = parseInt(record.data.properties.propertiesCount);
+        if(record.data.type == 'TemplateMapNode' && propertiesCount>0){//if(record.data.type == 'TemplateMapNode' && record.data.propertiesCount>0){
+          for(var kk=0;kk<propertiesCount;kk++){
             var propIndex = 'propertyName_'+kk;
             var tempProperty = record.data.properties[propIndex];
             if(tempProperty){
