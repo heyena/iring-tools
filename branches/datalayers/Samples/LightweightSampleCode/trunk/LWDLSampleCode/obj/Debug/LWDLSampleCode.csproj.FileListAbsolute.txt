@@ -1,0 +1,15 @@
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\LWDLSampleCode.dll
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\LWDLSampleCode.pdb
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\iRINGLibrary.dll
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\log4net.dll
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\StaticDust.Configuration.dll
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\UtilityLibrary.dll
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\iRINGLibrary.pdb
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\log4net.xml
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\UtilityLibrary.pdb
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\obj\Debug\ResolveAssemblyReference.cache
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\obj\Debug\LWDLSampleCode.dll
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\obj\Debug\LWDLSampleCode.pdb
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\Ionic.Zip.dll
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\Newtonsoft.Json.dll
+C:\Codes\LightweightSampleCode\LWDLSampleCode\LWDLSampleCode\bin\Debug\Newtonsoft.Json.xml
