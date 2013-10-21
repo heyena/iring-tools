@@ -1,0 +1,93 @@
+{
+    "type": "Ext.window.Window",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "application": null,
+        "scope": null,
+        "height": 300,
+        "width": 530,
+        "designer|userClassName": "directory.FileDownloadWindow",
+        "designer|userAlias": "filedownloadwindows",
+        "layout": "fit",
+        "title": "Download File",
+        "modal": true
+    },
+    "designerId": "70726d51-c369-4512-84e0-e1a1ee5e410a",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "application",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "scope",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "c26a9f32-6110-4a03-9b7d-2434080f99ed",
+            "masterInstanceId": "432c1ae6-f4e2-40e7-a3e6-5a7f25c5079b"
+        },
+        {
+            "type": "Ext.toolbar.Toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "bottom",
+                "container|pack": "end"
+            },
+            "designerId": "b5e22fcd-f228-4ae2-a842-cdf70c2aa9d3",
+            "cn": [
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "text": "Cancel"
+                    },
+                    "designerId": "77ae790d-39be-46f1-bdff-55cb3774cc18",
+                    "cn": [
+                        {
+                            "type": "fixedfunction",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "handler",
+                                "designer|params": [
+                                    "button",
+                                    "event"
+                                ],
+                                "implHandler": [
+                                    "button.up().up().close();"
+                                ]
+                            },
+                            "designerId": "4dfe73b6-f4cf-4b95-aab5-fb3bf8355db2"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

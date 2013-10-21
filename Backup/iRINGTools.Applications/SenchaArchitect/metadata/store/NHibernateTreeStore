@@ -1,0 +1,76 @@
+{
+    "type": "Ext.data.TreeStore",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "autoLoad": null,
+        "model": "NHibernateTreeModel",
+        "storeId": "NHibernateTreeStore",
+        "designer|userClassName": "NHibernateTreeStore",
+        "root": [
+            "{\r",
+            "  expanded: true,\r",
+            "  text: 'Data Objects',\r",
+            "  iconCls: 'folder',\r",
+            "  loaded:true\r",
+            "    }"
+        ]
+    },
+    "designerId": "a3fb05dd-4586-4c2d-82bb-23b8d97d9bc9",
+    "cn": [
+        {
+            "type": "Ext.data.proxy.Ajax",
+            "reference": {
+                "name": "proxy",
+                "type": "object"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "actionMethods": [
+                    "{\"read\":\"POST\"}"
+                ],
+                "extraParams": [
+                    "{\r",
+                    "  scope: null,\r",
+                    "  app: null,\r",
+                    "  dbProvider: null,\r",
+                    "  dbServer: null,\r",
+                    "  dbInstance: null,\r",
+                    "  dbName: null,\r",
+                    "  dbSchema: null,\r",
+                    "  dbUserName: null,\r",
+                    "  dbPassword: null,\r",
+                    "  portNumber: null,\r",
+                    "  tableNames: null,\r",
+                    "  serName: null,\r",
+                    "  baseUrl:null\r",
+                    "}"
+                ],
+                "timeout": 600000,
+                "url": "AdapterManager/DBObjects"
+            },
+            "designerId": "33e0092b-58da-454c-9de8-cb78073da37c",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "actionMethods",
+                    "type": "object"
+                }
+            ],
+            "cn": [
+                {
+                    "type": "Ext.data.reader.Json",
+                    "reference": {
+                        "name": "reader",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "designerId": "e9706447-dbdf-4be5-8da2-17f703d15a60"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,62 @@
+{
+    "type": "Ext.data.TreeStore",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "autoLoad": false,
+        "model": "SearchModel",
+        "storeId": "SearchStore",
+        "designer|userClassName": "SearchStore",
+        "root": [
+            "{expanded: true, loaded: true}"
+        ]
+    },
+    "designerId": "88fb5df4-c2c7-4ed8-a325-8140a2eb98bf",
+    "cn": [
+        {
+            "type": "Ext.data.proxy.Ajax",
+            "reference": {
+                "name": "proxy",
+                "type": "object"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "actionMethods": [
+                    "{\"read\":\"POST\"}"
+                ],
+                "extraParams": [
+                    "{  id: null,\r",
+                    "                type: null,\r",
+                    "                query: null,\r",
+                    "                reset: null,\r",
+                    "                limit: 100,\r",
+                    " start: 0}"
+                ],
+                "timeout": 600000,
+                "url": "refdata/getnode"
+            },
+            "designerId": "44f670b4-6410-4c1f-b76b-e1a3989a5da1",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "actionMethods",
+                    "type": "object"
+                }
+            ],
+            "cn": [
+                {
+                    "type": "Ext.data.reader.Json",
+                    "reference": {
+                        "name": "reader",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "designerId": "075e9926-beb3-490c-84a7-496a7cc89ff5"
+                }
+            ]
+        }
+    ]
+}

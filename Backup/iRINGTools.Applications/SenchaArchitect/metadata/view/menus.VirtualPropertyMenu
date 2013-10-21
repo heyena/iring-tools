@@ -1,0 +1,58 @@
+{
+    "type": "Ext.menu.Menu",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "width": 160,
+        "designer|userClassName": "menus.VirtualPropertyMenu",
+        "designer|userAlias": "virtualpropertymenu"
+    },
+    "designerId": "c2272cb9-059f-4d30-af85-1493ee31f092",
+    "cn": [
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "editvirtualproperty",
+                "icon": "Content/img/16x16/document-properties.png",
+                "text": "Edit Virtual Property"
+            },
+            "designerId": "b8eac103-e2f0-4263-81b2-0749d25820d5",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "deletevirtualproperty",
+                "icon": "Content/img/16x16/edit-delete.png",
+                "text": "Delete Virtual Property"
+            },
+            "designerId": "ca3ca61e-fcd3-4518-a4e4-410fe28ad927",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        }
+    ]
+}

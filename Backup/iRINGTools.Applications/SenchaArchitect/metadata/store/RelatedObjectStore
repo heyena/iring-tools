@@ -1,0 +1,39 @@
+{
+    "type": "arraystore",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "storeId": "RelatedObjectStore",
+        "designer|userClassName": "RelatedObjectStore"
+    },
+    "designerId": "ffabf5cf-ba77-4af8-bdd9-9bb18152cfcd",
+    "cn": [
+        {
+            "type": "Ext.data.Field",
+            "reference": {
+                "name": "fields",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "value"
+            },
+            "designerId": "6fcadd1c-201a-494e-88cc-f996ac0e9344"
+        },
+        {
+            "type": "Ext.data.Field",
+            "reference": {
+                "name": "fields",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "text"
+            },
+            "designerId": "d12b2450-a205-4963-99cd-ccce9f0e1941"
+        }
+    ]
+}

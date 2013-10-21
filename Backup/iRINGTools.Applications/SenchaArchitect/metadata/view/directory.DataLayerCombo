@@ -1,0 +1,20 @@
+{
+    "type": "Ext.form.field.ComboBox",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "width": null,
+        "designer|userClassName": "directory.DataLayerCombo",
+        "designer|userAlias": "datalayercombo",
+        "fieldLabel": "Data Layer",
+        "editable": false,
+        "displayField": "name",
+        "hiddenName": "Assembly",
+        "store": "DataLayerStore",
+        "valueField": "assembly"
+    },
+    "designerId": "89827f86-cc75-4149-b7e4-3defbfcb6ebd"
+}

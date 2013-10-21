@@ -1,0 +1,182 @@
+2013-10-03 10:10:14,293 [27] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 10:10:36,817 [31] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 10:28:05,951 [5] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 10:29:00,449 [13] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 10:29:23,240 [14] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 10:30:53,226 [21] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 10:32:16,750 [21] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 10:34:27,599 [22] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 10:35:00,601 [21] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 10:48:02,702 [21] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The operation has timed out
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 10:49:41,561 [25] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 10:50:42,859 [22] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 11:00:15,783 [13] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 11:02:40,806 [14] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 11:07:10,128 [19] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/ABC/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 11:31:58,459 [37] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid property map.
+   at org.iringtools.web.controllers.MappingController.MapProperty(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\MappingController.cs:line 918
+2013-10-03 11:32:18,747 [37] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid property map.
+   at org.iringtools.web.controllers.MappingController.MapProperty(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\MappingController.cs:line 918
+2013-10-03 11:32:36,702 [29] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid property map.
+   at org.iringtools.web.controllers.MappingController.MapProperty(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\MappingController.cs:line 918
+2013-10-03 13:20:41,552 [27] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/DEF/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 13:20:52,504 [31] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/DEF/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 13:27:54,369 [60] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/DEF/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 13:28:29,777 [31] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/DEF/binding]. ---> System.Net.WebException: The remote server returned an error: (400) Bad Request.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 13:33:46,189 [21] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adapter/12345_000/DEF/binding]. ---> System.Net.WebException: The operation has timed out
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetBinding(String scope, String application) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 330
+   at iRINGTools.Web.Models.AdapterRepository.GetDataLayer(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 365
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-03 13:34:23,899 [26] ERROR org.iringtools.web.controllers.DirectoryController - System.NullReferenceException: Object reference not set to an instance of an object.
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 472
+2013-10-03 13:35:46,687 [41] ERROR org.iringtools.web.controllers.DirectoryController - System.NullReferenceException: Object reference not set to an instance of an object.
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 472
+2013-10-03 13:38:13,288 [44] ERROR org.iringtools.web.controllers.DirectoryController - System.NullReferenceException: Object reference not set to an instance of an object.
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 472
+2013-10-03 13:48:25,418 [51] ERROR org.iringtools.web.controllers.DirectoryController - System.ArgumentNullException: Value cannot be null.
+Parameter name: values
+   at System.String.Join(String separator, IEnumerable`1 values)
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 472
+2013-10-03 13:49:53,882 [46] ERROR org.iringtools.web.controllers.DirectoryController - System.ArgumentNullException: Value cannot be null.
+Parameter name: values
+   at System.String.Join(String separator, IEnumerable`1 values)
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 472
+2013-10-03 14:02:26,207 [34] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/data/XYX/54652/dictionary?format=xml]. ---> System.Net.WebException: The remote server returned an error: (500) Internal Server Error.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetDictionary(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 255
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 279
+2013-10-03 14:06:24,460 [61] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/data/XYX/54652/dictionary?format=xml]. ---> System.Net.WebException: The remote server returned an error: (500) Internal Server Error.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetDictionary(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 255
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 279
+2013-10-03 14:18:17,671 [56] ERROR org.iringtools.web.controllers.MappingController - System.NullReferenceException: Object reference not set to an instance of an object.
+   at org.iringtools.mapping.MappingExtensions.GetClassTemplateMap(GraphMap graphMap, String classId, Int32 index) in C:\IRINGTools\Adapter\Libraries\iRINGLibrary\MappingExtensions.cs:line 156
+   at org.iringtools.mapping.MappingExtensions.DeleteTemplateMap(GraphMap graphMap, String parentClassId, Int32 parentClassIndex, Int32 templateMapIndex) in C:\IRINGTools\Adapter\Libraries\iRINGLibrary\MappingExtensions.cs:line 267
+   at org.iringtools.web.controllers.MappingController.DeleteTemplateMap(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\MappingController.cs:line 1103
+2013-10-03 14:18:24,217 [56] ERROR org.iringtools.web.controllers.MappingController - System.NullReferenceException: Object reference not set to an instance of an object.
+   at org.iringtools.mapping.MappingExtensions.GetClassTemplateMap(GraphMap graphMap, String classId, Int32 index) in C:\IRINGTools\Adapter\Libraries\iRINGLibrary\MappingExtensions.cs:line 156
+   at org.iringtools.mapping.MappingExtensions.DeleteTemplateMap(GraphMap graphMap, String parentClassId, Int32 parentClassIndex, Int32 templateMapIndex) in C:\IRINGTools\Adapter\Libraries\iRINGLibrary\MappingExtensions.cs:line 267
+   at org.iringtools.web.controllers.MappingController.DeleteTemplateMap(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\MappingController.cs:line 1103
+2013-10-03 14:18:41,276 [56] ERROR org.iringtools.web.controllers.DirectoryController - System.NullReferenceException: Object reference not set to an instance of an object.
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 187

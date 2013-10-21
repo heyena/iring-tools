@@ -1,0 +1,163 @@
+{
+    "type": "Ext.form.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "border": false,
+        "height": null,
+        "width": null,
+        "designer|userClassName": "spreadsheet.SpreadsheetForm",
+        "designer|userAlias": "spreadsheetform",
+        "defaults": [
+            "{ anchor: '100%', msgTarget: 'side'}"
+        ],
+        "bodyPadding": null,
+        "bodyStyle": [
+            "padding:10px 5px 0"
+        ],
+        "title": null
+    },
+    "configAlternates": {
+        "border": "boolean"
+    },
+    "designerId": "ce6504c7-08bb-4a89-a41b-4128aec9f385",
+    "cn": [
+        {
+            "type": "Ext.toolbar.Toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "bottom",
+                "container|padding": 4
+            },
+            "designerId": "ee726ea3-80c5-46fb-b2fa-1a1c9a265884",
+            "cn": [
+                {
+                    "type": "Ext.toolbar.Fill",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null
+                    },
+                    "designerId": "abb17c28-8074-432e-b0bc-d8b6404ee505"
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "icon": "Content/img/16x16/document-up.png",
+                        "text": "Upload"
+                    },
+                    "designerId": "0587ba17-ede8-4b50-81b6-5c1c86886442"
+                }
+            ]
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": null,
+                "name": "contectName"
+            },
+            "designerId": "b21eb1aa-4dcd-4a55-80b1-0889a3752068"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": null,
+                "name": "endpoint"
+            },
+            "designerId": "e6471fef-5bb1-415a-b4cd-ef18d79d503d"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": null,
+                "name": "baseUrl"
+            },
+            "designerId": "d973ff06-a45a-4b94-ba47-24050584f436"
+        },
+        {
+            "type": "Ext.form.field.Hidden",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": null,
+                "name": "datalayer"
+            },
+            "designerId": "4e198074-5815-45b2-b50c-cfe03049a585"
+        },
+        {
+            "type": "Ext.form.field.File",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "fieldLabel": "Spreadsheet Source",
+                "labelWidth": 150,
+                "name": "sourceFile",
+                "emptyText": "Select a Spreadsheet'",
+                "buttonConfig": [
+                    "{iconCls: 'upload-icon', buttonText: ''}"
+                ],
+                "buttonText": null
+            },
+            "designerId": "bf749712-f7d4-48e8-b08b-b9755244638e"
+        },
+        {
+            "type": "Ext.form.field.Checkbox",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": "100%",
+                "fieldLabel": "Generate Configuration",
+                "labelWidth": 150,
+                "name": "generate",
+                "boxLabel": null,
+                "checked": true
+            },
+            "designerId": "9ac41aad-1247-4d9f-8ca4-8ef540a47b85"
+        }
+    ]
+}

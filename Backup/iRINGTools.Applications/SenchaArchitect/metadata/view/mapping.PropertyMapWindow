@@ -1,0 +1,78 @@
+{
+    "type": "Ext.window.Window",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "initCompnent": null,
+        "init": null,
+        "height": 140,
+        "width": 430,
+        "designer|userClassName": "mapping.PropertyMapWindow",
+        "designer|userAlias": "propertymapwindow",
+        "layout": "fit",
+        "title": "Map Data Property to RoleMap"
+    },
+    "designerId": "30a9aae0-b8d9-4577-bd7d-c9c9ae4978d3",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "initCompnent",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "init",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "initComponent": null,
+                "designer|displayName": "PropertyMapForm"
+            },
+            "designerId": "001f96e1-ae57-4938-b430-bbb310279b2c",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "initComponent",
+                    "type": "string"
+                }
+            ],
+            "masterInstanceId": "6a016f72-b8ed-445c-8693-8e07b3c965cf"
+        },
+        {
+            "type": "customevent",
+            "reference": {
+                "name": "customEvents",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "save"
+            },
+            "designerId": "be5f2a5b-b7a6-4f37-9702-f41b1cd9c65d"
+        },
+        {
+            "type": "customevent",
+            "reference": {
+                "name": "customEvents",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "reset"
+            },
+            "designerId": "73af450d-017e-431f-b4fe-4a1704e819a6"
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+C:\IRINGTools\Adapter\Tests\NUnit.Runner\bin\Release\NUnit.exe
+C:\IRINGTools\Adapter\Tests\NUnit.Runner\bin\Release\NUnit.pdb
+C:\IRINGTools\Adapter\Tests\NUnit.Runner\bin\Release\nunit-gui-runner.dll
+C:\IRINGTools\Adapter\Tests\NUnit.Runner\bin\Release\nunit.util.dll
+C:\IRINGTools\Adapter\Tests\NUnit.Runner\bin\Release\nunit.uikit.dll
+C:\IRINGTools\Adapter\Tests\NUnit.Runner\bin\Release\nunit.core.dll
+C:\IRINGTools\Adapter\Tests\NUnit.Runner\bin\Release\nunit.core.interfaces.dll
+C:\IRINGTools\Adapter\Tests\NUnit.Runner\bin\Release\nunit.uiexception.dll
+C:\IRINGTools\Adapter\Tests\NUnit.Runner\obj\x86\Release\ResolveAssemblyReference.cache
+C:\IRINGTools\Adapter\Tests\NUnit.Runner\obj\x86\Release\NUnit.exe
+C:\IRINGTools\Adapter\Tests\NUnit.Runner\obj\x86\Release\NUnit.pdb

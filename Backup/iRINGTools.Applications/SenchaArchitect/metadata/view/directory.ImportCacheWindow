@@ -1,0 +1,54 @@
+{
+    "type": "Ext.window.Window",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "height": 119,
+        "width": 482,
+        "designer|userClassName": "directory.ImportCacheWindow",
+        "designer|userAlias": "importcachewindow",
+        "layout": "fit",
+        "title": "Import Cache",
+        "modal": true
+    },
+    "designerId": "2a0051e3-0005-471d-bb11-7167a82113ae",
+    "cn": [
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "b8e776d6-412c-40ef-8e41-2c2feabb1db5",
+            "masterInstanceId": "f30f4a0c-cd5b-40ff-9f77-c8f20a5f51bd"
+        },
+        {
+            "type": "customevent",
+            "reference": {
+                "name": "customEvents",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "save"
+            },
+            "designerId": "d1fba61a-4316-4a7b-bd0e-8e2b5e899410"
+        },
+        {
+            "type": "customevent",
+            "reference": {
+                "name": "customEvents",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "name": "reset"
+            },
+            "designerId": "884725a7-e947-4976-a4e2-fdf40ccff3fb"
+        }
+    ]
+}

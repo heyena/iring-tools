@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<tipMapping xmlns="http://www.iringtools.org/tipmapping" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<tipMaps>
+		<tipMap>
+			<id>T0004</id>
+			<name>Lines</name>
+			<description>Lines collection</description>
+			<parameterMaps>
+				<parameterMap>
+					<path>C1.T1.R1</path>
+					<id>P0009</id>
+					<name>TAGNAMELINES</name>
+					<tipId>T0004</tipId>
+					<dataPropertyName>LINES.TAG</dataPropertyName>
+				</parameterMap>
+				<parameterMap>
+					<path>C1.T1.R1.C2.T2.R2</path>
+					<id>P0022</id>
+					<name>TAGNOMIS</name>
+					<tipId>T0004</tipId>
+					<dataPropertyName>LINES.NOMDIAMETER</dataPropertyName>
+				</parameterMap>
+			</parameterMaps>
+		</tipMap>
+		<tipMap>
+			<id>T2403</id>
+			<name>Equipment</name>
+			<description>Equipment collection</description>
+			<parameterMaps>
+				<parameterMap>
+					<path>C5.T5.R5</path>
+					<id>P0453</id>
+					<name>EQUIPMENTTAG</name>
+					<tipId>T2403</tipId>
+					<dataPropertyName>EQUIPMENT.TAG</dataPropertyName>
+				</parameterMap>
+				<parameterMap>
+					<path>C5.T5.R5.C2.T2.R2</path>
+					<id>P0022</id>
+					<name>EQUIPMENTAREA</name>
+					<tipId>T2403</tipId>
+					<dataPropertyName>EQUIPMENT.AREA</dataPropertyName>
+				</parameterMap>
+			</parameterMaps>
+		</tipMap>
+	</tipMaps>
+</tipMapping>

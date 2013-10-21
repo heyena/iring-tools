@@ -1,0 +1,59 @@
+{
+    "type": "jsonstore",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "autoLoad": false,
+        "model": "FileDownloadModel",
+        "storeId": "FileDownloadStore",
+        "designer|userClassName": "FileDownloadStore",
+        "designer|userAlias": "filedownloadstore"
+    },
+    "designerId": "c47bb7fc-c622-4f9d-83ae-be96ead2c751",
+    "cn": [
+        {
+            "type": "Ext.data.proxy.Ajax",
+            "reference": {
+                "name": "proxy",
+                "type": "object"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "actionMethod": null,
+                "extraParams": [
+                    "{\r",
+                    "  'scope':null,\r",
+                    "  'application':null\r",
+                    "}"
+                ],
+                "timeout": null,
+                "url": "File/GetFiles"
+            },
+            "configAlternates": {
+                "actionMethod": "object"
+            },
+            "designerId": "6344d311-c9bc-4222-aaf5-10a783a30212",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "actionMethod",
+                    "type": "string"
+                }
+            ],
+            "cn": [
+                {
+                    "type": "Ext.data.reader.Json",
+                    "reference": {
+                        "name": "reader",
+                        "type": "object"
+                    },
+                    "codeClass": null,
+                    "designerId": "034866b0-c8fb-407b-bd3f-8fa811ddbbc5"
+                }
+            ]
+        }
+    ]
+}

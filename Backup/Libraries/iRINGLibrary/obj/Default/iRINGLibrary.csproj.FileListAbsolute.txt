@@ -1,0 +1,14 @@
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\bin\Default\iRINGLibrary.dll
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\bin\Default\iRINGLibrary.pdb
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\bin\Default\log4net.dll
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\bin\Default\StaticDust.Configuration.dll
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\bin\Default\UtilityLibrary.dll
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\bin\Default\Newtonsoft.Json.dll
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\bin\Default\Ionic.Zip.dll
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\bin\Default\UtilityLibrary.pdb
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\bin\Default\log4net.xml
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\bin\Default\Newtonsoft.Json.pdb
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\bin\Default\Newtonsoft.Json.xml
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\obj\Default\ResolveAssemblyReference.cache
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\obj\Default\iRINGLibrary.dll
+C:\IRINGTools\Adapter\Libraries\iRINGLibrary\obj\Default\iRINGLibrary.pdb
