@@ -133,16 +133,12 @@
     <Compile Include="BaseProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Container.cs" />
     <Compile Include="ContentObject.cs" />
     <Compile Include="DataLayerGateway.cs" />
     <Compile Include="DataProjectionEngine.cs" />
     <Compile Include="DBManager.cs" />
     <Compile Include="DtiTask.cs" />
     <Compile Include="InboundDtoTask.cs" />
-    <Compile Include="JsonLD.cs" />
-    <Compile Include="JsonLDBase.cs" />
-    <Compile Include="JsonLDContext.cs" />
     <Compile Include="JsonLDProjectionEngine.cs" />
     <Compile Include="OutboundDtoTask.cs" />
     <Compile Include="DataItemSerializer.cs" />
