@@ -175,6 +175,7 @@
     <Compile Include="SPARQLQuery.cs" />
     <Compile Include="SPARQLResults.cs" />
     <Compile Include="SessionState.cs" />
+    <Compile Include="TipMapping.cs" />
     <Compile Include="VersionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
