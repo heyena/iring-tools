@@ -107,9 +107,8 @@
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\Libraries\AdapterLibrary\DataItemSerializer.cs">
-      <Link>DataItemSerializer.cs</Link>
+      <Link>Models\DataItemSerializer.cs</Link>
     </Compile>
-    <Compile Include="ConfigFile.cs" />
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\AppEditorController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -150,23 +149,6 @@
     <Compile Include="Models\NHibernateRepository.cs" />
     <Compile Include="Models\RefDataRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\AppEditor\Index.aspx.cs">
-      <DependentUpon>Index.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Views\MappingEditor\Index.aspx.cs">
-      <DependentUpon>Index.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Views\MappingEditor\Index.aspx.designer.cs">
-      <DependentUpon>Index.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Views\RefDataEditor\Index.aspx.cs">
-      <DependentUpon>Index.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Views\RefDataEditor\Index.aspx.designer.cs">
-      <DependentUpon>Index.aspx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.html" />
@@ -381,11 +363,7 @@
     <Content Include="Scripts\AM\view\Viewport.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
-    <Content Include="Views\AppEditor\Index.aspx" />
-    <Content Include="Views\Directory\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />
-    <Content Include="Views\MappingEditor\Index.aspx" />
-    <Content Include="Views\RefDataEditor\Index.aspx" />
     <Content Include="Scripts\jquery-1.4.1.js" />
     <Content Include="Scripts\jquery-1.4.1.min.js" />
     <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
@@ -398,10 +376,8 @@
     <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
     <Content Include="Scripts\MicrosoftMvcValidation.js" />
     <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
-    <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ClientBin\" />
     <Folder Include="Service References\App_Data\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
