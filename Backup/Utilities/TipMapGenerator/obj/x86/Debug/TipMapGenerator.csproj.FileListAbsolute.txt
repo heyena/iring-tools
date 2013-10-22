@@ -1,5 +1,0 @@
-C:\IRINGTools\Adapter\Utilities\TipMapGenerator\bin\Debug\TipMapGenerator.exe
-C:\IRINGTools\Adapter\Utilities\TipMapGenerator\bin\Debug\TipMapGenerator.pdb
-C:\IRINGTools\Adapter\Utilities\TipMapGenerator\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\IRINGTools\Adapter\Utilities\TipMapGenerator\obj\x86\Debug\TipMapGenerator.exe
-C:\IRINGTools\Adapter\Utilities\TipMapGenerator\obj\x86\Debug\TipMapGenerator.pdb

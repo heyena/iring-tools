@@ -1,6 +1,0 @@
-2013-09-24 08:46:04,007 [27] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/data/MMM/12345_000/dictionary?format=xml]. ---> System.Net.WebException: The remote server returned an error: (500) Internal Server Error.
-   at System.Net.HttpWebRequest.GetResponse()
-   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\IRINGTools\Adapter\Libraries\UtilityLibrary\WebClient.cs:line 372
-   --- End of inner exception stack trace ---
-   at iRINGTools.Web.Models.AdapterRepository.GetDictionary(String scopeName, String applicationName) in C:\IRINGTools\Adapter\iRINGTools.Applications\Models\AdapterRepository.cs:line 255
-   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\IRINGTools\Adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 279
