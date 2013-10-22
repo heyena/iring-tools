@@ -7,8 +7,8 @@
     "codeClass": null,
     "userConfig": {
         "border": false,
-        "height": 200,
-        "width": 460,
+        "height": 242,
+        "width": 467,
         "designer|userClassName": "directory.ScopeWindow",
         "designer|userAlias": "scopewindow",
         "layout": "fit",
@@ -30,6 +30,10 @@
                 "type": "array"
             },
             "codeClass": null,
+            "userConfig": {
+                "height": 168,
+                "width": 448
+            },
             "designerId": "e17e2ec1-59e1-409f-b953-f01cb465332c",
             "masterInstanceId": "354a52a2-af56-440e-a28d-e03f1135a5e9"
         },

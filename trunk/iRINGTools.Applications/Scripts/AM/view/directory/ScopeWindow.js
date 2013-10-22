@@ -22,8 +22,8 @@ Ext.define('AM.view.directory.ScopeWindow', {
   ],
 
   border: false,
-  height: 200,
-  width: 460,
+  height: 242,
+  width: 467,
   layout: {
     type: 'fit'
   },
@@ -42,7 +42,9 @@ Ext.define('AM.view.directory.ScopeWindow', {
     Ext.applyIf(me, {
       items: [
         {
-          xtype: 'scopeform'
+          xtype: 'scopeform',
+          height: 168,
+          width: 448
         }
       ]
     });

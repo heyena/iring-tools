@@ -101,6 +101,11 @@ Ext.define('AM.view.directory.ScopeForm', {
           xtype: 'textareafield',
           fieldLabel: 'Description',
           name: 'description'
+        },
+        {
+          xtype: 'textareafield',
+          fieldLabel: 'Cache ConnStr',
+          name: 'cacheDBConnStr'
         }
       ]
     });

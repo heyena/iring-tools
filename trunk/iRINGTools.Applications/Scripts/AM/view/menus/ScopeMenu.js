@@ -26,13 +26,13 @@ Ext.define('AM.view.menus.ScopeMenu', {
           xtype: 'menuitem',
           action: 'neweditscope',
           itemId: 'editfolder',
-          icon: 'Content/img/16x16/document-properties.png',
+          icon: 'Content/img/16x16/edit.png',
           text: 'Edit Scope'
         },
         {
           xtype: 'menuitem',
           action: 'deletescope',
-          icon: 'Content/img/16x16/edit-delete.png',
+          icon: 'Content/img/16x16/delete.png',
           text: 'Delete Scope'
         },
         {

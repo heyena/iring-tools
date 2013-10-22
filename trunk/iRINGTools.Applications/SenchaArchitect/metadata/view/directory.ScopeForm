@@ -313,6 +313,20 @@
                 "name": "description"
             },
             "designerId": "9ef16378-a5b3-4867-ade6-cfbb89267fe0"
+        },
+        {
+            "type": "Ext.form.field.TextArea",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": "Cache ConnStr",
+                "name": "cacheDBConnStr"
+            },
+            "designerId": "bcf88a7c-5cad-42a8-addf-c486194ff413"
         }
     ]
 }
