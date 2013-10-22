@@ -8,9 +8,9 @@
     "userConfig": {
         "node": "",
         "border": false,
-        "height": 434,
+        "height": 467,
         "minHeight": 200,
-        "width": 733,
+        "width": 734,
         "designer|userClassName": "directory.ApplicationWindow",
         "designer|userAlias": "applicationwindow",
         "layout": "fit",
@@ -61,6 +61,10 @@
                 "type": "array"
             },
             "codeClass": null,
+            "userConfig": {
+                "height": 402,
+                "width": 721
+            },
             "designerId": "20a19a7b-b7be-432c-908a-eb4e5a07b151",
             "masterInstanceId": "140dde75-d72b-47c5-a76b-9c6cf6c94388"
         }

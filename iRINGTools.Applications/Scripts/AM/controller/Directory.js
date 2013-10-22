@@ -166,6 +166,7 @@ Ext.define('AM.controller.Directory', {
     var path, state, context, description, wintitle, displayName;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
+    var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
 
     context = node.data.record.context;
 
@@ -181,13 +182,19 @@ Ext.define('AM.controller.Directory', {
       description = node.data.record.Description;
       wintitle = 'Edit Scope \"' + node.data.text + '\"';
       state = 'edit';
+      if (node.data.record.Configuration != null && node.data.record.Configuration.AppSettings != null &&
+      node.data.record.Configuration.AppSettings.Settings != null) {
+        Ext.each(node.data.record.Configuration.AppSettings.Settings, function (settings, index) {
+          if (settings.Key == "iRINGCacheConnStr")
+          cacheDBConnStr = settings.Value;
+        });
+      }
 
     } else {
       name = '';
       //displayName = '';
       state = 'new';
       wintitle = 'Add Scope';
-
     }
 
     var conf = {
@@ -233,6 +240,7 @@ Ext.define('AM.controller.Directory', {
     form.getForm().findField('name').setValue(name);
     form.getForm().findField('displayName').setValue(displayName);
     form.getForm().findField('contextName').setValue(name);
+    form.getForm().findField('cacheDBConnStr').setValue(cacheDBConnStr);
 
     win.show();
   },
@@ -271,13 +279,14 @@ Ext.define('AM.controller.Directory', {
     var name,displayName, description, datalayer, assembly,application, baseurl, showconfig,endpoint,wintitle, state, path, context;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
+    var cacheImportURI = '';
+    var cacheTimeout = '';
 
     context = node.parentNode.data.text;//node.data.record.ContextName;
     if(item.itemId == 'editendpoint') {
       //name = node.data.record.Name;
       name = node.data.record.Name;
       displayName = node.data.record.DisplayName;
-
       description = node.data.record.Description;
       datalayer = node.data.record.DataLayer;
       assembly = node.data.record.Assembly;
@@ -285,6 +294,8 @@ Ext.define('AM.controller.Directory', {
       wintitle =  'Edit Application \"' + node.data.text + '\"';
       endpoint = node.data.record.Name;//node.data.record.Endpoint; 
       state = 'edit';
+      cacheImportURI = node.data.record.CacheImportURI;
+      cacheTimeout = node.data.record.CacheTimeout;
     } else {
       wintitle = 'Add Application';
       //state = 'new';
@@ -345,6 +356,8 @@ Ext.define('AM.controller.Directory', {
     form.getForm().findField('context').setValue(name);
     form.getForm().findField('assembly').setValue(assembly);
     form.getForm().findField('application').setValue(application);
+    form.getForm().findField('cacheImportURI').setValue(cacheImportURI);
+    form.getForm().findField('cacheTimeout').setValue(cacheTimeout);
 
     win.show();
   },
@@ -782,8 +795,8 @@ Ext.define('AM.controller.Directory', {
       var nameID = 'key1';
       var valueID = 'value1';
     }
-    var abc = me.addSettings("", "", nameID, valueID);
-    myFieldSet.add(abc);
+    var newSetting = me.addSettings("", "", nameID, valueID);
+    myFieldSet.add(newSetting);
     myFieldSet.doLayout();
     myFieldSet.items.items[myFieldSet.items.length-1].items.items[0].allowBlank = false;
 

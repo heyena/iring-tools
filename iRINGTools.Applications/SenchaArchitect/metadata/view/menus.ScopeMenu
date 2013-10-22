@@ -22,7 +22,7 @@
             "userConfig": {
                 "action": "neweditscope",
                 "itemId": "editfolder",
-                "icon": "Content/img/16x16/document-properties.png",
+                "icon": "Content/img/16x16/edit.png",
                 "text": "Edit Scope"
             },
             "designerId": "320825e5-0e15-43ba-8840-a4971f42dd72",
@@ -43,7 +43,7 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deletescope",
-                "icon": "Content/img/16x16/edit-delete.png",
+                "icon": "Content/img/16x16/delete.png",
                 "text": "Delete Scope"
             },
             "designerId": "22ae3716-6f2b-43a1-9f6d-3e92427dc78a",
