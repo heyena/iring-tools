@@ -25,8 +25,6 @@ namespace org.iringtools.adapter
         private string[] arrSpecialcharlist;
         private string[] arrSpecialcharValue;
 
-        private JsonLDBase JD;
-
 
         protected static readonly string QUALIFIED_RDF_NIL = RDF_NS.NamespaceName + "nil";
         private Dictionary<string, List<string>> _individualsCache;
@@ -57,7 +55,6 @@ namespace org.iringtools.adapter
             _dictionary = dictionary;
             _individualsCache = new Dictionary<string, List<string>>();
             tableMapping = new NameValueCollection();
-            JD = new JsonLDBase();
 
             if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
             {
