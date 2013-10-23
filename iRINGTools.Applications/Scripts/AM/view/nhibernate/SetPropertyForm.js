@@ -18,21 +18,14 @@ Ext.define('AM.view.nhibernate.SetPropertyForm', {
   alias: 'widget.setpropertyform',
 
   width: 400,
-  bodyPadding: 10,
-  bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
+  bodyStyle: 'background:#fff;padding:10px',
+  title: 'Configure Property',
 
   initComponent: function() {
     var me = this;
 
     Ext.applyIf(me, {
-      items: [
-        {
-          xtype: 'label',
-          cls: 'x-form-item',
-          style: 'font-weight:bold;',
-          text: 'Data Properties'
-        },
-        {
+      items: [{
           xtype: 'textfield',
           anchor: '100%',
           fieldLabel: 'Column Name',

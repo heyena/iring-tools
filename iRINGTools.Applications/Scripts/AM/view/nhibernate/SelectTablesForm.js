@@ -28,20 +28,14 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
   layout: {
     type: 'auto'
   },
-  bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-  frameHeader: false,
+  bodyStyle: 'background:#fff;padding:10px',
+  title: 'Select Tables',
 
   initComponent: function() {
     var me = this;
 
     Ext.applyIf(me, {
-      items: [
-        {
-          xtype: 'label',
-          style: 'font-weight:bold;',
-          text: 'Select Tables'
-        },
-        {
+      items: [{
           xtype: 'multiselectiongrid',
           hidden: true,
           itemId: 'tablesSelectionGrid',
@@ -51,7 +45,7 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
           xtype: 'multiselectcomponentgrid'
         },
         {
-          xtype: 'checkboxfield',
+          xtype: 'hidden', // 'checkboxfield',
           itemId: 'enableSummary',
           fieldLabel: 'Enable Summary:',
           labelWidth: 150,
