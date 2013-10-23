@@ -130,7 +130,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
         },
         {
           xtype: 'relationPropertyGrid',
-          height: 600,
+          height: 200,
           anchor: '100%'
         }
       ],

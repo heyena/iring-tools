@@ -58,7 +58,7 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
         {
             xtype: 'relationsgrid',
             autoShow: true,
-            height: 700
+            height: 200
         }],
         dockedItems: [{
             xtype: 'toolbar',
