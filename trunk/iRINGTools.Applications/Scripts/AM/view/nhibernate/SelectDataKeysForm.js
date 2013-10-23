@@ -26,19 +26,14 @@ Ext.define('AM.view.nhibernate.SelectDataKeysForm', {
   layout: {
     type: 'auto'
   },
-  bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+  bodyStyle: 'background:#fff;padding:10px',
+  title: 'Select Keys',
 
   initComponent: function() {
     var me = this;
 
     Ext.applyIf(me, {
-      items: [
-        {
-          xtype: 'label',
-          style: 'font-weight:bold;',
-          text: 'Select Keys'
-        },
-        {
+      items: [{
           xtype: 'multiselectiongrid',
           hidden: true,
           itemId: 'multiSelectDataKeys'

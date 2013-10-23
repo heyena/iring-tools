@@ -25,6 +25,8 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
   endpoint: '',
   rootNode: '',
   node: '',
+  bodyStyle: 'background:#fff;padding:10px',
+  title: 'Configure Relationship',
 
   initComponent: function() {
     var me = this;
@@ -38,64 +40,48 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
         labelWidth: 130,
         allowBlank: false
       },
-      items: [
+
+      items: [{
+            xtype: 'textfield',
+            fieldLabel: 'Relationship Name',
+            labelWidth: 160,
+            name: 'relationName',
+            enableKeyEvents: true,
+            size: 40,
+            listeners: {
+            keydown: {
+                fn: me.onRelationKeydown,
+                scope: me
+            }
+            }
+        },
         {
-          xtype: 'panel',
-          frame: true,
-          header: false,
-          items: [
+            xtype: 'relationsgrid',
+            autoShow: true,
+            height: 700
+        }],
+        dockedItems: [{
+            xtype: 'toolbar',
+            dock: 'top',
+            items: [
             {
-              xtype: 'label',
-              cls: 'x-form-item',
-              style: 'font-weight:bold;',
-              text: 'Add/Remove relationship'
+                xtype: 'button',
+                iconCls: 'am-apply',
+                text: 'Apply',
+                listeners: {
+                click: {
+                    fn: me.onButtonClick,
+                    scope: me
+                }
+                }
             },
             {
-              xtype: 'textfield',
-              fieldLabel: 'Relationship Name',
-              labelWidth: 160,
-              name: 'relationName',
-              enableKeyEvents: true,
-              size: 40,
-              listeners: {
-                keydown: {
-                  fn: me.onRelationKeydown,
-                  scope: me
-                }
-              }
-            },
-            {
-              xtype: 'relationsgrid',
-              autoShow: true,
-              height: 700
+                xtype: 'button',
+                iconCls: 'am-edit-clear',
+                text: 'Reset'
             }
-          ],
-          dockedItems: [
-            {
-              xtype: 'toolbar',
-              dock: 'top',
-              items: [
-                {
-                  xtype: 'button',
-                  iconCls: 'am-apply',
-                  text: 'Apply',
-                  listeners: {
-                    click: {
-                      fn: me.onButtonClick,
-                      scope: me
-                    }
-                  }
-                },
-                {
-                  xtype: 'button',
-                  iconCls: 'am-edit-clear',
-                  text: 'Reset'
-                }
-              ]
-            }
-          ]
-        }
-      ]
+            ]
+        }]
     });
 
     me.callParent(arguments);

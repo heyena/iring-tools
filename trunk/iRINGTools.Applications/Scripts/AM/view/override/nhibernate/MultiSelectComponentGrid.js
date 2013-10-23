@@ -26,14 +26,14 @@ initComponent: function() {
      items: [
                 {
                   xtype: 'label',
-                  text: 'Available Namespaces',
+                  text: 'Available Tables',
                   style:'font-weight:bold;font-size:11px;color:#888888;'
                   //margin: '0 0 0 10'
                 },
                 {
                   xtype: 'label',
-                  text: 'Selected Namespaces',
-                  margin: '0 0 0 110',
+                  text: 'Selected Tables',
+                  margin: '0 0 0 140',
                   style:'font-weight:bold;font-size:11px;color:#888888;'
                 },
               {
