@@ -39,8 +39,8 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
           minWidth: 260,
           width: 300,
           floatable: false,
-          split: true,
-          region: 'west'
+          region: 'west',
+          split: true
         },
         {
           xtype: 'container',
@@ -56,4 +56,5 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
 
     me.callParent(arguments);
   }
+
 });
