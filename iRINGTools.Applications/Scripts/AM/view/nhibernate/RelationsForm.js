@@ -161,22 +161,15 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
       var node = form.node;
       var numberOfRelation = rootNode.childNodes.length - 1;
 
-      if (mydata.length >= numberOfRelation) {
-  if (numberOfRelation === 0) {
-    message = 'Data object "' + node.parentNode.data.text + '" cannot have any relationship since it is the only data object selected';
-    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-  }
-  else {
-    message = 'Data object "' +node.parentNode.data.text + '" cannot have more than ' + numberOfRelation + ' relationship';
-    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-  }
-  return;
-      }
+    if (numberOfRelation === 0) {
+        message = 'Data object "' + node.parentNode.data.text + '" cannot have any relationship since it is the only data object selected.';
+        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+    }
 
       if (relationName === "") {
-  message = 'Relationship name cannot be blank.';
-  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-  return;
+          message = 'Relationship name cannot be blank.';
+          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+          return;
       }
 
       gridStore.each(function(relation) {
