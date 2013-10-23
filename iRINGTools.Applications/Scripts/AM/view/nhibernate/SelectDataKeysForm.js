@@ -22,10 +22,11 @@ Ext.define('AM.view.nhibernate.SelectDataKeysForm', {
     'AM.view.nhibernate.MultiSelectComponentGrid'
   ],
 
-  width: 300,
   layout: {
     type: 'auto'
   },
+  autoScroll: true,
+
   bodyStyle: 'background:#fff;padding:10px',
   title: 'Select Keys',
 

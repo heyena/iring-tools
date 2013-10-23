@@ -340,7 +340,7 @@ Ext.define('AM.controller.NHibernate', {
     var form = panel.down('selectdatakeysform');
     //var objectGrid =  form.down('multiselectcomponentgrid').items.items[2];//form.down('multiselectiongrid');
     //var boundlist = objectGrid.items.items[0].items.items[2].items.items[0].items.items[0];
-    var selected = form.down('multiselectcomponentgrid').items.items[2].items.items[0].items.items[2].store.data.items;//objectGrid.getSelections(boundlist);//objectGrid.getSelectionModel().getSelection();
+    var selected = form.down('multiselectcomponentgrid').items.items[0].items.items[0].items.items[2].store.data.items;//objectGrid.getSelections(boundlist);//objectGrid.getSelectionModel().getSelection();
     var selectValues = [];
     Ext.each(selected, function(item) {
       selectValues.push(item.data.text);
@@ -488,8 +488,8 @@ Ext.define('AM.controller.NHibernate', {
     var form = panel.down('selectpropertiesform');
     //var objectGrid = form.down('multiselectcomponentgrid').items.items[2];//form.down('multiselectiongrid');
     //var boundlist = objectGrid.items.items[0].items.items[2].items.items[0].items.items[0];
-    var selected = form.down('multiselectcomponentgrid').items.items[2].items.items[0].items.items[2].store.data.items;//objectGrid.getSelectionModel().getSelection();
-    var available = form.down('multiselectcomponentgrid').items.items[2].items.items[0].items.items[0].store.data.items;
+    var selected = form.down('multiselectcomponentgrid').items.items[0].items.items[0].items.items[2].store.data.items;//objectGrid.getSelectionModel().getSelection();
+    var available = form.down('multiselectcomponentgrid').items.items[0].items.items[0].items.items[0].store.data.items;
     var selectValues = [];
     Ext.each(selected, function(item) {
       selectValues.push(item.data.text);
@@ -628,20 +628,20 @@ Ext.define('AM.controller.NHibernate', {
     }
 
     var itemSelecter = form.down('#multiselectcomponentgrid');
-    itemSelecter.items.items[2].bindStore(grid.getStore());
+    itemSelecter.items.items[0].bindStore(grid.getStore());
     if(selectKeys){
       var records = [];
       for(var jj=0;jj<selectKeys.length;jj++){
         for(var  kk = 0;kk<grid.getStore().data.length;kk++){
           if(selectKeys[jj] == grid.getStore().data.items[kk].data.text){
             records.push(grid.getStore().data.items[kk]);
-            itemSelecter.items.items[2].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);
+            itemSelecter.items.items[0].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);
             break;
           }
         }     
       }
 
-      itemSelecter.items.items[2].items.items[0].items.items[2].getStore().add(records);
+      itemSelecter.items.items[0].items.items[0].items.items[2].getStore().add(records);
     }
 
 
@@ -869,7 +869,7 @@ Ext.define('AM.controller.NHibernate', {
     var form = panel.down('selecttablesform');
     //var objectGrid = form.down('multiselectcomponentgrid').items.items[2];//form.down('multiselectiongrid');
     //var boundlist = objectGrid.items.items[0].items.items[2].items.items[0].items.items[0];
-    var selected = form.down('multiselectcomponentgrid').items.items[2].items.items[0].items.items[2].store.data.items;//objectGrid.getSelections(boundlist);//objectGrid.getSelectionModel().getSelection();
+    var selected = form.down('multiselectcomponentgrid').items.items[0].items.items[0].items.items[2].store.data.items;//objectGrid.getSelections(boundlist);//objectGrid.getSelectionModel().getSelection();
 
     var serName = '';
     var dbInfo = dirNode.data.record.dbInfo;
@@ -978,7 +978,7 @@ Ext.define('AM.controller.NHibernate', {
       selectTableNamesSingle.push(nodeText);
     }
     var itemSelecter = form.down('#multiselectcomponentgrid');
-    itemSelecter.items.items[2].bindStore(grid.getStore());
+    itemSelecter.items.items[0].bindStore(grid.getStore());
 
     if(selectTableNamesSingle){
       var records = [];
@@ -986,13 +986,13 @@ Ext.define('AM.controller.NHibernate', {
         for(var  kk = 0;kk<grid.getStore().data.length;kk++){
           if(selectTableNamesSingle[jj] == grid.getStore().data.items[kk].data.text){
             records.push(grid.getStore().data.items[kk]);
-            itemSelecter.items.items[2].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);
+            itemSelecter.items.items[0].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);
             break;
           }
         }     
       }
 
-      itemSelecter.items.items[2].items.items[0].items.items[2].getStore().add(records);
+      itemSelecter.items.items[0].items.items[0].items.items[2].getStore().add(records);
     }
 
 
@@ -1028,7 +1028,7 @@ Ext.define('AM.controller.NHibernate', {
 
     var itemSelecter = form.down('#multiselectcomponentgrid');
     //itemSelecter.items.items[2].bindStore(grid.getStore());
-    itemSelecter.items.items[2].items.items[0].items.items[2].bindStore(grid.getStore());
+    itemSelecter.items.items[0].items.items[0].items.items[2].bindStore(grid.getStore());
     if(selectKeys){
       var records = [];
       var flag;
@@ -1058,10 +1058,10 @@ Ext.define('AM.controller.NHibernate', {
 
 
       }
-      itemSelecter.items.items[2].items.items[0].items.items[0].getStore().removeAll();
-      itemSelecter.items.items[2].items.items[0].items.items[0].getStore().add(records);
-      itemSelecter.items.items[2].items.items[0].items.items[2].getStore().removeAll();
-      itemSelecter.items.items[2].items.items[0].items.items[2].getStore().add(dataNode.childNodes);
+      itemSelecter.items.items[0].items.items[0].items.items[0].getStore().removeAll();
+      itemSelecter.items.items[0].items.items[0].items.items[0].getStore().add(records);
+      itemSelecter.items.items[0].items.items[0].items.items[2].getStore().removeAll();
+      itemSelecter.items.items[0].items.items[0].items.items[2].getStore().add(dataNode.childNodes);
       //itemSelecter.items.items[2].getStore().add(records);
     }
 
@@ -1503,12 +1503,12 @@ Ext.define('AM.controller.NHibernate', {
       grid.getStore().data.items[i].data.value = tables[i];
     }
 
-    itemSelecter.items.items[2].bindStore(grid.getStore());
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(2);
+    itemSelecter.items.items[0].bindStore(grid.getStore());
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(0);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(0);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(3);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(3);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(2);
     //grid.down('gridcolumn').setText('Select Data Tables');
     grid.selectItems(selected);
     //itemSelecter.items.items[1].selectItems(selected);
@@ -1522,11 +1522,11 @@ Ext.define('AM.controller.NHibernate', {
         if(record) {
           records.push(record); 
           utilsObj.deletedTables.push(record);
-          itemSelecter.items.items[2].items.items[0].items.items[0].getStore().remove(record);
+          itemSelecter.items.items[0].items.items[0].items.items[0].getStore().remove(record);
         } 
         //tempStore.remove(record);
       });
-      itemSelecter.items.items[2].items.items[0].items.items[2].getStore().add(utilsObj.deletedTables);
+      itemSelecter.items.items[0].items.items[0].items.items[2].getStore().add(utilsObj.deletedTables);
       //itemSelecter.items.items[2].bindStore(tempStore);
     }
 
@@ -2045,15 +2045,15 @@ Ext.define('AM.controller.NHibernate', {
       grid.getStore().data.items[i].data.text = availItems[i];
       grid.getStore().data.items[i].data.value = availItems[i];
     }
-    itemSelecter.items.items[2].bindStore(grid.getStore());
-    itemSelecter.items.items[0].setText('Available Keys');
-    itemSelecter.items.items[1].setText('Selected Keys');
-    itemSelecter.items.items[1].margin = '0 0 0 153';
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(2);
+    itemSelecter.items.items[0].bindStore(grid.getStore());
+//    itemSelecter.items.items[0].setText('Available Keys');
+//    itemSelecter.items.items[1].setText('Selected Keys');
+//    itemSelecter.items.items[1].margin = '0 0 0 153';
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(0);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(0);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(3);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(3);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(2);
 
     //itemSelecter.items.items[2].items.items[0].items.items[2].bindStore(grid.getStore());
     if(selectItems){
@@ -2073,13 +2073,13 @@ Ext.define('AM.controller.NHibernate', {
           if(selectItems[jj] == grid.getStore().data.items[kk].data.text){
             //records.push(record);
             utilsObj.deletedKeyProperties.push(grid.getStore().data.items[kk]);
-            itemSelecter.items.items[2].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);
+            itemSelecter.items.items[0].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);
             break;
           }
         }     
       }
 
-      itemSelecter.items.items[2].items.items[0].items.items[2].getStore().add(utilsObj.deletedKeyProperties);
+      itemSelecter.items.items[0].items.items[0].items.items[2].getStore().add(utilsObj.deletedKeyProperties);
     }
 
     panel = nhibernatePanel.down('#nhibernateContent');
@@ -2154,18 +2154,17 @@ Ext.define('AM.controller.NHibernate', {
 
     var blankStore = Ext.create('AM.store.MultiStore');
     blankStore.add(availProperties);
-    itemSelecter.items.items[2].bindStore(blankStore);
-    itemSelecter.items.items[2].items.items[0].items.items[2].bindStore(grid.getStore());
-    itemSelecter.items.items[0].setText('Available Properties');
-    itemSelecter.items.items[1].setText('Selected Properties');
-    itemSelecter.items.items[1].margin = '0 0 0 120';
-
-
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(0);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(3);
-    buttons = itemSelecter.items.items[2].items.items[0].items.items[1].items.removeAt(2);
+    itemSelecter.items.items[0].bindStore(blankStore);
+    itemSelecter.items.items[0].items.items[0].items.items[2].bindStore(grid.getStore());
+    //itemSelecter.items.items[0].setText('Available Properties');
+    //itemSelecter.items.items[1].setText('Selected Properties');
+    //itemSelecter.items.items[1].margin = '0 0 0 120';
+    
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(0);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(0);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(3);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(3);
+    buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(2);
     panel = nhibernatePanel.down('#nhibernateContent');
 
     panel.removeAll();

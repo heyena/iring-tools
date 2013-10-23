@@ -22,21 +22,14 @@ initComponent: function() {
     Ext.applyIf(me, {
      items: [
         {
-            xtype: 'label',
-            text: 'Available Tables'
-        },
-        {
-            xtype: 'label',
-            text: 'Selected Tables'
-        },
-        {
             xtype: 'itemselector',
             name: 'itemselector',
             anchor: '100%',
             store: ds,
-            height:356,
             allowBlank: false,
-            msgTarget: 'side'
+            msgTarget: 'side',
+            fromTitle: 'Available',
+            toTitle: 'Selected'
         }
       ]
     });
