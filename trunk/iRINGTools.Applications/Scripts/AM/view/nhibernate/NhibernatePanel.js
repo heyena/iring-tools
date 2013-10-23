@@ -49,7 +49,8 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
           itemId: 'nhibernateContent',
           layout: {
             type: 'fit'
-          }
+          },
+          autoScroll: true
         }
       ]
     });
