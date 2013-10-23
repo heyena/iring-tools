@@ -25,6 +25,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
   endpoint: '',
   contextName: '',
   node: '',
+  autoScroll: true,
   bodyStyle: 'background:#fff;padding:10px',
   title: 'Configure Relationship',
 

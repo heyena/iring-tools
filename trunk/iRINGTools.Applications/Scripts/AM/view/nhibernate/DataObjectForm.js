@@ -21,6 +21,7 @@ Ext.define('AM.view.nhibernate.DataObjectForm', {
   description: '',
   objectNamespace: '',
   objectName: '',
+  autoScroll: true,
   bodyStyle: 'background:#fff;padding:10px',
   title: 'Configure Data Object',
 
