@@ -21,20 +21,14 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
   dirNode: '',
   value: '',
   serName: '',
-  bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
+  bodyStyle: 'background:#fff;padding:10px',
+  title: 'Configure Data Source',
 
   initComponent: function() {
     var me = this;
 
     Ext.applyIf(me, {
       items: [
-        {
-          xtype: 'label',
-          anchor: '100%',
-          cls: 'x-form-item',
-          style: 'font-weight:bold',
-          text: 'Configure Data Source'
-        },
         {
           xtype: 'combobox',
           anchor: '100%',

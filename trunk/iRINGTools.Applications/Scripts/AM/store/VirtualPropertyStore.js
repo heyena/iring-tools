@@ -30,7 +30,7 @@ Ext.define('AM.store.VirtualPropertyStore', {
       storeId: 'virtualPropertyStore',
       proxy: {
         type: 'ajax',
-        //url: '/scripts/sample.json',
+        url: '',
         reader: {
           type: 'json',
           root: 'data'

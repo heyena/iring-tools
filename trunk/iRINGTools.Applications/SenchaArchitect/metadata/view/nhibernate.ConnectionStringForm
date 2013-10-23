@@ -16,9 +16,9 @@
         "designer|userAlias": "connectionstringform",
         "bodyPadding": null,
         "bodyStyle": [
-            "background:#eee;padding:10px 0px 0px 10px"
+            "background:#fff;padding:10px"
         ],
-        "title": null
+        "title": "Configure Data Source"
     },
     "designerId": "9ee7d1e0-1914-4b89-bc09-139012f29114",
     "customConfigs": [
@@ -44,23 +44,6 @@
         }
     ],
     "cn": [
-        {
-            "type": "Ext.form.Label",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": "100%",
-                "cls": "x-form-item",
-                "style": [
-                    "font-weight:bold"
-                ],
-                "text": "Configure Data Source"
-            },
-            "designerId": "78ae07c7-b64d-487d-ad16-49e9ace99a89"
-        },
         {
             "type": "Ext.form.field.ComboBox",
             "reference": {

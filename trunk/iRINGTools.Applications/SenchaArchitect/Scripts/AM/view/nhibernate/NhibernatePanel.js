@@ -39,16 +39,14 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
           minWidth: 260,
           width: 300,
           floatable: false,
-          region: 'center'
+          region: 'west',
+          split: true
         },
         {
           xtype: 'container',
-          flex: 4,
           floatable: false,
-          region: 'east',
-          split: true,
+          region: 'center',
           itemId: 'nhibernateContent',
-          width: 150,
           layout: {
             type: 'fit'
           }

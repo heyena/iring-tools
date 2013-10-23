@@ -24,7 +24,7 @@ Ext.define('AM.store.ProviderStore', {
     var me = this;
     cfg = cfg || {};
     me.callParent([Ext.apply({
-      autoLoad: true,
+      autoLoad: false,
       model: 'AM.model.ProviderModel',
       storeId: 'ProviderStore',
       proxy: {
