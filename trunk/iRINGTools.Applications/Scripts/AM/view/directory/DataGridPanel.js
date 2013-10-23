@@ -14,107 +14,49 @@
  */
 
 Ext.define('AM.view.directory.DataGridPanel', {
-  extend: 'Ext.grid.Panel',
-  alias: 'widget.dynamicgrid',
+    extend: 'Ext.grid.Panel',
+    alias: 'widget.dynamicgrid',
 
-  requires: [
+    requires: [
     'AM.view.override.directory.DataGridPanel',
     'AM.store.DataGridStore',
     'Ext.ux.grid.FiltersFeature'
   ],
 
-  closable: true,
-  store: 'DataGridStore',
+    closable: true,
+    store: 'DataGridStore',
 
-  initComponent: function() {
-    var me = this;
+    initComponent: function () {
+        var me = this;
 
-    Ext.applyIf(me, {
-      columns: [
-        {
-          xtype: 'gridcolumn',
-          dataIndex: 'string'
-        }
-      ]
-    });
+        Ext.applyIf(me, {
+            columns: [
+                {
+                    xtype: 'gridcolumn',
+                    dataIndex: 'string'
+                }
+             ],
+             viewConfig: {enableTextSelection: true}
+        });
 
-    me.processDataGridPanel(me);
-    me.callParent(arguments);
-  },
+        me.callParent(arguments);
+    },
 
-  processDataGridPanel: function(config) {
-    //var me = this,
-    /* storeId = Ext.data.IdGenerator.get("uuid").generate();
+    handleBeforeLoad: function (store, operation, e) {
+        var me = this;
+        store.on({
+            metachange: {
+                fn: function (store, meta, e) {
+                    me.handleMetaChange(me, meta);
+                },
+                scope: me,
+                single: true
+            }
+        });
+    },
 
-    config.store = Ext.create('AM.store.DataGridStore', {
-    storeId: "DataGrid" + storeId,
-    listeners: {
-    beforeload: {
-    fn: me.handleBeforeLoad,
-    scope: me
+    handleMetaChange: function (grid, meta) {
+        grid.reconfigure(grid.getStore(), meta.columns);
     }
-    }
-    });*/
-
-    /*config.dockedItems = [
-    {
-    xtype: 'pagingtoolbar',
-    dock: 'bottom',
-    displayInfo: true,
-    store: config.store,
-    plugins: [Ext.create('Ext.ux.plugin.GridPageSizer', { options: [25, 50, 100, 200] })]
-    }];*/
-
-    /*var filters = {
-    ftype: 'filters',
-    local: false,
-    buildQuery: function (filters) {
-    var processed_filters = [];
-
-    for (var i = 0; i < filters.length; i++) {
-    var pf = {};
-    var filter = filters[i];
-    pf.field = filter.field;
-
-    if (filter.data.type == 'numeric') {
-    pf.comparison = filter.data.comparison;
-    pf.value = filter.data.value;
-    pf.type = filter.data.type;
-    }
-    else {
-    for (var key in filter.data) {
-    pf[key] = filter.data[key];
-    }
-    pf.comparison = 'eq';
-    }
-
-    processed_filters.push(pf);
-
-    }
-    return { filter: Ext.encode(processed_filters) };
-    }
-    };*/
-
-    //config.iconCls = 'tabsData';
-    //config.features = [filters];
-    //return config;
-  },
-
-  handleBeforeLoad: function(store, operation, e) {
-    var me = this;
-    store.on({
-      metachange: {
-        fn: function(store, meta, e) {
-          me.handleMetaChange(me, meta);
-        }, 
-        scope: me, 
-        single: true
-      }
-    });
-  },
-
-  handleMetaChange: function(grid, meta) {
-    grid.reconfigure(grid.getStore(), meta.columns);
-  }
 
 });
