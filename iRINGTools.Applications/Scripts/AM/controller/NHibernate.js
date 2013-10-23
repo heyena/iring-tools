@@ -1276,13 +1276,13 @@ Ext.define('AM.controller.NHibernate', {
 
           if (dbDict !== null && dbDict !== undefined)
           dirNode.data.record.dbDict = dbDict;
-          me.showConnectionStringForm(panel);
           var rootNode = tree.items.items[0].node;
           if(rootNode.isExpanded())
           rootNode.collapse();
           tree.disable();
 
-        }
+      }
+      me.showConnectionStringForm(panel);
       });
       content.add(panel);
       content.body.unmask();
