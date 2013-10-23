@@ -30,10 +30,9 @@ Ext.define('AM.view.menus.ScopesMenu', {
         },
         {
           xtype: 'menuitem',
-          action: 'regenerateall',
-          hidden: true,
-          icon: 'Content/img/16x16/document-new.png',
-          text: 'Regenerate HibernateDataLayer artifacts'
+          action: 'refreshscopes',
+          icon: 'Content/img/16x16/view-refresh.png',
+          text: 'Refresh'
         }
       ]
     });

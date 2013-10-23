@@ -160,8 +160,11 @@ Ext.define('AM.controller.Directory', {
     }
   },
 
-  newOrEditScope: function(item, e, eOpts) {
+  refreshScopes: function(item, e, eOpts) {
+    this.getDirTree().onReload();
+  },
 
+  newOrEditScope: function(item, e, eOpts) {
     var me = this;
     var path, state, context, description, wintitle, displayName;
     var tree = me.getDirTree();
@@ -1269,6 +1272,9 @@ Ext.define('AM.controller.Directory', {
       },
       "menuitem[action=neweditscope]": {
         click: this.newOrEditScope
+      },
+      "menuitem[action=refreshscopes]": {
+        click: this.refreshScopes
       },
       "menuitem[action=deletescope]": {
         click: this.deleteScope

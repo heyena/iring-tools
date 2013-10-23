@@ -326,6 +326,7 @@
     <Content Include="Scripts\AM\view\mapping\ValueListMapWindow.js" />
     <Content Include="Scripts\AM\view\mapping\ValueListWindow.js" />
     <Content Include="Scripts\AM\view\menus\AppDataMenu.js" />
+    <Content Include="Scripts\AM\view\menus\AppDataRefreshMenu.js" />
     <Content Include="Scripts\AM\view\menus\ApplicationMenu.js" />
     <Content Include="Scripts\AM\view\menus\ClassmapMenu.js" />
     <Content Include="Scripts\AM\view\menus\GraphMenu.js" />
@@ -335,10 +336,12 @@
     <Content Include="Scripts\AM\view\menus\RolemapMenu.js" />
     <Content Include="Scripts\AM\view\menus\RootAdminScopesMenu.js" />
     <Content Include="Scripts\AM\view\menus\ScopeMenu.js" />
+    <Content Include="Scripts\AM\view\menus\ScopesMenu.js" />
     <Content Include="Scripts\AM\view\menus\TemplatemapMenu.js" />
     <Content Include="Scripts\AM\view\menus\ValueListMapMenu.js" />
     <Content Include="Scripts\AM\view\menus\ValueListMenu.js" />
     <Content Include="Scripts\AM\view\menus\ValueListsMenu.js" />
+    <Content Include="Scripts\AM\view\menus\VirtualPropertyMenu.js" />
     <Content Include="Scripts\AM\view\nhibernate\ConnectionStringForm.js" />
     <Content Include="Scripts\AM\view\nhibernate\DataKeyForm.js" />
     <Content Include="Scripts\AM\view\nhibernate\DataObjectForm.js" />
