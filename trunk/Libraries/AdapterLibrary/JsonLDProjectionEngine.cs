@@ -528,6 +528,8 @@ namespace org.iringtools.adapter
         {
             ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
 
+            
+
             if (classTemplateMap != null)
             {
                 ClassMap classMap = classTemplateMap.classMap;
