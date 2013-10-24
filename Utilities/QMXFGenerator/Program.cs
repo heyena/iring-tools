@@ -660,7 +660,7 @@ namespace QMXFGenerator
                           Convert.ToString(clss[(int) ClassColumns.Label].ToString().ToUpper()) ==
                           type.ToString().ToUpper()
                         select clss;
-            if (query.FirstOrDefault() != null &
+            if (query.FirstOrDefault() != null &&
                 query.FirstOrDefault()[(int) ClassColumns.Label].ToString().Trim().Equals(type.ToString()))
             {
               roleDefinition.range = query.FirstOrDefault()[(int) ClassColumns.ID].ToString().Trim();
