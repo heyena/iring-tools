@@ -61,6 +61,19 @@ namespace org.iringtools.tip
     [DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
     public ParameterMaps parameterMaps { get; set; }
   }
+
+  [Serializable]
+  [DataContractAttribute(Name = "tipRequest", Namespace = "http://www.iringtools.org/tipmapping")]
+  public class TipRequest
+  {
+      public TipRequest()
+      {
+          parameterMaps = new ParameterMaps();
+      }
+
+      [DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+      public ParameterMaps parameterMaps { get; set; }
+  }
       
   [Serializable]
   [CollectionDataContractAttribute(Name = "parameterMaps", Namespace = "http://www.iringtools.org/tipmapping", ItemName = "parameterMap")]
