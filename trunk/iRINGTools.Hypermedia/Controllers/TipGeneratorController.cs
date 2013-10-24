@@ -35,11 +35,7 @@ namespace iRINGTOOLS.Hypermedia.Controllers
                 string str = @"<?xml version='1.0'?><tipRequest xmlns=""http://www.iringtools.org/tipmapping"">
                 <parameterMaps>
                     <parameterMap>
-                        <path>rdl:R19192462550/tpl:R5E442F596F5C45CC8BECBEA04EC8D889(1)/tpl:R0BA20392093943E7896A5B36CAB56394/rdl:R21605619301/tpl:RBFF16CD8F3BB4BFE8539B683D6782F0B/tpl:R1A8A7FE96A464C889D1825DE45EA9657</path>
-                    </parameterMap>
-                     <parameterMap>
-
-            <path>rdl:R19192462550/tpl:R5E442F596F5C45CC8BECBEA04EC8D889/tpl:RA9880F55D688411695965B5215657423/rdl:R21605619301/tpl:RBFF16CD8F3BB4BFE8539B683D6782F0B/tpl:R1A8A7FE96A464C889D1825DE45EA9657</path>
+                        <path>rdl:Rd9c631e5-543f-4b98-8684-901e710f953f/tpl:R53360319163(0)/tpl:RF8B2CB1FF4F34B3D9D2FCFB3FC025BB5/rdl:R85074893353/tpl:RD7841CFC6A15488CBAA45414A54AB8C1(0)/tpl:R2EA408134E3C4A22A408AF1648A75317/rdl:R22683180655/tpl:R94082855849/tpl:R1427286232D34EE797D125795B0854A5</path>
                     </parameterMap>
                 </parameterMaps>
             </tipRequest>";
