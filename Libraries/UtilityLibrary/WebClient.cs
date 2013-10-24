@@ -1252,7 +1252,7 @@ namespace org.iringtools.utility
 
         request.Timeout = Timeout;
         request.Method = "POST";
-        request.ContentType = "text/xml";
+        request.ContentType = "application/xml";
         request.ContentLength = stream.Length;
 
         // allows for validation of SSL conversations
