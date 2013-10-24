@@ -75,9 +75,6 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="iRINGSecurity">
-      <HintPath>..\..\..\..\..\filez\dev\csharp\iRINGSecurity\iRINGSecurity\bin\Debug\iRINGSecurity.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
     </Reference>
