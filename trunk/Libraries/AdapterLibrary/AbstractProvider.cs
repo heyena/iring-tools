@@ -2670,6 +2670,10 @@ namespace org.iringtools.adapter
             {
                 _logger.DebugFormat("Initializing Scope: {0}.{1}", project, application);
                 InitializeScope(project, application);
+                InitializeDataLayer(false);
+                _graphMap = _mapping.FindGraphMap(resource);
+
+                UpdateTipMapping("tip", "findparameters", project, application);
                 return null;
             }
             catch (Exception ex)
@@ -2680,15 +2684,109 @@ namespace org.iringtools.adapter
         }
 
 
-        public void UpdateMapping(string scopeName, string applicationName, Mapping mapping, TipMapping tipMapping)
+        public void UpdateTipMapping(string tip, string method, string project, string application)
         {
-            XElement tipMappingXml = XElement.Parse(Utility.SerializeDataContract<TipMapping>(tipMapping));
-            WebHttpClient _adapterServiceClient = null;
-            string adapterServiceUri = _settings["AdapterServiceUri"];
-            _adapterServiceClient = new WebHttpClient(adapterServiceUri);
+            
+            WebHttpClient _tipServiceClient = null;
+            string tipServiceUri = _settings["TipServiceUri"];
+            _tipServiceClient = new WebHttpClient(tipServiceUri);
+
+            TipRequest tipRequest = new TipRequest();
+            ParameterMap pm = new ParameterMap();
+            pm.path = "R33612674560/R10528152386";
+            pm.dataPropertyName = "LINE.TAG";
+            tipRequest.parameterMaps.Add(pm);
+
+            ParameterMap pm2 = new ParameterMap();
+            pm2.path = "tpl:R65141162308/tpl:R44102076948/rdl:R38701712415/tpl:R63638239485/tpl:R55055340393";
+            pm2.dataPropertyName = "LINE.TAG2";
+            tipRequest.parameterMaps.Add(pm2);
+
+            
+
+
+            if (_graphMap != null)
+            {
+                ClassMap graphClassMap = null;
+                graphClassMap = _graphMap.classTemplateMaps.FirstOrDefault().classMap;
+                
+
+                if (_graphMap != null)
+                {
+                    foreach (var templateMaps in _graphMap.classTemplateMaps)
+                    {
+                        if (templateMaps.classMap.name != graphClassMap.name) continue;
+                        int templateIndex = 0;
+
+                        foreach (var templateMap in templateMaps.templateMaps)
+                        {
+
+
+                            IList<String> mappedProperties = _graphMap.GetMappedProperties(templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
+
+                            foreach (var role in templateMap.roleMaps)
+                            {
+
+                                if (role.type == RoleType.Reference)
+                                {
+                                    // 
+                                    // resolve class label and store it in role value
+                                    //
+                                    string classId = role.dataType;
+
+                                    if (string.IsNullOrEmpty(classId) || !classId.StartsWith("rdl:"))
+                                        classId = role.value;
+
+                                    if (!string.IsNullOrEmpty(classId) && !string.IsNullOrEmpty(role.value) &&
+                                      role.value.StartsWith("rdl:"))
+                                    {
+
+                                        role.dataType = classId;
+                                    }
+                                }
+
+                            }
+
+                            templateIndex++;
+                        }
+                    }
+                }
+            }
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            XElement trXml = XElement.Parse(Utility.SerializeDataContract<TipRequest>(tipRequest));
+            
             try
             {
-                _adapterServiceClient.Post<XElement>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), tipMappingXml, true);
+                XElement responseXml = _tipServiceClient.Post<XElement, XElement>(String.Format("/{0}/{1}", tip, method), trXml, true);
+                string path = string.Format("{0}TipMappingF.{1}.{2}.xml", _settings["AppDataPath"], project, application);
+
+                TipMapping tipMapping =  Utility.DeserializeDataContract<TipMapping>(responseXml.ToString());
+
+                Utility.Write<TipMapping>(tipMapping, path, true); 
             }
             catch (Exception ex)
             {
