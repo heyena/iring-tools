@@ -6,6 +6,7 @@ using org.iringtools.adapter;
 using System.Configuration;
 using System.Xml.Linq;
 using System.Collections.Specialized;
+using org.iringtools.library;
 
 namespace org.iringtools.services
 {
@@ -22,6 +23,15 @@ namespace org.iringtools.services
         public void GenerateTIP(string project, string app, string resource)
         {
             XDocument xDocument = _abstractPrivder.GenerateTIP(project, app, resource);
+        }
+
+        new public void GetContexts(string app, string format)
+        {
+            format = MapContentType(null, null, format);
+
+            Contexts contexts = _abstractPrivder.GetContexts(app);
+
+            _abstractPrivder.FormatOutgoingMessage<Contexts>(contexts, format, true);
         }
 
         new public void GetList(string project, string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
@@ -50,6 +60,24 @@ namespace org.iringtools.services
             {
                 throw ex;
             }
+        }
+
+        private string MapContentType(string project, string app, string format)
+        {
+
+            // if it's a known format then return it
+            if (format != null && (format.ToLower() == "raw" || format.ToLower() == "dto" || format.ToLower() == "rdf" ||
+              format.ToLower().Contains("xml") || format.ToLower().Contains("json")))
+            {
+                return format;
+            }
+
+            if (string.IsNullOrEmpty(format))
+            {
+                format = "json";
+            }
+
+            return format;
         }
     }
 }
