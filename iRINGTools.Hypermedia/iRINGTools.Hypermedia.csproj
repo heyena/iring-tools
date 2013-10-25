@@ -228,6 +228,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="..\iRINGTools.Services\CommonDataService.cs">
       <Link>Common\CommonDataService.cs</Link>
     </Compile>
