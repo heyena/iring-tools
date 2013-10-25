@@ -648,8 +648,6 @@ namespace org.iringtools.services
     #region Private Methods
     private string MapContentType(string project, string app, string format)
     {
-      //IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
-      //string contentType = request.ContentType;
 
       // if it's a known format then return it
       if (format != null && (format.ToLower() == "raw" || format.ToLower() == "dto" || format.ToLower() == "rdf" ||
