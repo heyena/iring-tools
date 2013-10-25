@@ -2697,10 +2697,10 @@ namespace org.iringtools.adapter
             pm.dataPropertyName = "LINE.TAG";
             tipRequest.parameterMaps.Add(pm);
 
-            ParameterMap pm2 = new ParameterMap();
-            pm2.path = "tpl:R65141162308/tpl:R44102076948/rdl:R38701712415/tpl:R63638239485/tpl:R55055340393";
-            pm2.dataPropertyName = "LINE.TAG2";
-            tipRequest.parameterMaps.Add(pm2);
+            //ParameterMap pm2 = new ParameterMap();
+            //pm2.path = "tpl:R65141162308/tpl:R44102076948/rdl:R38701712415/tpl:R63638239485/tpl:R55055340393";
+            //pm2.dataPropertyName = "LINE.TAG2";
+            //tipRequest.parameterMaps.Add(pm2);
 
             
 
