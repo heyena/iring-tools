@@ -22,28 +22,19 @@ namespace org.iringtools.services
     [RoutePrefix("data")]
     public class DataController : ApiController
     {
-        private CommonDataService _commonService = null;
+        private HMCommonDataService _hmCommonService = null;
 
         public DataController()
         {
-            _commonService = new CommonDataService();
+            _hmCommonService = new HMCommonDataService();
         }
 
-        //[GET("links")]
-        //[GET("urls")]
-        //[POST("postedlinks")]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //[GET("{project}/{app}/{resource}/{format=jsonld}/{start=0}/{limit=0}/{sortOrder?}/{sortBy?}/{indexStyle?}")]
         [GET("{app}/{project}/{resource}/{format?}/{start?}/{limit?}/{sortOrder?}/{sortBy?}/{indexStyle?}")]
         public HttpResponseMessage GetList(string app, string project, string resource, string format = "jsonld", int start = 0, int limit = 0, string sortOrder = null, string sortBy = null, string indexStyle = null)
         {
             try
             {
-                _commonService.GetList(project, app, resource, format, start, limit, sortOrder, sortBy, indexStyle);
+                _hmCommonService.GetList(project, app, resource, format, start, limit, sortOrder, sortBy, indexStyle);
                 HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
                 return response;
                 
@@ -51,25 +42,9 @@ namespace org.iringtools.services
             catch (Exception ex)
             {
                 ExceptionHandler.Handle(ex);
-                //HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.BadRequest);
-                return null;// response;
+                return null;
             }
         }
-
-
-        //[Description("Gets a specific object definition from data dictionary. Valid formats are XML, JSON.")]
-        //[GET("{app}/{project}/dictionary/{format?}")]
-        //public void GetObjectType(string project, string app, string format = "json")
-        //{
-        //    try
-        //    {
-        //        _commonService.GetDictionary(project, app, format);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //ExceptionHandler(ex);
-        //    }
-        //}
 
         [Description("Gets contexts of an application.")]
         [GET("{app}/contexts/{format=json}")]
@@ -77,15 +52,14 @@ namespace org.iringtools.services
         {
             try
             {
-                _commonService.GetContexts(app, format);
+                _hmCommonService.GetContexts(app, format);
                 HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
                 return response;
             }
             catch (Exception ex)
             {
                 ExceptionHandler.Handle(ex);
-                //HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.BadRequest);
-                return null;// response;
+                return null;
             }
         }
 
@@ -95,15 +69,14 @@ namespace org.iringtools.services
         {
             try
             {
-                _commonService.GetVersion(format);
+                _hmCommonService.GetVersion(format);
                 HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
                 return response;
             }
             catch (Exception ex)
             {
                 ExceptionHandler.Handle(ex);
-                //HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.BadRequest);
-                return null;// response;
+                return null;
             }
         }
 
