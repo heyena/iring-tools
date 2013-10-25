@@ -139,6 +139,7 @@
     <Compile Include="DBManager.cs" />
     <Compile Include="DtiTask.cs" />
     <Compile Include="InboundDtoTask.cs" />
+    <Compile Include="JsonLDCommon.cs" />
     <Compile Include="JsonLDProjectionEngine.cs" />
     <Compile Include="OutboundDtoTask.cs" />
     <Compile Include="DataItemSerializer.cs" />
