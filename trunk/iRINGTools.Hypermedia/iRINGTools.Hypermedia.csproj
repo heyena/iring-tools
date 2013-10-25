@@ -227,6 +227,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\iRINGTools.Services\CommonDataService.cs">
+      <Link>Common\CommonDataService.cs</Link>
+    </Compile>
     <Compile Include="App_Start\AttributeRoutingHttpConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -246,8 +249,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
-    <Compile Include="Common\CommonDataService.cs" />
-    <Compile Include="Common\TipRESTClient.cs" />
+    <Compile Include="Common\HMCommonDataService.cs" />
     <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TipGeneratorController.cs" />
