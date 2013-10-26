@@ -375,6 +375,7 @@
     <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Code\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
