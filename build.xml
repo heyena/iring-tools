@@ -217,7 +217,6 @@
     <Exec Command="Move /Y $(HypermediaServicesDir)\Web_Default.config $(HypermediaServicesDir)\Web.config" />
     <Exec Command="Move /Y $(HypermediaServicesDir)\App_Data\Federation_Default.xml $(HypermediaServicesDir)\App_Data\Federation.xml" />
     <Exec Command="Move /Y $(HypermediaServicesDir)\App_Data\Config_Default.ttl $(HypermediaServicesDir)\App_Data\Config.ttl" />
-    <Exec Command="Mkdir $(HypermediaServicesDir)\App_Code"/>
 	
 	
 
