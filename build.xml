@@ -4,9 +4,9 @@
   <PropertyGroup>
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
     <Major>2</Major>
-    <Minor>4</Minor>
+    <Minor>5</Minor>
     <Build>0</Build>
-    <Revision>0</Revision>
+    <Revision>5785</Revision>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,6 +15,7 @@
     <NUnit-ToolPath>$(MSBuildProjectDirectory)\ExternalBinaries\Nunit</NUnit-ToolPath>
     <ServicesDir>$(MSBuildProjectDirectory)\iRINGTools.Services</ServicesDir>
     <ApplicationsDir>$(MSBuildProjectDirectory)\iRINGTools.Applications</ApplicationsDir>
+	<HypermediaServicesDir>$(MSBuildProjectDirectory)\iRINGTools.Hypermedia</HypermediaServicesDir>
     <LandingPageDir>$(MSBuildProjectDirectory)\iRINGTools.Landing</LandingPageDir>
     <UtilitiesDir>$(MSBuildProjectDirectory)\Utilities</UtilitiesDir>
     <RDFImportExportDir>$(UtilitiesDir)\RDFImportExport\RDFImportExport</RDFImportExportDir>
@@ -92,6 +93,29 @@
                $(ApplicationsDir)\*\*\*\*\*\.svn\**;
                $(ApplicationsDir)\*\*\*\*\*\*\.svn\**;">
     </AppsDeployment>
+	
+	
+	<HypermediaServicesDeployment
+      Include="$(HypermediaServicesDir)\**"
+      Exclude="$(HypermediaServicesDir)\Controllers\**;
+               $(HypermediaServicesDir)\Models\**;               
+               $(HypermediaServicesDir)\bin\*.pdb;
+               $(HypermediaServicesDir)\obj\**;
+               $(HypermediaServicesDir)\Properties\**;
+               $(HypermediaServicesDir)\*.suo;
+               $(HypermediaServicesDir)\*.cs;
+               $(HypermediaServicesDir)\*.csproj;
+               $(HypermediaServicesDir)\*.user;
+               $(HypermediaServicesDir)\*.vspscc;
+               $(HypermediaServicesDir)\web.config;
+               $(HypermediaServicesDir)\.svn\**;
+               $(HypermediaServicesDir)\**\.svn\**;
+               $(HypermediaServicesDir)\*\*\.svn\**;
+               $(HypermediaServicesDir)\*\*\*\.svn\**;
+               $(HypermediaServicesDir)\*\*\*\*\.svn\**;
+               $(HypermediaServicesDir)\*\*\*\*\*\.svn\**;
+               $(HypermediaServicesDir)\*\*\*\*\*\*\.svn\**;">
+    </HypermediaServicesDeployment>
 
     <UtilitiesDeployment
       Include="Utilities\EncryptCredentials\bin\Debug\*.exe;
@@ -119,7 +143,7 @@
     <DeploymentPackage Include="*.*" Exclude="*.zip">
       <Options>a -tzip -y -r</Options>
       <OutputDir>$(DeploymentDir)</OutputDir>
-      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
+      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(HypermediaServicesDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
       <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
     </DeploymentPackage>
   </ItemGroup>
@@ -172,7 +196,7 @@
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
-    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
+    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(HypermediaServicesDir); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
     
     <Message Text="Creating Services deployment ..." />
     <Copy SourceFiles="@(ServicesDeployment)"
@@ -182,6 +206,19 @@
     <Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Config_Default.ttl $(ServicesDeploymentDir)\App_Data\Config.ttl" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\Logs" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\App_Code"/>
+	
+	
+	
+	<Message Text="Creating Hypermedia Services deployment ..." />
+    <Copy SourceFiles="@(HypermediaServicesDeployment)"
+          DestinationFiles="@(HypermediaServicesDeployment ->'$(HypermediaServicesDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(HypermediaServicesDir)\Web_Default.config $(HypermediaServicesDir)\Web.config" />
+    <Exec Command="Move /Y $(HypermediaServicesDir)\App_Data\Federation_Default.xml $(HypermediaServicesDir)\App_Data\Federation.xml" />
+    <Exec Command="Move /Y $(HypermediaServicesDir)\App_Data\Config_Default.ttl $(HypermediaServicesDir)\App_Data\Config.ttl" />
+    <Exec Command="Mkdir $(HypermediaServicesDir)\Logs" />
+    <Exec Command="Mkdir $(HypermediaServicesDir)\App_Code"/>
+	
+	
 
     <Message Text="Creating Applications deployment ..." />
     <Copy SourceFiles="@(AppsDeployment)"
