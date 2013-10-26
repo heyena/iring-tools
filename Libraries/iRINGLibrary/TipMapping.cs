@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using org.iringtools.library;
 using System;
 
-namespace org.iringtools.tip
+namespace org.iringtools.library
 {
   [Serializable]
   [DataContractAttribute(Name = "tipMapping", Namespace = "http://www.iringtools.org/tipmapping")]
