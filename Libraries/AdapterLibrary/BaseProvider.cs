@@ -17,7 +17,6 @@ using org.iringtools.library;
 using org.iringtools.mapping;
 using org.iringtools.utility;
 using StaticDust.Configuration;
-using org.iringtools.tip;
 
 namespace org.iringtools.adapter
 {

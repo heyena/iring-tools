@@ -29,7 +29,6 @@ using System.Text;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Microsoft.Win32;
-using org.iringtools.tip;
 
 namespace org.iringtools.adapter
 {

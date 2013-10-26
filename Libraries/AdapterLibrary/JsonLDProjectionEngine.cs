@@ -15,7 +15,6 @@ using System.Collections.Specialized;
 using Newtonsoft.Json;
 using System.Xml;
 using VDS.RDF.Query.Paths;
-using org.iringtools.tip;
 
 namespace org.iringtools.adapter
 {
