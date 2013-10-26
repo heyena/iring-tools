@@ -101,7 +101,9 @@
                $(HypermediaServicesDir)\Models\**;               
                $(HypermediaServicesDir)\bin\*.pdb;
                $(HypermediaServicesDir)\obj\**;
+			   $(HypermediaServicesDir)\App_Code\**;
                $(HypermediaServicesDir)\Properties\**;
+			   $(HypermediaServicesDir)\Logs\**;
                $(HypermediaServicesDir)\*.suo;
                $(HypermediaServicesDir)\*.cs;
                $(HypermediaServicesDir)\*.csproj;
