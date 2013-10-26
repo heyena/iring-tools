@@ -26,6 +26,7 @@
     <RefDataServiceTestsDir>$(UnitTestsDir)\ReferenceDataService.Tests</RefDataServiceTestsDir>    
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
     <ServicesDeploymentDir>$(DeploymentDir)\iRINGTools\Services</ServicesDeploymentDir>
+	<HypermediaServicesDeploymentDir>$(DeploymentDir)\iRINGTools\Hypermedia</HypermediaServicesDeploymentDir>
     <AppsDeploymentDir>$(DeploymentDir)\iRINGTools\Apps</AppsDeploymentDir>
     <UtilitiesDeploymentDir>$(DeploymentDir)\iRINGTools\Utils</UtilitiesDeploymentDir>
     <LandingDeploymentDir>$(DeploymentDir)\iRINGTools</LandingDeploymentDir>
@@ -104,6 +105,13 @@
 			   $(HypermediaServicesDir)\App_Code\**;
                $(HypermediaServicesDir)\Properties\**;
 			   $(HypermediaServicesDir)\Logs\**;
+			   $(HypermediaServicesDir)\App_Start\*.cs;
+			   $(HypermediaServicesDir)\Common\*.cs;
+			   $(HypermediaServicesDir)\Modules\*.cs;
+			   $(HypermediaServicesDir)\Areas\HelpPage\*.cs;
+			   $(HypermediaServicesDir)\Areas\HelpPage\Controllers\*.cs;
+			   $(HypermediaServicesDir)\Areas\HelpPage\Models\*.cs;
+			   $(HypermediaServicesDir)\Areas\HelpPage\SampleGeneration\*.cs;
                $(HypermediaServicesDir)\*.suo;
                $(HypermediaServicesDir)\*.cs;
                $(HypermediaServicesDir)\*.csproj;
@@ -145,7 +153,7 @@
     <DeploymentPackage Include="*.*" Exclude="*.zip">
       <Options>a -tzip -y -r</Options>
       <OutputDir>$(DeploymentDir)</OutputDir>
-      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(HypermediaServicesDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
+      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(HypermediaServicesDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
       <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
     </DeploymentPackage>
   </ItemGroup>
@@ -198,7 +206,7 @@
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
-    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(HypermediaServicesDir); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
+    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(HypermediaServicesDeploymentDir); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
     
     <Message Text="Creating Services deployment ..." />
     <Copy SourceFiles="@(ServicesDeployment)"
@@ -213,11 +221,12 @@
 	
 	<Message Text="Creating Hypermedia Services deployment ..." />
     <Copy SourceFiles="@(HypermediaServicesDeployment)"
-          DestinationFiles="@(HypermediaServicesDeployment ->'$(HypermediaServicesDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(HypermediaServicesDir)\Web_Default.config $(HypermediaServicesDir)\Web.config" />
-    <Exec Command="Move /Y $(HypermediaServicesDir)\App_Data\Federation_Default.xml $(HypermediaServicesDir)\App_Data\Federation.xml" />
-    <Exec Command="Move /Y $(HypermediaServicesDir)\App_Data\Config_Default.ttl $(HypermediaServicesDir)\App_Data\Config.ttl" />
-	
+          DestinationFiles="@(HypermediaServicesDeployment ->'$(HypermediaServicesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(HypermediaServicesDeploymentDir)\Web_Default.config $(HypermediaServicesDeploymentDir)\Web.config" />
+    <Exec Command="Move /Y $(HypermediaServicesDeploymentDir)\App_Data\Federation_Default.xml $(HypermediaServicesDeploymentDir)\App_Data\Federation.xml" />
+    <Exec Command="Move /Y $(HypermediaServicesDeploymentDir)\App_Data\Config_Default.ttl $(HypermediaServicesDeploymentDir)\App_Data\Config.ttl" />
+    <Exec Command="Mkdir $(HypermediaServicesDeploymentDir)\Logs" />
+    <Exec Command="Mkdir $(HypermediaServicesDeploymentDir)\App_Code"/>	
 	
 
     <Message Text="Creating Applications deployment ..." />
