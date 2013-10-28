@@ -58,7 +58,10 @@ namespace org.iringtools.library
     [DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
     public string description { get; set; }
 
-    [DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+    [DataMemberAttribute(EmitDefaultValue = true, Order = 3)]
+    public string dataObjectName { get; set; }
+
+    [DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
     public ParameterMaps parameterMaps { get; set; }
   }
 
@@ -71,7 +74,7 @@ namespace org.iringtools.library
           parameterMaps = new ParameterMaps();
       }
 
-      [DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+      [DataMemberAttribute(EmitDefaultValue = false, Order = 1)]
       public ParameterMaps parameterMaps { get; set; }
   }
       
@@ -102,7 +105,7 @@ namespace org.iringtools.library
     //[DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
     //public string isMapped { get; set; }
 
-    [DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
+    [DataMemberAttribute(EmitDefaultValue = true, Order = 4)]
     public string dataPropertyName { get; set; }
 
   }
