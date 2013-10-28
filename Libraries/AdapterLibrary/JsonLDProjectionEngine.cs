@@ -159,7 +159,7 @@ namespace org.iringtools.adapter
 
                 if (dataObjects.Count > 0)
                 {
-                    DataObject dataObject = FindGraphDataObject(graphName);
+                    DataObject dataObject = FindGraphDataObject(tipMap.dataObjectName);
                     dataItems.version = dataObject.version;
 
                     if (dataObject == null)
