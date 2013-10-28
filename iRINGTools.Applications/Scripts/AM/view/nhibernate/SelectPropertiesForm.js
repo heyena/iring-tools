@@ -22,11 +22,10 @@ Ext.define('AM.view.nhibernate.SelectPropertiesForm', {
     'AM.view.nhibernate.MultiSelectComponentGrid'
   ],
 
+  autoScroll: true,
   layout: {
     type: 'auto'
   },
-  autoScroll: true,
-
   bodyStyle: 'background:#fff;padding:10px',
   title: 'Select Properties',
 
@@ -66,7 +65,8 @@ Ext.define('AM.view.nhibernate.SelectPropertiesForm', {
           ]
         }
       ],
-      items: [{
+      items: [
+        {
           xtype: 'multiselectiongrid',
           hidden: true,
           itemId: 'propertiesSelectionGrid'

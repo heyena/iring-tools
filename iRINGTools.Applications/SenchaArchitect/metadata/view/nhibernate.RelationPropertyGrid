@@ -8,6 +8,7 @@
     "userConfig": {
         "height": null,
         "itemId": "relationPropertyGrid",
+        "padding": 10,
         "width": null,
         "designer|userClassName": "nhibernate.RelationPropertyGrid",
         "designer|userAlias": "relationPropertyGrid",

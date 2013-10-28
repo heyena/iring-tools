@@ -19,6 +19,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
   stateId: 'directory-treestate',
   stateful: true,
+  bodyStyle: 'background:#fff;padding:4px',
   store: 'DirectoryTreeStore',
 
   initComponent: function() {
@@ -40,26 +41,6 @@ Ext.define('AM.view.directory.DirectoryTree', {
           })
         ]
       },
-      dockedItems: [
-        {
-          xtype: 'toolbar',
-          dock: 'top',
-          layout: {
-            padding: 4,
-            type: 'hbox'
-          },
-          items: [
-            {
-              xtype: 'button',
-              handler: function(button, event) {
-                me.onReload();
-              },
-              iconCls: 'am-view-refresh',
-              text: 'Reload Tree'
-            }
-          ]
-        }
-      ],
       listeners: {
         itemclick: {
           fn: me.onClick,

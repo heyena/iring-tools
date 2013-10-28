@@ -42,10 +42,10 @@
             },
             "codeClass": null,
             "userConfig": {
-                "action": "regenerateall",
-                "hidden": true,
-                "icon": "Content/img/16x16/document-new.png",
-                "text": "Regenerate HibernateDataLayer artifacts"
+                "action": "refreshscopes",
+                "hidden": null,
+                "icon": "Content/img/16x16/view-refresh.png",
+                "text": "Refresh"
             },
             "designerId": "a78c6c90-082e-4fc6-bb06-697474e63ec1",
             "customConfigs": [

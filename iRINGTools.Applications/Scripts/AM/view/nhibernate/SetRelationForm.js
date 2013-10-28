@@ -33,7 +33,8 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
     var me = this;
 
     Ext.applyIf(me, {
-      items: [{
+      items: [
+        {
           xtype: 'textfield',
           anchor: '100%',
           margin: '5 0 0 10',

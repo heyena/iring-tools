@@ -7,33 +7,19 @@
     "codeClass": null,
     "userConfig": {
         "height": null,
-        "width": 300,
+        "width": null,
         "designer|userClassName": "nhibernate.SelectDataKeysForm",
         "designer|userAlias": "selectdatakeysform",
+        "autoScroll": true,
         "layout": "auto",
         "bodyPadding": null,
         "bodyStyle": [
-            "background:#eee;padding:10px 10px 0px 10px"
+            "background:#fff;padding:10px"
         ],
-        "title": null
+        "title": "Select Keys"
     },
     "designerId": "fc9cda16-dcc7-4f94-a9a7-8ed183eef987",
     "cn": [
-        {
-            "type": "Ext.form.Label",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "style": [
-                    "font-weight:bold;"
-                ],
-                "text": "Select Keys"
-            },
-            "designerId": "2eee59d5-d216-4274-92c3-7c012acfce44"
-        },
         {
             "type": "Ext.toolbar.Toolbar",
             "reference": {

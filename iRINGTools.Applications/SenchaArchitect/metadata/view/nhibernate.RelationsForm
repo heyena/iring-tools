@@ -20,7 +20,10 @@
         ],
         "layout": null,
         "bodyPadding": null,
-        "title": null
+        "bodyStyle": [
+            "background:#fff;padding:10px"
+        ],
+        "title": "Configure Relationship"
     },
     "configAlternates": {
         "dockedItems": "object"
@@ -55,58 +58,88 @@
     ],
     "cn": [
         {
-            "type": "Ext.panel.Panel",
+            "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
                 "type": "array"
             },
             "codeClass": null,
             "userConfig": {
-                "frame": true,
-                "layout": null,
-                "header": false,
-                "title": null
+                "fieldLabel": "Relationship Name",
+                "labelWidth": 160,
+                "name": "relationName",
+                "enableKeyEvents": true,
+                "size": 40
             },
-            "designerId": "71550efd-df3f-4a62-94ae-549a32759a4d",
-            "customConfigs": [
-                {
-                    "group": "(Custom Properties)",
-                    "name": "dockedItems",
-                    "type": "string"
-                }
-            ],
+            "designerId": "88744c0c-9cc7-48f0-9ffb-c02d990f1148",
             "cn": [
                 {
-                    "type": "Ext.form.Label",
+                    "type": "basiceventbinding",
                     "reference": {
-                        "name": "items",
+                        "name": "listeners",
                         "type": "array"
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "cls": "x-form-item",
-                        "style": [
-                            "font-weight:bold;"
+                        "fn": "onRelationKeydown",
+                        "implHandler": [
+                            "var me = this;\r",
+                            "if (e.getKey() == e.ENTER) {\r",
+                            "  me.addRelationship(me);\r",
+                            "}"
                         ],
-                        "text": "Add/Remove relationship"
+                        "name": "keydown",
+                        "scope": "me"
                     },
-                    "designerId": "08d6af8a-b119-4c81-a559-36b5d98c155c"
-                },
+                    "designerId": "625436bb-23cf-400e-85dc-198ef807c0e6"
+                }
+            ]
+        },
+        {
+            "type": "linkedinstance",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "autoShow": true,
+                "height": 200,
+                "minHeight": null,
+                "width": null,
+                "designer|displayName": "relationsGrid",
+                "dock": null
+            },
+            "designerId": "938378b7-386f-4cf1-8c7f-bdfc1186c090",
+            "masterInstanceId": "17fb1af5-2569-49f4-927f-dd778c03c1a1"
+        },
+        {
+            "type": "Ext.toolbar.Toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top",
+                "height": null,
+                "margin": null
+            },
+            "designerId": "15499fcb-b1b3-4e8a-8231-e26f9767c110",
+            "cn": [
                 {
-                    "type": "Ext.form.field.Text",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "fieldLabel": "Relationship Name",
-                        "labelWidth": 160,
-                        "name": "relationName",
-                        "enableKeyEvents": true,
-                        "size": 40
+                        "layout|flex": null,
+                        "iconCls": "am-apply",
+                        "text": "Apply"
                     },
-                    "designerId": "88744c0c-9cc7-48f0-9ffb-c02d990f1148",
+                    "designerId": "1bb27259-eb4d-44da-853d-3bf6cb43185d",
                     "cn": [
                         {
                             "type": "basiceventbinding",
@@ -116,100 +149,30 @@
                             },
                             "codeClass": null,
                             "userConfig": {
-                                "fn": "onRelationKeydown",
+                                "fn": "onButtonClick",
                                 "implHandler": [
-                                    "var me = this;\r",
-                                    "if (e.getKey() == e.ENTER) {\r",
-                                    "  me.addRelationship(me);\r",
-                                    "}"
+                                    ""
                                 ],
-                                "name": "keydown",
+                                "name": "click",
                                 "scope": "me"
                             },
-                            "designerId": "625436bb-23cf-400e-85dc-198ef807c0e6"
+                            "designerId": "9cbb4d9c-ad6d-41a1-af02-37ceeefed135"
                         }
                     ]
                 },
                 {
-                    "type": "linkedinstance",
+                    "type": "Ext.button.Button",
                     "reference": {
                         "name": "items",
                         "type": "array"
                     },
                     "codeClass": null,
                     "userConfig": {
-                        "autoShow": true,
-                        "height": 700,
-                        "minHeight": null,
-                        "width": null,
-                        "designer|displayName": "relationsGrid",
-                        "dock": null
+                        "layout|flex": null,
+                        "iconCls": "am-edit-clear",
+                        "text": "Reset"
                     },
-                    "designerId": "938378b7-386f-4cf1-8c7f-bdfc1186c090",
-                    "masterInstanceId": "17fb1af5-2569-49f4-927f-dd778c03c1a1"
-                },
-                {
-                    "type": "Ext.toolbar.Toolbar",
-                    "reference": {
-                        "name": "dockedItems",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "dock": "top",
-                        "height": null,
-                        "margin": null
-                    },
-                    "designerId": "15499fcb-b1b3-4e8a-8231-e26f9767c110",
-                    "cn": [
-                        {
-                            "type": "Ext.button.Button",
-                            "reference": {
-                                "name": "items",
-                                "type": "array"
-                            },
-                            "codeClass": null,
-                            "userConfig": {
-                                "layout|flex": null,
-                                "iconCls": "am-apply",
-                                "text": "Apply"
-                            },
-                            "designerId": "1bb27259-eb4d-44da-853d-3bf6cb43185d",
-                            "cn": [
-                                {
-                                    "type": "basiceventbinding",
-                                    "reference": {
-                                        "name": "listeners",
-                                        "type": "array"
-                                    },
-                                    "codeClass": null,
-                                    "userConfig": {
-                                        "fn": "onButtonClick",
-                                        "implHandler": [
-                                            ""
-                                        ],
-                                        "name": "click",
-                                        "scope": "me"
-                                    },
-                                    "designerId": "9cbb4d9c-ad6d-41a1-af02-37ceeefed135"
-                                }
-                            ]
-                        },
-                        {
-                            "type": "Ext.button.Button",
-                            "reference": {
-                                "name": "items",
-                                "type": "array"
-                            },
-                            "codeClass": null,
-                            "userConfig": {
-                                "layout|flex": null,
-                                "iconCls": "am-edit-clear",
-                                "text": "Reset"
-                            },
-                            "designerId": "6eb8eca4-63c6-4e3e-833a-9de6d82763fa"
-                        }
-                    ]
+                    "designerId": "6eb8eca4-63c6-4e3e-833a-9de6d82763fa"
                 }
             ]
         },
@@ -288,17 +251,17 @@
                     "var node = form.node;\r",
                     "var numberOfRelation = rootNode.childNodes.length - 1;\r",
                     "\r",
-                    "if (mydata.length >= numberOfRelation) {\r",
+                    "//if (mydata.length >= numberOfRelation) {\r",
                     "if (numberOfRelation === 0) {\r",
-                    "message = 'Data object \"' + node.parentNode.data.text + '\" cannot have any relationship since it is the only data object selected';\r",
-                    "showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "    message = 'Data object \"' + node.parentNode.data.text + '\" cannot have any relationship since it is the only data object selected';\r",
+                    "    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
                     "}\r",
-                    "else {\r",
+                    "/*else {\r",
                     "message = 'Data object \"' +node.parentNode.data.text + '\" cannot have more than ' + numberOfRelation + ' relationship';\r",
                     "showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
                     "}\r",
                     "return;\r",
-                    "}\r",
+                    "}*/\r",
                     "\r",
                     "if (relationName === \"\") {\r",
                     "message = 'Relationship name cannot be blank.';\r",

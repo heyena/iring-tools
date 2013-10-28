@@ -40,48 +40,51 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
         labelWidth: 130,
         allowBlank: false
       },
-
-      items: [{
-            xtype: 'textfield',
-            fieldLabel: 'Relationship Name',
-            labelWidth: 160,
-            name: 'relationName',
-            enableKeyEvents: true,
-            size: 40,
-            listeners: {
+      items: [
+        {
+          xtype: 'textfield',
+          fieldLabel: 'Relationship Name',
+          labelWidth: 160,
+          name: 'relationName',
+          enableKeyEvents: true,
+          size: 40,
+          listeners: {
             keydown: {
-                fn: me.onRelationKeydown,
-                scope: me
+              fn: me.onRelationKeydown,
+              scope: me
             }
-            }
+          }
         },
         {
-            xtype: 'relationsgrid',
-            autoShow: true,
-            height: 200
-        }],
-        dockedItems: [{
-            xtype: 'toolbar',
-            dock: 'top',
-            items: [
+          xtype: 'relationsgrid',
+          autoShow: true,
+          height: 200
+        }
+      ],
+      dockedItems: [
+        {
+          xtype: 'toolbar',
+          dock: 'top',
+          items: [
             {
-                xtype: 'button',
-                iconCls: 'am-apply',
-                text: 'Apply',
-                listeners: {
+              xtype: 'button',
+              iconCls: 'am-apply',
+              text: 'Apply',
+              listeners: {
                 click: {
-                    fn: me.onButtonClick,
-                    scope: me
+                  fn: me.onButtonClick,
+                  scope: me
                 }
-                }
+              }
             },
             {
-                xtype: 'button',
-                iconCls: 'am-edit-clear',
-                text: 'Reset'
+              xtype: 'button',
+              iconCls: 'am-edit-clear',
+              text: 'Reset'
             }
-            ]
-        }]
+          ]
+        }
+      ]
     });
 
     me.callParent(arguments);
@@ -161,15 +164,22 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
       var node = form.node;
       var numberOfRelation = rootNode.childNodes.length - 1;
 
-    if (numberOfRelation === 0) {
-        message = 'Data object "' + node.parentNode.data.text + '" cannot have any relationship since it is the only data object selected.';
-        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-    }
+      //if (mydata.length >= numberOfRelation) {
+      if (numberOfRelation === 0) {
+  message = 'Data object "' + node.parentNode.data.text + '" cannot have any relationship since it is the only data object selected';
+  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      }
+      /*else {
+      message = 'Data object "' +node.parentNode.data.text + '" cannot have more than ' + numberOfRelation + ' relationship';
+      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      }
+      return;
+      }*/
 
       if (relationName === "") {
-          message = 'Relationship name cannot be blank.';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-          return;
+  message = 'Relationship name cannot be blank.';
+  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+  return;
       }
 
       gridStore.each(function(relation) {

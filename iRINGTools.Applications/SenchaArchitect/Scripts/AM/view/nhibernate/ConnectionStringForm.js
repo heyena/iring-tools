@@ -21,6 +21,7 @@ Ext.define('AM.view.nhibernate.ConnectionStringForm', {
   dirNode: '',
   value: '',
   serName: '',
+  autoScroll: true,
   bodyStyle: 'background:#fff;padding:10px',
   title: 'Configure Data Source',
 

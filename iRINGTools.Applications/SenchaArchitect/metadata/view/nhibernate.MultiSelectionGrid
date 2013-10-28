@@ -7,7 +7,7 @@
     "codeClass": null,
     "userConfig": {
         "height": null,
-        "maxHeight": 260,
+        "maxHeight": null,
         "maxWidth": null,
         "width": null,
         "designer|userClassName": "nhibernate.MultiSelectionGrid",

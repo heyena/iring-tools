@@ -25,7 +25,8 @@ Ext.define('AM.view.nhibernate.SetPropertyForm', {
     var me = this;
 
     Ext.applyIf(me, {
-      items: [{
+      items: [
+        {
           xtype: 'textfield',
           anchor: '100%',
           fieldLabel: 'Column Name',

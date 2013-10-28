@@ -25,21 +25,15 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
   endpoint: '',
   contextName: '',
   node: '',
-  bodyStyle: 'background:#eee;padding:10 0 0 10',
+  autoScroll: true,
+  bodyStyle: 'background:#fff;padding:10px',
+  title: 'Configure Relationship',
 
   initComponent: function() {
     var me = this;
 
     Ext.applyIf(me, {
       items: [
-        {
-          xtype: 'label',
-          cls: 'x-form-item',
-          height: 14,
-          margin: '5 0 0 10',
-          style: 'font-weight:bold;',
-          text: 'Configure Relationship'
-        },
         {
           xtype: 'textfield',
           anchor: '100%',
@@ -137,7 +131,7 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
         },
         {
           xtype: 'relationPropertyGrid',
-          height: 600,
+          height: 200,
           anchor: '100%'
         }
       ],

@@ -25,6 +25,8 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
   endpoint: '',
   rootNode: '',
   node: '',
+  bodyStyle: 'background:#fff;padding:10px',
+  title: 'Configure Relationship',
 
   initComponent: function() {
     var me = this;
@@ -40,58 +42,45 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
       },
       items: [
         {
-          xtype: 'panel',
-          frame: true,
-          header: false,
+          xtype: 'textfield',
+          fieldLabel: 'Relationship Name',
+          labelWidth: 160,
+          name: 'relationName',
+          enableKeyEvents: true,
+          size: 40,
+          listeners: {
+            keydown: {
+              fn: me.onRelationKeydown,
+              scope: me
+            }
+          }
+        },
+        {
+          xtype: 'relationsgrid',
+          autoShow: true,
+          height: 200
+        }
+      ],
+      dockedItems: [
+        {
+          xtype: 'toolbar',
+          dock: 'top',
           items: [
             {
-              xtype: 'label',
-              cls: 'x-form-item',
-              style: 'font-weight:bold;',
-              text: 'Add/Remove relationship'
-            },
-            {
-              xtype: 'textfield',
-              fieldLabel: 'Relationship Name',
-              labelWidth: 160,
-              name: 'relationName',
-              enableKeyEvents: true,
-              size: 40,
+              xtype: 'button',
+              iconCls: 'am-apply',
+              text: 'Apply',
               listeners: {
-                keydown: {
-                  fn: me.onRelationKeydown,
+                click: {
+                  fn: me.onButtonClick,
                   scope: me
                 }
               }
             },
             {
-              xtype: 'relationsgrid',
-              autoShow: true,
-              height: 700
-            }
-          ],
-          dockedItems: [
-            {
-              xtype: 'toolbar',
-              dock: 'top',
-              items: [
-                {
-                  xtype: 'button',
-                  iconCls: 'am-apply',
-                  text: 'Apply',
-                  listeners: {
-                    click: {
-                      fn: me.onButtonClick,
-                      scope: me
-                    }
-                  }
-                },
-                {
-                  xtype: 'button',
-                  iconCls: 'am-edit-clear',
-                  text: 'Reset'
-                }
-              ]
+              xtype: 'button',
+              iconCls: 'am-edit-clear',
+              text: 'Reset'
             }
           ]
         }
@@ -175,17 +164,17 @@ Ext.define('AM.view.nhibernate.RelationsForm', {
       var node = form.node;
       var numberOfRelation = rootNode.childNodes.length - 1;
 
-      if (mydata.length >= numberOfRelation) {
-  if (numberOfRelation === 0) {
-    message = 'Data object "' + node.parentNode.data.text + '" cannot have any relationship since it is the only data object selected';
-    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-  }
-  else {
-    message = 'Data object "' +node.parentNode.data.text + '" cannot have more than ' + numberOfRelation + ' relationship';
-    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-  }
-  return;
+      //if (mydata.length >= numberOfRelation) {
+      if (numberOfRelation === 0) {
+  message = 'Data object "' + node.parentNode.data.text + '" cannot have any relationship since it is the only data object selected';
+  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
       }
+      /*else {
+      message = 'Data object "' +node.parentNode.data.text + '" cannot have more than ' + numberOfRelation + ' relationship';
+      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      }
+      return;
+      }*/
 
       if (relationName === "") {
   message = 'Relationship name cannot be blank.';

@@ -21,8 +21,8 @@ Ext.define('AM.view.nhibernate.MultiSelectComponentGrid', {
     'AM.view.override.nhibernate.MultiSelectComponentGrid'
   ],
 
-  itemId: 'multiselectcomponentgrid',
   border: false,
+  itemId: 'multiselectcomponentgrid',
 
   initComponent: function() {
     var me = this;
