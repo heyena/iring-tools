@@ -47,6 +47,7 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
           floatable: false,
           region: 'center',
           itemId: 'nhibernateContent',
+          autoScroll: true,
           layout: {
             type: 'fit'
           }

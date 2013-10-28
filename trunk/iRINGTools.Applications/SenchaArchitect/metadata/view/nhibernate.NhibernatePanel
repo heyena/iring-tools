@@ -64,6 +64,7 @@
                 "layout|region": "center",
                 "layout|split": null,
                 "itemId": "nhibernateContent",
+                "autoScroll": true,
                 "layout": "fit"
             },
             "designerId": "ebb5ac25-f61a-4708-8d1d-f1d197b5163d"

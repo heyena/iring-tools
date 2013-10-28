@@ -19,6 +19,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
   stateId: 'directory-treestate',
   stateful: true,
+  bodyStyle: 'background:#fff;padding:4px',
   store: 'DirectoryTreeStore',
   bodyStyle: 'background:#fff;padding:4px',
 

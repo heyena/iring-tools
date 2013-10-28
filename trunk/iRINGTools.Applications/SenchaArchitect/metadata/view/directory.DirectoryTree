@@ -17,6 +17,9 @@
         "width": null,
         "designer|userClassName": "directory.DirectoryTree",
         "designer|userAlias": "directorytree",
+        "bodyStyle": [
+            "background:#fff;padding:4px"
+        ],
         "title": null,
         "store": "DirectoryTreeStore"
     },
@@ -58,65 +61,6 @@
                             "group": "(Custom Properties)",
                             "name": "dragField",
                             "type": "string"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "Ext.toolbar.Toolbar",
-            "reference": {
-                "name": "dockedItems",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "dock": "top",
-                "container|padding": 4
-            },
-            "designerId": "d6c514dc-06dc-4f44-a592-77d3c55ffc8d",
-            "cn": [
-                {
-                    "type": "Ext.button.Button",
-                    "reference": {
-                        "name": "items",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "scope": null,
-                        "layout|flex": null,
-                        "icon": null,
-                        "iconCls": "am-view-refresh",
-                        "text": "Reload Tree"
-                    },
-                    "designerId": "da9e4018-f3fc-4bee-b0b3-bee73985e3fa",
-                    "customConfigs": [
-                        {
-                            "group": "(Custom Properties)",
-                            "name": "scope",
-                            "type": "string"
-                        }
-                    ],
-                    "cn": [
-                        {
-                            "type": "fixedfunction",
-                            "reference": {
-                                "name": "items",
-                                "type": "array"
-                            },
-                            "codeClass": null,
-                            "userConfig": {
-                                "fn": "handler",
-                                "designer|params": [
-                                    "button",
-                                    "event"
-                                ],
-                                "implHandler": [
-                                    "me.onReload();"
-                                ]
-                            },
-                            "designerId": "e64ad5bd-5eaf-465c-b337-06d900a4fc67"
                         }
                     ]
                 }

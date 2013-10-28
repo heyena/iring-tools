@@ -17,7 +17,6 @@ Ext.define('AM.view.nhibernate.MultiSelectionGrid', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.multiselectiongrid',
 
-  //maxHeight: 260,
   autoScroll: true,
   frameHeader: false,
   header: false,

@@ -22,8 +22,8 @@ Ext.define('AM.view.nhibernate.RelationPropertyGrid', {
   ],
 
   itemId: 'relationPropertyGrid',
-  store: 'RelationStore',
   padding: 10,
+  store: 'RelationStore',
 
   initComponent: function() {
     var me = this;

@@ -10,30 +10,14 @@
         "width": 400,
         "designer|userClassName": "nhibernate.SetPropertyForm",
         "designer|userAlias": "setpropertyform",
-        "bodyPadding": 10,
+        "bodyPadding": null,
         "bodyStyle": [
-            "background:#eee;padding:10px 0px 0px 10px"
+            "background:#fff;padding:10px"
         ],
-        "title": null
+        "title": "Configure Property"
     },
     "designerId": "d1c34e2a-9007-4641-b713-a25c592fadbd",
     "cn": [
-        {
-            "type": "Ext.form.Label",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "cls": "x-form-item",
-                "style": [
-                    "font-weight:bold;"
-                ],
-                "text": "Data Properties"
-            },
-            "designerId": "996f144f-a6f4-40d8-a576-72bfe584a14c"
-        },
         {
             "type": "Ext.form.field.Text",
             "reference": {

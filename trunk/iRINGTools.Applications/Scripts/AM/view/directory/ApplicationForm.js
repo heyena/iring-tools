@@ -185,18 +185,23 @@ Ext.define('AM.view.directory.ApplicationForm', {
     var me = this;
     var win = me.up('window');
     var endpointName = me.getForm().findField('displayName').getValue();
+    var scope = me.getForm().findField('scope').getValue();
 
     var dlCombo = me.down('combo');
     var state = me.getForm().findField('state').getValue();
 
     if(state!='edit')
     me.getForm().findField('name').setValue(endpointName);
+    /////////////////////////////////////
+    if (scope != endpointName) {
+      /*if (ifExistSibling(endpointName, that.node, that.state)) {
+      showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
+      return;
+      }*/
 
-    if(me.getForm().isValid()){
       me.getForm().submit({
         waitMsg: 'Saving Data...',
         success: function (response, request) {
-
           win.fireEvent('save', me);
           Ext.ComponentQuery.query('directorytree')[0].onReload();
         },
@@ -206,13 +211,34 @@ Ext.define('AM.view.directory.ApplicationForm', {
           return;
         }
       });
-    }else
-    {
-      var message = 'Please fill the required data';
+    }
+    else {
+      var message = 'Scope & Application name cannot be same!';
       showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-      return;
     }
 
+    ////////////////////////////////////
+    /*(me.getForm().isValid()){
+    me.getForm().submit({
+    waitMsg: 'Saving Data...',
+    success: function (response, request) {
+
+    win.fireEvent('save', me);
+    Ext.ComponentQuery.query('directorytree')[0].onReload();
+    },
+    failure: function (response, request) {
+    var message = 'Error saving changes!';
+    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+    return;
+    }
+    });
+    }else
+    {
+    var message = 'Please fill the required data';
+    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+    return;
+    }
+    */
   },
 
   onReset: function() {

@@ -29,7 +29,8 @@ Ext.define('AM.view.nhibernate.DataObjectForm', {
     var me = this;
 
     Ext.applyIf(me, {
-      items: [{
+      items: [
+        {
           xtype: 'textfield',
           anchor: '100%',
           saveDelay: 160,
@@ -40,7 +41,7 @@ Ext.define('AM.view.nhibernate.DataObjectForm', {
           allowBlank: false
         },
         {
-          xtype: 'hidden',
+          xtype: 'hiddenfield',
           anchor: '100%',
           name: 'objectNamespace'
         },

@@ -1839,8 +1839,8 @@
             "userConfig": {
                 "fn": "onSwitchToLive",
                 "implHandler": [
-                    "\tvar me = this;\r",
-                    "\tme.switchDataMode('Live');"
+                    "var me = this;\r",
+                    "me.switchDataMode('Live');"
                 ],
                 "name": "click",
                 "scope": "me",
@@ -1898,6 +1898,25 @@
                 ]
             },
             "designerId": "b2c42858-d155-4dec-9c4f-e436e6478851"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "refreshScopes",
+                "implHandler": [
+                    "this.getDirTree().onReload();"
+                ],
+                "name": "click",
+                "scope": "me",
+                "designer|targetType": "Ext.menu.Item",
+                "designer|controlQuery": "menuitem[action=refreshscopes]"
+            },
+            "designerId": "c1533f0f-8a22-4c2d-9678-249738154dd1"
         }
     ]
 }

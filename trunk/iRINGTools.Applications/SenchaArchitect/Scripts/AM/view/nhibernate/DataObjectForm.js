@@ -21,20 +21,15 @@ Ext.define('AM.view.nhibernate.DataObjectForm', {
   description: '',
   objectNamespace: '',
   objectName: '',
-  bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
+  autoScroll: true,
+  bodyStyle: 'background:#fff;padding:10px',
+  title: 'Configure Data Object',
 
   initComponent: function() {
     var me = this;
 
     Ext.applyIf(me, {
       items: [
-        {
-          xtype: 'label',
-          anchor: '100%',
-          cls: 'x-form-item',
-          style: 'font-weight:bold;',
-          text: 'Data Object'
-        },
         {
           xtype: 'textfield',
           anchor: '100%',
@@ -46,13 +41,9 @@ Ext.define('AM.view.nhibernate.DataObjectForm', {
           allowBlank: false
         },
         {
-          xtype: 'textfield',
+          xtype: 'hiddenfield',
           anchor: '100%',
-          saveDelay: 160,
-          fieldLabel: 'Object Namespace',
-          labelWidth: 160,
-          name: 'objectNamespace',
-          allowBlank: false
+          name: 'objectNamespace'
         },
         {
           xtype: 'textfield',

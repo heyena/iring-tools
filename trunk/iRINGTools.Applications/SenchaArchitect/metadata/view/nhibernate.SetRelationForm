@@ -15,11 +15,12 @@
         "width": null,
         "designer|userClassName": "nhibernate.SetRelationForm",
         "designer|userAlias": "setrelationform",
+        "autoScroll": true,
         "bodyPadding": null,
         "bodyStyle": [
-            "background:#eee;padding:10 0 0 10"
+            "background:#fff;padding:10px"
         ],
-        "title": null
+        "title": "Configure Relationship"
     },
     "designerId": "ef191768-2bd4-46be-864b-6386fbb488a5",
     "customConfigs": [
@@ -45,24 +46,6 @@
         }
     ],
     "cn": [
-        {
-            "type": "Ext.form.Label",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "cls": "x-form-item",
-                "height": 14,
-                "margin": "5 0 0 10",
-                "style": [
-                    "font-weight:bold;"
-                ],
-                "text": "Configure Relationship"
-            },
-            "designerId": "528dde09-4029-4027-87d5-0d7ce455debe"
-        },
         {
             "type": "Ext.form.field.Text",
             "reference": {
@@ -533,7 +516,7 @@
             },
             "codeClass": null,
             "userConfig": {
-                "height": 600,
+                "height": 200,
                 "minHeight": null,
                 "store": null,
                 "layout|anchor": "100%"

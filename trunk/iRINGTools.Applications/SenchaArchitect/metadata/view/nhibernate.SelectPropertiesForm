@@ -7,13 +7,14 @@
     "codeClass": null,
     "userConfig": {
         "height": null,
-        "width": 300,
+        "width": null,
         "designer|userClassName": "nhibernate.SelectPropertiesForm",
         "designer|userAlias": "selectpropertiesform",
+        "autoScroll": true,
         "layout": "auto",
         "bodyPadding": null,
-        "bodyStyle": "background:#eee;padding:10px 10px 0px 10px",
-        "title": null
+        "bodyStyle": "background:#fff;padding:10px",
+        "title": "Select Properties"
     },
     "configAlternates": {
         "bodyStyle": "string"
@@ -104,21 +105,6 @@
                     ]
                 }
             ]
-        },
-        {
-            "type": "Ext.form.Label",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "style": [
-                    "font-weight:bold;"
-                ],
-                "text": "Select Properties"
-            },
-            "designerId": "b6fdaec9-965d-4992-96cb-10fea5921e9c"
         },
         {
             "type": "linkedinstance",

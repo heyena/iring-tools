@@ -1255,6 +1255,10 @@ Ext.define('AM.controller.Directory', {
     me.switchDataMode('Live');
   },
 
+  refreshScopes: function(item, e, eOpts) {
+    this.getDirTree().onReload();
+  },
+
   init: function(application) {
     scopForExport = null;
     appForExport = null;
@@ -1345,6 +1349,9 @@ Ext.define('AM.controller.Directory', {
       },
       "menuitem[action=switchToLive]": {
         click: this.onSwitchToLive
+      },
+      "menuitem[action=refreshscopes]": {
+        click: this.refreshScopes
       }
     });
   },

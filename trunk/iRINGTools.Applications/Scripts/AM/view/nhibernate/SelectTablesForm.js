@@ -35,25 +35,6 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
     var me = this;
 
     Ext.applyIf(me, {
-      items: [{
-          xtype: 'multiselectiongrid',
-          hidden: true,
-          itemId: 'tablesSelectionGrid',
-          minHeight: 200
-        },
-        {
-          xtype: 'multiselectcomponentgrid'
-        },
-        {
-          xtype: 'hidden', // 'checkboxfield',
-          itemId: 'enableSummary',
-          fieldLabel: 'Enable Summary:',
-          labelWidth: 150,
-          name: 'enableSummary',
-          value: 'off',
-          inputValue: 'off'
-        }
-      ],
       dockedItems: [
         {
           xtype: 'toolbar',
@@ -84,6 +65,25 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
               text: 'Reset'
             }
           ]
+        }
+      ],
+      items: [
+        {
+          xtype: 'multiselectiongrid',
+          hidden: true,
+          itemId: 'tablesSelectionGrid',
+          minHeight: 200
+        },
+        {
+          xtype: 'multiselectcomponentgrid'
+        },
+        {
+          xtype: 'hiddenfield',
+          itemId: 'enableSummary',
+          fieldLabel: 'Enable Summary:',
+          labelWidth: 150,
+          name: 'enableSummary',
+          value: 'off'
         }
       ]
     });

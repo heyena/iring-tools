@@ -14,11 +14,12 @@
         "width": null,
         "designer|userClassName": "nhibernate.DataObjectForm",
         "designer|userAlias": "dataobjectform",
+        "autoScroll": true,
         "bodyPadding": null,
         "bodyStyle": [
-            "background:#eee;padding:10px 0px 0px 10px"
+            "background:#fff;padding:10px"
         ],
-        "title": null
+        "title": "Configure Data Object"
     },
     "designerId": "926170c4-1014-4c33-b926-bf1625034d16",
     "customConfigs": [
@@ -45,23 +46,6 @@
     ],
     "cn": [
         {
-            "type": "Ext.form.Label",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": "100%",
-                "cls": "x-form-item",
-                "style": [
-                    "font-weight:bold;"
-                ],
-                "text": "Data Object"
-            },
-            "designerId": "699f5e22-b0b9-4cf1-8b0e-94a96b0c0735"
-        },
-        {
             "type": "Ext.form.field.Text",
             "reference": {
                 "name": "items",
@@ -80,7 +64,7 @@
             "designerId": "5135b9ad-e5ce-4722-9f6b-c0ecd667add0"
         },
         {
-            "type": "Ext.form.field.Text",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -88,15 +72,10 @@
             "codeClass": null,
             "userConfig": {
                 "layout|anchor": "100%",
-                "saveDelay": 160,
-                "fieldLabel": "Object Namespace",
-                "labelWidth": 160,
-                "name": "objectNamespace",
-                "allowBlank": false,
-                "regex": null,
-                "regexText": null
+                "fieldLabel": null,
+                "name": "objectNamespace"
             },
-            "designerId": "97c9d57e-4d11-4ed9-a06d-3828ca826ac6"
+            "designerId": "a36efffe-bb1a-4213-a1f6-a5dbbcfccb52"
         },
         {
             "type": "Ext.form.field.Text",

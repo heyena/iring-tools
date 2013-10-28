@@ -18,10 +18,10 @@
         "bodyBorder": null,
         "bodyPadding": null,
         "bodyStyle": [
-            "background:#eee;padding:10px 10px 0px 10px"
+            "background:#fff;padding:10px"
         ],
-        "frameHeader": false,
-        "title": null
+        "frameHeader": null,
+        "title": "Select Tables"
     },
     "configAlternates": {
         "border": "boolean"
@@ -35,31 +35,6 @@
         }
     ],
     "cn": [
-        {
-            "type": "Ext.form.Label",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "labelStyle": null,
-                "margin": null,
-                "padding": null,
-                "style": [
-                    "font-weight:bold;"
-                ],
-                "text": "Select Tables"
-            },
-            "designerId": "ea8417a3-2258-4042-9ba4-3229979a4b44",
-            "customConfigs": [
-                {
-                    "group": "(Custom Properties)",
-                    "name": "labelStyle",
-                    "type": "string"
-                }
-            ]
-        },
         {
             "type": "Ext.toolbar.Toolbar",
             "reference": {
@@ -177,7 +152,7 @@
             "masterInstanceId": "55e4d2fa-9ebe-4466-b024-6d81829b1584"
         },
         {
-            "type": "Ext.form.field.Checkbox",
+            "type": "Ext.form.field.Hidden",
             "reference": {
                 "name": "items",
                 "type": "array"
@@ -190,11 +165,9 @@
                 "name": "enableSummary",
                 "value": [
                     "off"
-                ],
-                "boxLabel": null,
-                "inputValue": "off"
+                ]
             },
-            "designerId": "a28b81f3-4b5e-4856-894d-cadba9b88a8a"
+            "designerId": "a95fee1a-d6c4-4e54-8b4d-9824bf9c96df"
         }
     ]
 }

@@ -1281,8 +1281,8 @@ Ext.define('AM.controller.NHibernate', {
           rootNode.collapse();
           tree.disable();
 
-      }
-      me.showConnectionStringForm(panel);
+        }
+        me.showConnectionStringForm(panel);
       });
       content.add(panel);
       content.body.unmask();
@@ -2046,9 +2046,9 @@ Ext.define('AM.controller.NHibernate', {
       grid.getStore().data.items[i].data.value = availItems[i];
     }
     itemSelecter.items.items[0].bindStore(grid.getStore());
-//    itemSelecter.items.items[0].setText('Available Keys');
-//    itemSelecter.items.items[1].setText('Selected Keys');
-//    itemSelecter.items.items[1].margin = '0 0 0 153';
+    //itemSelecter.items.items[0].setText('Available Keys');
+    //itemSelecter.items.items[1].setText('Selected Keys');
+    //itemSelecter.items.items[1].margin = '0 0 0 153';
     buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(0);
     buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(0);
     buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(3);
@@ -2159,7 +2159,8 @@ Ext.define('AM.controller.NHibernate', {
     //itemSelecter.items.items[0].setText('Available Properties');
     //itemSelecter.items.items[1].setText('Selected Properties');
     //itemSelecter.items.items[1].margin = '0 0 0 120';
-    
+
+
     buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(0);
     buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(0);
     buttons = itemSelecter.items.items[0].items.items[0].items.items[1].items.removeAt(3);
