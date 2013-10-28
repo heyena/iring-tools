@@ -279,8 +279,6 @@ Ext.define('AM.controller.Directory', {
     var name,displayName, description, datalayer, assembly,application, baseurl, showconfig,endpoint,wintitle, state, path, context;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
-    var cacheImportURI = '';
-    var cacheTimeout = '';
 
     context = node.parentNode.data.text;//node.data.record.ContextName;
     if(item.itemId == 'editendpoint') {
@@ -294,8 +292,7 @@ Ext.define('AM.controller.Directory', {
       wintitle =  'Edit Application \"' + node.data.text + '\"';
       endpoint = node.data.record.Name;//node.data.record.Endpoint; 
       state = 'edit';
-      cacheImportURI = node.data.record.CacheImportURI;
-      cacheTimeout = node.data.record.CacheTimeout;
+
     } else {
       wintitle = 'Add Application';
       //state = 'new';
@@ -356,9 +353,6 @@ Ext.define('AM.controller.Directory', {
     form.getForm().findField('context').setValue(name);
     form.getForm().findField('assembly').setValue(assembly);
     form.getForm().findField('application').setValue(application);
-    form.getForm().findField('cacheImportURI').setValue(cacheImportURI);
-    form.getForm().findField('cacheTimeout').setValue(cacheTimeout);
-
     win.show();
   },
 

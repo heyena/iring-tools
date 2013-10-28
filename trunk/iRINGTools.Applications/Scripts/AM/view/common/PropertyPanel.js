@@ -32,10 +32,23 @@ Ext.define('AM.view.common.PropertyPanel', {
       },
       source: {
         
+      },
+      listeners: {
+        validateedit: {
+          fn: me.onPropertygridValidateedit,
+          scope: me
+        }
       }
     });
 
     me.callParent(arguments);
+  },
+
+  onPropertygridValidateedit: function(editor, e, eOpts) {
+    var me = this;
+    e.cancel = true;
+    e.record.data[e.field] = e.value;
+
   }
 
 });

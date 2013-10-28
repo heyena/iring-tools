@@ -152,10 +152,10 @@
                     "/////////////////////////////////////\r",
                     "if (scope != endpointName) {\r",
                     "  /*if (ifExistSibling(endpointName, that.node, that.state)) {\r",
-                    "    showDialog(400, 100, 'Warning', 'The name \\\"' + endpointName + '\\\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);\r",
-                    "    return;\r",
+                    "  showDialog(400, 100, 'Warning', 'The name \\\"' + endpointName + '\\\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);\r",
+                    "  return;\r",
                     "  }*/\r",
-                    "  \r",
+                    "\r",
                     "  me.getForm().submit({\r",
                     "    waitMsg: 'Saving Data...',\r",
                     "    success: function (response, request) {\r",
@@ -176,24 +176,24 @@
                     "\r",
                     "////////////////////////////////////\r",
                     "/*(me.getForm().isValid()){\r",
-                    "  me.getForm().submit({\r",
-                    "    waitMsg: 'Saving Data...',\r",
-                    "    success: function (response, request) {\r",
+                    "me.getForm().submit({\r",
+                    "waitMsg: 'Saving Data...',\r",
+                    "success: function (response, request) {\r",
                     "\r",
-                    "      win.fireEvent('save', me);\r",
-                    "      Ext.ComponentQuery.query('directorytree')[0].onReload();\r",
-                    "    },\r",
-                    "    failure: function (response, request) {\r",
-                    "      var message = 'Error saving changes!';\r",
-                    "      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
-                    "      return;\r",
-                    "    }\r",
-                    "  });\r",
+                    "win.fireEvent('save', me);\r",
+                    "Ext.ComponentQuery.query('directorytree')[0].onReload();\r",
+                    "},\r",
+                    "failure: function (response, request) {\r",
+                    "var message = 'Error saving changes!';\r",
+                    "showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "return;\r",
+                    "}\r",
+                    "});\r",
                     "}else\r",
                     "{\r",
-                    "  var message = 'Please fill the required data';\r",
-                    "  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
-                    "  return;\r",
+                    "var message = 'Please fill the required data';\r",
+                    "showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);\r",
+                    "return;\r",
                     "}\r",
                     "*/"
                 ]
@@ -376,38 +376,6 @@
             },
             "designerId": "eebfb9f9-0d2a-4775-9fda-c6aa962e1aa5",
             "masterInstanceId": "89827f86-cc75-4149-b7e4-3defbfcb6ebd"
-        },
-        {
-            "type": "Ext.form.field.Text",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": null,
-                "margin": null,
-                "fieldLabel": "Cache ImportURI",
-                "name": "cacheImportURI",
-                "allowBlank": false
-            },
-            "designerId": "54dab557-7206-4fa0-ba25-2cf5b51de6d3"
-        },
-        {
-            "type": "Ext.form.field.Text",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "layout|anchor": null,
-                "margin": null,
-                "fieldLabel": "Cache Timeout (in minutes)",
-                "name": "cacheTimeout",
-                "allowBlank": false
-            },
-            "designerId": "b835a21a-7a24-48f6-a5e7-98994fbf4c8a"
         },
         {
             "type": "Ext.container.Container",
