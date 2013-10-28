@@ -29,12 +29,6 @@ Ext.define('AM.view.menus.GraphsMenu', {
           action: 'editnewgraph',
           icon: 'Content/img/16x16/document-new.png',
           text: 'New GraphMap'
-        },
-        {
-          xtype: 'menuitem',
-          href: '',
-          hrefTarget: '_blank',
-          text: 'Export Graphs'
         }
       ]
     });
