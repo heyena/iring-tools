@@ -117,18 +117,6 @@ Ext.define('AM.view.directory.ApplicationForm', {
           xtype: 'datalayercombo'
         },
         {
-          xtype: 'textfield',
-          fieldLabel: 'Cache ImportURI',
-          name: 'cacheImportURI',
-          allowBlank: false
-        },
-        {
-          xtype: 'textfield',
-          fieldLabel: 'Cache Timeout (in minutes)',
-          name: 'cacheTimeout',
-          allowBlank: false
-        },
-        {
           xtype: 'container',
           layout: {
             align: 'stretch',
