@@ -21,7 +21,7 @@ namespace iRINGTOOLS.Hypermedia.Controllers
         }
 
         [GET("{app}/{project}/{resource}")]
-        public void GetList(string app, string project, string resource)
+        public void GetGenerateTip(string app, string project, string resource)
         {
             try
             {
