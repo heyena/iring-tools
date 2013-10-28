@@ -102,9 +102,8 @@
                $(HypermediaServicesDir)\Models\**;               
                $(HypermediaServicesDir)\bin\*.pdb;
                $(HypermediaServicesDir)\obj\**;
-			   $(HypermediaServicesDir)\App_Code\**;
+			   $(HypermediaServicesDir)\Packages.config;
                $(HypermediaServicesDir)\Properties\**;
-			   $(HypermediaServicesDir)\Logs\**;
 			   $(HypermediaServicesDir)\App_Start\*.cs;
 			   $(HypermediaServicesDir)\Common\*.cs;
 			   $(HypermediaServicesDir)\Modules\*.cs;
@@ -223,10 +222,6 @@
     <Copy SourceFiles="@(HypermediaServicesDeployment)"
           DestinationFiles="@(HypermediaServicesDeployment ->'$(HypermediaServicesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(HypermediaServicesDeploymentDir)\Web_Default.config $(HypermediaServicesDeploymentDir)\Web.config" />
-    <Exec Command="Move /Y $(HypermediaServicesDeploymentDir)\App_Data\Federation_Default.xml $(HypermediaServicesDeploymentDir)\App_Data\Federation.xml" />
-    <Exec Command="Move /Y $(HypermediaServicesDeploymentDir)\App_Data\Config_Default.ttl $(HypermediaServicesDeploymentDir)\App_Data\Config.ttl" />
-    <Exec Command="Mkdir $(HypermediaServicesDeploymentDir)\Logs" />
-    <Exec Command="Mkdir $(HypermediaServicesDeploymentDir)\App_Code"/>	
 	
 
     <Message Text="Creating Applications deployment ..." />
