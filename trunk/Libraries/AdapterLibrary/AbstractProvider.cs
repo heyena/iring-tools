@@ -2690,25 +2690,39 @@ namespace org.iringtools.adapter
             string tipServiceUri = _settings["TipServiceUri"];
             _tipServiceClient = new WebHttpClient(tipServiceUri);
 
-            TipRequest tipRequest = new TipRequest();
-            ParameterMap pm = new ParameterMap();
-            pm.path = "R33612674560/R10528152386";
-            pm.dataPropertyName = "LINE.TAG";
-            tipRequest.parameterMaps.Add(pm);
+            TipRequest tipRequest = BuildTipRequest();
 
-            //ParameterMap pm2 = new ParameterMap();
-            //pm2.path = "tpl:R65141162308/tpl:R44102076948/rdl:R38701712415/tpl:R63638239485/tpl:R55055340393";
-            //pm2.dataPropertyName = "LINE.TAG2";
-            //tipRequest.parameterMaps.Add(pm2);
-
+            XElement trXml = XElement.Parse(Utility.SerializeDataContract<TipRequest>(tipRequest));
             
+            try
+            {
+                XElement responseXml = _tipServiceClient.Post<XElement, XElement>(String.Format("/{0}/{1}", tip, method), trXml, true);
+                string path = string.Format("{0}TipMapping.{1}.{2}.xml", _settings["AppDataPath"], project, application);
+
+                TipMapping tipMapping =  Utility.DeserializeDataContract<TipMapping>(responseXml.ToString());
+
+                tipMapping.tipMaps[0].dataObjectName = _graphMap.dataObjectName;
+                tipMapping.tipMaps[0].parameterMaps[0].dataPropertyName = _graphMap.dataObjectName;
+
+
+                Utility.Write<TipMapping>(tipMapping, path, true); 
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
+        }
+
+        private TipRequest BuildTipRequest()
+        {
+            TipRequest tipRequest = new TipRequest();
 
 
             if (_graphMap != null)
             {
                 ClassMap graphClassMap = null;
                 graphClassMap = _graphMap.classTemplateMaps.FirstOrDefault().classMap;
-                
+
 
                 if (_graphMap != null)
                 {
@@ -2752,7 +2766,6 @@ namespace org.iringtools.adapter
                 }
             }
 
-            
 
 
 
@@ -2760,37 +2773,16 @@ namespace org.iringtools.adapter
 
 
 
+            ParameterMap pm = new ParameterMap();
+            pm.path = "rdl:Rd9c631e5-543f-4b98-8684-901e710f953f/tpl:R53360319163(0)/tpl:RF8B2CB1FF4F34B3D9D2FCFB3FC025BB5/rdl:R85074893353/tpl:RD7841CFC6A15488CBAA45414A54AB8C1(0)/tpl:R2EA408134E3C4A22A408AF1648A75317/rdl:R22683180655/tpl:R94082855849/tpl:R1427286232D34EE797D125795B0854A5";
+            pm.dataPropertyName = "EQUIPMENT.TAG";
+            tipRequest.parameterMaps.Add(pm);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            XElement trXml = XElement.Parse(Utility.SerializeDataContract<TipRequest>(tipRequest));
-            
-            try
-            {
-                XElement responseXml = _tipServiceClient.Post<XElement, XElement>(String.Format("/{0}/{1}", tip, method), trXml, true);
-                string path = string.Format("{0}TipMappingF.{1}.{2}.xml", _settings["AppDataPath"], project, application);
-
-                TipMapping tipMapping =  Utility.DeserializeDataContract<TipMapping>(responseXml.ToString());
-
-                Utility.Write<TipMapping>(tipMapping, path, true); 
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-            }
+            //ParameterMap pm2 = new ParameterMap();
+            //pm2.path = "tpl:R65141162308/tpl:R44102076948/rdl:R38701712415/tpl:R63638239485/tpl:R55055340393";
+            //pm2.dataPropertyName = "LINE.TAG2";
+            //tipRequest.parameterMaps.Add(pm2);
+            return tipRequest;
         }
 
 
@@ -3718,7 +3710,7 @@ namespace org.iringtools.adapter
                     {
                         _isResourceGraph = true;
 
-                        _dataObjDef = _dictionary.dataObjects.Find(o => o.objectName.ToUpper() == _tipMap.name.ToUpper());
+                        _dataObjDef = _dictionary.dataObjects.Find(o => o.objectName.ToUpper() == _tipMap.dataObjectName.ToUpper());
                         //FKM _dataObjDef = _dictionary.dataObjects.Find(o => o.objectName.ToUpper() == "EQUIPMENT");
 
                         if (_dataObjDef == null || _dataObjDef.isRelatedOnly)
