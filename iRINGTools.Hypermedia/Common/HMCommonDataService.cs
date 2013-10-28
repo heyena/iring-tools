@@ -25,6 +25,15 @@ namespace org.iringtools.services
             XDocument xDocument = _abstractPrivder.GenerateTIP(project, app, resource);
         }
 
+        public void GetVersion(string format)
+        {
+            format = MapContentType(null, null, format);
+
+            VersionInfo version = _abstractPrivder.GetVersion();
+
+            _abstractPrivder.FormatOutgoingMessage<VersionInfo>(version, format, true);
+        }
+
         new public void GetContexts(string app, string format)
         {
             format = MapContentType(null, null, format);
