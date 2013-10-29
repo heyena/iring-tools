@@ -32,29 +32,6 @@
                     "type": "string"
                 }
             ]
-        },
-        {
-            "type": "Ext.menu.Item",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "action": null,
-                "href": "",
-                "hrefTarget": "_blank",
-                "icon": null,
-                "text": "Export Graphs"
-            },
-            "designerId": "73a761c8-3f6c-4063-abe7-0f38d27ba098",
-            "customConfigs": [
-                {
-                    "group": "(Custom Properties)",
-                    "name": "action",
-                    "type": "string"
-                }
-            ]
         }
     ]
 }

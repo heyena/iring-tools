@@ -203,7 +203,10 @@ Ext.define('AM.controller.Mapping', {
       graphName = node.internalId;//node.data.text;
     title = 'GraphMap - ' + context + "." + endpoint + '.' + node.data.text;
 
-    var templateTypes = ['Qualification', 'Definition'];
+    //var templateTypes = ['Qualification', 'Definition'];
+    var templateTypes = ['Qualification', 'Definition']
+    var roleTypes = ['Unknown', 'Property', 'Possessor', 'Reference', 'FixedValue', 'DataProperty', 'ObjectProperty'];
+
     var mapPanel = content.down('mappingpanel[title='+title+']');
     if(!mapPanel) {
       mapPanel = Ext.widget('mappingpanel', {
@@ -253,7 +256,10 @@ Ext.define('AM.controller.Mapping', {
 
       mapTree.on('itemclick', function (tablepanel, record, item, index, e) {
         var tempProperty, dataObject, prop;
+        var source = {}; 
+        if(record.data.properties)
         var propertiesCount = parseInt(record.data.properties.propertiesCount);
+
         if(record.data.type == 'TemplateMapNode' && propertiesCount>0){//if(record.data.type == 'TemplateMapNode' && record.data.propertiesCount>0){
           for(var kk=0;kk<propertiesCount;kk++){
             var propIndex = 'propertyName_'+kk;
@@ -290,49 +296,74 @@ Ext.define('AM.controller.Mapping', {
             }
           }
         }
+        //Code to set source in property grid.
 
         var obj = record.store.getAt(index).data;
-        if (obj.property && obj.property !== "" && obj.property.length) {
-          mapProp.setSource(obj.property);
+        /*if (obj.property && obj.property !== "" && obj.property.length) {
+        mapProp.setSource(obj.property);
         } else {
-          if (obj.record.type>=0  && !obj.record.roleMaps) {
-            var arrStr = '';
-            for (var i in obj.record) {
-              if (i != 'type' && obj.record[i] !== null && obj.record[i] !== '') {
-                arrStr += i + '=' + obj.record[i] + '&';
-              }
+        if (obj.record.type>=0  && !obj.record.roleMaps) {
+        var arrStr = '';
+        for (var i in obj.record) {
+        if (i != 'type' && obj.record[i] !== null && obj.record[i] !== '' && i!=='dataLength') {
+        arrStr += i + '=' + obj.record[i] + '&';
+        }
+        }
+        var type = me.getObjectType(obj.record.type);
+        //arrStr += 'typeDescription=' + type;
+        arrStr += 'type=' + type;
+        var arr = Ext.Object.fromQueryString(arrStr);
+        mapProp.setSource(arr);
+      }
+      else {
+        //mapProp.setSource(obj.record);
+
+        for (var propName in obj.record) {
+          if (propName != 'dataLength') {
+            var propValue = obj.record.type;
+
+            if (propName == 'type') {
+              if(propValue!='Qualification' && propValue!='Definition')  
+              propValue = templateTypes[propValue];
+
             }
-            var type = me.getObjectType(obj.record.type);
-            //arrStr += 'typeDescription=' + type;
-            arrStr += 'type=' + type;
-            var arr = Ext.Object.fromQueryString(arrStr);
-            mapProp.setSource(arr);
-          }
-          else {
-            //mapProp.setSource(obj.record);
-
-            for (var propName in obj.record) {
-              if (propName != 'dataLength') {
-                var propValue = obj.record.type;
-
-                if (propName == 'type') {
-                  if(propValue!='Qualification' && propValue!='Definition')  
-                  propValue = templateTypes[propValue];
-
-                }
-                obj.record.type = propValue;
-                mapProp.setSource(obj.record);
-              }
-            }
+            obj.record.type = propValue;
+            mapProp.setSource(obj.record);
           }
         }
-
-      });
-      treeStore.load();
-      content.add(mapPanel);
+      }
     }
+    */
 
-    content.setActiveTab(mapPanel);
+    for (var propName in obj.record) {
+      if (propName != 'dataLength') {
+        var propValue = obj.record[propName];
+
+        if (propName == 'type') {
+          if (obj.type == 'TemplateMapNode') {
+            propValue = templateTypes[propValue];
+          }
+          else if (obj.type == 'RoleMapNode') {
+            propValue = roleTypes[propValue];
+          }
+        }
+        else if (propName == 'identifiers') {
+          propName = 'identifier';
+          propValue = propValue.join();
+        }
+
+        if(propName!='identifierDelimiter')
+        source[propName] = propValue;
+      }
+    }
+    mapProp.setSource(source);
+
+  });
+  treeStore.load();
+  content.add(mapPanel);
+      }
+
+      content.setActiveTab(mapPanel);
   },
 
   addClassMap: function(item, e, eOpts) {

@@ -20,9 +20,9 @@
             },
             "codeClass": null,
             "userConfig": {
-                "action": "refreshfacade",
-                "icon": "Content/img/table_refresh.png",
-                "text": "Refresh Facade"
+                "action": "opengraph",
+                "icon": "Content/img/16x16/mapping.png",
+                "text": "Open GraphMap"
             },
             "designerId": "b9b1a8ac-a72a-4dae-bb71-5eba1d7ce6b9",
             "customConfigs": [
@@ -77,36 +77,6 @@
                 "text": "Delete GraphMap"
             },
             "designerId": "2d2e9394-85d9-4a7a-8b62-9b39f7c6751b",
-            "customConfigs": [
-                {
-                    "group": "(Custom Properties)",
-                    "name": "action",
-                    "type": "string"
-                }
-            ]
-        },
-        {
-            "type": "Ext.menu.Separator",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "designerId": "4641f6e8-7efc-4e51-bd00-91a1de6418a5"
-        },
-        {
-            "type": "Ext.menu.Item",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "action": "opengraph",
-                "icon": "Content/img/16x16/mapping.png",
-                "text": "Open GraphMap"
-            },
-            "designerId": "590ecc15-5deb-4a8a-9f5c-c1c1b2f0c11a",
             "customConfigs": [
                 {
                     "group": "(Custom Properties)",

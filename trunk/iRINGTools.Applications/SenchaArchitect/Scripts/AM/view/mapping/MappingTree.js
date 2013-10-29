@@ -284,7 +284,9 @@ Ext.define('AM.view.mapping.MappingTree', {
   },
 
   onReload: function() {
+
     var me = this;
+    var mappingPanel = me.up('mappingpanel');
     var graphFullName = me.up('mappingpanel').graph;//me.up('mappingpanel').graphName;
     var graphNameArr = graphFullName.split('/');
     var graphName = graphNameArr[graphNameArr.length-1];
@@ -312,6 +314,7 @@ Ext.define('AM.view.mapping.MappingTree', {
     });*/
     var state = me.getState();
     if (node) {
+      //mappingPanel.body.mask('Loading...', 'x-mask-loading');
       /*path = node.getPath('text');
       store.load(node);
       if(node.isExpanded())
@@ -325,6 +328,16 @@ Ext.define('AM.view.mapping.MappingTree', {
         //params.tempNode = id;
         params.graph = graphName;
       }, me);
+
+      /*store.load({
+      node: node,
+      callback: function(records, options, success){
+      mappingPanel.body.unmask();
+
+      }
+      });
+      */
+
       store.load({
         callback: function (records, options, success) {
           //alert('this is load...');
