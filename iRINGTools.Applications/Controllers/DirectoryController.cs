@@ -504,11 +504,8 @@ namespace org.iringtools.web.controllers
                 ClassMap classMap = graph.classTemplateMaps[0].classMap;
 
                 node.property = new Dictionary<string, string>();
-                node.property.Add("Data Object Name", graph.dataObjectName);
-                node.property.Add("Name", graph.name);
-                node.property.Add("Identifier", string.Join(",", classMap.identifiers));
-                node.property.Add("Delimiter", classMap.identifierDelimiter);
-                node.property.Add("Class Label", classMap.name);
+                node.property.Add("Mapped Data Object", graph.dataObjectName);
+                node.property.Add("Root Class", classMap.name); 
                 nodes.Add(node);
               }
 
