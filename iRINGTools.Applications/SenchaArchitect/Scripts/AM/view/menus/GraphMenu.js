@@ -26,9 +26,9 @@ Ext.define('AM.view.menus.GraphMenu', {
       items: [
         {
           xtype: 'menuitem',
-          action: 'refreshfacade',
-          icon: 'Content/img/table_refresh.png',
-          text: 'Refresh Facade'
+          action: 'opengraph',
+          icon: 'Content/img/16x16/mapping.png',
+          text: 'Open GraphMap'
         },
         {
           xtype: 'menuseparator'
@@ -45,15 +45,6 @@ Ext.define('AM.view.menus.GraphMenu', {
           action: 'deletegraph',
           icon: 'Content/img/16x16/edit-delete.png',
           text: 'Delete GraphMap'
-        },
-        {
-          xtype: 'menuseparator'
-        },
-        {
-          xtype: 'menuitem',
-          action: 'opengraph',
-          icon: 'Content/img/16x16/mapping.png',
-          text: 'Open GraphMap'
         }
       ]
     });

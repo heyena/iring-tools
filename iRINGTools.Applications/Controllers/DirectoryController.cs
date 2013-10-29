@@ -76,7 +76,7 @@ namespace org.iringtools.web.controllers
                   };
 
                   node.property = new Dictionary<string, string>();
-				  node.property.Add("Name", scope.Name);
+				  //node.property.Add("Name", scope.Name);
                   node.property.Add("Internal Name", scope.Name);
                   node.property.Add("Display Name", scope.DisplayName);
                   node.property.Add("Description", scope.Description);
@@ -124,7 +124,7 @@ namespace org.iringtools.web.controllers
                   };
                   
                   node.property = new Dictionary<string, string>();
-				  node.property.Add("Name", application.Name);
+				  //node.property.Add("Name", application.Name);
                   node.property.Add("Internal Name", application.Name);
                   node.property.Add("Display Name", application.DisplayName);
                   node.property.Add("Description", application.Description);
@@ -333,7 +333,7 @@ namespace org.iringtools.web.controllers
                   }
 
                   node.property = new Dictionary<string, string>();
-				  node.property.Add("Name", dataObject.objectName);
+				  //node.property.Add("Name", dataObject.objectName);
                   node.property.Add("Object Name", dataObject.objectName);
                   node.property.Add("Is Readonly", dataObject.isReadOnly.ToString());
                   node.property.Add("Properties Count", dataObject.dataProperties.Count.ToString());
@@ -386,7 +386,7 @@ namespace org.iringtools.web.controllers
                
                 node.property.Add("Datatype", dataType);
 				node.property.Add("Data Length", property.dataLength.ToString());
-                node.property.Add("isVirtual", property.isVirtual.ToString());
+                //node.property.Add("isVirtual", property.isVirtual.ToString());
                 if (isKeyProp)
                 {
                    node.property.Add("Keytype", keyType);

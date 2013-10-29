@@ -807,7 +807,6 @@
                     "  scopForExport = node.parentNode.parentNode.data.text;\r",
                     "  appForExport = node.parentNode.data.text;  \r",
                     "  var graphsMenu = Ext.widget('graphsmenu');\r",
-                    "  graphsMenu.items.items[1].href = '/mapping/export/'+ scopForExport+'/'+appForExport;\r",
                     "  graphsMenu.showAt(e.getXY());\r",
                     "} else if (obj.type === \"GraphNode\") {\r",
                     "  var graphMenu = Ext.widget('graphmenu');\r",
