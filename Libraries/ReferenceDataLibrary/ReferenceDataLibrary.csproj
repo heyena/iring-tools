@@ -62,13 +62,13 @@
     <Compile Include="ReferenceDataSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\iRINGLibrary\iRINGLibrary.csproj">
+    <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary</Name>
+      <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UtilityLibrary\UtilityLibrary.csproj">
+    <ProjectReference Include="..\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
-      <Name>UtilityLibrary</Name>
+      <Name>UtilityLibrary.Desktop</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

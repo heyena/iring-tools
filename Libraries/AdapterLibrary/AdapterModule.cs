@@ -20,7 +20,6 @@ namespace org.iringtools.adapter
       Bind<IProjectionLayer>().To<JsonProjectionEngine>().Named("json");
       Bind<IProjectionLayer>().To<DtoProjectionEngine>().Named("dto");
       Bind<IProjectionLayer>().To<RdfProjectionEngine>().Named("rdf");
-      Bind<IProjectionLayer>().To<JsonLDProjectionEngine>().Named("jsonld");
     }
   }
 }

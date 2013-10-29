@@ -38,13 +38,8 @@ namespace org.iringtools.adapter
     protected static ConcurrentDictionary<string, RequestStatus> _requests =
      new ConcurrentDictionary<string, RequestStatus>();
 
-
     protected Dictionary<string, KeyValuePair<string, Dictionary<string, string>>> _qmxfTemplateResultCache = null;
     protected WebHttpClient _webHttpClient = null;  // for old mapping conversion
-
-    //FKM
-    protected TipMapping _tipMapping = null;
-    protected string format = "";
 
     public BaseProvider(NameValueCollection settings)
     {
@@ -381,7 +376,7 @@ namespace org.iringtools.adapter
 
     protected void InitializeScope(string projectName, string applicationName)
     {
-        InitializeScope(projectName, applicationName, true);
+      InitializeScope(projectName, applicationName, true);
     }
 
     protected void InitializeScope(string projectName, string applicationName, bool loadMapping)
@@ -397,60 +392,32 @@ namespace org.iringtools.adapter
         {
           ProcessSettings(projectName, applicationName);
 
-            if (loadMapping)
+          if (loadMapping)
+          {
+            string mappingPath = String.Format("{0}Mapping.{1}.xml", _settings["AppDataPath"], scope);
+
+            if (File.Exists(mappingPath))
             {
-                string mappingPath;
+              try
+              {
+                _mapping = Utility.Read<mapping.Mapping>(mappingPath);
+              }
+              catch (Exception legacyEx)
+              {
+                _logger.Warn("Error loading mapping file [" + mappingPath + "]:" + legacyEx);
+                Status status = new Status();
 
-                //FKM
-                if (format.Equals("jsonld"))
-                {
-                    mappingPath = String.Format("{0}TipMapping.{1}.xml", _settings["AppDataPath"], scope);
-                }
-                else
-                {
-                    mappingPath = String.Format("{0}Mapping.{1}.xml", _settings["AppDataPath"], scope);
-                }
+                _mapping = LoadMapping(mappingPath, ref status);
+                _logger.Info(status.ToString());
+              }
+            }
+            else
+            {
+              _mapping = new mapping.Mapping();
+              Utility.Write<mapping.Mapping>(_mapping, mappingPath);
+            }
 
-                if (File.Exists(mappingPath))
-                {
-                    try
-                    {
-                        //FKM
-                        if (format.Equals("jsonld"))
-                        {
-                            _tipMapping = Utility.Read<TipMapping>(mappingPath);
-                            
-                        }
-                        else
-                        {
-                            _mapping = Utility.Read<mapping.Mapping>(mappingPath);
-                        }
-                    }
-                    catch (Exception legacyEx)
-                    {
-                    _logger.Warn("Error loading mapping file [" + mappingPath + "]:" + legacyEx);
-                    Status status = new Status();
-
-                    _mapping = LoadMapping(mappingPath, ref status);
-                    _logger.Info(status.ToString());
-                    }
-                }
-                else
-                {
-                    _mapping = new mapping.Mapping();
-                    Utility.Write<mapping.Mapping>(_mapping, mappingPath);
-                }
-
-                //FKM
-                if (format.Equals("jsonld"))
-                {
-                    _kernel.Bind<TipMapping>().ToConstant(_tipMapping).InThreadScope();
-                }
-                else
-                {
-                    _kernel.Bind<mapping.Mapping>().ToConstant(_mapping).InThreadScope();
-                }
-                
+            _kernel.Bind<mapping.Mapping>().ToConstant(_mapping).InThreadScope();
           }
 
           _isScopeInitialized = true;
@@ -1172,98 +1139,5 @@ namespace org.iringtools.adapter
         throw ex;
       }
     }
-  }
-
-  public enum PostAction { Create, Update }
-
-  public class ScopeComparer : IComparer<ScopeProject>
-  {
-      public int Compare(ScopeProject left, ScopeProject right)
-      {
-          // compare strings
-          {
-              string leftValue = left.DisplayName.ToLower();
-              string rightValue = right.DisplayName.ToLower();
-              return string.Compare(leftValue, rightValue);
-          }
-      }
-  }
-
-  public class ApplicationComparer : IComparer<ScopeApplication>
-  {
-      public int Compare(ScopeApplication left, ScopeApplication right)
-      {
-          // compare strings
-          {
-              string leftValue = left.DisplayName.ToLower();
-              string rightValue = right.DisplayName.ToLower();
-              return string.Compare(leftValue, rightValue);
-          }
-      }
-  }
-
-  public class DataObjectComparer : IComparer<IDataObject>
-  {
-      private DataProperty _dataProp;
-
-      public DataObjectComparer(DataProperty dataProp)
-      {
-          _dataProp = dataProp;
-      }
-
-      public int Compare(IDataObject left, IDataObject right)
-      {
-          // compare booleans
-          if (_dataProp.dataType == DataType.Boolean)
-          {
-              int leftValue = (int)left.GetPropertyValue(_dataProp.propertyName);
-              int rightValue = (int)right.GetPropertyValue(_dataProp.propertyName);
-
-              if (leftValue > rightValue)
-                  return 1;
-
-              if (rightValue > leftValue)
-                  return -1;
-
-              return 0;
-          }
-
-          // compare numerics
-          if (_dataProp.dataType == DataType.Byte ||
-            _dataProp.dataType == DataType.Decimal ||
-            _dataProp.dataType == DataType.Double ||
-            _dataProp.dataType == DataType.Int16 ||
-            _dataProp.dataType == DataType.Int32 ||
-            _dataProp.dataType == DataType.Int64 ||
-            _dataProp.dataType == DataType.Single)
-          {
-              decimal leftValue = (decimal)left.GetPropertyValue(_dataProp.propertyName);
-              decimal rightValue = (decimal)right.GetPropertyValue(_dataProp.propertyName);
-
-              if (leftValue > rightValue)
-                  return 1;
-
-              if (rightValue > leftValue)
-                  return -1;
-
-              return 0;
-          }
-
-          // compare date times
-          if (_dataProp.dataType == DataType.DateTime)
-          {
-              DateTime leftValue = (DateTime)left.GetPropertyValue(_dataProp.propertyName);
-              DateTime rightValue = (DateTime)right.GetPropertyValue(_dataProp.propertyName);
-
-              return DateTime.Compare(leftValue, rightValue);
-          }
-
-          // compare strings
-          {
-              string leftValue = Convert.ToString(left.GetPropertyValue(_dataProp.propertyName));
-              string rightValue = Convert.ToString(right.GetPropertyValue(_dataProp.propertyName));
-              return string.Compare(leftValue, rightValue);
-          }
-      }
   }
 }

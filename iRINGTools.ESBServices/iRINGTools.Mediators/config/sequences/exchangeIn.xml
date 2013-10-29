@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="exchangeIn">
+  <log level="custom">
+    <property name="EXCHANGE_IN" expression="*"/>
+  </log>
+  
+  <property xmlns:xreq="http://www.iringtools.org/dxfr/request" name="exchangeRequest" expression="//xreq:exchangeRequest" type="OM"/>
+    
+  <property name="relativeUri" expression="fn:substring-after(get-property('To'), 'exchange/')"/>
+  <property name="scope" expression="fn:substring-before(get-property('relativeUri'), '/')"/>
+  <property name="exchangeId" expression="fn:substring-after(get-property('relativeUri'), '/')"/>    
+  <sequence key="conf:/repository/synapse/sequences/exchangeDefinition"/>
+  
+  <header name="To" expression="fn:concat(get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/manifest')" />
+	<class name="org.iringtools.mediators.RESTCalloutMediator">
+    <property name="endpointEntry" value=""/>
+    <property name="serviceURL" value="" />
+    <property name="method" value="" />
+    <property name="axis2ConfigFile" value="" />
+    <property name="contentType" value="" />    
+  </class>
+  
+  <script language="js"><![CDATA[
+    var sourceUri = mc.getProperty('sourceUri') + '/' + mc.getProperty('sourceScopeName') + '/' + mc.getProperty('sourceAppName') + '/' + mc.getProperty('sourceGraphName');
+    var targetUri = mc.getProperty('targetUri') + '/' + mc.getProperty('targetScopeName') + '/' + mc.getProperty('targetAppName') + '/' + mc.getProperty('targetGraphName');
+    var exchangeRequest = new XML(mc.getProperty('exchangeRequest'));
+    var manifest = mc.getPayloadXML().*;
+    mc.setPayloadXML(
+      <xpr:exchangePoolRequest xmlns:xpr="http://wso2.org/request">
+        <xpr:sourceUri>{sourceUri}</xpr:sourceUri>
+        <xpr:targetUri>{targetUri}</xpr:targetUri>
+        <xpr:exchangeRequest xmlns="http://www.iringtools.org/dxfr/request">{exchangeRequest.*}</xpr:exchangeRequest>
+        <xpr:manifest xmlns="http://www.iringtools.org/dxfr/manifest">{manifest}</xpr:manifest>
+      </xpr:exchangePoolRequest>);
+  ]]></script>
+  
+  <property name="REST_URL_POSTFIX" value="exchangePool"/>
+  <class name="org.iringtools.mediators.RESTCalloutMediator">
+    <property name="endpointEntry" value="conf:/repository/synapse/endpoints/axis2Service"/>
+    <property name="serviceURL" value="" />
+    <property name="method" value="POST" />
+    <property name="axis2ConfigFile" value="" />
+    <property name="contentType" value="" />    
+  </class>
+
+	<sequence key="conf:/repository/synapse/sequences/restRespone"/>
+</sequence>

@@ -1028,8 +1028,7 @@ namespace iRINGTools.Web.Models
               type = "keyProperty",
               properties = properties,
               iconCls = "treeKey",
-              leaf = true,
-              property = properties
+              leaf = true
             };
 
             keyPropertiesNode.children.Add(keyPropertyNode);
@@ -1043,8 +1042,7 @@ namespace iRINGTools.Web.Models
               iconCls = "treeProperty",
               leaf = true,
               hidden = true,
-              properties = properties,
-              property = properties
+              properties = properties
             };
 
             dataPropertiesNode.children.Add(dataPropertyNode);

@@ -76,10 +76,10 @@ namespace org.iringtools.web.controllers
                   };
 
                   node.property = new Dictionary<string, string>();
-				  //node.property.Add("Name", scope.Name);
                   node.property.Add("Internal Name", scope.Name);
                   node.property.Add("Display Name", scope.DisplayName);
                   node.property.Add("Description", scope.Description);
+                
                   nodes.Add(node);
                 }
               }
@@ -104,7 +104,7 @@ namespace org.iringtools.web.controllers
                   {
                     nodeType = "async",
                     type = "ApplicationNode",
-                    iconCls = "application",
+                    iconCls = "applications",
                     id = scope.Name + "/" + application.Name,
                     text = application.DisplayName,
                     expanded = false,
@@ -124,7 +124,6 @@ namespace org.iringtools.web.controllers
                   };
                   
                   node.property = new Dictionary<string, string>();
-				  //node.property.Add("Name", application.Name);
                   node.property.Add("Internal Name", application.Name);
                   node.property.Add("Display Name", application.DisplayName);
                   node.property.Add("Description", application.Description);
@@ -217,7 +216,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = "ValueListNode",
-                  iconCls = "valuemap",
+                  iconCls = "treeValuelist",
                   id = context + "/ValueList/" + valueList.name,
                   text = valueList.name,
                   expanded = false,
@@ -270,7 +269,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = "ListMapNode",
-                  iconCls = "valuelistmap",
+                  iconCls = "treeValue",
                   id = context + "/ValueMap/" + valueMap.internalValue,
                   text = classLabel + " [" + valueMap.internalValue + "]",
                   expanded = false,
@@ -333,12 +332,10 @@ namespace org.iringtools.web.controllers
                   }
 
                   node.property = new Dictionary<string, string>();
-				  //node.property.Add("Name", dataObject.objectName);
                   node.property.Add("Object Name", dataObject.objectName);
                   node.property.Add("Is Readonly", dataObject.isReadOnly.ToString());
                   node.property.Add("Properties Count", dataObject.dataProperties.Count.ToString());
                   nodes.Add(node);
-
                 }
               }
 
@@ -381,16 +378,17 @@ namespace org.iringtools.web.controllers
                     Datatype = dataType
                   }                 
                 };
+
                 node.property = new Dictionary<string, string>();
                 node.property.Add("Name", property.propertyName);
-               
-                node.property.Add("Datatype", dataType);
-				node.property.Add("Data Length", property.dataLength.ToString());
-                //node.property.Add("isVirtual", property.isVirtual.ToString());
+                node.property.Add("Data Type", dataType);
+                node.property.Add("Data Length", property.dataLength.ToString());
+
                 if (isKeyProp)
                 {
-                   node.property.Add("Keytype", keyType);
+                  node.property.Add("Key Type", keyType);
                 }
+
                 nodes.Add(node);
               }
 
@@ -505,7 +503,7 @@ namespace org.iringtools.web.controllers
 
                 node.property = new Dictionary<string, string>();
                 node.property.Add("Mapped Data Object", graph.dataObjectName);
-                node.property.Add("Root Class", classMap.name); 
+                node.property.Add("Root Class", classMap.name);
                 nodes.Add(node);
               }
 
@@ -573,13 +571,13 @@ namespace org.iringtools.web.controllers
     {
       string success = String.Empty;
 
-      if (form["state"]=="new")//if (String.IsNullOrEmpty(form["scope"]))
+      if (string.IsNullOrEmpty(form["name"]))
       {
-          success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"]);
+        success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"]);
       }
       else
       {
-          success = _repository.UpdateScope(form["contextName"], form["displayName"], form["description"],form["cacheDBConnStr"]);
+        success = _repository.UpdateScope(form["name"], form["displayName"], form["description"], form["cacheDBConnStr"]);
       }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -627,7 +625,7 @@ namespace org.iringtools.web.controllers
 
       ScopeApplication application = new ScopeApplication()
       {
-        DisplayName = form["displayName"],//form["Name"],
+        DisplayName = form["Name"],
         Name = form["Name"],
         Description = form["Description"],
         Assembly = form["assembly"],

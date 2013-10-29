@@ -1,9 +1,9 @@
 ﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<dynamic>" %>
 
 <% 
-    var major = typeof(org.iringtools.web.controllers.HomeController).Assembly.GetName().Version.Major.ToString();
-    var minor = typeof(org.iringtools.web.controllers.HomeController).Assembly.GetName().Version.Minor.ToString("00");
-    var patch = typeof(org.iringtools.web.controllers.HomeController).Assembly.GetName().Version.Build.ToString("00");
+    string major = typeof(org.iringtools.web.controllers.HomeController).Assembly.GetName().Version.Major.ToString();
+    string minor = typeof(org.iringtools.web.controllers.HomeController).Assembly.GetName().Version.Minor.ToString("00");
+    string patch = typeof(org.iringtools.web.controllers.HomeController).Assembly.GetName().Version.Build.ToString("00");
 %>
 
 <html>
