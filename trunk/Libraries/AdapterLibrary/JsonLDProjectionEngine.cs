@@ -269,7 +269,7 @@ namespace org.iringtools.adapter
                                             value = valueStr;
                                         }
 
-                                        string dataParameterName = graphName.ToUpper() + "." + dataProperty.propertyName;
+                                        string dataParameterName = tipMap.dataObjectName + "." + dataProperty.propertyName;
 
                                         if (tableMapping[dataParameterName] != null)
                                         {
