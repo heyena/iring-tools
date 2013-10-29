@@ -676,7 +676,7 @@ namespace org.iringtools.web.controllers
         expanded = false,
         leaf = false,
         children = null,
-        record = graph,
+        record = classMap,
         identifierIndex = classMap.index
       };
 
