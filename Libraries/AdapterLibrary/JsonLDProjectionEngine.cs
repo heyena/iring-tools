@@ -331,7 +331,7 @@ namespace org.iringtools.adapter
 
                 if (dataItems.limit == 0) //Blank data item must have atleast version and type
                 {
-                    DataObject dataObject = FindGraphDataObject(graphName);
+                    DataObject dataObject = FindGraphDataObject(tipMap.dataObjectName);
                     dataItems.version = dataObject.version;
                     dataItems.type = graphName;
                 }
@@ -371,8 +371,9 @@ namespace org.iringtools.adapter
         {
             try
             {
+                TipMap tipMap = _tipMapping.FindTipMap(graphName);
                 List<IDataObject> dataObjects = new List<IDataObject>();
-                DataObject objectType = FindGraphDataObject(graphName);
+                DataObject objectType = FindGraphDataObject(tipMap.dataObjectName);
 
                 if (objectType != null)
                 {

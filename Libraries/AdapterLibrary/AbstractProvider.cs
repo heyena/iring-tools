@@ -883,11 +883,11 @@ namespace org.iringtools.adapter
             }
         }
 
-        private void DoGetTipDictionary(string project, string application, string id)
+        private void DoGetTipDictionary(string project, string application, string id, string format)
         {
             try
             {
-                TipMapping tipDictionary = GetTipDictionary(project, application);
+                TipMapping tipDictionary = GetTipDictionary(project, application, format);
 
                 _requests[id].ResponseText = Utility.Serialize<TipMapping>(tipDictionary, true);
                 _requests[id].State = State.Completed;
@@ -1100,16 +1100,16 @@ namespace org.iringtools.adapter
             }
         }
 
-        public TipMapping GetTipDictionary(string project, string application)
+        public TipMapping GetTipDictionary(string project, string application, string format)
         {
             try
             {
-                InitializeScope(project, application);
-                
-                //InitializeDataLayer();
 
+                _logger.DebugFormat("Initializing Scope: {0}.{1}", project, application);
+                base.format = format;
+                InitializeScope(project, application);
+                _logger.Debug("Initializing DataLayer.");
                 return _tipMapping;
-                //return _kernel.TryGet<TipMapping>();
             }
             catch (Exception ex)
             {
@@ -2386,6 +2386,8 @@ namespace org.iringtools.adapter
         {
             try
             {
+
+                base.format = format;
                 DataDictionary dictionary = GetDictionary(project, application);
                 _dataObjDef = dictionary.GetDataObject(resource);
 
@@ -2399,7 +2401,7 @@ namespace org.iringtools.adapter
                 _logger.Debug("Initializing DataLayer.");
                 InitializeDataLayer();
                 _logger.DebugFormat("Initializing Projection: {0} as {1}", resource, format);
-                InitializeProjection(resource, ref format, false);
+                InitializeProjection(GetTipFromResouce(resource), ref format, false);
 
                 _projectionEngine.Start = start;
                 _projectionEngine.Limit = limit;
@@ -2412,7 +2414,7 @@ namespace org.iringtools.adapter
                 }
 
                 _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
-                _dataObjects = _dataLayerGateway.Get(_dataObjDef, filter, start, limit);
+                _dataObjects = _dataLayerGateway.Get(_dataObjDef, GetKey(filter), start, limit);
 
                 _projectionEngine.Count = _dataLayerGateway.GetCount(_dataObjDef, filter);
                 _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
@@ -2436,6 +2438,38 @@ namespace org.iringtools.adapter
                 _logger.Error(string.Format("Error in GetProjection: {0}", ex));
                 throw ex;
             }
+        }
+
+        private DataFilter GetKey(DataFilter filter)
+        {
+            foreach (var item in filter.Expressions)
+            {
+                string propName = item.PropertyName;
+                foreach (var tmaps in _tipMapping.tipMaps)
+                {
+                    foreach (var parameters in tmaps.parameterMaps)
+                    {
+                        if (parameters.name.ToUpper() == propName.ToUpper())
+                        {
+                            item.PropertyName = parameters.dataPropertyName.Remove(0, tmaps.dataObjectName.Length + 1);
+                        }
+                            ////return parameters.dataPropertyName.Remove(0, tmaps.dataObjectName.Length + 1);
+                    }
+                }
+
+            }
+
+            return filter;
+        }
+
+        private string GetTipFromResouce(string resource)
+        {
+            foreach (var tmaps in _tipMapping.tipMaps)
+            {
+                if (tmaps.dataObjectName.ToUpper() == resource.ToUpper())
+                        return tmaps.name;
+            }
+            return resource;
         }
 
 
@@ -2631,7 +2665,7 @@ namespace org.iringtools.adapter
 
                                 Expression expression = new Expression
                                 {
-                                    PropertyName = key,
+                                    PropertyName = GetKey(key),
                                     RelationalOperator = RelationalOperator.EqualTo,
                                     Values = new Values { value },
                                     IsCaseSensitive = false,
@@ -2703,6 +2737,19 @@ namespace org.iringtools.adapter
                 _logger.Error(string.Format("Error in GetProjection: {0}", ex));
                 throw ex;
             }
+        }
+
+        private string GetKey(string key)
+        {
+            foreach (var tmaps in _tipMapping.tipMaps)
+            {
+                foreach (var parameters in tmaps.parameterMaps)
+                {
+                    if (parameters.name.ToUpper() == key.ToUpper())
+                        return parameters.dataPropertyName.Remove(0, tmaps.dataObjectName.Length + 1);
+                }
+            }
+            return key;
         }
 
 
@@ -2963,8 +3010,8 @@ namespace org.iringtools.adapter
 
             try
             {
+                base.format = format;
                 InitializeScope(project, application);
-                InitializeDataLayer();
 
                 picklists = _dictionary.picklists;
             }
@@ -4200,7 +4247,7 @@ namespace org.iringtools.adapter
 
         public void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
         {
-            if (format.ToUpper() == "JSON")
+            if (format.ToUpper() == "JSON" || format.ToUpper() == "JSONLD")
             {
                 string json = Utility.SerializeJson<T>(graph, useDataContractSerializer);
 
