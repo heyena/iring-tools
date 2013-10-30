@@ -528,5 +528,41 @@ namespace org.iringtools.mapping
       }
       return propertyList;
     }
+
+
+    public static IDictionary<String, String> GetMappedPropertiesWithPath(this GraphMap graphMap, String templateId, int templateIndex, String parentClassId, int parentClassIndex, IDictionary<String, String> propertyList = null)
+    {
+        if (propertyList == null)
+            propertyList = new Dictionary<String, String>();
+
+        var classTemplateMap = graphMap.GetClassTemplateMap(parentClassId, parentClassIndex);
+
+        if (classTemplateMap != null)
+        {
+            var template = classTemplateMap.templateMaps.SingleOrDefault(x => (x.id == templateId && x.index == templateIndex));
+            if (template != null)
+            {
+                foreach (var role in template.roleMaps.Where(x => !String.IsNullOrWhiteSpace(x.propertyName)))
+                {
+                    string path = classTemplateMap.classMap.path.ToString() + "/" + classTemplateMap.classMap.id.ToString() +"/" + template.id.ToString() + "/" + role.id.ToString();
+                    propertyList.Add(path, role.propertyName);
+                }
+                foreach (var role in template.roleMaps.Where(x => x.classMap != null))
+                {
+                    var classTemplate = graphMap.GetClassTemplateMap(role.classMap.id, role.classMap.index);
+                    foreach (var tmpl in classTemplate.templateMaps)
+                    {
+                        if (tmpl != null)
+                        {
+                            graphMap.GetMappedPropertiesWithPath(tmpl.id, tmpl.index, role.classMap.id, role.classMap.index, propertyList);
+                        }
+                    }
+                }
+            }
+        }
+        return propertyList;
+    }
+
+
   }
 }
