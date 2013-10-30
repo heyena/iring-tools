@@ -262,23 +262,20 @@ Ext.define('AM.view.mapping.MappingTree', {
   getState: function() {
     var me = this;
     var nodes = [], state = me.callParent();
-    var idArray = [];
     me.getRootNode().eachChild(function (child) {
       // function to store state of tree recursively 
-      var storeTreeState = function (node, expandedNodes,idArray) {
+      var storeTreeState = function (node, expandedNodes) {
         if (node.isExpanded() && node.childNodes.length > 0) {
           expandedNodes.push(node.getPath('text'));
-          idArray.push(node.data.id);
           node.eachChild(function (child) {
-            storeTreeState(child, expandedNodes,idArray);
+            storeTreeState(child, expandedNodes);
           });
         }
       };
-      storeTreeState(child, nodes,idArray);
+      storeTreeState(child, nodes);
     });
     Ext.apply(state, {
-      expandedNodes: nodes,
-      idArray: idArray
+      expandedNodes: nodes
     });
     return state;
   },
@@ -340,15 +337,14 @@ Ext.define('AM.view.mapping.MappingTree', {
 
       store.load({
         callback: function (records, options, success) {
-          //alert('this is load...');
+
           var nodes = state.expandedNodes || [];
           var len = nodes.length;
-          //if(len>0)
-          // me.collapseAll();
-
-          /*Ext.each(nodes, function (path) {
-          me.expandPath(path, 'text');
-          });*/
+          if(len>0)
+          me.collapseAll();
+          Ext.each(nodes, function (path) {
+            me.expandPath(path, 'text');
+          });
           //me.expandPath('/OctGraph/IdentificationByTag', 'text');
           // me.applyState(state);
         }
