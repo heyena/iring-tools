@@ -7,6 +7,8 @@ using System.Configuration;
 using System.Xml.Linq;
 using System.Collections.Specialized;
 using org.iringtools.library;
+using System.ServiceModel.Web;
+using System.Net;
 
 namespace org.iringtools.services
 {
@@ -22,25 +24,50 @@ namespace org.iringtools.services
 
         public void GenerateTIP(string project, string app, string resource)
         {
-            XDocument xDocument = _abstractPrivder.GenerateTIP(project, app, resource);
+            TipMapping context = _abstractPrivder.GenerateTIP(project, app, resource);
+            _abstractPrivder.FormatOutgoingMessage<TipMapping>(context, "json", true);
         }
 
-        public void GetVersion(string format)
+        new public void GetVersion(string format)
         {
-            format = MapContentType(null, null, format);
 
             VersionInfo version = _abstractPrivder.GetVersion();
 
-            _abstractPrivder.FormatOutgoingMessage<VersionInfo>(version, format, true);
+            _abstractPrivder.FormatOutgoingMessage<VersionInfo>(version, "json", true);
+        }
+
+        public void GetDictionary(string project, string app, string format)
+        {
+            try
+            {
+                format = "jsonld";
+
+                if (IsAsync())
+                {
+                    string statusUrl = _abstractPrivder.AsyncGetTipDictionary(project, app);
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+                    WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
+                }
+                else
+                {
+                    TipMapping tipDictionary = _abstractPrivder.GetTipDictionary(project, app);
+                    _abstractPrivder.FormatOutgoingMessage<TipMapping>(tipDictionary, format, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+                HttpContext.Current.Response.ContentType = "text/plain";
+                HttpContext.Current.Response.Write(ex.Message);
+            }
         }
 
         new public void GetContexts(string app, string format)
         {
-            format = MapContentType(null, null, format);
 
             Contexts contexts = _abstractPrivder.GetContexts(app);
 
-            _abstractPrivder.FormatOutgoingMessage<Contexts>(contexts, format, true);
+            _abstractPrivder.FormatOutgoingMessage<Contexts>(contexts, "json", true);
         }
 
         new public void GetList(string project, string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
@@ -48,13 +75,7 @@ namespace org.iringtools.services
             
             try
             {
-                // get list of contents is not allowed in this service
-                if (string.IsNullOrEmpty(format) || !(format.ToLower() == "dto" || format.ToLower() == "rdf" ||
-                  format.ToLower().Contains("xml") || format.ToLower().Contains("json") || format.ToLower().Contains("jsonld")))
-                {
-                    format = "jsonld";
-                }
-
+                format = "jsonld";
                 NameValueCollection parameters = new NameValueCollection();
                 parameters.Add("format", format);
 
@@ -71,22 +92,31 @@ namespace org.iringtools.services
             }
         }
 
-        private string MapContentType(string project, string app, string format)
+        new public void GetItem(string project, string app, string resource, string id, string format)
         {
-
-            // if it's a known format then return it
-            if (format != null && (format.ToLower() == "raw" || format.ToLower() == "dto" || format.ToLower() == "rdf" ||
-              format.ToLower().Contains("xml") || format.ToLower().Contains("json")))
+            try
             {
-                return format;
+                format = "jsonld";
+                object content = _abstractPrivder.GetItem(project, app, resource, String.Empty, id, ref format, false);
+                _abstractPrivder.FormatOutgoingMessage(content, format);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private bool IsAsync()
+        {
+            bool async = false;
+            string asyncHeader = WebOperationContext.Current.IncomingRequest.Headers["async"];
+
+            if (asyncHeader != null && asyncHeader.ToLower() == "true")
+            {
+                async = true;
             }
 
-            if (string.IsNullOrEmpty(format))
-            {
-                format = "json";
-            }
-
-            return format;
+            return async;
         }
     }
 }
