@@ -74,13 +74,6 @@ namespace org.iringtools.services
             _hmCommonService.GetContexts(app, format);
         }
 
-        [Description("Gets the wadl for an all endpoint.")]
-        [WebGet(UriTemplate = "/all/{app}?wadl")]
-        public void GetAllWADL(string app)
-        {
-            _hmCommonService.GetAllWADL(app);
-        }
-
         [Description("Gets the wadl for an application.")]
         [WebGet(UriTemplate = "/{app}?wadl")]
         public void GetAppWADL(string app)
@@ -305,78 +298,6 @@ namespace org.iringtools.services
         public void GetRequestStatus(string id)
         {
             _hmCommonService.GetRequestStatus(id);
-        }
-        #endregion
-
-        #region "All" Methods
-        [Description("Gets object definitions of an application.")]
-        [WebGet(UriTemplate = "/all/{app}/dictionary?format={format}")]
-        public void GetDictionaryAll(string app, string format)
-        {
-            _hmCommonService.GetDictionaryAll(app, format);
-        }
-
-        [Description("Gets resource items. Valid formats are XML, JSON, DTO, RDF.")]
-        [WebGet(UriTemplate = "/all/{app}/{resource}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-        public void GetListAll(string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
-        {
-            _hmCommonService.GetListAll(app, resource, format, start, limit, sortOrder, sortBy, indexStyle);
-        }
-
-        [Description("Gets a specific resource item. Valid formats are XML, JSON, DTO, RDF.")]
-        [WebGet(UriTemplate = "/all/{app}/{resource}/{id}?format={format}")]
-        public void GetItemAll(string app, string resource, string id, string format)
-        {
-            _hmCommonService.GetItemAll(app, resource, id, format);
-        }
-
-        [Description("Gets resource items with filter. Valid formats are XML, JSON, DTO, RDF.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{resource}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
-        public void GetWithFilterAll(string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
-        {
-            _hmCommonService.GetWithFilterAll(app, resource, format, start, limit, indexStyle, stream);
-        }
-
-        [Description("Gets related resource items. Valid formats are XML, JSON, DTO, RDF.")]
-        [WebGet(UriTemplate = "/all/{app}/{resource}/{clazz}/{id}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-        public void GetRelatedListAll(string app, string resource, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
-        {
-            _hmCommonService.GetRelatedListAll(app, resource, clazz, id, format, start, limit, sortOrder, sortBy, indexStyle);
-        }
-
-        [Description("Gets a specific related resource item. Valid formats are XML, JSON, DTO, RDF.")]
-        [WebGet(UriTemplate = "/all/{app}/{resource}/{id}/{related}/{relatedId}?format={format}")]
-        public void GetRelatedItemAll(string app, string resource, string id, string related, string relatedId, string format)
-        {
-            _hmCommonService.GetRelatedItemAll(app, resource, id, related, relatedId, format);
-        }
-
-        [Description("Updates resource items. Valid format is JSON.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{resource}?format={format}")]
-        public void UpdateListAll(string app, string resource, string format, Stream stream)
-        {
-            _hmCommonService.UpdateListAll(app, resource, format, stream);
-        }
-
-        [Description("Updates specific resource item. Valid format is JSON.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{resource}/{id}?format={format}")]
-        public void UpdateItemAll(string app, string resource, string id, string format, Stream stream)
-        {
-            _hmCommonService.UpdateItemAll(app, resource, id, format, stream);
-        }
-
-        [Description("Creates resource items. Valid format is JSON.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{resource}?format={format}")]
-        public void CreateItemAll(string app, string resource, string format, Stream stream)
-        {
-            _hmCommonService.CreateItemAll(app, resource, format, stream);
-        }
-
-        [Description("Deletes a resource item. Valid format is JSON.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/all/{app}/{resource}/{id}?format={format}")]
-        public void DeleteItemAll(string app, string resource, string id, string format)
-        {
-            _hmCommonService.DeleteItemAll(app, resource, id, format);
         }
         #endregion
 
