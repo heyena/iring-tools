@@ -341,19 +341,15 @@ Ext.define('AM.view.mapping.MappingTree', {
       store.load({
         callback: function (records, options, success) {
           //alert('this is load...');
-          //var nodes = state.expandedNodes || [];
-          /*me.expandPath('/Root/Equip', 'text');
-          me.expandPath('/Root/Equip/IdentificationByTag', 'text');
-          me.expandPath('/Root/Equip/IdentificationByTag/valIdentifier', 'text');
-          me.expandPath('/Root/Equip/IdentificationByTag/valIdentifier/DESCRIPTION (RETIRED)', 'text');
-          me.expandPath('/Root/Equip/IdentificationByTag/valIdentifier/DESCRIPTION (RETIRED)/Description', 'text');
-          */
+          var nodes = state.expandedNodes || [];
+          var len = nodes.length;
+          //if(len>0)
+          // me.collapseAll();
 
-          /*me.collapseAll();
-          Ext.each(nodes, function (path) {
-
+          /*Ext.each(nodes, function (path) {
           me.expandPath(path, 'text');
           });*/
+          //me.expandPath('/OctGraph/IdentificationByTag', 'text');
           // me.applyState(state);
         }
 

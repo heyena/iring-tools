@@ -6,8 +6,8 @@
     },
     "codeClass": null,
     "userConfig": {
-        "height": 91,
-        "width": 164,
+        "height": 34,
+        "width": 166,
         "designer|userClassName": "menus.AppDataMenu",
         "designer|userAlias": "appdatamenu"
     },
@@ -43,6 +43,7 @@
             "codeClass": null,
             "userConfig": {
                 "action": "refreshdataobjectcache",
+                "hidden": true,
                 "icon": "Content/img/16x16/document-properties.png",
                 "text": "Refresh Cache"
             },
@@ -64,6 +65,7 @@
             "codeClass": null,
             "userConfig": {
                 "action": "addvirtualproperty",
+                "hidden": true,
                 "icon": "Content/img/16x16/edit-delete.png",
                 "text": "Add Virtual Property"
             },

@@ -21,7 +21,6 @@ Ext.define('AM.view.directory.DirectoryTree', {
   stateful: true,
   bodyStyle: 'background:#fff;padding:4px',
   store: 'DirectoryTreeStore',
-  bodyStyle: 'background:#fff;padding:4px',
 
   initComponent: function() {
     var me = this;
@@ -132,7 +131,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
   if(me.body!=undefined)
   me.body.mask('Loading...', 'x-mask-loading');
 
-  dbInfo = null; //17th June
+  dbInfo = null; 
   dbDict = null;
   if (node) {
     if(context!=undefined && endpoint!=undefined){
@@ -200,7 +199,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
     }, me);
     store.on('load', function (store, action) {
       //alert('afterload...');
-      if(dbInfo == null && dataRecord!=undefined) // 17th June
+      if(dbInfo == null && dataRecord!=undefined) 
       dbInfo = dataRecord.dbInfo;
 
       dirNode = store.getNodeById(nodeInternalId);
