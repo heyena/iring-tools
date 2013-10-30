@@ -444,14 +444,14 @@ Ext.define('AM.controller.Directory', {
     var node = tree.getSelectedNode();
     content = me.getMainContent();
     //contextName = node.data.property.context,
-    contextName = node.parentNode.parentNode.parentNode.data.property.Name;
+    contextName = node.parentNode.parentNode.parentNode.data.property['Internal Name'];
     //endpointName = node.data.property.endpoint,
-    endpointName = node.parentNode.parentNode.data.property.Name;
+    endpointName = node.parentNode.parentNode.data.property['Internal Name'];
     //baseurl = node.data.property.baseUrl;
 
     var graph = node.data.text;
     //var title = 'Data Grid ' + contextName + '.' + endpointName + '.' + graph;
-    var title = /*'Data Grid ' + */ node.parentNode.parentNode.parentNode.data.property.Name + '.' + node.parentNode.parentNode.data.property.Name + '.' + graph;
+    var title = contextName + '.' + endpointName + '.' + graph;
     var gridPanel = content.down('dynamicgrid[title=' + title + ']');
 
     if (!gridPanel) {
@@ -467,8 +467,8 @@ Ext.define('AM.controller.Directory', {
         //params.context = contextName;
         params.start = (store.currentPage - 1) * store.pageSize;
         params.limit = store.pageSize;
-        params.app = node.parentNode.parentNode.data.property.Name;
-        params.scope = node.parentNode.parentNode.parentNode.data.property.Name ;
+        params.app = endpointName;//node.parentNode.parentNode.data.property.Name;
+        params.scope = contextName;//node.parentNode.parentNode.parentNode.data.property.Name ;
         //params.endpoint = endpointName;
         //params.baseUrl = baseurl;
         params.graph = graph;
@@ -1350,13 +1350,13 @@ Ext.define('AM.controller.Directory', {
   },
 
   onShowGrap: function(items, e, eOpts) {
-    alert('onShowGrap...');
+    //alert('onShowGrap...');
     var me = this;
     var tree = this.getDirTree();
     var node = tree.getSelectedNode();
     content = me.getMainContent();
-    contextName = node.parentNode.parentNode.parentNode.data.property.Name;
-    endpointName = node.parentNode.parentNode.data.property.Name;
+    contextName = node.parentNode.parentNode.parentNode.data.property['Internal Name'];
+    endpointName = node.parentNode.parentNode.data.property['Internal Name'];
     var graph = node.data.text;
   },
 

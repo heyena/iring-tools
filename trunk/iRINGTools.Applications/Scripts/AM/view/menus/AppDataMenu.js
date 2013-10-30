@@ -17,8 +17,8 @@ Ext.define('AM.view.menus.AppDataMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.appdatamenu',
 
-  height: 91,
-  width: 164,
+  height: 34,
+  width: 166,
 
   initComponent: function() {
     var me = this;
@@ -34,12 +34,14 @@ Ext.define('AM.view.menus.AppDataMenu', {
         {
           xtype: 'menuitem',
           action: 'refreshdataobjectcache',
+          hidden: true,
           icon: 'Content/img/16x16/document-properties.png',
           text: 'Refresh Cache'
         },
         {
           xtype: 'menuitem',
           action: 'addvirtualproperty',
+          hidden: true,
           icon: 'Content/img/16x16/edit-delete.png',
           text: 'Add Virtual Property'
         }
