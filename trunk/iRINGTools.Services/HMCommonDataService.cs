@@ -9,6 +9,7 @@ using System.Collections.Specialized;
 using org.iringtools.library;
 using System.ServiceModel.Web;
 using System.Net;
+using System.IO;
 
 namespace org.iringtools.services
 {
@@ -36,7 +37,7 @@ namespace org.iringtools.services
             _abstractPrivder.FormatOutgoingMessage<VersionInfo>(version, "json", true);
         }
 
-        public void GetDictionary(string project, string app, string format)
+        public void GetTipDictionary(string project, string app, string format)
         {
             try
             {
@@ -50,7 +51,7 @@ namespace org.iringtools.services
                 }
                 else
                 {
-                    TipMapping tipDictionary = _abstractPrivder.GetTipDictionary(project, app);
+                    TipMapping tipDictionary = _abstractPrivder.GetTipDictionary(project, app, format);
                     _abstractPrivder.FormatOutgoingMessage<TipMapping>(tipDictionary, format, true);
                 }
             }
@@ -59,6 +60,55 @@ namespace org.iringtools.services
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
                 HttpContext.Current.Response.ContentType = "text/plain";
                 HttpContext.Current.Response.Write(ex.Message);
+            }
+        }
+
+        public void GetPicklists(string project, string app, string format)
+        {
+            try
+            {
+                format = "jsonld";
+                IList<PicklistObject> objs = _abstractPrivder.GetPicklists(project, app, format);
+                _abstractPrivder.FormatOutgoingMessage<IList<PicklistObject>>(objs, format, false);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void GetWithFilter(string project, string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
+        {
+            try
+            {
+                format = "jsonld";
+
+                bool fullIndex = false;
+
+                if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+                    fullIndex = true;
+
+                if (IsAsync())
+                {
+                    DataFilter filter = _abstractPrivder.FormatIncomingMessage<DataFilter>(stream, format, true);
+                    string statusUrl = _abstractPrivder.AsyncGetWithFilter(project, app, resource, format,
+                      start, limit, fullIndex, filter);
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+                    WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
+                }
+                else
+                {
+                    DataFilter filter = _abstractPrivder.FormatIncomingMessage<DataFilter>(stream, format, true);
+                    XDocument xDocument = null;
+
+                    xDocument = _abstractPrivder.GetWithFilter(project, app, resource, filter, ref format, start, limit, fullIndex);
+
+                    _abstractPrivder.FormatOutgoingMessage(xDocument.Root, format);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 
@@ -76,8 +126,8 @@ namespace org.iringtools.services
             try
             {
                 format = "jsonld";
-                NameValueCollection parameters = new NameValueCollection();
-                parameters.Add("format", format);
+
+                NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
                 bool fullIndex = false;
                 if (indexStyle != null && indexStyle.ToUpper() == "FULL")

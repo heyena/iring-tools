@@ -90,9 +90,9 @@ namespace org.iringtools.services
 
         [Description("Gets data dictionary. Valid formats are XML, JSON.")]
         [WebGet(UriTemplate = "/{app}/{project}/dictionary?format={format}")]
-        public void GetDictionary(string project, string app, string format)
+        public void GetTipDictionary(string project, string app, string format)
         {
-            _hmCommonService.GetDictionary(project, app, format);
+            _hmCommonService.GetTipDictionary(project, app, format);
         }
 
         [Description("Gets a specific object definition from data dictionary. Valid formats are XML, JSON.")]
