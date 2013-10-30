@@ -501,7 +501,6 @@ namespace org.iringtools.adapter
                         if (format.Equals("jsonld"))
                         {
                             _tipMapping = Utility.Read<TipMapping>(mappingPath);
-                            
                         }
                         else
                         {
