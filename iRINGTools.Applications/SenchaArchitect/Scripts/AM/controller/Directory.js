@@ -477,10 +477,11 @@ Ext.define('AM.controller.Directory', {
       gridProxy.on('exception', function (proxy, response, operation) {
         content.getEl().unmask();
         gridPanel.destroy();
-        var rtext = response.responseText;
-        var error = 'SUCCESS = FALSE';
-        var index = rtext.toUpperCase().indexOf(error);
-        var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
+        var msg = Ext.JSON.decode(response.responseText).message;
+        //var rtext = response.responseText;
+        //var error = 'SUCCESS = FALSE';
+        //var index = rtext.toUpperCase().indexOf(error);
+        //var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
         showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
       }, me);
 
@@ -493,7 +494,7 @@ Ext.define('AM.controller.Directory', {
             } else {
               if (response){
                 //showDialog(200, 50, 'Warning', 'Authentication failure', Ext.Msg.OK, null);
-                showDialog(500, 300, 'Error', response.response.responseText, Ext.Msg.OK, null);
+                //showDialog(500, 300, 'Error', response.response.responseText, Ext.Msg.OK, null);
               }
               return true;
             }

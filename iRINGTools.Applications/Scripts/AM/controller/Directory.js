@@ -478,6 +478,7 @@ Ext.define('AM.controller.Directory', {
         content.getEl().unmask();
         gridPanel.destroy();
         var msg = Ext.JSON.decode(response.responseText).message;
+        //var rtext = response.responseText;
         //var error = 'SUCCESS = FALSE';
         //var index = rtext.toUpperCase().indexOf(error);
         //var msg = rtext.substring(index + error.length + 2, rtext.length - 1);

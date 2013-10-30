@@ -66,7 +66,6 @@ Ext.define('AM.view.directory.DirectoryTree', {
   },
 
   getState: function() {
-
     var me = this;
     var nodes = [], state = me.callParent();
     me.getRootNode().eachChild(function (child) {
@@ -74,7 +73,6 @@ Ext.define('AM.view.directory.DirectoryTree', {
       var storeTreeState = function (node, expandedNodes) {
         if (node.isExpanded() && node.childNodes.length > 0) {
           expandedNodes.push(node.getPath('text'));
-
           node.eachChild(function (child) {
             storeTreeState(child, expandedNodes);
           });
@@ -89,7 +87,6 @@ Ext.define('AM.view.directory.DirectoryTree', {
   },
 
   applyState: function(state) {
-
     var me = this;
     var nodes = state.expandedNodes || [],
       len = nodes.length;
@@ -165,6 +162,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
     store.load({
       callback: function (records, options, success) {
+
         var nodes = state.expandedNodes || [],
           len = nodes.length;
         if(len>0)
@@ -198,7 +196,6 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
     }, me);
     store.on('load', function (store, action) {
-      //alert('afterload...');
       if(dbInfo == null && dataRecord!=undefined) 
       dbInfo = dataRecord.dbInfo;
 

@@ -76,7 +76,6 @@
             "userConfig": {
                 "fn": "getState",
                 "implHandler": [
-                    "\r",
                     "var me = this;\r",
                     "var nodes = [], state = me.callParent();\r",
                     "me.getRootNode().eachChild(function (child) {\r",
@@ -84,7 +83,6 @@
                     "  var storeTreeState = function (node, expandedNodes) {\r",
                     "    if (node.isExpanded() && node.childNodes.length > 0) {\r",
                     "      expandedNodes.push(node.getPath('text'));\r",
-                    "\r",
                     "      node.eachChild(function (child) {\r",
                     "        storeTreeState(child, expandedNodes);\r",
                     "      });\r",
@@ -113,7 +111,6 @@
                     "state"
                 ],
                 "implHandler": [
-                    "\r",
                     "var me = this;\r",
                     "var nodes = state.expandedNodes || [],\r",
                     "  len = nodes.length;\r",
@@ -229,6 +226,7 @@
                     "\r",
                     "store.load({\r",
                     "  callback: function (records, options, success) {\r",
+                    "     \r",
                     "    var nodes = state.expandedNodes || [],\r",
                     "      len = nodes.length;\r",
                     "    if(len>0)\r",
@@ -262,7 +260,6 @@
                     "\r",
                     "}, me);\r",
                     "store.on('load', function (store, action) {\r",
-                    "  //alert('afterload...');\r",
                     "  if(dbInfo == null && dataRecord!=undefined) \r",
                     "  dbInfo = dataRecord.dbInfo;\r",
                     "\r",
