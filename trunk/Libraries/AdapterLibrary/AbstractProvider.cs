@@ -883,7 +883,38 @@ namespace org.iringtools.adapter
             }
         }
 
+        private void DoGetTipDictionary(string project, string application, string id)
+        {
+            try
+            {
+                TipMapping tipDictionary = GetTipDictionary(project, application);
+
+                _requests[id].ResponseText = Utility.Serialize<TipMapping>(tipDictionary, true);
+                _requests[id].State = State.Completed;
+            }
+            catch (Exception ex)
+            {
+                _requests[id].Message = ex.Message;
+                _requests[id].State = State.Error;
+            }
+        }
+
         public string AsyncGetDictionary(string project, string application)
+        {
+            try
+            {
+                var id = NewQueueRequest();
+                Task task = Task.Factory.StartNew(() => DoGetDictionary(project, application, id));
+                return "/requests/" + id;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(string.Format("Error refreshing data objects: {0}", ex));
+                throw ex;
+            }
+        }
+
+        public string AsyncGetTipDictionary(string project, string application)
         {
             try
             {
@@ -1066,6 +1097,24 @@ namespace org.iringtools.adapter
             {
                 _logger.Error(string.Format("Error getting data dictionary: {0}", ex));
                 throw new Exception(string.Format("Error getting data dictionary: {0}", ex));
+            }
+        }
+
+        public TipMapping GetTipDictionary(string project, string application)
+        {
+            try
+            {
+                InitializeScope(project, application);
+                
+                //InitializeDataLayer();
+
+                return _tipMapping;
+                //return _kernel.TryGet<TipMapping>();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(string.Format("Error getting tip dictionary: {0}", ex));
+                throw new Exception(string.Format("Error getting tip dictionary: {0}", ex));
             }
         }
 
@@ -2390,11 +2439,6 @@ namespace org.iringtools.adapter
         }
 
 
-
-
-
-
-
         private bool IsNumeric(DataProperty dataProperty)
         {
             return (dataProperty.dataType == DataType.Byte ||
@@ -2663,7 +2707,7 @@ namespace org.iringtools.adapter
 
 
 
-        public XDocument GenerateTIP(string project, string application, string resource)
+        public TipMapping GenerateTIP(string project, string application, string resource)
         {
             try
             {
@@ -2672,8 +2716,7 @@ namespace org.iringtools.adapter
                 InitializeDataLayer(false);
                 _graphMap = _mapping.FindGraphMap(resource);
 
-                UpdateTipMapping("tip", "findparameters", project, application);
-                return null;
+                return UpdateTipMapping("tip", "findparameters", project, application);
             }
             catch (Exception ex)
             {
@@ -2683,14 +2726,15 @@ namespace org.iringtools.adapter
         }
 
 
-        public void UpdateTipMapping(string tip, string method, string project, string application)
+        public TipMapping UpdateTipMapping(string tip, string method, string project, string application)
         {
             
             WebHttpClient _tipServiceClient = null;
             string tipServiceUri = _settings["TipServiceUri"];
             _tipServiceClient = new WebHttpClient(tipServiceUri);
 
-            TipRequest tipRequest = BuildTipRequest();
+            IDictionary<String, String> mappedProperties = null;
+            TipRequest tipRequest = BuildTipRequest(ref mappedProperties);
 
             XElement trXml = XElement.Parse(Utility.SerializeDataContract<TipRequest>(tipRequest));
             
@@ -2701,19 +2745,27 @@ namespace org.iringtools.adapter
 
                 TipMapping tipMapping =  Utility.DeserializeDataContract<TipMapping>(responseXml.ToString());
 
-                tipMapping.tipMaps[0].dataObjectName = _graphMap.dataObjectName;
-                tipMapping.tipMaps[0].parameterMaps[0].dataPropertyName = _graphMap.dataObjectName;
+                foreach (var tmaps in tipMapping.tipMaps)
+                {
+                    tmaps.dataObjectName = _graphMap.dataObjectName;
+                    foreach (var parameters in tmaps.parameterMaps)
+                    {
+                        parameters.dataPropertyName = mappedProperties[parameters.path];
+                    }
+                }
 
+                Utility.Write<TipMapping>(tipMapping, path, true);
 
-                Utility.Write<TipMapping>(tipMapping, path, true); 
+                return tipMapping;
             }
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw ex;
             }
         }
 
-        private TipRequest BuildTipRequest()
+        private TipRequest BuildTipRequest(ref IDictionary<String, String> mappedProperties)
         {
             TipRequest tipRequest = new TipRequest();
 
@@ -2734,31 +2786,30 @@ namespace org.iringtools.adapter
                         foreach (var templateMap in templateMaps.templateMaps)
                         {
 
+                            mappedProperties = _graphMap.GetMappedPropertiesWithPath(templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
 
-                            IList<String> mappedProperties = _graphMap.GetMappedProperties(templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
+                            //foreach (var role in templateMap.roleMaps)
+                            //{
 
-                            foreach (var role in templateMap.roleMaps)
-                            {
+                            //    if (role.type == RoleType.Reference)
+                            //    {
+                            //        // 
+                            //        // resolve class label and store it in role value
+                            //        //
+                            //        string classId = role.dataType;
 
-                                if (role.type == RoleType.Reference)
-                                {
-                                    // 
-                                    // resolve class label and store it in role value
-                                    //
-                                    string classId = role.dataType;
+                            //        if (string.IsNullOrEmpty(classId) || !classId.StartsWith("rdl:"))
+                            //            classId = role.value;
 
-                                    if (string.IsNullOrEmpty(classId) || !classId.StartsWith("rdl:"))
-                                        classId = role.value;
+                            //        if (!string.IsNullOrEmpty(classId) && !string.IsNullOrEmpty(role.value) &&
+                            //          role.value.StartsWith("rdl:"))
+                            //        {
 
-                                    if (!string.IsNullOrEmpty(classId) && !string.IsNullOrEmpty(role.value) &&
-                                      role.value.StartsWith("rdl:"))
-                                    {
+                            //            role.dataType = classId;
+                            //        }
+                            //    }
 
-                                        role.dataType = classId;
-                                    }
-                                }
-
-                            }
+                            //}
 
                             templateIndex++;
                         }
@@ -2767,16 +2818,17 @@ namespace org.iringtools.adapter
             }
 
 
+            foreach (var item in mappedProperties)
+            {
+                ParameterMap pm = new ParameterMap();
+                pm.dataPropertyName = item.Value;
+                pm.path = item.Key;
+                tipRequest.parameterMaps.Add(pm);
+            }
 
-
-
-
-
-
-            ParameterMap pm = new ParameterMap();
-            pm.path = "rdl:Rd9c631e5-543f-4b98-8684-901e710f953f/tpl:R53360319163(0)/tpl:RF8B2CB1FF4F34B3D9D2FCFB3FC025BB5/rdl:R85074893353/tpl:RD7841CFC6A15488CBAA45414A54AB8C1(0)/tpl:R2EA408134E3C4A22A408AF1648A75317/rdl:R22683180655/tpl:R94082855849/tpl:R1427286232D34EE797D125795B0854A5";
-            pm.dataPropertyName = "EQUIPMENT.TAG";
-            tipRequest.parameterMaps.Add(pm);
+            //ParameterMap pm = new ParameterMap();
+            //pm.path = "rdl:Rd9c631e5-543f-4b98-8684-901e710f953f/tpl:R53360319163(0)/tpl:RF8B2CB1FF4F34B3D9D2FCFB3FC025BB5/rdl:R85074893353/tpl:RD7841CFC6A15488CBAA45414A54AB8C1(0)/tpl:R2EA408134E3C4A22A408AF1648A75317/rdl:R22683180655/tpl:R94082855849/tpl:R1427286232D34EE797D125795B0854A5";
+            //tipRequest.parameterMaps.Add(pm);
 
             //ParameterMap pm2 = new ParameterMap();
             //pm2.path = "tpl:R65141162308/tpl:R44102076948/rdl:R38701712415/tpl:R63638239485/tpl:R55055340393";
@@ -2842,6 +2894,7 @@ namespace org.iringtools.adapter
 
             try
             {
+                base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
                 InitializeProjection(resource, ref format, true);

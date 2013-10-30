@@ -143,7 +143,7 @@ namespace org.iringtools.adapter
             if (bJsonLd)
             {
                //FKM don't need it for now
-               // result["PlantArea.IdentificationByTag.valIdentifier"] = dataItem.id;
+                result[_idFieldName] = dataItem.id;
             }
             else
             {
