@@ -53,7 +53,7 @@ namespace org.iringtools.web.controllers
 			string response = _repository.GetResponse();
 			if (response != "")
 			{
-				return Json(new { success = false } + response, JsonRequestBehavior.AllowGet);
+              return Json(new { success = false, message = response }, JsonRequestBehavior.AllowGet);
 			}
 
             return Json(dataGrid, JsonRequestBehavior.AllowGet);
