@@ -523,6 +523,23 @@ namespace org.iringtools.services
       FormatOutgoingMessage<Response>(response, true);
     }
 
+    [Description("Get all groups for the specified user from LDAP.")]
+    [WebGet(UriTemplate = "/{username}/groups")]
+    public List<string> GetLDAPUserGroups(string username)
+    {
+        return _adapterProvider.GetUserGroups(username);
+    }
+
+    [Description("Gets the authorized scopes (project and application combinations) available from the service.")]
+    [WebGet(UriTemplate = "/{username}/authorizedscopes")]
+    public ScopeProjects GetAuthorizedScopes(string username)
+    {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        context.ContentType = "application/xml";
+
+        return _adapterProvider.GetAuthorizedScope(username);
+    }
+
     private void FormatOutgoingMessage<T>(T graph, bool useDataContractSerializer)
     {
       string reqContentType = WebOperationContext.Current.IncomingRequest.ContentType;

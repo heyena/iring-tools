@@ -10,7 +10,8 @@ using System.Net;
 using log4net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
-
+using System.Linq;
+using System.Data;
 
 
 namespace org.iringtools.utility
@@ -25,8 +26,8 @@ namespace org.iringtools.utility
         public static string groupDN = "ou=configurations,o=iringtools,dc=iringug,dc=org";
         private static object _lockObj = new Object();
         public static List<Type> configTypes = new List<Type>(); //It will contain the type of objects which you want to
-                                                                 // keep in LDAP.  
-        
+        // keep in LDAP.  
+
 
         public static void GetAppSettings()
         {
@@ -240,7 +241,7 @@ namespace org.iringtools.utility
                 };
 
                 LdapConnection ldapConnection = Connect();
-             
+
                 if (ldapConnection != null)
                 {
                     SearchResponse response = (SearchResponse)ldapConnection.SendRequest(request);
@@ -259,7 +260,66 @@ namespace org.iringtools.utility
                 throw e;
             }
         }
-        
-        
+
+        public static List<string> GetAllGroups(string userName)
+        {
+            List<string> lstgroups = new List<string>();
+            try
+            {
+                GetAppSettings();
+                SearchRequest request = new SearchRequest
+                {
+                    DistinguishedName = "ou=groups,o=iringtools,dc=iringug,dc=org",
+                    // Filter = filter,
+                    Scope = System.DirectoryServices.Protocols.SearchScope.Subtree,
+                };
+
+                LdapConnection ldapConnection = Connect();
+
+                if (ldapConnection != null)
+                {
+                    SearchResponse response = (SearchResponse)ldapConnection.SendRequest(request);
+                    UTF8Encoding utf8 = new UTF8Encoding(false, true);
+
+                    if (response.Entries.Count > 0)
+                    {
+                        SearchResultEntryCollection entries = response.Entries;
+                        for (int i = 0; i < entries.Count; i++)
+                        {
+                            SearchResultEntry entry = entries[i];
+
+                            if (entry.Attributes["member"] != null)
+                            {
+                                DirectoryAttribute attrib = entry.Attributes["member"];
+                                string[] names = null;
+                                for (int ic = 0; ic < attrib.Count; ic++)
+                                {
+                                    if ((attrib[ic] as string).Contains(userName))
+                                    {
+                                        if (entry.DistinguishedName.Contains(","))
+                                            names = entry.DistinguishedName.Split(',');
+                                        else
+                                        {
+                                            _logger.Error("Please check the group name in LDAP:" + entry.DistinguishedName);
+                                            return null;
+                                        }
+                                        string groupName = names.First().Substring(names.First().IndexOf("=") + 1);
+                                        lstgroups.Add(groupName);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return lstgroups;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error in getting groups from LDAP server for the current user: " + ex);
+                throw ex;
+            }
+        }
     }
 }
+    

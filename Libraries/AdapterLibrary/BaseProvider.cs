@@ -29,6 +29,7 @@ namespace org.iringtools.adapter
     protected IKernel _kernel = null;
     protected AdapterSettings _settings = null;
     protected ScopeProjects _scopes = null;
+    protected ScopeProjects _authorizedscopes = null;
     protected ScopeApplication _application = null;
     protected DataLayerGateway _dataLayerGateway = null;
     protected DataDictionary _dictionary = null;
@@ -91,7 +92,6 @@ namespace org.iringtools.adapter
       if (File.Exists(scopesPath))
       {
         _scopes = Utility.Read<ScopeProjects>(scopesPath);
-
         bool needToUpdate = false;
 
         foreach (ScopeProject scope in _scopes)
@@ -161,6 +161,12 @@ namespace org.iringtools.adapter
       _kernel.Load(adapterBindingPath);
       
       InitializeIdentity();
+      InitializeAuthorizedScopes();
+    }
+
+    protected void InitializeAuthorizedScopes()
+    {
+        _authorizedscopes = GetAuthorizedScope(_settings["UserName"]);
     }
 
     protected void InitializeDataLayer()
@@ -235,7 +241,16 @@ namespace org.iringtools.adapter
 
     public ScopeProject GetScope(string scopeName)
     {
-      foreach (ScopeProject scope in _scopes)
+        ScopeProjects scopeProjects;
+        if (string.IsNullOrEmpty(_settings["EnableUISecurity"]) ||
+                             _settings["EnableUISecurity"].ToLower() == "false")
+        {
+            scopeProjects = _scopes;
+        }
+        else
+            scopeProjects = _authorizedscopes;
+
+        foreach (ScopeProject scope in scopeProjects)
       {
         if (scope.Name.ToLower() == scopeName.ToLower())
         {
@@ -256,6 +271,73 @@ namespace org.iringtools.adapter
       }
 
       throw new Exception("Scope [" + scopeName + "] not found.");
+    }
+
+    public ScopeProjects GetAuthorizedScope(string userName)
+    {
+        bool exist = false;
+        bool appsPermission = false;
+        List<string> lstGroups = new List<string>();
+        int count = 0; int appcount = 0;
+        ScopeProjects authorizedScopes = null;
+
+        try
+        {
+            if (string.IsNullOrEmpty(_settings["EnableUISecurity"]) ||
+                              _settings["EnableUISecurity"].ToLower() == "false")
+                return null;
+
+            lstGroups = GetUserGroups(userName);  //Get all groups from LDAP to which user belongs.
+
+            authorizedScopes = Utility.CloneDataContractObject<ScopeProjects>(_scopes);
+            foreach (ScopeProject scope in _scopes)
+            {
+                if (scope.PermissionGroup != null)
+                    exist = lstGroups.Any(s => scope.PermissionGroup.Contains(s));
+
+                if (!exist)    // If no access on scope, check on apps level.
+                {
+                    appcount = 0;
+                    foreach (ScopeApplication app in scope.Applications)
+                    {
+                        if (app.PermissionGroup == null)
+                        {
+                            appcount++;
+                            continue;
+                        }
+                        else
+                        {
+                            appsPermission = true;
+                        }
+                        exist = lstGroups.Any(s => app.PermissionGroup.Contains(s));
+                        if (!exist)  // If no access on app, remove it
+                        {
+                            authorizedScopes[count].Applications.RemoveAt(appcount);
+                            appcount--;
+                        }
+                        appcount++;
+                    }
+                    if ((authorizedScopes[count].Applications.Count == 0 && scope.PermissionGroup != null) ||
+                                     (scope.PermissionGroup != null && !appsPermission))
+                    {
+                        authorizedScopes.RemoveAt(count);
+                        count--;
+                    }
+                }
+                count++;
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.Error(string.Format("Error initializing authorized scopes: {0}", e));
+        }
+        return authorizedScopes;
+    }
+
+    public List<string> GetUserGroups(string userName)
+    {
+        List<string> lstGroups = ConfigurationRepository.GetAllGroups(userName);
+        return lstGroups;
     }
 
     public ScopeApplication GetApplication(string scopeName, string appName)
@@ -287,7 +369,7 @@ namespace org.iringtools.adapter
 
       throw new Exception("Application [" + scopeName + "." + appName + "] not found.");
     }
-
+    
     protected void Impersonate()
     {
       if (_settings["AllowImpersonation"] != null &&

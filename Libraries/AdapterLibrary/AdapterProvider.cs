@@ -85,7 +85,10 @@ namespace org.iringtools.adapter
     #region application methods
     public ScopeProjects GetScopes()
     {
-      return _scopes;
+        if (string.IsNullOrEmpty(_settings["EnableUISecurity"]) || _settings["EnableUISecurity"].ToLower() == "false")
+             return _scopes;         
+        else
+            return _authorizedscopes;
     }
 
     public VersionInfo GetVersion()
