@@ -463,7 +463,7 @@ namespace iRINGTools.Web.Models
           };
         }
 
-        string uri = string.Format("/scopes/{0}", name);
+        string uri = string.Format("/scopes/{0}", oldName);
         WebHttpClient client = CreateWebClient(_adapterServiceUri);
         obj = client.Post<ScopeProject>(uri, scope, true);
       }

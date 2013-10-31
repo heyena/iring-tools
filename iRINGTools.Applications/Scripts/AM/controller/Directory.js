@@ -662,13 +662,13 @@ Ext.define('AM.controller.Directory', {
 
   },
 
-  onShowDataGridd: function(dataview, record, item, index, e, eOpts) {
+  onItemDblClick: function(dataview, record, item, index, e, eOpts) {
     var me = this;
+
     if(record.data.type == 'GraphNode')
-    me.application.fireEvent('opengraphmap', me);    
-    //me.onShowGrap(item, e, eOpts);
-    else
-    me.onShowDataGrid(item, e, eOpts);
+      me.application.fireEvent('opengraphmap', me);    
+    else if (record.data.type == 'DataObjectNode')
+      me.onShowDataGrid(item, e, eOpts);
   },
 
   onTextfieldBlur: function(component, e, eOpts) {
@@ -1299,7 +1299,7 @@ Ext.define('AM.controller.Directory', {
       },
       "directorytree": {
         itemcontextmenu: this.showContextMenu,
-        itemdblclick: this.onShowDataGridd
+        itemdblclick: this.onItemDblClick
       },
       "menuitem[action=refreshdata]": {
         click: this.onAppDataRefreshClick

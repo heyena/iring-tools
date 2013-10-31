@@ -24,7 +24,8 @@ Ext.define('AM.view.directory.DataGridPanel', {
   ],
 
   closable: true,
-  store: 'DataGridStore',
+  store: 'DataGridStore', 
+  style: 'background-color: #fff;',
 
   initComponent: function() {
     var me = this;
