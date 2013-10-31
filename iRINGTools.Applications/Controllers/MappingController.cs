@@ -252,7 +252,7 @@ namespace org.iringtools.web.controllers
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
 
-    public JsonResult GetNode(FormCollection form)
+    public JsonResult GetNodeOld(FormCollection form)
     {
       GraphMap graphMap = null;
       ClassMap graphClassMap = null;
@@ -519,6 +519,287 @@ namespace org.iringtools.web.controllers
       }
 
       return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult GetNode(FormCollection form)
+    {
+      GraphMap graphMap = null;
+      ClassMap graphClassMap = null;
+      string format = String.Empty;
+      string context = form["node"];
+      string[] formgraph = form["graph"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+      string[] variables = context.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+      string scope = form["context"];//= variables[0];
+      string application = form["endpoint"]; //= variables[1];
+      string graphName = formgraph[formgraph.Count() - 1];
+      string key = string.Format(_keyFormat, scope, application);
+
+      Mapping mapping = GetMapping(scope, application);
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+      if (!string.IsNullOrEmpty(graphName))
+        graphMap = mapping.graphMaps.FirstOrDefault<GraphMap>(o => o.name == graphName);
+
+      if (graphMap != null)
+      {
+        graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
+
+        switch (form["type"])
+        {
+          case "MappingNode":
+            foreach (var graph in mapping.graphMaps)
+            {
+              if (graphMap != null && graphMap.name != graph.name) 
+                continue;
+
+              JsonTreeNode graphNode = CreateGraphNode(context, graph, graphClassMap);
+              nodes.Add(graphNode);
+              graphNode.children = new List<JsonTreeNode>();
+              CreateGraphMapNode(graphMap, graphClassMap, graphNode.id, graphNode.children);
+            }
+            break;
+          case "GraphMapNode":
+          case "ClassMapNode":
+          case "TemplateMapNode":
+          case "RoleMapNode":
+            break;
+        }
+      }
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    private void CreateTemplateMapNode(FormCollection form, GraphMap graphMap, ClassMap graphClassMap, string context, string[] variables, List<JsonTreeNode> nodes)
+    {
+      var templateId = form["id"];
+      if (graphMap != null)
+      {
+        string className = graphClassMap.name;
+        if (variables.Count() > 4)
+        {
+          className = variables[variables.Count() - 2];
+        }
+
+        ClassTemplateMap classTemplateMap =
+          graphMap.classTemplateMaps.Find(ctm => ctm.classMap.name == className);
+
+        if (classTemplateMap == null) { return; }
+        TemplateMap templateMap =
+          classTemplateMap.templateMaps.Find(tm => tm.id == templateId);
+
+        if (templateMap == null) { return;}
+        foreach (var role in templateMap.roleMaps)
+        {
+          JsonTreeNode roleNode = CreateRoleNode(context, role);
+
+          if (role.type == RoleType.Reference)
+          {
+            // 
+            // resolve class label and store it in role value
+            //
+            string classId = role.dataType;
+
+            if (string.IsNullOrEmpty(classId) || !classId.StartsWith("rdl:"))
+              classId = role.value;
+
+            if (!string.IsNullOrEmpty(classId) && !string.IsNullOrEmpty(role.value) &&
+              role.value.StartsWith("rdl:"))
+            {
+              string classLabel = GetClassLabel(classId);
+              role.dataType = classId;
+              role.value = classLabel;
+            }
+          }
+
+          if (role.classMap != null && role.classMap.id != graphClassMap.id)
+          {
+            JsonTreeNode classNode = CreateClassNode(context, role.classMap);
+            if (roleNode.children == null)
+              roleNode.children = new List<JsonTreeNode>();
+            roleNode.children.Add(classNode);
+          }
+          else
+          {
+            roleNode.leaf = true;
+          }
+
+          nodes.Add(roleNode);
+        }
+      }
+    }
+
+    private void CreateClassMapNode(GraphMap graphMap, ClassMap graphClassMap, JsonTreeNode classMapNode)
+    {
+
+      string context = classMapNode.id;
+
+      var classMapId = classMapNode.identifier;// form["id"];
+      int classMapIndex = classMapNode.identifierIndex;
+
+      classMapNode.children = new List<JsonTreeNode>();
+      List<JsonTreeNode> nodes = classMapNode.children;
+
+      if (graphMap != null)
+      {
+        foreach (var classTemplateMap in graphMap.classTemplateMaps)
+        {
+          if (classTemplateMap.classMap.id == classMapId && classTemplateMap.classMap.index == classMapIndex)
+          {
+            int templateIndex = 0;
+
+            foreach (var templateMap in classTemplateMap.templateMaps)
+            {
+              JsonTreeNode templateNode = CreateTemplateNode(context, templateMap, templateIndex);
+              JsonTreeNode roleNode = new JsonTreeNode();
+
+              foreach (var role in templateMap.roleMaps)
+              {
+                roleNode = new JsonTreeNode
+                {
+                  nodeType = "async",
+                  type = "RoleMapNode",
+                  icon = "Content/img/role-map.png",
+                  id = templateNode.id + "/" + role.name,
+                  text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
+                                           string.Format("{0}{1}", role.name, unMappedToken),
+                  expanded = false,
+                  leaf = false,
+                  children = null,
+                  record = role,
+                  properties = new Dictionary<string, string>()
+                };
+
+                if (role.type == RoleType.Reference)
+                {
+                  // 
+                  // resolve class label and store it in role value
+                  //
+                  string classId = role.dataType;
+
+                  if (string.IsNullOrEmpty(classId) || !classId.StartsWith("rdl:"))
+                    classId = role.value;
+
+                  if (!string.IsNullOrEmpty(classId) && !string.IsNullOrEmpty(role.value) &&
+                    role.value.StartsWith("rdl:"))
+                  {
+                    string classLabel = GetClassLabel(classId);
+                    role.dataType = classId;
+                    role.value = classLabel;
+                  }
+                }
+
+                if (role.classMap != null && role.classMap.id != graphClassMap.id)
+                {
+                  JsonTreeNode classNode = CreateClassNode(roleNode.id, role.classMap);
+                  if (roleNode.children == null)
+                    roleNode.children = new List<JsonTreeNode>();
+                  roleNode.children.Add(classNode);
+                  CreateClassMapNode(graphMap, graphClassMap, classNode);
+                }
+                else
+                {
+                  roleNode.leaf = true;
+                }
+
+                templateNode.children.Add(roleNode);
+              }
+
+              nodes.Add(templateNode);
+              templateIndex++;
+            }
+
+            break;
+          }
+        }
+      }
+    }
+
+    private void CreateGraphMapNode(GraphMap graphMap, ClassMap graphClassMap, string context, List<JsonTreeNode> nodes)
+    {
+      if (graphMap != null)
+      {
+        foreach (var templateMaps in graphMap.classTemplateMaps)
+        {
+          if (templateMaps.classMap.name != graphClassMap.name) continue;
+          int templateIndex = 0;
+
+          foreach (var templateMap in templateMaps.templateMaps)
+          {
+            JsonTreeNode templateNode = CreateTemplateNode(context, templateMap, templateIndex);
+            JsonTreeNode roleNode = new JsonTreeNode();
+
+            IList<String> mappedProperties = graphMap.GetMappedProperties(templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
+            var count = 0;
+            for (int i = 0; i < mappedProperties.Count; i++)
+            {
+              templateNode.properties.Add("propertyName_" + i, mappedProperties[i]);
+              count++;
+            }
+            //templateNode.propertiesCount = count;
+            templateNode.properties.Add("propertiesCount", count.ToString());
+            foreach (var role in templateMap.roleMaps)
+            {
+              roleNode = new JsonTreeNode
+              {
+                nodeType = "async",
+                type = "RoleMapNode",
+                icon = "Content/img/role-map.png",
+                id = templateNode.id + "/" + role.name,
+                text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
+                                          string.Format("{0}{1}", role.name, unMappedToken),
+                expanded = false,
+                leaf = false,
+                children = null,
+                record = role,
+                properties = new Dictionary<string, string>()
+              };
+
+              if (role.type == RoleType.Reference)
+              {
+                // 
+                // resolve class label and store it in role value
+                //
+                string classId = role.dataType;
+
+                if (string.IsNullOrEmpty(classId) || !classId.StartsWith("rdl:"))
+                  classId = role.value;
+
+                if (!string.IsNullOrEmpty(classId) && !string.IsNullOrEmpty(role.value) &&
+                  role.value.StartsWith("rdl:"))
+                {
+                  string classLabel = GetClassLabel(classId);
+                  role.dataType = classId;
+                  role.value = classLabel;
+                }
+              }
+
+              if (role.classMap != null && role.classMap.id != graphClassMap.id)
+              {
+                //JsonTreeNode classNode = CreateClassNode(templateNode.id + "/" + role.name, role.classMap);
+                JsonTreeNode classNode = CreateClassNode(roleNode.id, role.classMap);
+
+                if (roleNode.children == null)
+                  roleNode.children = new List<JsonTreeNode>();
+
+                roleNode.children.Add(classNode);
+                CreateClassMapNode(graphMap, graphClassMap, classNode);
+              }
+              else
+              {
+                roleNode.leaf = true;
+              }
+
+              templateNode.children.Add(roleNode);
+
+              
+
+              
+            }
+
+            nodes.Add(templateNode);
+            templateIndex++;
+          }
+        }
+      }
     }
 
     public JsonResult DeleteClassMap(FormCollection form)
