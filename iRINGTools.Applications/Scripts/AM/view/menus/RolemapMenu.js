@@ -27,13 +27,13 @@ Ext.define('AM.view.menus.RolemapMenu', {
         {
           xtype: 'menuitem',
           action: 'addclassmap',
-          icon: 'Content/img/16x16/document-new.png',
+          icon: 'Content/img/class-map.png',
           text: 'Add/Edit ClassMap'
         },
         {
           xtype: 'menuitem',
           action: 'makepossessor',
-          icon: 'Content/img/16x16/map.png',
+          icon: 'Content/img/relation.png',
           text: 'Make Possessor'
         },
         {
@@ -46,25 +46,25 @@ Ext.define('AM.view.menus.RolemapMenu', {
         {
           xtype: 'menuitem',
           action: 'mapproperty',
-          icon: 'Content/img/16x16/map.png',
+          icon: 'Content/img/property.png',
           text: 'Map Property'
         },
         {
           xtype: 'menuitem',
           action: 'mapvaluelist',
-          icon: 'Content/img/16x16/map.png',
+          icon: 'Content/img/value.png',
           text: 'Map ValueList'
         },
         {
           xtype: 'menuitem',
           action: 'mapliteral',
-          icon: 'Content/img/16x16/map.png',
+          icon: 'Content/img/valuelist.png',
           text: 'Map Literal'
         },
         {
           xtype: 'menuitem',
           action: 'resetmapping',
-          icon: 'Content/img/16x16/map.png',
+          icon: 'Content/img/16x16/reset.png',
           text: 'Reset Mapping'
         }
       ]

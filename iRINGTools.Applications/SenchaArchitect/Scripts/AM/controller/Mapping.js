@@ -196,11 +196,12 @@ Ext.define('AM.controller.Mapping', {
     var me = this;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
-    var content = me.getMainContent(),
-      context = node.parentNode.parentNode.parentNode.data.text;//node.data.property.context,
-      endpoint = node.parentNode.parentNode.data.text//node.data.property.endpoint,
-      // baseUrl = node.data.property.baseUrl,
-      graphName = node.internalId;//node.data.text;
+    var content = me.getMainContent();
+    content.getEl().mask('Loading...');
+    context = node.parentNode.parentNode.parentNode.data.text;//node.data.property.context,
+    endpoint = node.parentNode.parentNode.data.text//node.data.property.endpoint,
+    // baseUrl = node.data.property.baseUrl,
+    graphName = node.internalId;//node.data.text;
     title = 'GraphMap - ' + context + "." + endpoint + '.' + node.data.text;
 
     //var templateTypes = ['Qualification', 'Definition'];
