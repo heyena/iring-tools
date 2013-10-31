@@ -28,7 +28,7 @@ Ext.define('AM.view.menus.AppDataMenu', {
         {
           xtype: 'menuitem',
           action: 'showdata',
-          icon: 'Content/img/16x16/document-properties.png',
+          icon: 'Content/img/16x16/view.png',
           text: 'View Application Data'
         },
         {

@@ -22,7 +22,7 @@
             "codeClass": null,
             "userConfig": {
                 "action": "showdata",
-                "icon": "Content/img/16x16/document-properties.png",
+                "icon": "Content/img/16x16/view.png",
                 "text": "View Application Data"
             },
             "designerId": "9708ce33-2748-4615-9805-e0e043d1c5ca",

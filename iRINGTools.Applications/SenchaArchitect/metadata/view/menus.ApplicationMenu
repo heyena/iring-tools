@@ -23,7 +23,7 @@
             "userConfig": {
                 "action": "neweditendpoint",
                 "itemId": "editendpoint",
-                "icon": "Content/img/16x16/document-properties.png",
+                "icon": "Content/img/16x16/edit.png",
                 "text": "Edit Application"
             },
             "designerId": "4d50d77d-fa94-4fa9-94d9-2572c0e30878",
@@ -44,7 +44,7 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deleteendpoint",
-                "icon": "Content/img/16x16/edit-delete.png",
+                "icon": "Content/img/16x16/delete.png",
                 "text": "Delete Application"
             },
             "designerId": "99e248d5-4d9a-47b9-b343-9443ed9217e3",
@@ -85,6 +85,15 @@
                     "type": "string"
                 }
             ]
+        },
+        {
+            "type": "Ext.menu.Separator",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "ff7853f5-8408-4341-8b9c-cddcf23befc4"
         },
         {
             "type": "Ext.menu.Item",

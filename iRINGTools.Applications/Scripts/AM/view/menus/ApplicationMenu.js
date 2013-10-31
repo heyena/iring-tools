@@ -28,13 +28,13 @@ Ext.define('AM.view.menus.ApplicationMenu', {
           xtype: 'menuitem',
           action: 'neweditendpoint',
           itemId: 'editendpoint',
-          icon: 'Content/img/16x16/document-properties.png',
+          icon: 'Content/img/16x16/edit.png',
           text: 'Edit Application'
         },
         {
           xtype: 'menuitem',
           action: 'deleteendpoint',
-          icon: 'Content/img/16x16/edit-delete.png',
+          icon: 'Content/img/16x16/delete.png',
           text: 'Delete Application'
         },
         {
@@ -45,6 +45,9 @@ Ext.define('AM.view.menus.ApplicationMenu', {
           action: 'configureendpoint',
           icon: 'Content/img/16x16/preferences-system.png',
           text: 'Open Configuration'
+        },
+        {
+          xtype: 'menuseparator'
         },
         {
           xtype: 'menuitem',

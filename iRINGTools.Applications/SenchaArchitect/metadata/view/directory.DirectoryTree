@@ -226,7 +226,7 @@
                     "\r",
                     "store.load({\r",
                     "  callback: function (records, options, success) {\r",
-                    "     \r",
+                    "\r",
                     "    var nodes = state.expandedNodes || [],\r",
                     "      len = nodes.length;\r",
                     "    if(len>0)\r",

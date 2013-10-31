@@ -26,13 +26,13 @@ Ext.define('AM.view.menus.ValueListMapMenu', {
           xtype: 'menuitem',
           action: 'editnewvaluemap',
           itemId: 'editvaluemap',
-          icon: 'Content/img/16x16/document-properties.png',
+          icon: 'Content/img/16x16/edit.png',
           text: 'Edit Value List Map'
         },
         {
           xtype: 'menuitem',
           action: 'deletevaluemap',
-          icon: 'Content/img/16x16/edit-delete.png',
+          icon: 'Content/img/16x16/delete.png',
           text: 'Delete Value List Map'
         }
       ]

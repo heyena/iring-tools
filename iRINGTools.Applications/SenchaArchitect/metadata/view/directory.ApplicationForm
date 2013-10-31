@@ -378,6 +378,34 @@
             "masterInstanceId": "89827f86-cc75-4149-b7e4-3defbfcb6ebd"
         },
         {
+            "type": "Ext.form.field.Text",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": "Cache ImportURI",
+                "name": "cacheImportURI"
+            },
+            "designerId": "9b544cec-d40b-40e7-b3ef-8eb8d17f53f1"
+        },
+        {
+            "type": "Ext.form.field.Text",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout|anchor": null,
+                "fieldLabel": "Cache Timeout (in minutes)",
+                "name": "cacheTimeout"
+            },
+            "designerId": "4cdf21f3-66b6-4acf-a707-563789eb2d76"
+        },
+        {
             "type": "Ext.container.Container",
             "reference": {
                 "name": "items",
