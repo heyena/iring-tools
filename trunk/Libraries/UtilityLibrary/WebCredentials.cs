@@ -56,7 +56,9 @@ namespace org.iringtools.utility
 
         public virtual void Encrypt()
         {
-            string credentials = userName + _delimiter + password + _delimiter + domain;
+            string credentials = userName + _delimiter + password;
+            if ( domain != null && domain.Length > 0 )
+                credentials = credentials +_delimiter + domain;
             encryptedToken = Encryption.EncryptString(credentials);
             userName = null;
             password = null;
@@ -71,7 +73,8 @@ namespace org.iringtools.utility
 
             userName = credentialsArray[0];
             password = credentialsArray[1];
-            domain = credentialsArray[2];
+            if (credentialsArray.Length>2)
+                domain = credentialsArray[2];
             encryptedToken = null;
             isEncrypted = false;
         }
