@@ -439,7 +439,7 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string UpdateScope(string name, string displayName, string newDescription, string cacheDBConnStr)
+    public string UpdateScope(string oldName, string displayName, string newDescription, string cacheDBConnStr)
     {
       string obj = null;
 
@@ -447,7 +447,7 @@ namespace iRINGTools.Web.Models
       {
         ScopeProject scope = new ScopeProject()
         {
-          Name = name,
+          Name = oldName,
           DisplayName = displayName,
           Description = newDescription,
           Configuration = new org.iringtools.library.Configuration() { AppSettings = new AppSettings() }
