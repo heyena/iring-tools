@@ -18,26 +18,26 @@ Ext.define('AM.controller.Directory', {
 
   models: [
     'DirectoryModel',
-    'BaseUrlModel',
+    //'BaseUrlModel',
+    //'ContextModel',
     'DataLayerModel',
-    'ContextModel',
     'DynamicModel',
     'FileDownloadModel',
     'VirtualPropertyModel'
   ],
   stores: [
     'DirectoryTreeStore',
-    'ContextStore',
-    'BaseUrlStore',
+    //'BaseUrlStore',
+    //'ContextStore',
     'DataLayerStore',
     'FileDownloadStore',
     'VirtualPropertyStore'
   ],
   views: [
-    'common.PropertyPanel',
-    'common.CenterPanel',
-    'common.ContentPanel',
     'directory.DirectoryPanel',
+    'common.PropertyPanel',
+    'common.ContentPanel',
+    'common.CenterPanel',
     'directory.DirectoryTree',
     'directory.ApplicationWindow',
     'directory.ScopeWindow',
@@ -46,9 +46,9 @@ Ext.define('AM.controller.Directory', {
     'directory.GraphMapForm',
     'directory.GraphMapWindow',
     'directory.ScopeForm',
-    'directory.ContextCombo',
     'directory.DataLayerWindow',
-    'directory.AvailBaseUrlCombo',
+    //'directory.AvailBaseUrlCombo',
+    //'directory.ContextCombo',
     'directory.DataLayerCombo',
     'directory.ApplicationForm',
     'menus.ScopesMenu',
@@ -90,17 +90,17 @@ Ext.define('AM.controller.Directory', {
       selector: 'viewport > centerpanel > contentpanel'
     },
     {
+      ref: 'datalayerCombo',
+      selector: 'datalayercombo'
+    }/*,
+    {
       ref: 'contextCombo',
       selector: 'contextcombo'
     },
     {
-      ref: 'datalayerCombo',
-      selector: 'datalayercombo'
-    },
-    {
       ref: 'baseUrlCombo',
       selector: 'availbaseurlcombo'
-    }
+    }*/
   ],
 
   handleMetachange: function() {
@@ -166,8 +166,7 @@ Ext.define('AM.controller.Directory', {
     var path, state, context, description, wintitle, displayName;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
-    var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
-
+    
     context = node.data.record.context;
 
     if(node.parentNode) {
@@ -176,17 +175,29 @@ Ext.define('AM.controller.Directory', {
       path = '';
     }
 
+    var conf = {
+      id: 'tab-' + node.data.id,
+      title: wintitle,
+      iconCls: 'tabsScope'
+    };
+
+    var win = Ext.widget('scopewindow', conf);
+    var form = win.down('form');
+    form.node = node;
+
     if(item.itemId == 'editfolder' && node.data.record !== undefined) {
       name = node.data.record.Name;
       displayName = node.data.record.DisplayName;
       description = node.data.record.Description;
       wintitle = 'Edit Scope \"' + node.data.text + '\"';
       state = 'edit';
+
       if (node.data.record.Configuration != null && node.data.record.Configuration.AppSettings != null &&
       node.data.record.Configuration.AppSettings.Settings != null) {
         Ext.each(node.data.record.Configuration.AppSettings.Settings, function (settings, index) {
-          if (settings.Key == "iRINGCacheConnStr")
-          cacheDBConnStr = settings.Value;
+          if (settings.Key == "iRINGCacheConnStr") {
+            form.getForm().findField('cacheDBConnStr').setValue(settings.Value);
+          }
         });
       }
 
@@ -197,41 +208,30 @@ Ext.define('AM.controller.Directory', {
       wintitle = 'Add Scope';
     }
 
-    var conf = {
-      id: 'tab-' + node.data.id,
-      title: wintitle,
-      iconCls: 'tabsScope'
-    };
-
-    var win = Ext.widget('scopewindow', conf);
-
     win.on('save', function () {
       win.destroy();
       //me.onAppDataRefreshClick(item, e, eOpts);
-
     }, me);
 
     win.on('cancel', function () {
       win.destroy();
     }, me);
 
-    var form = win.down('form');
-    form.node = node;
 
-    var combo = me.getContextCombo();
+//    var combo = me.getContextCombo();
 
-    combo.store.on('load', function(store, action) {
-      if(context === '') {
-        if(store)
-        if(store.data.items[0])
-        context = store.data.items[0].data.context;
-      }
-    }, me);
+//    combo.store.on('load', function(store, action) {
+//      if(context === '') {
+//        if(store)
+//        if(store.data.items[0])
+//        context = store.data.items[0].data.context;
+//      }
+//    }, me);
 
-    combo.on('afterrender', function (combo, eopts) {
-      if(context !== '' && context !== undefined && combo.store.data.length == 1)
-      combo.setValue(context);
-    }, me);
+//    combo.on('afterrender', function (combo, eopts) {
+//      if(context !== '' && context !== undefined && combo.store.data.length == 1)
+//      combo.setValue(context);
+//    }, me);
 
     form.getForm().findField('path').setValue(path);
     form.getForm().findField('state').setValue(state);
@@ -240,7 +240,6 @@ Ext.define('AM.controller.Directory', {
     form.getForm().findField('name').setValue(name);
     form.getForm().findField('displayName').setValue(displayName);
     form.getForm().findField('contextName').setValue(name);
-    form.getForm().findField('cacheDBConnStr').setValue(cacheDBConnStr);
 
     win.show();
   },
@@ -1256,6 +1255,7 @@ Ext.define('AM.controller.Directory', {
 
   refreshScopes: function(item, e, eOpts) {
     this.getDirTree().onReload();
+
   },
 
   init: function(application) {

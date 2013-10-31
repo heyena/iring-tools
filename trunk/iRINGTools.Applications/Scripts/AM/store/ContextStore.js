@@ -27,7 +27,7 @@ Ext.define('AM.store.ContextStore', {
       actionMethod: {
         read: 'POST'
       },
-      autoLoad: true,
+      autoLoad: false,
       model: 'AM.model.ContextModel',
       storeId: 'ContextJsonStore',
       proxy: {

@@ -46,7 +46,7 @@ Ext.define('AM.controller.Spreadsheet', {
       selector: 'spreadsheetpanel'
     },
     {
-      autoCreate: true,
+      //autoCreate: true,
       ref: 'spreadsheetSourceWindow',
       selector: 'spreadsheetsourcewindow',
       xtype: 'spreadsheetsourcewindow'
