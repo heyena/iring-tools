@@ -197,7 +197,6 @@ Ext.define('AM.controller.Mapping', {
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
     var content = me.getMainContent();
-    content.getEl().mask('Loading...');
     context = node.parentNode.parentNode.parentNode.data.text;//node.data.property.context,
     endpoint = node.parentNode.parentNode.data.text//node.data.property.endpoint,
     // baseUrl = node.data.property.baseUrl,
@@ -210,6 +209,7 @@ Ext.define('AM.controller.Mapping', {
 
     var mapPanel = content.down('mappingpanel[title='+title+']');
     if(!mapPanel) {
+      content.getEl().mask('Loading...');
       mapPanel = Ext.widget('mappingpanel', {
         'title': title, 
         'contextName': context,
@@ -454,7 +454,8 @@ Ext.define('AM.controller.Mapping', {
     form.getForm().setValues(formRecord);
     win.on('save', function () {
       win.close();
-      tree.store.load();
+      tree.onReload();
+      //tree.store.load();
       if (node.get('expanded') === false)
       node.expand();
     }, me);
