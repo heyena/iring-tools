@@ -2423,10 +2423,7 @@ namespace org.iringtools.adapter
 
                 if (_isProjectionPart7)
                 {
-                    if (format.Equals("jsonld"))
-                        return _projectionEngine.ToXml(_tipMap.name, ref _dataObjects);
-                    else
-                        return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
+                    return _projectionEngine.ToXml(_tipMap.graphName, ref _dataObjects);
                 }
                 else
                 {
@@ -2583,17 +2580,7 @@ namespace org.iringtools.adapter
 
                 _projectionEngine.FullIndex = fullIndex;
 
-                if (_isProjectionPart7)
-                {
-                    if (format.Equals("jsonld"))
-                        return _projectionEngine.ToXml(_tipMap.name, ref _dataObjects);
-                    else
-                        return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
-                }
-                else
-                {
-                    return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
-                }
+                return _projectionEngine.ToXml(_tipMap.graphName, ref _dataObjects);
             }
             catch (Exception ex)
             {
@@ -2712,25 +2699,8 @@ namespace org.iringtools.adapter
                     ? String.Format("/{0}/{1}", application, resource)
                     : String.Format("/{0}/{1}/{2}", application, project, resource);
 
-                if (_isProjectionPart7)
-                {
-                    if (format.Equals("jsonld"))
-                    {
-                        //return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects); FKM
-                        //return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
-                        return _projectionEngine.ToXml(_tipMap.name, ref _dataObjects);
+                return _projectionEngine.ToXml(_tipMap.graphName, ref _dataObjects);
 
-                    }
-                    else
-                    {
-                        return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
-                    }
-
-                }
-                else
-                {
-                    return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
-                }
             }
             catch (Exception ex)
             {
@@ -2795,6 +2765,7 @@ namespace org.iringtools.adapter
                 foreach (var tmaps in tipMapping.tipMaps)
                 {
                     tmaps.dataObjectName = _graphMap.dataObjectName;
+                    tmaps.graphName = _graphMap.name;
                     foreach (var parameters in tmaps.parameterMaps)
                     {
                         parameters.dataPropertyName = mappedProperties[parameters.path];
@@ -2969,17 +2940,7 @@ namespace org.iringtools.adapter
 
                     if (_dataObjects != null)
                     {
-                        if (_isProjectionPart7)
-                        {
-                            if (format.Equals("jsonld"))
-                                return _projectionEngine.ToXml(_tipMap.name, ref _dataObjects, className, classIdentifier);
-                            else
-                                return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects, className, classIdentifier);
-                        }
-                        else
-                        {
-                            return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
-                        }
+                        return _projectionEngine.ToXml(_tipMap.graphName, ref _dataObjects, className, classIdentifier);
                     }
                     else
                     {
@@ -3316,6 +3277,7 @@ namespace org.iringtools.adapter
 
             try
             {
+                base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
                 InitializeProjection(resource, ref format, false);
@@ -3337,7 +3299,7 @@ namespace org.iringtools.adapter
 
                 if (_isProjectionPart7)
                 {
-                    dataObjects = _projectionEngine.ToDataObjects(_graphMap.name, ref xml);
+                    dataObjects = _projectionEngine.ToDataObjects(_tipMap.graphName, ref xml);
                 }
                 else
                 {
@@ -3502,6 +3464,7 @@ namespace org.iringtools.adapter
 
             try
             {
+                base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
                 InitializeProjection(resource, ref format, false);
@@ -3540,7 +3503,7 @@ namespace org.iringtools.adapter
                 List<IDataObject> dataObjects = null;
                 if (_isProjectionPart7)
                 {
-                    dataObjects = _projectionEngine.ToDataObjects(_graphMap.name, ref xml);
+                    dataObjects = _projectionEngine.ToDataObjects(_tipMap.graphName, ref xml);
                 }
                 else
                 {
