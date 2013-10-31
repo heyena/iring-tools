@@ -608,9 +608,10 @@ namespace org.iringtools.web.controllers
 
       for (int i = 0; i < form.AllKeys.Length; i++)
       {
-          if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && 
-            form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val"
-            && form.GetKey(i).ToLower() != "cacheimporturi" && form.GetKey(i).ToLower() != "cachetimeout")
+          //if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && 
+          //  form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val"
+          //  && form.GetKey(i).ToLower() != "cacheimporturi" && form.GetKey(i).ToLower() != "cachetimeout")
+        if(form.GetKey(i).ToLower().StartsWith("key"))
           {
               String key = form[i];
               if (i + 1 < form.AllKeys.Length)
