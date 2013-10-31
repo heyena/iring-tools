@@ -17,7 +17,8 @@ Ext.define('AM.view.menus.GraphMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.graphmenu',
 
-  width: 130,
+  height: 106,
+  width: 152,
 
   initComponent: function() {
     var me = this;
@@ -26,25 +27,25 @@ Ext.define('AM.view.menus.GraphMenu', {
       items: [
         {
           xtype: 'menuitem',
-          action: 'opengraph',
-          icon: 'Content/img/16x16/mapping.png',
-          text: 'Open GraphMap'
+          action: 'editnewgraph',
+          itemId: 'editgraph',
+          icon: 'Content/img/16x16/edit.png',
+          text: 'Edit GraphMap'
+        },
+        {
+          xtype: 'menuitem',
+          action: 'deletegraph',
+          icon: 'Content/img/16x16/delete.png',
+          text: 'Delete GraphMap'
         },
         {
           xtype: 'menuseparator'
         },
         {
           xtype: 'menuitem',
-          action: 'editnewgraph',
-          itemId: 'editgraph',
-          icon: 'Content/img/16x16/document-properties.png',
-          text: 'Edit GraphMap'
-        },
-        {
-          xtype: 'menuitem',
-          action: 'deletegraph',
-          icon: 'Content/img/16x16/edit-delete.png',
-          text: 'Delete GraphMap'
+          action: 'opengraph',
+          icon: 'Content/img/16x16/configure.png',
+          text: 'Configure GraphMap'
         }
       ]
     });

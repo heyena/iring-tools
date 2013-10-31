@@ -6,7 +6,8 @@
     },
     "codeClass": null,
     "userConfig": {
-        "width": null,
+        "height": 67,
+        "width": 182,
         "designer|userClassName": "menus.AppDataRefreshMenu",
         "designer|userAlias": "appdatarefreshmenu"
     },
@@ -21,7 +22,7 @@
             "codeClass": null,
             "userConfig": {
                 "action": "refreshdata",
-                "icon": "Content/img/16x16/refresh_dict.gif",
+                "icon": "Content/img/16x16/refresh_cache.gif",
                 "text": "Refresh Dictionary"
             },
             "designerId": "5fd26a1f-7fb5-44b1-8aa9-8c2d9622cf03",
@@ -42,102 +43,11 @@
             "codeClass": null,
             "userConfig": {
                 "action": "switchToCached",
-                "hidden": true,
                 "itemId": "switchToCached",
                 "icon": "Content/img/16x16/switch.png",
-                "text": "Switch to Cached-Data Mode"
+                "text": "Switch to Cache Mode"
             },
             "designerId": "53d3a9c2-9680-4b3c-ae99-2476fb9f3f0c",
-            "customConfigs": [
-                {
-                    "group": "(Custom Properties)",
-                    "name": "action",
-                    "type": "string"
-                }
-            ]
-        },
-        {
-            "type": "Ext.menu.Item",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "action": "switchToLive",
-                "hidden": true,
-                "itemId": "switchToLive",
-                "icon": "Content/img/16x16/switch.png",
-                "text": "Switch to Live-Data Mode"
-            },
-            "designerId": "de13f363-0739-44fe-8eb9-93014bd2613c",
-            "customConfigs": [
-                {
-                    "group": "(Custom Properties)",
-                    "name": "action",
-                    "type": "string"
-                }
-            ]
-        },
-        {
-            "type": "Ext.menu.Item",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "action": "refreshcache",
-                "hidden": true,
-                "itemId": "refreshCacheId",
-                "icon": "Content/img/16x16/refresh_cache.gif",
-                "text": "Refresh Cache"
-            },
-            "designerId": "8a86cefb-5ac0-4452-b101-cc66914b3228",
-            "customConfigs": [
-                {
-                    "group": "(Custom Properties)",
-                    "name": "action",
-                    "type": "string"
-                }
-            ]
-        },
-        {
-            "type": "Ext.menu.Item",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "action": "importcache",
-                "hidden": true,
-                "itemId": "importCacheId",
-                "icon": "Content/img/16x16/import.jpg",
-                "text": "Import Cache"
-            },
-            "designerId": "801c3fe5-3c88-4e1a-bceb-bdbd37cfbae5",
-            "customConfigs": [
-                {
-                    "group": "(Custom Properties)",
-                    "name": "action",
-                    "type": "string"
-                }
-            ]
-        },
-        {
-            "type": "Ext.menu.Item",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "action": "deletcache",
-                "icon": "Content/img/16x16/document-properties.png",
-                "text": "Delete Cache"
-            },
-            "designerId": "322a1f65-17d6-4134-a7a0-4eddf40ba447",
             "customConfigs": [
                 {
                     "group": "(Custom Properties)",

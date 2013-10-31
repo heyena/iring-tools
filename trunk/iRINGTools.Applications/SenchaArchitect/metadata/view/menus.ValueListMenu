@@ -6,7 +6,8 @@
     },
     "codeClass": null,
     "userConfig": {
-        "width": 130,
+        "height": 98,
+        "width": 139,
         "designer|userClassName": "menus.ValueListMenu",
         "designer|userAlias": "valuelistmenu"
     },
@@ -22,8 +23,8 @@
             "userConfig": {
                 "action": "editnewvaluelist",
                 "itemId": "editvaluelist",
-                "icon": "Content/img/16x16/document-properties.png",
-                "text": "Edit Value List"
+                "icon": "Content/img/16x16/edit.png",
+                "text": "Edit Value List Name"
             },
             "designerId": "a2ed2783-91bb-41d5-9b0b-b34c9d3f212f",
             "customConfigs": [
@@ -43,7 +44,7 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deletevaluelist",
-                "icon": "Content/img/16x16/edit-delete.png",
+                "icon": "Content/img/16x16/delete.png",
                 "text": "Delete Value List"
             },
             "designerId": "56c3edfd-9dc4-4b55-a99b-e079e0b796ad",

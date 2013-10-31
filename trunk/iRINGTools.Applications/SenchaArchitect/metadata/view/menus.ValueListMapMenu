@@ -22,7 +22,7 @@
             "userConfig": {
                 "action": "editnewvaluemap",
                 "itemId": "editvaluemap",
-                "icon": "Content/img/16x16/document-properties.png",
+                "icon": "Content/img/16x16/edit.png",
                 "text": "Edit Value List Map"
             },
             "designerId": "3bc76631-79f3-440c-8fed-a30192af538c",
@@ -43,7 +43,7 @@
             "codeClass": null,
             "userConfig": {
                 "action": "deletevaluemap",
-                "icon": "Content/img/16x16/edit-delete.png",
+                "icon": "Content/img/16x16/delete.png",
                 "text": "Delete Value List Map"
             },
             "designerId": "7a17aafd-edde-45fa-88cf-9690412b9e93",

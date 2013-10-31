@@ -343,14 +343,15 @@ Ext.define('AM.view.mapping.MappingTree', {
           if(len>0)
           me.collapseAll();
           Ext.each(nodes, function (path) {
-            me.expandPath(path, 'text');
+            me.expandPath(path, 'text');        
           });
+
+
           //me.expandPath('/OctGraph/IdentificationByTag', 'text');
           // me.applyState(state);
         }
 
       });
-
     }
 
     /*if(path) {

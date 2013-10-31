@@ -17,7 +17,8 @@ Ext.define('AM.view.menus.ValueListMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.valuelistmenu',
 
-  width: 130,
+  height: 98,
+  width: 139,
 
   initComponent: function() {
     var me = this;
@@ -28,13 +29,13 @@ Ext.define('AM.view.menus.ValueListMenu', {
           xtype: 'menuitem',
           action: 'editnewvaluelist',
           itemId: 'editvaluelist',
-          icon: 'Content/img/16x16/document-properties.png',
-          text: 'Edit Value List'
+          icon: 'Content/img/16x16/edit.png',
+          text: 'Edit Value List Name'
         },
         {
           xtype: 'menuitem',
           action: 'deletevaluelist',
-          icon: 'Content/img/16x16/edit-delete.png',
+          icon: 'Content/img/16x16/delete.png',
           text: 'Delete Value List'
         },
         {
