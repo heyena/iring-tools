@@ -22,7 +22,7 @@ namespace org.iringtools.library
       TipMap tip = null;
       foreach (TipMap item in this.tipMaps)
       {
-        if (item.name.ToLower() == name.ToLower())
+        if (item.graphName.ToLower() == name.ToLower())
         {
           tip = item;
           break;
@@ -61,7 +61,10 @@ namespace org.iringtools.library
     [DataMemberAttribute(EmitDefaultValue = true, Order = 3)]
     public string dataObjectName { get; set; }
 
-    [DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
+    [DataMemberAttribute(EmitDefaultValue = true, Order = 4)]
+    public string graphName { get; set; }
+
+    [DataMemberAttribute(EmitDefaultValue = false, Order = 5)]
     public ParameterMaps parameterMaps { get; set; }
   }
 
