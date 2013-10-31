@@ -337,7 +337,6 @@ Ext.define('AM.view.mapping.MappingTree', {
 
       store.load({
         callback: function (records, options, success) {
-
           var nodes = state.expandedNodes || [];
           var len = nodes.length;
           if(len>0)
@@ -345,8 +344,6 @@ Ext.define('AM.view.mapping.MappingTree', {
           Ext.each(nodes, function (path) {
             me.expandPath(path, 'text');        
           });
-
-
           //me.expandPath('/OctGraph/IdentificationByTag', 'text');
           // me.applyState(state);
         }
