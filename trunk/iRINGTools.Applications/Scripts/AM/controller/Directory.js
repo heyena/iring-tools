@@ -559,15 +559,19 @@ Ext.define('AM.controller.Directory', {
   },
 
   showContextMenu: function(dataview, record, item, index, e, eOpts) {
-    var me = this,
-      tree = me.getDirTree();
-    e.stopEvent();
-    node = record.store.getAt(index);
+    var me = this;
+    var tree = me.getDirTree();
+    
+    //e.stopEvent();
+    //node = record.store.getAt(index);
 
-    tree.getSelectionModel().select(node);
+    //TODO: need to scope this variable
+    node = tree.getSelectedNode();
+
+    //tree.getSelectionModel().select(node);
     //tree.onClick(dataview, record, 0, index, e);
 
-    var obj = node.data;
+    var obj = record.data;
 
     if (obj.type === "ScopesNode") {
       var scopesMenu = Ext.widget('scopesmenu');
@@ -598,35 +602,32 @@ Ext.define('AM.controller.Directory', {
     } else if (obj.type === "GraphNode") {
       var graphMenu = Ext.widget('graphmenu');
       graphMenu.showAt(e.getXY());
-    }else if (obj.type === "DataObjectsNode") {
+    } else if (obj.type === "DataObjectsNode") {
       var graphMenu = Ext.widget('appdatarefreshmenu');
-      /*if (node.data.property["Data Mode"] == "Live") {
-      if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
-      graphMenu.items.map['switchToCached'].setVisible(true);
-      graphMenu.items.map['switchToLive'].setVisible(false);
 
+      if (node.data.property["Data Mode"] == "Live") {
+          if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
+              graphMenu.items.map['switchToCached'].setVisible(true);
+//              graphMenu.items.map['switchToLive'].setVisible(false);
+
+          }
+//          graphMenu.items.map['refreshData'].setVisible(true);	
+//          graphMenu.items.map['importData'].setVisible(true);	
+      } else if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
+          graphMenu.items.map['switchToCached'].setVisible(false);
+//              graphMenu.items.map['switchToLive'].setVisible(true);
+//          graphMenu.items.map['refreshData'].setVisible(false);	
+//              graphMenu.items.map['importData'].setVisible(false);	
       }
-      graphMenu.items.map['refreshCacheId'].setVisible(true);	
-      graphMenu.items.map['importCacheId'].setVisible(true);	
-      }else if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
-      graphMenu.items.map['switchToCached'].setVisible(false);
-      graphMenu.items.map['switchToLive'].setVisible(true);
-      graphMenu.items.map['refreshCacheId'].setVisible(false);	
-      graphMenu.items.map['importCacheId'].setVisible(false);	
-      }*/
-
       graphMenu.showAt(e.getXY());
-    }else if(obj.type === "DataPropertyNode"){
+    } else if(obj.type === "DataPropertyNode"){
       if(obj.property){
         if(obj.property.isVirtual=='True'){
           var virtualpropertymenu = Ext.widget('virtualpropertymenu');
           virtualpropertymenu.showAt(e.getXY());
         }
-
       }
-
     }
-
   },
 
   onAppDataRefreshClick: function(item, e, eOpts) {
@@ -1435,12 +1436,10 @@ Ext.define('AM.controller.Directory', {
       success: function (response, request) {
         var responseObj = Ext.decode(response.responseText);
 
-        if (responseObj.Level == 0) {
-          showDialog(450, 100, 'Result', 'Data Mode switched to [' + mode + '].', Ext.Msg.OK, null);
-        }
-        else {
+        if (responseObj.Level != 0) {
           showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
         }
+
         tree.onReload();
         //node.parentNode.reload();
         //Ext.getCmp('content-panel').getEl().unmask();

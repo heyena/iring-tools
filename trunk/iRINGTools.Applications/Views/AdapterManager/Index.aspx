@@ -4,15 +4,14 @@
 <head runat="server">
   <title>iRINGTools: Adapter Manager</title>
 
-  <link href="../../Scripts/extjs-4.1.1/resources/css/ext-all.css" rel="stylesheet" type="text/css" />
-  <link href="../../Scripts/extjs-4.1.1/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" href="../../Content/css/adaptermanager-gray.css" type="text/css" />
-  <link href="../../Scripts/extjs-4.1.1/ux/grid/css/GridFilters.css" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" type="text/css" href="../../Scripts/extjs-4.1.1/ux/css/ItemSelector.css" /> 
+  <link rel="stylesheet" type="text/css" href="<%: Url.Content("~/Scripts/ext-4.2.1.883/resources/css/ext-all-gray.css") %>" />
+  <link rel="stylesheet" type="text/css" href="<%: Url.Content("~/Content/css/adaptermanager-gray.css") %>" />
+  <link rel="stylesheet" type="text/css" href="<%: Url.Content("~/Scripts/ext-4.2.1.883/ux/grid/css/GridFilters.css") %>" />
+  <link rel="stylesheet" type="text/css" href="<%: Url.Content("~/Scripts/ext-4.2.1.883/ux/css/ItemSelector.css") %>" /> 
        
-  <script src="../../Scripts/extjs-4.1.1/ext-all.js" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/AM/utilities/utilities.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/app.js") %>" type="text/javascript"></script>   
+  <script type="text/javascript" src="<%: Url.Content("~/Scripts/ext-4.2.1.883/ext-all.js") %>"></script>
+  <script type="text/javascript" src="<%: Url.Content("~/Scripts/AM/utilities/utilities.js") %>"></script>
+  <script type="text/javascript" src="<%: Url.Content("~/app.js") %>"></script>   
 </head>
 <body> 
 </body>

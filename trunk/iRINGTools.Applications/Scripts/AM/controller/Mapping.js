@@ -299,7 +299,9 @@ Ext.define('AM.controller.Mapping', {
         }
         //Code to set source in property grid.
 
-        var obj = record.store.getAt(index).data;
+        //var obj = record.store.getAt(index).data;
+        var obj = record.data;
+		
         /*if (obj.property && obj.property !== "" && obj.property.length) {
         mapProp.setSource(obj.property);
         } else {

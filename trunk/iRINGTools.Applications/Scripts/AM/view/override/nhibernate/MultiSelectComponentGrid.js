@@ -26,8 +26,8 @@ initComponent: function() {
                   anchor: '100%',
                   store: ds,
                   allowBlank: false,
-                	fromTitle: 'Available',
-            			toTitle: 'Selected',
+                  fromTitle: 'Available',
+            	  toTitle: 'Selected',
                   msgTarget: 'side'
               }
       ]

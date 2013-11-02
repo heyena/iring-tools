@@ -208,8 +208,10 @@ Ext.define('AM.view.mapping.MappingTree', {
 
   showContextMenu: function(dataview, record, item, index, e, eOpts) {
     var me = this;
-    e.stopEvent();
-    var obj = record.store.getAt(index).data;
+    
+	//e.stopEvent();
+    //var obj = record.store.getAt(index).data;
+	var obj = record.data;
 
     if (obj.type == "TemplateMapNode") {
       var templatemapMenu = Ext.widget('templatemapmenu');
