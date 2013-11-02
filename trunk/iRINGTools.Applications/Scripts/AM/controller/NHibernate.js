@@ -875,7 +875,9 @@ Ext.define('AM.controller.NHibernate', {
         var form = panel.down('selecttablesform');
         //var objectGrid = form.down('multiselectcomponentgrid').items.items[2];//form.down('multiselectiongrid');
         //var boundlist = objectGrid.items.items[0].items.items[2].items.items[0].items.items[0];
-        var selected = form.down('multiselectcomponentgrid').items.items[0].items.items[0].items.items[2].store.data.items; //objectGrid.getSelections(boundlist);//objectGrid.getSelectionModel().getSelection();
+        //objectGrid.getSelections(boundlist);//objectGrid.getSelectionModel().getSelection();
+        //var selected = form.down('multiselectcomponentgrid').items.items[0].items.items[0].items.items[2].store.data.items;
+        var selected = form.down('multiselectcomponentgrid').items.items[0].items.items[2].store.data.items;
 
         var serName = '';
         var dbInfo = dirNode.data.record.dbInfo;
