@@ -17,8 +17,6 @@ Ext.define('AM.view.menus.ValueListsMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.valuelistsmenu',
 
-  width: 130,
-
   initComponent: function() {
     var me = this;
 

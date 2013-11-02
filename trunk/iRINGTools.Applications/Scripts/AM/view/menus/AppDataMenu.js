@@ -17,9 +17,6 @@ Ext.define('AM.view.menus.AppDataMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.appdatamenu',
 
-  height: 34,
-  width: 166,
-
   initComponent: function() {
     var me = this;
 

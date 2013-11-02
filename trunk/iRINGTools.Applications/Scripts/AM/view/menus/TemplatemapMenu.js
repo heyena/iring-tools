@@ -17,8 +17,6 @@ Ext.define('AM.view.menus.TemplatemapMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.templatemapmenu',
 
-  width: 140,
-
   initComponent: function() {
     var me = this;
 

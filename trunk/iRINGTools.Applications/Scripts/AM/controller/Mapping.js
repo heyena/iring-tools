@@ -201,7 +201,7 @@ Ext.define('AM.controller.Mapping', {
     endpoint = node.parentNode.parentNode.data.text//node.data.property.endpoint,
     // baseUrl = node.data.property.baseUrl,
     graphName = node.internalId;//node.data.text;
-    title = 'GraphMap - ' + context + "." + endpoint + '.' + node.data.text;
+    title = 'Graph.' + context + "." + endpoint + '.' + node.data.text;
 
     //var templateTypes = ['Qualification', 'Definition'];
     var templateTypes = ['Qualification', 'Definition']
@@ -511,9 +511,9 @@ Ext.define('AM.controller.Mapping', {
       record = node.data.record;
 
     if(item.itemId == 'editvaluemap') {
-      wintitle = 'Edit Value List \"' + node.data.text + '\"';
+      wintitle = 'Edit ValueMap';
     } else {
-      wintitle = 'Add new ValueListMap to valueList \"' + node.data.text + '\"';
+      wintitle = 'Add ValueMap';
     }
 
     if(node.data.record && node.data.type == 'ListMapNode') {
@@ -686,12 +686,12 @@ Ext.define('AM.controller.Mapping', {
       state = 'edit';
       nodeId = node.data.id;
       valueListName = node.data.record.name;//node.data.record.record.name;
-      wintitle = 'Edit Value List \"' + node.data.text + '\"';
+      wintitle = 'Edit ValueList';
     } else {
       state = 'new';
       nodeId = node.data.id;
       valueListName = null;
-      wintitle = 'Add New ValueList';
+      wintitle = 'Add ValueList';
     }
 
     var win = Ext.widget('valuelistwindow', {
@@ -727,10 +727,10 @@ Ext.define('AM.controller.Mapping', {
     if(item.itemId == 'editvaluelist') {
     state = 'edit';
     valueList = node.data.record.record.name;
-    wintitle = 'Edit Value List \"' + node.data.text + '\"';
+    wintitle = 'Edit ValueList';
     } else {
     state = 'new';
-    wintitle = 'Add New ValueList';
+    wintitle = 'Add ValueList';
     }
 
     var win = Ext.widget('valuelistwindow', {

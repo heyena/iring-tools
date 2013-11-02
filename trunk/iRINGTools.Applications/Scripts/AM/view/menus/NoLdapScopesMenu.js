@@ -17,8 +17,6 @@ Ext.define('AM.view.menus.NoLdapScopesMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.noldapscopesmenu',
 
-  width: 130,
-
   initComponent: function() {
     var me = this;
 

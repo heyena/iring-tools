@@ -17,8 +17,6 @@ Ext.define('AM.view.menus.RolemapMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.rolemapmenu',
 
-  width: 130,
-
   initComponent: function() {
     var me = this;
 

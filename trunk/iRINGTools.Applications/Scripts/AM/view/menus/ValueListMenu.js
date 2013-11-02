@@ -17,9 +17,6 @@ Ext.define('AM.view.menus.ValueListMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.valuelistmenu',
 
-  height: 98,
-  width: 139,
-
   initComponent: function() {
     var me = this;
 
@@ -30,13 +27,13 @@ Ext.define('AM.view.menus.ValueListMenu', {
           action: 'editnewvaluelist',
           itemId: 'editvaluelist',
           icon: 'Content/img/16x16/edit.png',
-          text: 'Edit Value List Name'
+          text: 'Edit ValueList'
         },
         {
           xtype: 'menuitem',
           action: 'deletevaluelist',
           icon: 'Content/img/16x16/delete.png',
-          text: 'Delete Value List'
+          text: 'Delete ValueList'
         },
         {
           xtype: 'menuseparator'
@@ -45,7 +42,7 @@ Ext.define('AM.view.menus.ValueListMenu', {
           xtype: 'menuitem',
           action: 'editnewvaluemap',
           icon: 'Content/img/16x16/document-new.png',
-          text: 'New Value Map'
+          text: 'Add ValueMap'
         }
       ]
     });

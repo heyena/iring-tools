@@ -17,8 +17,6 @@ Ext.define('AM.view.menus.GroupAdminScopesMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.groupadminscopesmenu',
 
-  width: 130,
-
   initComponent: function() {
     var me = this;
 
