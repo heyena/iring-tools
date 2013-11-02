@@ -185,12 +185,12 @@ Ext.define('AM.controller.Directory', {
     var form = win.down('form');
     form.node = node;
 
-    if(item.itemId == 'editfolder' && node.data.record !== undefined) {
-      name = node.data.record.Name;
-      displayName = node.data.record.DisplayName;
-      description = node.data.record.Description;
-      wintitle = 'Edit Scope \"' + node.data.text + '\"';
-      state = 'edit';
+    if (item.itemId == 'editfolder' && node.data.record !== undefined) {
+      var name = node.data.record.Name;
+      var displayName = node.data.record.DisplayName;
+      var description = node.data.record.Description;
+      win.title = 'Edit Scope';
+      var state = 'edit';
 
       if (node.data.record.Configuration != null && node.data.record.Configuration.AppSettings != null &&
       node.data.record.Configuration.AppSettings.Settings != null) {
@@ -202,10 +202,9 @@ Ext.define('AM.controller.Directory', {
       }
 
     } else {
-      name = '';
-      //displayName = '';
-      state = 'new';
-      wintitle = 'Add Scope';
+      var name = '';
+      var state = 'new';
+      win.title = 'Add Scope';
     }
 
     win.on('save', function () {
@@ -280,31 +279,28 @@ Ext.define('AM.controller.Directory', {
     var node = tree.getSelectedNode();
     var cacheImportURI = '';
     var cacheTimeout = '';
-    context = node.parentNode.data.text;//node.data.record.ContextName;
+    var context = node.parentNode.data.text;
+
     if(item.itemId == 'editendpoint') {
-      //name = node.data.record.Name;
-      name = node.data.record.Name;
-      displayName = node.data.record.DisplayName;
-      description = node.data.record.Description;
-      datalayer = node.data.record.DataLayer;
-      assembly = node.data.record.Assembly;
-      application = name;
-      wintitle =  'Edit Application \"' + node.data.text + '\"';
-      endpoint = node.data.record.Name;//node.data.record.Endpoint; 
-      state = 'edit';
-      cacheImportURI = node.data.record.CacheImportURI;
-      cacheTimeout = node.data.record.CacheTimeout;
+      var name = node.data.record.Name;
+      var displayName = node.data.record.DisplayName;
+      var description = node.data.record.Description;
+      var datalayer = node.data.record.DataLayer;
+      var assembly = node.data.record.Assembly;
+      var application = name;
+      var wintitle =  'Edit Application';
+      var endpoint = node.data.record.Name; 
+      var state = 'edit';
+      var cacheImportURI = node.data.record.CacheImportURI;
+      var cacheTimeout = node.data.record.CacheTimeout;
 
     } else {
-      wintitle = 'Add Application';
-      //state = 'new';
-      state = '';
-      application = '';
-      context = node.data.record.Name;
-      path = node.internalId;
+      var wintitle = 'Add Application';
+      var state = '';
+      var application = '';
+      var context = node.data.record.Name;
+      var path = node.internalId;
     }
-
-
 
     var conf = { 
       id: 'newwin-' + node.data.id, 

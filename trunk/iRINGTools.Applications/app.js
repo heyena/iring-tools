@@ -18,7 +18,7 @@ Ext.Loader.setConfig({
   enabled: true,
   garbageCollect: true,
   paths: {
-    'Ext.ux': 'Scripts/extjs-4.1.1/ux'
+    'Ext.ux': 'Scripts/ext-4.2.1.883/ux'
   }
 });
 

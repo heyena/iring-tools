@@ -28,7 +28,7 @@ Ext.define('AM.view.directory.ScopeWindow', {
     type: 'fit'
   },
   bodyPadding: 1,
-  iconCls: 'tabsScope',
+  //iconCls: 'tabsScope',
   modal: true,
 
   initComponent: function() {

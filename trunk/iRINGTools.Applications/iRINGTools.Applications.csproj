@@ -365,7 +365,6 @@
     <Content Include="Scripts\AM\view\override\nhibernate\NhibernateTree.js" />
     <Content Include="Scripts\AM\view\override\nhibernate\RelationPropertyGrid.js" />
     <Content Include="Scripts\AM\view\override\search\SearchTree.js" />
-    <Content Include="Scripts\AM\view\override\spreadsheet\SpreadsheetTree.js" />
     <Content Include="Scripts\AM\view\search\SearchPanel.js" />
     <Content Include="Scripts\AM\view\search\SearchToolbar.js" />
     <Content Include="Scripts\AM\view\search\SearchTree.js" />
@@ -400,6 +399,7 @@
     <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Scripts\AM\view\override\spreadsheet\" />
     <Folder Include="Service References\App_Data\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
