@@ -475,7 +475,7 @@ namespace iRINGTools.Web.Models
                   expression.LogicalOperator = LogicalOperator.And;
                 }
 
-                if (filterExpression["comparison"] != null)
+                if (filterExpression.ContainsKey("comparison") && filterExpression["comparison"] != null)
                 {										
                   RelationalOperator optor = GetOpt(filterExpression["comparison"]);
                   expression.RelationalOperator = optor;
