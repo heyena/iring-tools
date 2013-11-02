@@ -38,7 +38,7 @@ Ext.define('AM.view.search.SearchPanel', {
       items: [
         {
           xtype: 'propertypanel',
-          width: 250,
+          width: 300,
           collapseDirection: 'right',
           title: 'Search Details',
           region: 'east',
@@ -47,13 +47,13 @@ Ext.define('AM.view.search.SearchPanel', {
         {
           xtype: 'contentpanel',
           itemId: 'searchcontent',
-          region: 'center'
-        }
-      ],
-      dockedItems: [
-        {
-          xtype: 'searchtoolbar',
-          dock: 'top'
+          region: 'center',
+          dockedItems: [
+            {
+                xtype: 'searchtoolbar',
+                dock: 'top'
+            }
+          ]
         }
       ]
     });
