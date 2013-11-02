@@ -361,7 +361,7 @@ Ext.define('AM.view.mapping.MappingTree', {
 
   onSave: function() {
     var me = this;
-    var mapPanel = me.isContained;
+    var mapPanel = me.up('panel');
     Ext.Ajax.request({
       url: 'mapping/updateMapping',
       method: 'POST',

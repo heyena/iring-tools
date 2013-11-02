@@ -30,7 +30,6 @@ Ext.define('AM.view.mapping.MappingPanel', {
     type: 'border'
   },
   closable: true,
-  iconCls: 'tabsMapping',
 
   initComponent: function() {
     var me = this;
