@@ -62,5 +62,4 @@ Ext.define('AM.view.directory.DataGridPanel', {
         grid.reconfigure(grid.getStore(), meta.columns);
         grid.features[0].filters = meta.fields;
     }
-
 });
