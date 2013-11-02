@@ -17,8 +17,6 @@ Ext.define('AM.view.menus.ClassmapMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.classmapmenu',
 
-  width: 130,
-
   initComponent: function() {
     var me = this;
 

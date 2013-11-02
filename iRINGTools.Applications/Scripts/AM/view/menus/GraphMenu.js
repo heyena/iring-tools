@@ -17,9 +17,6 @@ Ext.define('AM.view.menus.GraphMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.graphmenu',
 
-  height: 106,
-  width: 152,
-
   initComponent: function() {
     var me = this;
 

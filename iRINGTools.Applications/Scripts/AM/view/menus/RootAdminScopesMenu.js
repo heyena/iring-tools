@@ -17,8 +17,6 @@ Ext.define('AM.view.menus.RootAdminScopesMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.rootadminscopesmenu',
 
-  width: 130,
-
   initComponent: function() {
     var me = this;
 

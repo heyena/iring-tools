@@ -337,7 +337,7 @@ Ext.define('AM.view.mapping.MappingTree', {
       });
       */
 
-      store.load({
+      store.reload({
         callback: function (records, options, success) {
           var nodes = state.expandedNodes || [];
           var len = nodes.length;

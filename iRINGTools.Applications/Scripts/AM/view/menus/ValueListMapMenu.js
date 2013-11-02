@@ -27,13 +27,13 @@ Ext.define('AM.view.menus.ValueListMapMenu', {
           action: 'editnewvaluemap',
           itemId: 'editvaluemap',
           icon: 'Content/img/16x16/edit.png',
-          text: 'Edit Value List Map'
+          text: 'Edit ValueMap'
         },
         {
           xtype: 'menuitem',
           action: 'deletevaluemap',
           icon: 'Content/img/16x16/delete.png',
-          text: 'Delete Value List Map'
+          text: 'Delete ValueMap'
         }
       ]
     });

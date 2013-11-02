@@ -17,8 +17,6 @@ Ext.define('AM.view.menus.VirtualPropertyMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.virtualpropertymenu',
 
-  width: 160,
-
   initComponent: function() {
     var me = this;
 

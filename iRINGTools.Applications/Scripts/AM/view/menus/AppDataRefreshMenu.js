@@ -17,9 +17,6 @@ Ext.define('AM.view.menus.AppDataRefreshMenu', {
   extend: 'Ext.menu.Menu',
   alias: 'widget.appdatarefreshmenu',
 
-  height: 67,
-  width: 182,
-
   initComponent: function() {
     var me = this;
 
