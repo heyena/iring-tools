@@ -181,7 +181,8 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
           win.fireEvent('save', me);
         },
         failure: function (f, a) {
-          message = 'Failed to map property';
+          //message = 'Failed to map property';
+          message = a.response.responseText;
           showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }
       });

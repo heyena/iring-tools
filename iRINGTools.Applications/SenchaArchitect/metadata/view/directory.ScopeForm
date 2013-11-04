@@ -7,6 +7,7 @@
     "codeClass": null,
     "userConfig": {
         "node": "",
+        "cacheConnStrTpl": "Data Source={hostname\\\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}",
         "height": 250,
         "width": 400,
         "designer|userClassName": "directory.ScopeForm",
@@ -26,6 +27,11 @@
         {
             "group": "(Custom Properties)",
             "name": "node",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "cacheConnStrTpl",
             "type": "string"
         }
     ],
@@ -141,16 +147,18 @@
                     "var state = form.findField('state').getValue();\r",
                     "var contextNameField = form.findField('contextName');\r",
                     "//form.findField('contextName').setValue(folderName);\r",
-                    "var context = form.findField('contextCombo').getValue();\r",
+                    "//var context = form.findField('contextCombo').getValue();\r",
                     "//contextNameField.setValue(context);\r",
                     "\r",
                     "//if(state == 'new')\r",
                     "//form.findField('name').setValue(folderName);\r",
+                    " if (form.findField('cacheDBConnStr').getValue() == me.cacheConnStrTpl)\r",
+                    "     form.findField('cacheDBConnStr').setValue('');\r",
                     "\r",
                     "node.eachChild(function(n) {\r",
                     "  if(n.data.text == folderName) {\r",
                     "    if(state == 'new') {\r",
-                    "      showDialog(400, 100, 'Warning', 'The name \\\"' + folderName + '\\\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);\r",
+                    "       showDialog(400, 100, 'Warning', 'Scope name \\\"' + folderName + '\\\" already exists.', Ext.Msg.OK, null);\r",
                     "      return;\r",
                     "    }\r",
                     "  }\r",
@@ -286,19 +294,6 @@
                 "name": "contextName"
             },
             "designerId": "4d7dacf2-c6f5-473b-8e2f-78e2450a3058"
-        },
-        {
-            "type": "linkedinstance",
-            "reference": {
-                "name": "items",
-                "type": "array"
-            },
-            "codeClass": null,
-            "userConfig": {
-                "hidden": true
-            },
-            "designerId": "075ebdd5-bfff-484a-bbc1-3d578d3c2c57",
-            "masterInstanceId": "3f6306a7-11d6-4ef2-894e-dbea2ac88a90"
         },
         {
             "type": "Ext.form.field.TextArea",

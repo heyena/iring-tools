@@ -17,11 +17,8 @@ Ext.define('AM.view.directory.ScopeForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.scopeform',
 
-  requires: [
-    'AM.view.directory.ContextCombo'
-  ],
-
   node: '',
+  cacheConnStrTpl: 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}',
   height: 250,
   width: 400,
   bodyPadding: 10,
@@ -94,10 +91,6 @@ Ext.define('AM.view.directory.ScopeForm', {
           name: 'contextName'
         },
         {
-          xtype: 'contextcombo',
-          hidden: true
-        },
-        {
           xtype: 'textareafield',
           fieldLabel: 'Description',
           name: 'description'
@@ -121,16 +114,18 @@ Ext.define('AM.view.directory.ScopeForm', {
     var state = form.findField('state').getValue();
     var contextNameField = form.findField('contextName');
     //form.findField('contextName').setValue(folderName);
-    var context = form.findField('contextCombo').getValue();
+    //var context = form.findField('contextCombo').getValue();
     //contextNameField.setValue(context);
 
     //if(state == 'new')
     //form.findField('name').setValue(folderName);
+    if (form.findField('cacheDBConnStr').getValue() == me.cacheConnStrTpl)
+    form.findField('cacheDBConnStr').setValue('');
 
     node.eachChild(function(n) {
       if(n.data.text == folderName) {
         if(state == 'new') {
-          showDialog(400, 100, 'Warning', 'The name \"' + folderName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
+          showDialog(400, 100, 'Warning', 'Scope name \"' + folderName + '\" already exists.', Ext.Msg.OK, null);
           return;
         }
       }

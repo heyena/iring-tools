@@ -8,6 +8,9 @@
     "userConfig": {
         "dockedItems": null,
         "height": null,
+        "style": [
+            "background-color: #fff;"
+        ],
         "width": null,
         "designer|userClassName": "directory.DataGridPanel",
         "designer|userAlias": "dynamicgrid",
