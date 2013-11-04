@@ -23,6 +23,7 @@ Ext.define('AM.view.directory.DataGridPanel', {
     'Ext.ux.grid.FiltersFeature'
   ],
 
+  style: 'background-color: #fff;',
   closable: true,
   store: 'DataGridStore',
 

@@ -231,7 +231,6 @@
             },
             "codeClass": null,
             "userConfig": {
-                "autoCreate": true,
                 "ref": "spreadsheetSourceWindow",
                 "selector": "spreadsheetsourcewindow",
                 "xtype": "spreadsheetsourcewindow"

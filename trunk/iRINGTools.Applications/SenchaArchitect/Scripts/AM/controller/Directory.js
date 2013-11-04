@@ -18,17 +18,13 @@ Ext.define('AM.controller.Directory', {
 
   models: [
     'DirectoryModel',
-    'BaseUrlModel',
     'DataLayerModel',
-    'ContextModel',
     'DynamicModel',
     'FileDownloadModel',
     'VirtualPropertyModel'
   ],
   stores: [
     'DirectoryTreeStore',
-    'ContextStore',
-    'BaseUrlStore',
     'DataLayerStore',
     'FileDownloadStore',
     'VirtualPropertyStore'
@@ -46,9 +42,7 @@ Ext.define('AM.controller.Directory', {
     'directory.GraphMapForm',
     'directory.GraphMapWindow',
     'directory.ScopeForm',
-    'directory.ContextCombo',
     'directory.DataLayerWindow',
-    'directory.AvailBaseUrlCombo',
     'directory.DataLayerCombo',
     'directory.ApplicationForm',
     'menus.ScopesMenu',
@@ -90,16 +84,8 @@ Ext.define('AM.controller.Directory', {
       selector: 'viewport > centerpanel > contentpanel'
     },
     {
-      ref: 'contextCombo',
-      selector: 'contextcombo'
-    },
-    {
       ref: 'datalayerCombo',
       selector: 'datalayercombo'
-    },
-    {
-      ref: 'baseUrlCombo',
-      selector: 'availbaseurlcombo'
     }
   ],
 
@@ -167,7 +153,6 @@ Ext.define('AM.controller.Directory', {
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
     var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
-
     context = node.data.record.context;
 
     if(node.parentNode) {
@@ -175,6 +160,14 @@ Ext.define('AM.controller.Directory', {
     } else {
       path = '';
     }
+    var conf = {
+      id: 'tab-' + node.data.id,
+      title: wintitle,
+      iconCls: 'tabsScope'
+    };
+    var win = Ext.widget('scopewindow', conf);
+    var form = win.down('form');
+    form.node = node;
 
     if(item.itemId == 'editfolder' && node.data.record !== undefined) {
       name = node.data.record.Name;
@@ -185,8 +178,9 @@ Ext.define('AM.controller.Directory', {
       if (node.data.record.Configuration != null && node.data.record.Configuration.AppSettings != null &&
       node.data.record.Configuration.AppSettings.Settings != null) {
         Ext.each(node.data.record.Configuration.AppSettings.Settings, function (settings, index) {
-          if (settings.Key == "iRINGCacheConnStr")
-          cacheDBConnStr = settings.Value;
+          if (settings.Key == "iRINGCacheConnStr") {
+            cacheDBConnStr = settings.Value;
+          }
         });
       }
 
@@ -196,14 +190,6 @@ Ext.define('AM.controller.Directory', {
       state = 'new';
       wintitle = 'Add Scope';
     }
-
-    var conf = {
-      id: 'tab-' + node.data.id,
-      title: wintitle,
-      iconCls: 'tabsScope'
-    };
-
-    var win = Ext.widget('scopewindow', conf);
 
     win.on('save', function () {
       win.destroy();
@@ -215,23 +201,22 @@ Ext.define('AM.controller.Directory', {
       win.destroy();
     }, me);
 
-    var form = win.down('form');
-    form.node = node;
 
-    var combo = me.getContextCombo();
 
+    /*var combo = me.getContextCombo();
     combo.store.on('load', function(store, action) {
-      if(context === '') {
-        if(store)
-        if(store.data.items[0])
-        context = store.data.items[0].data.context;
-      }
+    if(context === '') {
+    if(store)
+    if(store.data.items[0])
+    context = store.data.items[0].data.context;
+    }
     }, me);
 
     combo.on('afterrender', function (combo, eopts) {
-      if(context !== '' && context !== undefined && combo.store.data.length == 1)
-      combo.setValue(context);
+    if(context !== '' && context !== undefined && combo.store.data.length == 1)
+    combo.setValue(context);
     }, me);
+    */
 
     form.getForm().findField('path').setValue(path);
     form.getForm().findField('state').setValue(state);
@@ -281,7 +266,7 @@ Ext.define('AM.controller.Directory', {
     var node = tree.getSelectedNode();
     var cacheImportURI = '';
     var cacheTimeout = '';
-    context = node.parentNode.data.text;//node.data.record.ContextName;
+    context = node.parentNode.data.record.Name;//node.parentNode.data.text;//node.data.record.ContextName;
     if(item.itemId == 'editendpoint') {
       //name = node.data.record.Name;
       name = node.data.record.Name;
@@ -663,12 +648,11 @@ Ext.define('AM.controller.Directory', {
 
   },
 
-  onShowDataGridd: function(dataview, record, item, index, e, eOpts) {
+  onItemDblClick: function(dataview, record, item, index, e, eOpts) {
     var me = this;
     if(record.data.type == 'GraphNode')
     me.application.fireEvent('opengraphmap', me);    
-    //me.onShowGrap(item, e, eOpts);
-    else
+    else if (record.data.type == 'DataObjectNode')
     me.onShowDataGrid(item, e, eOpts);
   },
 
@@ -1299,7 +1283,7 @@ Ext.define('AM.controller.Directory', {
       },
       "directorytree": {
         itemcontextmenu: this.showContextMenu,
-        itemdblclick: this.onShowDataGridd
+        itemdblclick: this.onItemDblClick
       },
       "menuitem[action=refreshdata]": {
         click: this.onAppDataRefreshClick

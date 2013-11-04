@@ -24,22 +24,6 @@
             ],
             "className": "AvailItemsModel"
         },
-        "04d7d720-bc2d-4fcc-aa1c-2b0784a418d0": {
-            "paths": [
-                "metadata/model/BaseUrlModel",
-                "Scripts/AM/model/override/BaseUrlModel.js",
-                "Scripts/AM/model/BaseUrlModel.js"
-            ],
-            "className": "BaseUrlModel"
-        },
-        "db4b5919-39b3-4a1c-8197-8ad919ca449b": {
-            "paths": [
-                "metadata/model/ContextModel",
-                "Scripts/AM/model/override/ContextModel.js",
-                "Scripts/AM/model/ContextModel.js"
-            ],
-            "className": "ContextModel"
-        },
         "b2925ef6-3b68-49c8-b67b-e2f0f003ae2e": {
             "paths": [
                 "metadata/model/DataLayerModel",
@@ -431,22 +415,6 @@
             ],
             "className": "directory.ScopeForm"
         },
-        "3f6306a7-11d6-4ef2-894e-dbea2ac88a90": {
-            "paths": [
-                "metadata/view/directory.ContextCombo",
-                "Scripts/AM/view/override/directory/ContextCombo.js",
-                "Scripts/AM/view/directory/ContextCombo.js"
-            ],
-            "className": "directory.ContextCombo"
-        },
-        "2db45ef9-18a6-4bb9-9db3-921bfcb6c5e7": {
-            "paths": [
-                "metadata/store/ContextStore",
-                "Scripts/AM/store/override/ContextStore.js",
-                "Scripts/AM/store/ContextStore.js"
-            ],
-            "className": "ContextStore"
-        },
         "f80d391f-dcab-42e6-adf6-2505c539da0f": {
             "paths": [
                 "metadata/view/directory.DataLayerForm",
@@ -478,22 +446,6 @@
                 "Scripts/AM/view/directory/DataLayerCombo.js"
             ],
             "className": "directory.DataLayerCombo"
-        },
-        "58e927fe-fafa-4674-b907-2df5d6711a7d": {
-            "paths": [
-                "metadata/view/directory.AvailBaseUrlCombo",
-                "Scripts/AM/view/override/directory/AvailBaseUrlCombo.js",
-                "Scripts/AM/view/directory/AvailBaseUrlCombo.js"
-            ],
-            "className": "directory.AvailBaseUrlCombo"
-        },
-        "39cdf596-1486-4cf2-872c-8d6d0a4fc56d": {
-            "paths": [
-                "metadata/store/BaseUrlStore",
-                "Scripts/AM/store/override/BaseUrlStore.js",
-                "Scripts/AM/store/BaseUrlStore.js"
-            ],
-            "className": "BaseUrlStore"
         },
         "5b36ea62-f472-4b96-bf97-b38668a73c4b": {
             "paths": [
@@ -1081,9 +1033,7 @@
             "140dde75-d72b-47c5-a76b-9c6cf6c94388",
             "90c99fcb-05cd-42f8-a3df-8a16712e5601",
             "354a52a2-af56-440e-a28d-e03f1135a5e9",
-            "3f6306a7-11d6-4ef2-894e-dbea2ac88a90",
             "89827f86-cc75-4149-b7e4-3defbfcb6ebd",
-            "58e927fe-fafa-4674-b907-2df5d6711a7d",
             "f80d391f-dcab-42e6-adf6-2505c539da0f",
             "b966cc72-9af0-45fd-828f-bf50eb7ffb69",
             "f84720ec-a5c9-4ebd-94ae-2d99104ab3de",
@@ -1149,9 +1099,7 @@
             "407d383b-68a1-4bb4-aff2-4bb391e4ef89",
             "199ea7ae-35b2-4084-9980-34e8fc1aca2c",
             "cdfeedca-6f01-4cca-8571-032eb19b8cdc",
-            "2db45ef9-18a6-4bb9-9db3-921bfcb6c5e7",
             "a249d4c0-23f0-4051-acef-d74eb07471ea",
-            "39cdf596-1486-4cf2-872c-8d6d0a4fc56d",
             "73348ec9-a390-493b-aabd-e1cee85f950c",
             "f38a99b9-b2d4-4f72-9e08-b126caa893b7",
             "bd0c2146-a07f-405b-85d7-72edd111ce14",
@@ -1173,8 +1121,6 @@
         ],
         "model": [
             "be3f23ad-f579-463e-98fb-9e65fd3b6f6a",
-            "04d7d720-bc2d-4fcc-aa1c-2b0784a418d0",
-            "db4b5919-39b3-4a1c-8197-8ad919ca449b",
             "b2925ef6-3b68-49c8-b67b-e2f0f003ae2e",
             "9f26f379-62da-4105-bec6-18e1b4bd2e53",
             "f6d4d4d1-064f-4282-8b9e-1344fb991f23",
