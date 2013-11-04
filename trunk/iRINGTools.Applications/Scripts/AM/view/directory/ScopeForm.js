@@ -14,152 +14,154 @@
  */
 
 Ext.define('AM.view.directory.ScopeForm', {
-  extend: 'Ext.form.Panel',
-  alias: 'widget.scopeform',
+    extend: 'Ext.form.Panel',
+    alias: 'widget.scopeform',
 
-  node: '',
-  cacheConnStrTpl: 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}',
-  height: 250,
-  width: 400,
-  bodyPadding: 10,
-  bodyStyle: 'padding:10px 5px 0',
-  url: 'directory/Scope',
+    node: '',
+    height: 250,
+    width: 400,
+    bodyPadding: 10,
+    bodyStyle: 'padding:10px 5px 0',
+    url: 'directory/Scope',
+    cacheConnStrTpl: 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}',
 
-  initComponent: function() {
-    var me = this;
+    initComponent: function () {
+        var me = this;
 
-    me.initialConfig = Ext.apply({
-      url: 'directory/Scope'
-    }, me.initialConfig);
+        me.initialConfig = Ext.apply({
+            url: 'directory/Scope'
+        }, me.initialConfig);
 
-    Ext.applyIf(me, {
-      defaults: {
-        anchor: '100%',
-        msgTarget: 'side'
-      },
-      dockedItems: [
+        Ext.applyIf(me, {
+            defaults: {
+                anchor: '100%',
+                msgTarget: 'side'
+            },
+            dockedItems: [
         {
-          xtype: 'toolbar',
-          dock: 'bottom',
-          items: [
+            xtype: 'toolbar',
+            dock: 'bottom',
+            items: [
             {
-              xtype: 'tbfill'
+                xtype: 'tbfill'
             },
             {
-              xtype: 'button',
-              handler: function(button, event) {
-                me.onSave();
-              },
-              text: 'Ok'
+                xtype: 'button',
+                handler: function (button, event) {
+                    me.onSave();
+                },
+                text: 'Ok'
             },
             {
-              xtype: 'button',
-              handler: function(button, event) {
-                me.onReset();
-              },
-              text: 'Cancel'
+                xtype: 'button',
+                handler: function (button, event) {
+                    me.onReset();
+                },
+                text: 'Cancel'
             }
           ]
         }
       ],
-      items: [
+            items: [
         {
-          xtype: 'hiddenfield',
-          name: 'path'
+            xtype: 'hiddenfield',
+            name: 'path'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'state'
+            xtype: 'hiddenfield',
+            name: 'state'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'oldContext'
+            xtype: 'hiddenfield',
+            name: 'oldContext'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'name'
+            xtype: 'hiddenfield',
+            name: 'name'
         },
         {
-          xtype: 'textfield',
-          fieldLabel: 'Name',
-          name: 'displayName',
-          allowBlank: false
+            xtype: 'textfield',
+            fieldLabel: 'Name',
+            name: 'displayName',
+            allowBlank: false
         },
         {
-          xtype: 'hiddenfield',
-          itemId: 'contextname',
-          name: 'contextName'
+            xtype: 'hiddenfield',
+            itemId: 'contextname',
+            name: 'contextName'
         },
         {
-          xtype: 'textareafield',
-          fieldLabel: 'Description',
-          name: 'description'
-        },
+        xtype: 'textareafield',
+        fieldLabel: 'Description',
+        name: 'description'
+    },
         {
-          xtype: 'textareafield',
-          fieldLabel: 'Cache ConnStr',
-          name: 'cacheDBConnStr'
+            xtype: 'textareafield',
+            fieldLabel: 'Cache ConnStr',
+            name: 'cacheDBConnStr',
+            value: this.cacheConnStrTpl
         }
       ]
-    });
+        });
 
-    me.callParent(arguments);
-  },
+        me.callParent(arguments);
+    },
 
-  onSave: function() {
-    var me = this;
-    var win = me.up('window');
-    var form = me.getForm();
-    var folderName = form.findField('displayName').getValue();
-    var state = form.findField('state').getValue();
-    var contextNameField = form.findField('contextName');
-    //form.findField('contextName').setValue(folderName);
-    //var context = form.findField('contextCombo').getValue();
-    //contextNameField.setValue(context);
+    onSave: function () {
+        var me = this;
+        var win = me.up('window');
+        var form = me.getForm();
+        var folderName = form.findField('displayName').getValue();
+        var state = form.findField('state').getValue();
+        var contextNameField = form.findField('contextName');
+        //form.findField('contextName').setValue(folderName);
+        //    var context = form.findField('contextCombo').getValue();
+        //contextNameField.setValue(context);
 
-    //if(state == 'new')
-    //form.findField('name').setValue(folderName);
-    if (form.findField('cacheDBConnStr').getValue() == me.cacheConnStrTpl)
-    form.findField('cacheDBConnStr').setValue('');
+        //if(state == 'new')
+        //form.findField('name').setValue(folderName);
 
-    node.eachChild(function(n) {
-      if(n.data.text == folderName) {
-        if(state == 'new') {
-          showDialog(400, 100, 'Warning', 'Scope name \"' + folderName + '\" already exists.', Ext.Msg.OK, null);
-          return;
-        }
-      }
-    });
+        if (form.findField('cacheDBConnStr').getValue() == this.cacheConnStrTpl)
+            form.findField('cacheDBConnStr').setValue('');
 
-    if(form.isValid()) {
-      form.submit({
-        waitMsg: 'Saving Data...',
-        success: function (response, request) {
-          win.fireEvent('save', me);
-          Ext.ComponentQuery.query('directorytree')[0].onReload();
-        },
-        failure: function (response, request) {
-          if (response.items!=undefined && response.items[3].value !== undefined) {
-            var rtext = response.items[3].value;
-            showDialog(400, 100, 'Error saving folder changes', 'Changes of ' + rtext + ' are not saved.', Ext.Msg.OK, null);
+        node.eachChild(function (n) {
+            if (n.data.text == folderName) {
+                if (state == 'new') {
+                    showDialog(400, 100, 'Warning', 'Scope name \"' + folderName + '\" already exists.', Ext.Msg.OK, null);
+                    return;
+                }
+            }
+        });
+
+        if (form.isValid()) {
+            form.submit({
+                waitMsg: 'Saving Data...',
+                success: function (response, request) {
+                    win.fireEvent('save', me);
+                    Ext.ComponentQuery.query('directorytree')[0].onReload();
+                },
+                failure: function (response, request) {
+                    if (response.items != undefined && response.items[3].value !== undefined) {
+                        var rtext = response.items[3].value;
+                        showDialog(400, 100, 'Error saving folder changes', 'Changes of ' + rtext + ' are not saved.', Ext.Msg.OK, null);
+                        return;
+                    }
+                    var message = 'Error saving changes!';
+                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+                }
+            });
+        } else {
+            showDialog(400, 100, 'Warning', 'Please complete all required fields...', Ext.Msg.OK, null);
             return;
-          }
-          var message = 'Error saving changes!';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }
-      });
-    } else {
-      showDialog(400, 100, 'Warning', 'Please complete all required fields...', Ext.Msg.OK, null);
-      return;
+    },
+
+    onReset: function () {
+        var me = this;
+        var win = me.up('window');
+        win.fireEvent('cancel', me);
+
+
     }
-  },
-
-  onReset: function() {
-    var me = this;
-    var win = me.up('window');
-    win.fireEvent('cancel', me);
-
-
-  }
 
 });

@@ -14,52 +14,52 @@
  */
 
 Ext.define('AM.view.directory.DataGridPanel', {
-  extend: 'Ext.grid.Panel',
-  alias: 'widget.dynamicgrid',
+    extend: 'Ext.grid.Panel',
+    alias: 'widget.dynamicgrid',
 
-  requires: [
-    'AM.view.override.directory.DataGridPanel',
-    'AM.store.DataGridStore',
-    'Ext.ux.grid.FiltersFeature'
-  ],
+    requires: [
+        'AM.view.override.directory.DataGridPanel',
+        'AM.store.DataGridStore',
+        'Ext.ux.grid.FiltersFeature'
+    ],
 
-  style: 'background-color: #fff;',
-  closable: true,
-  store: 'DataGridStore',
+    closable: true,
+    store: 'DataGridStore',
+    style: 'background-color: #fff;',
 
-  initComponent: function() {
-    var me = this;
+    initComponent: function () {
+        var me = this;
 
-    Ext.applyIf(me, {
-      columns: [
+        Ext.applyIf(me, {
+            columns: [
         {
-          xtype: 'gridcolumn',
-          dataIndex: 'string'
+            xtype: 'gridcolumn',
+            dataIndex: 'string'
         }
       ],
-      viewConfig: {
-        enableTextSelection: true
-      }
-    });
+            viewConfig: {
+                enableTextSelection: true
+            }
+        });
 
-    me.callParent(arguments);
-  },
+        me.callParent(arguments);
+    },
 
-  handleBeforeLoad: function(store, operation, e) {
-    var me = this;
-    store.on({
-      metachange: {
-        fn: function(store, meta, e) {
-          me.handleMetaChange(me, meta);
-        }, 
-        scope: me, 
-        single: true
-      }
-    });
-  },
+    handleBeforeLoad: function (store, operation, e) {
+        var me = this;
+        store.on({
+            metachange: {
+                fn: function (store, meta, e) {
+                    me.handleMetaChange(me, meta);
+                },
+                scope: me,
+                single: true
+            }
+        });
+    },
 
-  handleMetaChange: function(grid, meta) {
-    grid.reconfigure(grid.getStore(), meta.columns);
-  }
-
+    handleMetaChange: function (grid, meta) {
+        grid.reconfigure(grid.getStore(), meta.columns);
+        grid.features[0].filters = meta.fields;
+    }
 });
