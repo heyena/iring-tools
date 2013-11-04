@@ -90,7 +90,7 @@ menuItemCfgs : {
      * </pre>
      */
     menuItemCfgs : {
-        emptyText: 'Enter Number...',
+        //emptyText: 'Enter Number...',
         selectOnFocus: false,
         width: 155
     },
