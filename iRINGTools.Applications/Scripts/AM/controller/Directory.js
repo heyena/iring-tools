@@ -18,6 +18,8 @@ Ext.define('AM.controller.Directory', {
 
   models: [
     'DirectoryModel',
+    //'BaseUrlModel',
+    //'ContextModel',
     'DataLayerModel',
     'DynamicModel',
     'FileDownloadModel',
@@ -25,15 +27,17 @@ Ext.define('AM.controller.Directory', {
   ],
   stores: [
     'DirectoryTreeStore',
+    //'BaseUrlStore',
+    //'ContextStore',
     'DataLayerStore',
     'FileDownloadStore',
     'VirtualPropertyStore'
   ],
   views: [
-    'common.PropertyPanel',
-    'common.CenterPanel',
-    'common.ContentPanel',
     'directory.DirectoryPanel',
+    'common.PropertyPanel',
+    'common.ContentPanel',
+    'common.CenterPanel',
     'directory.DirectoryTree',
     'directory.ApplicationWindow',
     'directory.ScopeWindow',
@@ -43,6 +47,8 @@ Ext.define('AM.controller.Directory', {
     'directory.GraphMapWindow',
     'directory.ScopeForm',
     'directory.DataLayerWindow',
+    //'directory.AvailBaseUrlCombo',
+    //'directory.ContextCombo',
     'directory.DataLayerCombo',
     'directory.ApplicationForm',
     'menus.ScopesMenu',
@@ -86,7 +92,15 @@ Ext.define('AM.controller.Directory', {
     {
       ref: 'datalayerCombo',
       selector: 'datalayercombo'
-    }
+    }/*,
+    {
+      ref: 'contextCombo',
+      selector: 'contextcombo'
+    },
+    {
+      ref: 'baseUrlCombo',
+      selector: 'availbaseurlcombo'
+    }*/
   ],
 
   handleMetachange: function() {
@@ -152,7 +166,7 @@ Ext.define('AM.controller.Directory', {
     var path, state, context, description, wintitle, displayName;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
-    var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
+    
     context = node.data.record.context;
 
     if(node.parentNode) {
@@ -160,41 +174,42 @@ Ext.define('AM.controller.Directory', {
     } else {
       path = '';
     }
+
     var conf = {
       id: 'tab-' + node.data.id,
       title: wintitle,
       iconCls: 'tabsScope'
     };
+
     var win = Ext.widget('scopewindow', conf);
     var form = win.down('form');
     form.node = node;
 
-    if(item.itemId == 'editfolder' && node.data.record !== undefined) {
-      name = node.data.record.Name;
-      displayName = node.data.record.DisplayName;
-      description = node.data.record.Description;
-      wintitle = 'Edit Scope \"' + node.data.text + '\"';
-      state = 'edit';
+    if (item.itemId == 'editfolder' && node.data.record !== undefined) {
+      var name = node.data.record.Name;
+      var displayName = node.data.record.DisplayName;
+      var description = node.data.record.Description;
+      win.title = 'Edit Scope';
+      var state = 'edit';
+
       if (node.data.record.Configuration != null && node.data.record.Configuration.AppSettings != null &&
       node.data.record.Configuration.AppSettings.Settings != null) {
         Ext.each(node.data.record.Configuration.AppSettings.Settings, function (settings, index) {
           if (settings.Key == "iRINGCacheConnStr") {
-            cacheDBConnStr = settings.Value;
+            form.getForm().findField('cacheDBConnStr').setValue(settings.Value);
           }
         });
       }
 
     } else {
-      name = '';
-      //displayName = '';
-      state = 'new';
-      wintitle = 'Add Scope';
+      var name = '';
+      var state = 'new';
+      win.title = 'Add Scope';
     }
 
     win.on('save', function () {
       win.destroy();
       //me.onAppDataRefreshClick(item, e, eOpts);
-
     }, me);
 
     win.on('cancel', function () {
@@ -202,21 +217,20 @@ Ext.define('AM.controller.Directory', {
     }, me);
 
 
+//    var combo = me.getContextCombo();
 
-    /*var combo = me.getContextCombo();
-    combo.store.on('load', function(store, action) {
-    if(context === '') {
-    if(store)
-    if(store.data.items[0])
-    context = store.data.items[0].data.context;
-    }
-    }, me);
+//    combo.store.on('load', function(store, action) {
+//      if(context === '') {
+//        if(store)
+//        if(store.data.items[0])
+//        context = store.data.items[0].data.context;
+//      }
+//    }, me);
 
-    combo.on('afterrender', function (combo, eopts) {
-    if(context !== '' && context !== undefined && combo.store.data.length == 1)
-    combo.setValue(context);
-    }, me);
-    */
+//    combo.on('afterrender', function (combo, eopts) {
+//      if(context !== '' && context !== undefined && combo.store.data.length == 1)
+//      combo.setValue(context);
+//    }, me);
 
     form.getForm().findField('path').setValue(path);
     form.getForm().findField('state').setValue(state);
@@ -225,7 +239,6 @@ Ext.define('AM.controller.Directory', {
     form.getForm().findField('name').setValue(name);
     form.getForm().findField('displayName').setValue(displayName);
     form.getForm().findField('contextName').setValue(name);
-    form.getForm().findField('cacheDBConnStr').setValue(cacheDBConnStr);
 
     win.show();
   },
@@ -266,31 +279,28 @@ Ext.define('AM.controller.Directory', {
     var node = tree.getSelectedNode();
     var cacheImportURI = '';
     var cacheTimeout = '';
-    context = node.parentNode.data.record.Name;//node.parentNode.data.text;//node.data.record.ContextName;
+    var context = node.parentNode.data.text;
+
     if(item.itemId == 'editendpoint') {
-      //name = node.data.record.Name;
-      name = node.data.record.Name;
-      displayName = node.data.record.DisplayName;
-      description = node.data.record.Description;
-      datalayer = node.data.record.DataLayer;
-      assembly = node.data.record.Assembly;
-      application = name;
-      wintitle =  'Edit Application \"' + node.data.text + '\"';
-      endpoint = node.data.record.Name;//node.data.record.Endpoint; 
-      state = 'edit';
-      cacheImportURI = node.data.record.CacheImportURI;
-      cacheTimeout = node.data.record.CacheTimeout;
+      var name = node.data.record.Name;
+      var displayName = node.data.record.DisplayName;
+      var description = node.data.record.Description;
+      var datalayer = node.data.record.DataLayer;
+      var assembly = node.data.record.Assembly;
+      var application = name;
+      var wintitle =  'Edit Application';
+      var endpoint = node.data.record.Name; 
+      var state = 'edit';
+      var cacheImportURI = node.data.record.CacheImportURI;
+      var cacheTimeout = node.data.record.CacheTimeout;
 
     } else {
-      wintitle = 'Add Application';
-      //state = 'new';
-      state = '';
-      application = '';
-      context = node.data.record.Name;
-      path = node.internalId;
+      var wintitle = 'Add Application';
+      var state = '';
+      var application = '';
+      var context = node.data.record.Name;
+      var path = node.internalId;
     }
-
-
 
     var conf = { 
       id: 'newwin-' + node.data.id, 
@@ -545,15 +555,19 @@ Ext.define('AM.controller.Directory', {
   },
 
   showContextMenu: function(dataview, record, item, index, e, eOpts) {
-    var me = this,
-      tree = me.getDirTree();
-    e.stopEvent();
-    node = record.store.getAt(index);
+    var me = this;
+    var tree = me.getDirTree();
+    
+    //e.stopEvent();
+    //node = record.store.getAt(index);
 
-    tree.getSelectionModel().select(node);
+    //TODO: need to scope this variable
+    node = tree.getSelectedNode();
+
+    //tree.getSelectionModel().select(node);
     //tree.onClick(dataview, record, 0, index, e);
 
-    var obj = node.data;
+    var obj = record.data;
 
     if (obj.type === "ScopesNode") {
       var scopesMenu = Ext.widget('scopesmenu');
@@ -584,35 +598,32 @@ Ext.define('AM.controller.Directory', {
     } else if (obj.type === "GraphNode") {
       var graphMenu = Ext.widget('graphmenu');
       graphMenu.showAt(e.getXY());
-    }else if (obj.type === "DataObjectsNode") {
+    } else if (obj.type === "DataObjectsNode") {
       var graphMenu = Ext.widget('appdatarefreshmenu');
-      /*if (node.data.property["Data Mode"] == "Live") {
-      if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
-      graphMenu.items.map['switchToCached'].setVisible(true);
-      graphMenu.items.map['switchToLive'].setVisible(false);
 
+      if (node.data.property["Data Mode"] == "Live") {
+          if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
+              graphMenu.items.map['switchToCached'].setVisible(true);
+//              graphMenu.items.map['switchToLive'].setVisible(false);
+
+          }
+//          graphMenu.items.map['refreshData'].setVisible(true);	
+//          graphMenu.items.map['importData'].setVisible(true);	
+      } else if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
+          graphMenu.items.map['switchToCached'].setVisible(false);
+//              graphMenu.items.map['switchToLive'].setVisible(true);
+//          graphMenu.items.map['refreshData'].setVisible(false);	
+//              graphMenu.items.map['importData'].setVisible(false);	
       }
-      graphMenu.items.map['refreshCacheId'].setVisible(true);	
-      graphMenu.items.map['importCacheId'].setVisible(true);	
-      }else if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
-      graphMenu.items.map['switchToCached'].setVisible(false);
-      graphMenu.items.map['switchToLive'].setVisible(true);
-      graphMenu.items.map['refreshCacheId'].setVisible(false);	
-      graphMenu.items.map['importCacheId'].setVisible(false);	
-      }*/
-
       graphMenu.showAt(e.getXY());
-    }else if(obj.type === "DataPropertyNode"){
+    } else if(obj.type === "DataPropertyNode"){
       if(obj.property){
         if(obj.property.isVirtual=='True'){
           var virtualpropertymenu = Ext.widget('virtualpropertymenu');
           virtualpropertymenu.showAt(e.getXY());
         }
-
       }
-
     }
-
   },
 
   onAppDataRefreshClick: function(item, e, eOpts) {
@@ -626,38 +637,26 @@ Ext.define('AM.controller.Directory', {
     node = me.getRootNode();
     var state = tree.getState();
     var nodeState = '/Scopes/'+node.internalId;
-    //var path = node.getPath('text');
-    //store.load(node);
     tree.body.mask('Loading...', 'x-mask-loading');
-    //store.load(node);
-    //store.load({
-    //});
+    
     store.load({
       node:node,
       callback: function (records, options, success) {
-        //var nodes = state.expandedNodes || [],
-        //len = nodes.length;
-        //tree.collapseAll();
-        //Ext.each(nodes, function (path) {
-        //tree.expandPath('/Scopes/test/ABC/Data Objects', 'text');
-        //});
         tree.body.unmask();
       }
-
     });
-
   },
 
   onItemDblClick: function(dataview, record, item, index, e, eOpts) {
     var me = this;
+
     if(record.data.type == 'GraphNode')
-    me.application.fireEvent('opengraphmap', me);    
+      me.application.fireEvent('opengraphmap', me);    
     else if (record.data.type == 'DataObjectNode')
-    me.onShowDataGrid(item, e, eOpts);
+      me.onShowDataGrid(item, e, eOpts);
   },
 
   onTextfieldBlur: function(component, e, eOpts) {
-
     if(component.dataIndex!=undefined){
       var me = this;
       var gridPanel  = me.getMainContent().activeTab;
@@ -673,9 +672,7 @@ Ext.define('AM.controller.Directory', {
           var index = rtext.toUpperCase().indexOf(error);
           msg = rtext;
           showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
-
         }
-
       }, me);
       gridStore.load({
         callback: function (records, response) 
@@ -686,7 +683,6 @@ Ext.define('AM.controller.Directory', {
 
         }
       });
-
     }
   },
 
@@ -702,8 +698,7 @@ Ext.define('AM.controller.Directory', {
       scope: node.parentNode.data.text,
       application: node.data.text 
     };
-
-
+    
     form.getForm().setValues(formRecord);
 
     win.on('Save', function () {
@@ -735,21 +730,11 @@ Ext.define('AM.controller.Directory', {
     var store = grid.getStore();
     var storeProxy = store.getProxy();
     form.getForm().setValues(formRecord);
-    /*
-    win.on('Save', function () {
-    win.destroy();
-    }, me);
-
-    win.on('reset', function () {
-    win.destroy();
-    }, me);
-    */
     store.on('beforeload', function (store, action) {
       var params = storeProxy.extraParams;
       params.scope = scope;
       params.application = app;
     }, me);
-
 
     store.load({
       callback: function (records, options, success) {
@@ -757,9 +742,6 @@ Ext.define('AM.controller.Directory', {
           store.add({'File':'No Record found to download'});
           grid.reconfigure(store);
         }
-
-
-
       }
     });
 
@@ -836,11 +818,9 @@ Ext.define('AM.controller.Directory', {
         showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
       }
     })
-
   },
 
   onRefreshCache: function(item, e, eOpts) {
-
     var me = this;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode(); 
@@ -868,7 +848,6 @@ Ext.define('AM.controller.Directory', {
   },
 
   onImportCache: function(item, e, eOpts) {
-
     var me = this;
     var win = Ext.widget('importcachewindow');
     var form = win.down('form');
@@ -878,8 +857,7 @@ Ext.define('AM.controller.Directory', {
     var formRecord = {
       nodeid: node.data.id 
     };
-
-
+    
     form.getForm().setValues(formRecord);
 
     win.on('Save', function () {
@@ -894,7 +872,6 @@ Ext.define('AM.controller.Directory', {
   },
 
   onDeleteCache: function(item, e, eOpts) {
-
     var me = this;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode(); 
@@ -922,7 +899,6 @@ Ext.define('AM.controller.Directory', {
   },
 
   onAddVirtualProperty: function(item, e, eOpts) {
-
     var me = this;
     var win = Ext.widget('virtualpropertywindow');
     var form = win.down('form');
@@ -948,8 +924,7 @@ Ext.define('AM.controller.Directory', {
       autoLoad: true,
       data: properties
     });
-
-
+    
     form.getForm().setValues(formRecord);
 
     win.on('Save', function () {
@@ -993,16 +968,12 @@ Ext.define('AM.controller.Directory', {
               flag = false;
             }
           }
-
         }else{ //Adding new virtual property if existing properties are zero.
-
           var virtualProperty = {};
           virtualProperty.virtualProperties = [];
           properties = virtualProperty;
-
         }
-
-
+        
         folder.objectName = objectName;
         folder.delimiter = delimeter;
         folder.virtualPropertyValues = [];
@@ -1069,19 +1040,13 @@ Ext.define('AM.controller.Directory', {
           },
           failure: function (response, request) {
             showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
-
           }
         });
-
-
       },
       failure: function (response, request) {
         showDialog(400, 100, 'Error', 'An error has occurred while getting virtual property.', Ext.Msg.OK, null);
-
       }
     });
-
-
   },
 
   onEditVirtualProperty: function(item, e, eOpts) {
@@ -1149,7 +1114,6 @@ Ext.define('AM.controller.Directory', {
           }
         }
 
-
         win.on('Save', function () {
           win.destroy();
         }, me);
@@ -1159,20 +1123,12 @@ Ext.define('AM.controller.Directory', {
         }, me);
 
         win.show();
-        //var directoryTree = Ext.widget('directorytree');
-        //win.fireEvent('save', me);
-        //directoryTree.onReload();
       },
       failure: function (response, request) {
         showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
 
       }
     });
-
-
-
-
-
   },
 
   onDeleteVirtualProperty: function(item, e, eOpts) {
@@ -1240,6 +1196,7 @@ Ext.define('AM.controller.Directory', {
 
   refreshScopes: function(item, e, eOpts) {
     this.getDirTree().onReload();
+
   },
 
   init: function(application) {
@@ -1340,7 +1297,6 @@ Ext.define('AM.controller.Directory', {
   },
 
   onShowGrap: function(items, e, eOpts) {
-    //alert('onShowGrap...');
     var me = this;
     var tree = this.getDirTree();
     var node = tree.getSelectedNode();
@@ -1354,7 +1310,6 @@ Ext.define('AM.controller.Directory', {
     return[ {
       xtype: 'container',
       margin:'10 20 0 96',
-      //bodyStyle: 'padding:10px 20px 0 70px',
       layout:'column',
       items: [
       {
@@ -1362,7 +1317,6 @@ Ext.define('AM.controller.Directory', {
         name:nameID,
         value:key,
         columnWidth:'0.30',
-        //width:164,
         allowBlank: true
       },
       {
@@ -1371,42 +1325,27 @@ Ext.define('AM.controller.Directory', {
         value:value,
         columnWidth:'0.60',
         grow : false,
-        //width:270,  // height: 50,
         margin:'0 0 0 3',
-        //margin:'0 0 0 3'
       },
       {
         xtype: 'button',
-        //flex: 1,
         text: 'Delete',
         columnWidth:'0.10',
         margin:'0 0 0 3',
-        //width:48,
-        //margin:'0 0 0 3',
-        //action:'DeleteMe',
-        //icon :'../../ux/css/images/right2.gif',//'remove-button',
-        //columnWidth: 0.10,
-        //style: 'margin:0 0 0 49;',
-        //style: 'float: right;',
         tooltip: 'Click to Delete settings',
         handler : function (){
           this.findParentByType('container').destroy();
-
         }
       }
-
       ]
     }
-
     ]
   },
 
   switchDataMode: function(mode) {
     var me = this;
     var tree = me.getDirTree();
-    var node = tree.getSelectedNode();    
-    //var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    //Ext.getCmp('content-panel').getEl().mask('Processing...', 'x-mask-loading');
+    var node = tree.getSelectedNode();
 
     Ext.Ajax.request({
       url: 'AdapterManager/SwitchDataMode',
@@ -1419,20 +1358,14 @@ Ext.define('AM.controller.Directory', {
       success: function (response, request) {
         var responseObj = Ext.decode(response.responseText);
 
-        if (responseObj.Level == 0) {
-          showDialog(450, 100, 'Result', 'Data Mode switched to [' + mode + '].', Ext.Msg.OK, null);
-        }
-        else {
+        if (responseObj.Level != 0) {
           showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
         }
+
         tree.onReload();
-        //node.parentNode.reload();
-        //Ext.getCmp('content-panel').getEl().unmask();
       },
       failure: function (response, request) {
         showDialog(500, 160, 'Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
-        //node.parentNode.reload();
-        //Ext.getCmp('content-panel').getEl().unmask();
       }
     });
   }
