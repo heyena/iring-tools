@@ -114,6 +114,7 @@ Ext.define('AM.view.directory.ScopeForm', {
         var folderName = form.findField('displayName').getValue();
         var state = form.findField('state').getValue();
         var contextNameField = form.findField('contextName');
+		var node = me.node;
         //form.findField('contextName').setValue(folderName);
         //    var context = form.findField('contextCombo').getValue();
         //contextNameField.setValue(context);
