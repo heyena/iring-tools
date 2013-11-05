@@ -184,7 +184,6 @@ Ext.define('AM.controller.Mapping', {
 
         var mapPanel = content.down('mappingpanel[title=' + title + ']');
         if (!mapPanel) {
-            content.getEl().mask('Loading...');
             mapPanel = Ext.widget('mappingpanel', {
                 'title': title,
                 'contextName': context,
@@ -206,10 +205,6 @@ Ext.define('AM.controller.Mapping', {
 
             mapTree.on('beforeitemexpand', function () {
                 content.getEl().mask('Loading...');
-            }, me);
-
-            mapTree.on('load', function (that, records) {
-                content.getEl().unmask();
             }, me);
 
             mapTree.on('itemexpand', function () {
@@ -285,7 +280,18 @@ Ext.define('AM.controller.Mapping', {
                 mapProp.setSource(source);
 
             });
-            treeStore.load();
+
+            mapTree.on('beforeload', function (that, records) {
+                content.getEl().mask('Loading...');
+            }, me);
+
+            treeStore.load({
+                callback: function (records, options, success) {
+                    mapTree.getRootNode().firstChild.expand();
+                    content.getEl().unmask();
+                }
+            });
+
             content.add(mapPanel);
         }
 
