@@ -29,6 +29,7 @@ using System.Text;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using org.iringtools.library.tip;
 
 namespace org.iringtools.adapter
 {
@@ -1088,6 +1089,7 @@ namespace org.iringtools.adapter
         {
             try
             {
+                base.format = "jsonld";
                 InitializeScope(project, application);
                 InitializeDataLayer();
 
@@ -2450,7 +2452,7 @@ namespace org.iringtools.adapter
                         {
                             item.PropertyName = parameters.dataPropertyName.Remove(0, tmaps.dataObjectName.Length + 1);
                         }
-                            ////return parameters.dataPropertyName.Remove(0, tmaps.dataObjectName.Length + 1);
+                        ////return parameters.dataPropertyName.Remove(0, tmaps.dataObjectName.Length + 1);
                     }
                 }
 
@@ -2464,7 +2466,7 @@ namespace org.iringtools.adapter
             foreach (var tmaps in _tipMapping.tipMaps)
             {
                 if (tmaps.dataObjectName.ToUpper() == resource.ToUpper())
-                        return tmaps.name;
+                    return tmaps.graphName;
             }
             return resource;
         }
@@ -2745,30 +2747,41 @@ namespace org.iringtools.adapter
 
         public TipMapping UpdateTipMapping(string tip, string method, string project, string application)
         {
-            
+
             WebHttpClient _tipServiceClient = null;
             string tipServiceUri = _settings["TipServiceUri"];
             _tipServiceClient = new WebHttpClient(tipServiceUri);
 
-            IDictionary<String, String> mappedProperties = null;
+            IDictionary<String, IDictionary<String, org.iringtools.mapping.Identifiers>> mappedProperties = null;
             TipRequest tipRequest = BuildTipRequest(ref mappedProperties);
 
             XElement trXml = XElement.Parse(Utility.SerializeDataContract<TipRequest>(tipRequest));
-            
+
             try
             {
                 XElement responseXml = _tipServiceClient.Post<XElement, XElement>(String.Format("/{0}/{1}", tip, method), trXml, true);
                 string path = string.Format("{0}TipMapping.{1}.{2}.xml", _settings["AppDataPath"], project, application);
 
-                TipMapping tipMapping =  Utility.DeserializeDataContract<TipMapping>(responseXml.ToString());
+                TipMapping tipMapping = Utility.DeserializeDataContract<TipMapping>(responseXml.ToString());
 
-                foreach (var tmaps in tipMapping.tipMaps)
+                ClassMap graphClassMap = null;
+                graphClassMap = _graphMap.classTemplateMaps.FirstOrDefault().classMap;
+
+                foreach (TipMap tmap in tipMapping.tipMaps)
                 {
-                    tmaps.dataObjectName = _graphMap.dataObjectName;
-                    tmaps.graphName = _graphMap.name;
-                    foreach (var parameters in tmaps.parameterMaps)
+                    tmap.dataObjectName = _graphMap.dataObjectName;
+                    tmap.graphName = _graphMap.name;
+                    tmap.identifierDelimiter = graphClassMap.identifierDelimiter;
+                    tmap.identifiers = new library.tip.Identifiers();
+                    tmap.identifiers.AddRange(graphClassMap.identifiers.ToList());
+                    foreach (var parameters in tmap.parameterMaps)
                     {
-                        parameters.dataPropertyName = mappedProperties[parameters.path];
+                        foreach (var item in mappedProperties[parameters.path])
+                        {
+                            parameters.dataPropertyName = item.Key;
+                            parameters.identifiers = new library.tip.Identifiers();
+                            parameters.identifiers.AddRange(item.Value.ToList());
+                        }
                     }
                 }
 
@@ -2783,7 +2796,7 @@ namespace org.iringtools.adapter
             }
         }
 
-        private TipRequest BuildTipRequest(ref IDictionary<String, String> mappedProperties)
+        private TipRequest BuildTipRequest(ref IDictionary<String, IDictionary<String, org.iringtools.mapping.Identifiers>> mappedProperties)
         {
             TipRequest tipRequest = new TipRequest();
 
@@ -2806,28 +2819,6 @@ namespace org.iringtools.adapter
 
                             mappedProperties = _graphMap.GetMappedPropertiesWithPath(templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
 
-                            //foreach (var role in templateMap.roleMaps)
-                            //{
-
-                            //    if (role.type == RoleType.Reference)
-                            //    {
-                            //        // 
-                            //        // resolve class label and store it in role value
-                            //        //
-                            //        string classId = role.dataType;
-
-                            //        if (string.IsNullOrEmpty(classId) || !classId.StartsWith("rdl:"))
-                            //            classId = role.value;
-
-                            //        if (!string.IsNullOrEmpty(classId) && !string.IsNullOrEmpty(role.value) &&
-                            //          role.value.StartsWith("rdl:"))
-                            //        {
-
-                            //            role.dataType = classId;
-                            //        }
-                            //    }
-
-                            //}
 
                             templateIndex++;
                         }
@@ -2839,19 +2830,17 @@ namespace org.iringtools.adapter
             foreach (var item in mappedProperties)
             {
                 ParameterMap pm = new ParameterMap();
-                pm.dataPropertyName = item.Value;
                 pm.path = item.Key;
+
+                foreach (var element in item.Value)
+                {
+                    pm.dataPropertyName = element.Key;
+                    pm.identifiers.AddRange(element.Value.ToList());
+                }
+                
                 tipRequest.parameterMaps.Add(pm);
             }
 
-            //ParameterMap pm = new ParameterMap();
-            //pm.path = "rdl:Rd9c631e5-543f-4b98-8684-901e710f953f/tpl:R53360319163(0)/tpl:RF8B2CB1FF4F34B3D9D2FCFB3FC025BB5/rdl:R85074893353/tpl:RD7841CFC6A15488CBAA45414A54AB8C1(0)/tpl:R2EA408134E3C4A22A408AF1648A75317/rdl:R22683180655/tpl:R94082855849/tpl:R1427286232D34EE797D125795B0854A5";
-            //tipRequest.parameterMaps.Add(pm);
-
-            //ParameterMap pm2 = new ParameterMap();
-            //pm2.path = "tpl:R65141162308/tpl:R44102076948/rdl:R38701712415/tpl:R63638239485/tpl:R55055340393";
-            //pm2.dataPropertyName = "LINE.TAG2";
-            //tipRequest.parameterMaps.Add(pm2);
             return tipRequest;
         }
 
@@ -2973,7 +2962,7 @@ namespace org.iringtools.adapter
             {
                 base.format = format;
                 InitializeScope(project, application);
-
+                InitializeDataLayer();
                 picklists = _dictionary.picklists;
             }
             catch (Exception ex)
@@ -3008,23 +2997,45 @@ namespace org.iringtools.adapter
         }
 
         public XDocument GetRelatedList(
-                string project, string application, string resource, string id, string relatedresource,
+                string project, string application, string resource, string id, string relatedResource,
                 ref string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex, NameValueCollection parameters)
         {
             try
             {
+                base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
-                InitializeProjection(resource, ref format, false);
+                InitializeProjection(GetTipFromResouce(resource), ref format, false);
 
-                AddURIsInSettingCollection(project, application, resource, id, relatedresource);
+                AddURIsInSettingCollection(project, application, resource, id, relatedResource);
 
                 id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
                 IDataObject parentDataObject = _dataLayerGateway.Get(_dataObjDef, new List<string> { id }).FirstOrDefault<IDataObject>();
                 if (parentDataObject == null) return new XDocument();
 
-                DataRelationship dataRelationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedresource.ToLower());
-                DataObject relatedObjectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == dataRelationship.relatedObjectName.ToLower());
+                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
+
+                if (objectType == null)
+                {
+                    throw new Exception("Primary resource [" + resource + "] not found.");
+                }
+
+                DataRelationship relationship = objectType.dataRelationships.Find(c => c.relationshipName.ToLower() == relatedResource.ToLower());
+
+                //
+                // if relationship is null, check if provided related resource by name
+                //
+                if (relationship == null)
+                {
+                    relationship = objectType.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
+                }
+
+                DataObject relatedType = _dictionary.dataObjects.Find(c => c.objectName == relationship.relatedObjectName);
+
+                if (relatedType == null)
+                {
+                    throw new Exception("Relationship between parent and child resource not found.");
+                }
 
                 if (limit == 0)
                 {
@@ -3036,36 +3047,45 @@ namespace org.iringtools.adapter
                 _projectionEngine.FullIndex = fullIndex;
 
                 _projectionEngine.BaseURI = (project.ToLower() == "all")
-                    ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedresource)
-                    : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedresource);
-
-                //_projectionEngine.Count = _dataLayerGateway.GetRelatedCount(parentDataObject, relatedObjectType);
+                    ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedResource)
+                    : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedResource);
 
                 DataFilter filter = CreateDataFilter(parameters, sortOrder, sortBy);
 
-                foreach (PropertyMap propMap in dataRelationship.propertyMaps)
+                if (relatedType.isRelatedOnly)
                 {
-                    filter.Expressions.Add(new Expression()
+                    // NOTE: this path strictly supports legacy data layers with related only support.
+                    _dataObjects = _dataLayerGateway.GetRelatedObjects(parentDataObject, relatedType, filter, limit, start);
+                    _projectionEngine.Count = _dataLayerGateway.GetRelatedCount(parentDataObject, relatedType, filter);
+                }
+                else
+                {
+                    foreach (PropertyMap propMap in relationship.propertyMaps)
                     {
-                        PropertyName = propMap.relatedPropertyName,
-                        RelationalOperator = RelationalOperator.EqualTo,
-                        LogicalOperator = LogicalOperator.And,
-                        Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
-                    });
+                        filter.Expressions.Add(new Expression()
+                        {
+                            PropertyName = propMap.relatedPropertyName,
+                            RelationalOperator = RelationalOperator.EqualTo,
+                            LogicalOperator = LogicalOperator.And,
+                            Values = new Values() { Convert.ToString(parentDataObject.GetPropertyValue(propMap.dataPropertyName)) }
+                        });
+                    }
+
+                    try
+                    {
+                        _dataObjects = _dataLayerGateway.Get(relatedType, filter, start, limit);
+                    }
+                    catch (NotImplementedException nie)
+                    {
+                        throw nie;
+                    }
+
+                    _projectionEngine.Count = _dataObjects.Count;
                 }
 
-                try
-                {
-                    _dataObjects = _dataLayerGateway.Get(relatedObjectType, filter, start, limit);
-                }
-                catch (NotImplementedException nie)
-                {
-                    //_dataObjects = _dataLayerGateway.Get(relatedObjectType, filter, start, limit);
-                    throw nie;
-                }
-                _projectionEngine.Count = _dataObjects.Count;
+                //XDocument xdoc = _projectionEngine.ToXml(relatedType.objectName, ref _dataObjects);
+                XDocument xdoc = _projectionEngine.ToXml(_tipMap.graphName, ref _dataObjects, resource, relatedType.objectName);
 
-                XDocument xdoc = _projectionEngine.ToXml(relatedObjectType.objectName, ref _dataObjects);
                 return xdoc;
             }
             catch (Exception ex)
@@ -3076,35 +3096,56 @@ namespace org.iringtools.adapter
         }
 
         public XDocument GetRelatedItem(string project, string application, string resource, string id,
-          string relatedresource, string relatedId, ref string format)
+          string relatedResource, string relatedId, ref string format)
         {
             try
             {
+                base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
-                InitializeProjection(resource, ref format, false);
+                InitializeProjection(GetTipFromResouce(resource), ref format, false);
 
-                AddURIsInSettingCollection(project, application, resource, id, relatedresource, relatedId);
+                AddURIsInSettingCollection(project, application, resource, id, relatedResource, relatedId);
 
                 id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
                 IDataObject parentDataObject = _dataLayerGateway.Get(_dataObjDef, new List<string> { id }).FirstOrDefault<IDataObject>();
                 if (parentDataObject == null) return new XDocument();
 
                 _projectionEngine.BaseURI = (project.ToLower() == "all")
-                    ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedresource)
-                    : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedresource);
+                    ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedResource)
+                    : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedResource);
 
-                DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedresource.ToLower());
-                DataObject relatedObjectType = _dictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
+                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
 
-                _dataObjects = _dataLayerGateway.Get(relatedObjectType, new List<string> { relatedId });
+                if (objectType == null)
+                {
+                    throw new Exception("Primary resource [" + resource + "] not found.");
+                }
+
+                DataRelationship relationship = objectType.dataRelationships.Find(c => c.relationshipName.ToLower() == relatedResource.ToLower());
+
+                //
+                // if relationship is null, check if provided related resource by name
+                //
+                if (relationship == null)
+                {
+                    relationship = objectType.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
+                }
+
+                DataObject relatedType = _dictionary.dataObjects.Find(c => c.objectName == relationship.relatedObjectName);
+
+                if (relatedType == null)
+                {
+                    throw new Exception("Relationship between parent and child resource not found.");
+                }
+                _dataObjects = _dataLayerGateway.Get(relatedType, new List<string> { relatedId });
 
                 if (_dataObjects != null)
                 {
                     _projectionEngine.Count = _dataObjects.Count;
                 }
 
-                XDocument xdoc = _projectionEngine.ToXml(relatedObjectType.objectName, ref _dataObjects);
+                XDocument xdoc = _projectionEngine.ToXml(_tipMap.graphName, ref _dataObjects, resource, relatedType.objectName);
                 return xdoc;
             }
             catch (Exception ex)
@@ -3297,54 +3338,47 @@ namespace org.iringtools.adapter
                 _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
                 List<IDataObject> dataObjects = null;
 
-                if (_isProjectionPart7)
-                {
-                    dataObjects = _projectionEngine.ToDataObjects(_tipMap.graphName, ref xml);
-                }
-                else
-                {
-                    dataObjects = _projectionEngine.ToDataObjects(_dataObjDef.objectName, ref xml);
-                    SetObjectState(action, dataObjects);
+                dataObjects = _projectionEngine.ToDataObjects(_dataObjDef.objectName, ref xml);
+                SetObjectState(action, dataObjects);
 
-                    // throw exception if all key properties are not provided
-                    if (action != PostAction.Create)
+                // throw exception if all key properties are not provided
+                if (action != PostAction.Create)
+                {
+                    for (int i = 0; i < dataObjects.Count; i++)
                     {
-                        for (int i = 0; i < dataObjects.Count; i++)
+                        IDataObject dataObject = dataObjects[i];
+
+                        if (_dataObjDef.keyProperties.Count == 1)
                         {
-                            IDataObject dataObject = dataObjects[i];
-
-                            if (_dataObjDef.keyProperties.Count == 1)
+                            string keyProp = _dataObjDef.keyProperties[0].keyPropertyName;
+                            object propValue = dataObject.GetPropertyValue(keyProp);
+                            if (propValue == null)
                             {
-                                string keyProp = _dataObjDef.keyProperties[0].keyPropertyName;
-                                object propValue = dataObject.GetPropertyValue(keyProp);
-                                if (propValue == null)
+                                //TODO: remove object from list and add error in payload
+                                throw new Exception("Value of key property: " + keyProp + " cannot be null.");
+                            }
+                        }
+                        else if (_dataObjDef.keyProperties.Count > 1)
+                        {
+                            bool isKeyPropertiesHaveValues = false;
+                            foreach (KeyProperty keyProp in _dataObjDef.keyProperties)
+                            {
+                                object propValue = dataObject.GetPropertyValue(keyProp.keyPropertyName);
+
+                                // it is acceptable to have some key property values to be null but not all
+                                if (propValue != null)
                                 {
-                                    //TODO: remove object from list and add error in payload
-                                    throw new Exception("Value of key property: " + keyProp + " cannot be null.");
+                                    isKeyPropertiesHaveValues = true;
+                                    break;
                                 }
                             }
-                            else if (_dataObjDef.keyProperties.Count > 1)
+
+                            if (!isKeyPropertiesHaveValues)
                             {
-                                bool isKeyPropertiesHaveValues = false;
-                                foreach (KeyProperty keyProp in _dataObjDef.keyProperties)
-                                {
-                                    object propValue = dataObject.GetPropertyValue(keyProp.keyPropertyName);
-
-                                    // it is acceptable to have some key property values to be null but not all
-                                    if (propValue != null)
-                                    {
-                                        isKeyPropertiesHaveValues = true;
-                                        break;
-                                    }
-                                }
-
-                                if (!isKeyPropertiesHaveValues)
-                                {
-                                    //TODO: remove object from list and add error in payload
-                                    throw new Exception("Value of key property must for atleat one key property.");
-                                }
-
+                                //TODO: remove object from list and add error in payload
+                                throw new Exception("Value of key property must for atleat one key property.");
                             }
+
                         }
                     }
                 }
@@ -3392,9 +3426,15 @@ namespace org.iringtools.adapter
 
             try
             {
+                base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
-                InitializeProjection(resource, ref format, false);
+                InitializeProjection(GetTipFromResouce(resource), ref format, false);
+
+                if (_projectionEngine == null)
+                {
+                    throw new Exception("Initializing projection failed. This is most likely due to invalid format/content-type.");
+                }
 
                 if (_dataObjDef.isReadOnly || _settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
                 {
@@ -3408,19 +3448,54 @@ namespace org.iringtools.adapter
                     return response;
                 }
 
-                if (_isProjectionPart7)
+
+                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
+
+                if (objectType == null)
                 {
-                    throw new Exception("Operation not supported.");
+                    throw new Exception("Primary resource [" + resource + "] not found.");
                 }
 
-                DataObject relatedObjectType = _dictionary.dataObjects.First(c => c.objectName.ToLower() == relatedResource.ToLower());
+                DataRelationship relationship = objectType.dataRelationships.Find(c => c.relationshipName.ToLower() == relatedResource.ToLower());
 
-                /// TODO: set property maps from parent resource in the posted xml
-                List<IDataObject> childDataObjects = _projectionEngine.ToDataObjects(relatedResource, ref xml);
-                SetObjectState(action, childDataObjects);
+                //
+                // if relationship is null, check if provided related resource by name
+                //
+                if (relationship == null)
+                {
+                    relationship = objectType.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
+                }
 
-                response = _dataLayerGateway.Update(relatedObjectType, childDataObjects);
+                DataObject relatedType = _dictionary.dataObjects.Find(c => c.objectName == relationship.relatedObjectName);
 
+                if (relatedType == null)
+                {
+                    throw new Exception("Relationship between parent and child resource not found.");
+                }
+
+                //
+                // get parent object and set property maps from parent resource in the posted xml
+                //
+                IDataObject parentObject = _dataLayerGateway.Get(objectType, new List<string> { id }).FirstOrDefault();
+
+                if (parentObject == null)
+                {
+                    throw new Exception("Parent object with id [" + id + "] not found.");
+                }
+
+                List<IDataObject> childObjects = _projectionEngine.ToDataObjects(relatedResource + "." + relatedType.objectName, ref xml);
+                SetObjectState(action, childObjects);
+
+                foreach (IDataObject childObject in childObjects)
+                {
+                    foreach (PropertyMap propMap in relationship.propertyMaps)
+                    {
+                        object value = parentObject.GetPropertyValue(propMap.dataPropertyName);
+                        childObject.SetPropertyValue(propMap.relatedPropertyName, value);
+                    }
+                }
+
+                response = _dataLayerGateway.Update(relatedType, childObjects);
                 response.DateTimeStamp = DateTime.Now;
 
                 string baseUri = _settings["GraphBaseUri"] +
@@ -3612,6 +3687,7 @@ namespace org.iringtools.adapter
 
             try
             {
+                base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
                 InitializeProjection(resource, ref format, false);
@@ -3628,26 +3704,21 @@ namespace org.iringtools.adapter
                     return response;
                 }
 
-                if (!_isProjectionPart7)
-                {
-                    identifier = Utility.ConvertSpecialCharOutbound(identifier, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
 
-                    List<IDataObject> dataObjects = new List<IDataObject>
-          { 
-            new SerializableDataObject()
-            {
-              Id = identifier,
-              Type = _dataObjDef.objectName,
-              State = ObjectState.Delete
-            }
-          };
+                identifier = Utility.ConvertSpecialCharOutbound(identifier, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
 
-                    response = _dataLayerGateway.Update(_dataObjDef, dataObjects);
-                }
-                else
-                {
-                    throw new Exception("The operation is not supported in this service.");
-                }
+                List<IDataObject> dataObjects = new List<IDataObject>
+                    { 
+                    new SerializableDataObject()
+                    {
+                        Id = identifier,
+                        Type = _dataObjDef.objectName,
+                        State = ObjectState.Delete
+                    }
+                    };
+
+                response = _dataLayerGateway.Update(_dataObjDef, dataObjects);
+
 
                 response.DateTimeStamp = DateTime.Now;
                 response.Level = StatusLevel.Success;
@@ -3682,9 +3753,10 @@ namespace org.iringtools.adapter
 
             try
             {
+                base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
-                InitializeProjection(resource, ref format, false);
+                InitializeProjection(GetTipFromResouce(resource), ref format, false);
 
                 if (_dataObjDef.isReadOnly || _settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
                 {
@@ -3698,33 +3770,43 @@ namespace org.iringtools.adapter
                     return response;
                 }
 
-                if (_isProjectionPart7)
+                id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);
+
+                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
+
+                if (objectType == null)
                 {
-                    throw new Exception("Operation not supported.");
+                    throw new Exception("Primary resource [" + resource + "] not found.");
                 }
-                else
+
+                DataRelationship relationship = objectType.dataRelationships.Find(c => c.relationshipName.ToLower() == relatedResource.ToLower());
+
+                //
+                // if relationship is null, check if provided related resource by name
+                //
+                if (relationship == null)
                 {
-                    id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);
+                    relationship = objectType.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedResource.ToLower());
+                }
 
-                    DataObject relatedObjectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == relatedResource);
+                DataObject relatedType = _dictionary.dataObjects.Find(c => c.objectName == relationship.relatedObjectName);
 
-                    if (relatedObjectType == null)
+                if (relatedType == null)
+                {
+                    throw new Exception("Relationship between parent and child resource not found.");
+                }
+
+                List<IDataObject> dataObjects = new List<IDataObject>
+                    { 
+                    new SerializableDataObject()
                     {
-                        throw new Exception("Related resource [" + relatedResource + "] not found.");
+                        Id = id,
+                        Type = relatedResource,
+                        State = ObjectState.Delete
                     }
+                    };
 
-                    List<IDataObject> dataObjects = new List<IDataObject>
-          { 
-            new SerializableDataObject()
-            {
-              Id = id,
-              Type = relatedResource,
-              State = ObjectState.Delete
-            }
-          };
-
-                    response = _dataLayerGateway.Update(relatedObjectType, dataObjects);
-                }
+                response = _dataLayerGateway.Update(relatedType, dataObjects);
 
                 response.DateTimeStamp = DateTime.Now;
             }
@@ -3868,6 +3950,16 @@ namespace org.iringtools.adapter
                 _logger.Error(string.Format("Error initializing application: {0}", ex));
                 throw ex;
             }
+        }
+
+        private string GetTipFromGraph(string resource)
+        {
+            foreach (var tmaps in _tipMapping.tipMaps)
+            {
+                if (tmaps.graphName.ToUpper() == resource.ToUpper())
+                    return tmaps.name;
+            }
+            return resource;
         }
 
         private void DeleteScope()

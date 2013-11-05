@@ -10,6 +10,7 @@ using org.iringtools.mapping;
 using log4net;
 using System.IO;
 using System.Web;
+using org.iringtools.library.tip;
 
 namespace org.iringtools.adapter.projection
 {

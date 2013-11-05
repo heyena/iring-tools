@@ -15,6 +15,7 @@ using System.Collections.Specialized;
 using Newtonsoft.Json;
 using System.Xml;
 using VDS.RDF.Query.Paths;
+using org.iringtools.library.tip;
 
 namespace org.iringtools.adapter
 {
@@ -145,7 +146,7 @@ namespace org.iringtools.adapter
 
 
                 //createFields(tipMap);
-                createFields();
+                createFields(false);
 
 
                 string resource = graphName.ToLower();
@@ -178,7 +179,7 @@ namespace org.iringtools.adapter
                         {
                             if (i == 0)
                             {
-                                dataItems.type = graphName;
+                                dataItems.type = tipMap.dataObjectName;
                             }
 
                             DataItem dataItem = new DataItem()
@@ -333,7 +334,7 @@ namespace org.iringtools.adapter
                 {
                     DataObject dataObject = FindGraphDataObject(tipMap.dataObjectName);
                     dataItems.version = dataObject.version;
-                    dataItems.type = graphName;
+                    dataItems.type = tipMap.dataObjectName;
                 }
 
                 string xml = Utility.SerializeDataContract<DataItems>(dataItems);
@@ -347,33 +348,262 @@ namespace org.iringtools.adapter
             }
         }
 
-        public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects, string className, string classIdentifier)
+        public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects, string parnt, string child)
         {
-            return ToXml(graphName, ref dataObjects);
 
-            //XDocument dtoDoc = null;
+            if(parnt.Equals(""))
+            {
+                return ToXml(graphName, ref dataObjects);
+            }
+            try
+            {
 
-            //try
-            //{
-            //    GraphMap graphMap = _mapping.FindGraphMap(graphName);
-            //    //dtoDoc = ToXml(graphMap, ref dataObjects, className, classIdentifier);
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.Error("Error in ToXml: " + ex);
-            //    throw ex;
-            //}
+                string baseUri = _settings["GraphBaseUri"];
 
-            //return dtoDoc;
+                string app = _settings["ApplicationName"].ToLower();
+                string proj = _settings["ProjectName"].ToLower();
+
+                string appBaseUri = Utility.FormEndpointBaseURI(_uriMaps, baseUri, proj, app);
+
+                // GraphMap graphMap = _mapping.FindGraphMap(graphName);
+
+                TipMap tipMap = _tipMapping.FindTipMap(graphName);
+
+
+                //_graphBaseUri = appBaseUri + graphMap.name + "/";
+                _graphBaseUri = appBaseUri + graphName + "/";
+                _dataObjects = dataObjects;
+                //rdfDoc = new XDocument(BuildRdfXml());
+
+
+                //createFields(tipMap);
+                createFields(true);
+
+
+                string resource = child;
+
+                DataItems dataItems = new DataItems()
+                {
+                    total = this.Count,
+                    start = this.Start,
+                    items = new List<DataItem>()
+                };
+
+                if (dataObjects.Count > 0)
+                {
+                    DataObject dataObject = FindGraphDataObject(child);
+                    dataItems.version = dataObject.version;
+
+                    if (dataObject == null)
+                    {
+                        return new XDocument();
+                    }
+
+                    bool showNullValue = _settings["ShowJsonNullValues"] != null &&
+                      _settings["ShowJsonNullValues"].ToString() == "True";
+
+                    for (int i = 0; i < dataObjects.Count; i++)
+                    {
+                        IDataObject dataObj = dataObjects[i];
+
+                        if (dataObj != null)
+                        {
+                            if (i == 0)
+                            {
+                                dataItems.type = child.ToUpper();
+                            }
+
+                            DataItem dataItem = new DataItem()
+                            {
+                                properties = new Dictionary<string, object>(),
+                            };
+
+                            if (dataObj is GenericDataObject)
+                            {
+                                dataItem.hasContent = ((GenericDataObject)dataObj).HasContent;
+                            }
+
+                            bool isContentObject = false;
+                            if (dataObj is IContentObject)
+                            {
+                                dataItem.hasContent = true;
+                                isContentObject = true;
+                            }
+
+                            if (isContentObject)
+                            {
+                                MemoryStream stream = ((IContentObject)dataObj).Content.ToMemoryStream();
+                                byte[] data = stream.ToArray();
+                                string base64Content = Convert.ToBase64String(data);
+                                dataItem.content = base64Content;
+                            }
+
+                            foreach (KeyProperty keyProperty in dataObject.keyProperties)
+                            {
+                                DataProperty dataProperty = dataObject.dataProperties.Find(x => keyProperty.keyPropertyName.ToLower() == x.propertyName.ToLower());
+
+                                if (dataProperty != null)
+                                {
+                                    object value = dataObj.GetPropertyValue(keyProperty.keyPropertyName);
+
+                                    if (value != null)
+                                    {
+                                        if (dataProperty.dataType == DataType.Char ||
+                                            dataProperty.dataType == DataType.DateTime ||
+                                            dataProperty.dataType == DataType.Date ||
+                                            dataProperty.dataType == DataType.String ||
+                                            dataProperty.dataType == DataType.TimeStamp)
+                                        {
+                                            string valueStr = Convert.ToString(value);
+                                            valueStr = Utility.ConvertSpecialCharOutbound(valueStr, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.
+
+                                            if (dataProperty.dataType == DataType.DateTime ||
+                                                dataProperty.dataType == DataType.Date)
+                                                valueStr = Utility.ToXsdDateTime(valueStr);
+
+                                            value = valueStr;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        value = string.Empty;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(dataItem.id))
+                                    {
+                                        dataItem.id += dataObject.keyDelimeter;
+                                    }
+
+                                    dataItem.id += value;
+                                }
+                            }
+
+                            foreach (DataProperty dataProperty in dataObject.dataProperties)
+                            {
+                                if (!dataProperty.isHidden)
+                                {
+                                    object value = dataObj.GetPropertyValue(dataProperty.propertyName);
+
+                                    if (value != null)
+                                    {
+                                        if (dataProperty.dataType == DataType.Char ||
+                                              dataProperty.dataType == DataType.DateTime ||
+                                              dataProperty.dataType == DataType.Date ||
+                                              dataProperty.dataType == DataType.String ||
+                                              dataProperty.dataType == DataType.TimeStamp)
+                                        {
+                                            string valueStr = Convert.ToString(value);
+
+                                            if (dataProperty.dataType == DataType.DateTime ||
+                                                dataProperty.dataType == DataType.Date)
+                                                valueStr = Utility.ToXsdDateTime(valueStr);
+
+                                            value = valueStr;
+                                        }
+
+                                        string dataParameterName = dataProperty.propertyName;
+
+                                        if (tableMapping[dataParameterName] != null)
+                                        {
+                                            dataItem.properties.Add(tableMapping.Get(dataParameterName).ToString(), value);
+                                        }
+                                    }
+                                }
+                                else if (showNullValue)
+                                {
+                                    dataItem.properties.Add(dataProperty.propertyName, null);
+                                }
+                            }
+
+                            if (_settings["DisplayLinks"].ToLower() == "true")
+                            {
+                                string itemHref = String.Format("{0}/{1}", BaseURI, dataItem.id);
+
+                                dataItem.links = new List<Link> {
+                                                              new Link {
+                                                                href = itemHref,
+                                                                rel = "self"
+                                                              }
+                                                            };
+
+                                foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+                                {
+                                    long relObjCount = 0;
+                                    bool validateLinks = (_settings["ValidateLinks"].ToLower() == "true");
+
+                                    if (validateLinks)
+                                    {
+                                        //TODO:
+                                        //relObjCount = _dataLayer.GetRelatedCount(dataObj, dataRelationship.relatedObjectName);
+                                    }
+
+                                    // only add link for related object that has data
+                                    if (!validateLinks || relObjCount > 0)
+                                    {
+                                        string relObj = dataRelationship.relatedObjectName.ToLower();
+                                        string relName = dataRelationship.relationshipName.ToLower();
+
+                                        Link relLink = new Link()
+                                        {
+                                            href = String.Format("{0}/{1}", itemHref, relName),
+                                            rel = relObj
+                                        };
+
+                                        dataItem.links.Add(relLink);
+                                    }
+                                }
+                            }
+
+                            dataItems.items.Add(dataItem);
+                        }
+                    }
+                }
+
+                dataItems.limit = dataItems.items.Count;
+
+                if (dataItems.limit == 0) //Blank data item must have atleast version and type
+                {
+                    DataObject dataObject = FindGraphDataObject(tipMap.dataObjectName);
+                    dataItems.version = dataObject.version;
+                    dataItems.type = tipMap.dataObjectName;
+                }
+
+                string xml = Utility.SerializeDataContract<DataItems>(dataItems);
+                XElement xElement = XElement.Parse(xml);
+                return new XDocument(xElement);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error creating JSON content: " + e);
+                throw e;
+            }
         }
+
 
         public override List<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
         {
             try
             {
-                TipMap tipMap = _tipMapping.FindTipMap(graphName);
+                
+                //TipMap tipMap = _tipMapping.FindTipMap(graphName);
+                String sGraphName = graphName;
+                string[] sGraphParts = sGraphName.Split('.');
                 List<IDataObject> dataObjects = new List<IDataObject>();
-                DataObject objectType = FindGraphDataObject(tipMap.dataObjectName);
+
+                DataObject objectType;
+
+                if (sGraphParts.Count() > 1)
+                {
+                    objectType = FindGraphDataObject(sGraphParts[1]);
+                    createFieldsReverse(true);
+                }
+                else
+                {
+                    objectType = FindGraphDataObject(graphName);
+                    createFieldsReverse(true);
+                }
+
+                
 
                 if (objectType != null)
                 {
@@ -468,7 +698,7 @@ namespace org.iringtools.adapter
                                 string keyProp = objectType.keyProperties[i].keyPropertyName;
                                 string keyValue = idParts[i];
 
-                                dataObject.SetPropertyValue(keyProp, keyValue);
+                                dataObject.SetPropertyValue(tableMapping[keyProp], keyValue);
                             }
                         }
 
@@ -477,7 +707,7 @@ namespace org.iringtools.adapter
                         //
                         foreach (var pair in dataItem.properties)
                         {
-                            dataObject.SetPropertyValue(pair.Key, pair.Value);
+                            dataObject.SetPropertyValue(tableMapping[pair.Key], pair.Value);
                         }
 
                         dataObjects.Add(dataObject);
@@ -968,7 +1198,7 @@ namespace org.iringtools.adapter
             return individualElement;
         }
 
-        private void createFields()
+        private void createFields(bool child = true)
         {
             tableMapping.Clear();
 
@@ -976,7 +1206,36 @@ namespace org.iringtools.adapter
             {
                 foreach (ParameterMap parameterMap in tipMap.parameterMaps)
                 {
-                    tableMapping.Add(parameterMap.dataPropertyName, parameterMap.name);
+                    if (child)
+                    {
+                        tableMapping.Add(parameterMap.dataPropertyName.Split('.').GetValue(1).ToString(), parameterMap.name);
+                    }
+                    else
+                    {
+                        tableMapping.Add(parameterMap.dataPropertyName, parameterMap.name);
+                    }
+
+                }
+            }
+        }
+
+
+        private void createFieldsReverse(bool child = true)
+        {
+            tableMapping.Clear();
+
+            foreach (TipMap tipMap in _tipMapping.tipMaps)
+            {
+                foreach (ParameterMap parameterMap in tipMap.parameterMaps)
+                {
+                    if (child)
+                    {
+                        tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName.Split('.').GetValue(1).ToString());
+                    }
+                    else
+                    {
+                        tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName);
+                    }
 
                 }
             }
