@@ -1120,7 +1120,7 @@ namespace org.iringtools.web.controllers
           }
         }
 
-        _repository.UpdateMapping(scope, app, mapping);
+        UpdateMapping(scope, app, mapping);
       }
       catch (Exception ex)
       {
@@ -1136,16 +1136,25 @@ namespace org.iringtools.web.controllers
       string scope = form["scope"];
       string application = form["application"];
       Mapping mapping = GetMapping(scope, application);
-      try
-      {
-        _repository.UpdateMapping(scope, application, mapping);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(ex.ToString());
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-      }
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+
+      return UpdateMapping(scope, application, mapping);
+    }
+
+    public JsonResult UpdateMapping(string scope, string application, Mapping mapping)
+    {
+        try
+        {
+            _repository.UpdateMapping(scope, application, mapping);
+
+            string key = string.Format(_keyFormat, scope, application);
+            Session.Remove(key);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex.ToString());
+            return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+        }
+        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult DeleteGraphMap(FormCollection form)
@@ -1161,7 +1170,7 @@ namespace org.iringtools.web.controllers
         if (graphMap != null)
         {
           mapping.graphMaps.Remove(graphMap);
-          _repository.UpdateMapping(scope, application, mapping);
+          UpdateMapping(scope, application, mapping);
         }
       }
       catch (Exception ex)
@@ -1416,7 +1425,7 @@ namespace org.iringtools.web.controllers
         var valueListMap = mapping.valueListMaps.Find(c => c.name == deleteValueList);
         if (valueListMap != null)
           mapping.valueListMaps.Remove(valueListMap);
-        _repository.UpdateMapping(scope, application, mapping);
+        UpdateMapping(scope, application, mapping);
       }
       catch (Exception ex)
       {
@@ -1477,7 +1486,7 @@ namespace org.iringtools.web.controllers
           if (valuelistMap.valueMaps == null)
             valuelistMap.valueMaps = new ValueMaps();
           valuelistMap.valueMaps.Add(valueMap);
-          _repository.UpdateMapping(scope, application, mapping);
+          UpdateMapping(scope, application, mapping);
         }
         else
         {
@@ -1487,7 +1496,7 @@ namespace org.iringtools.web.controllers
             valueMap.internalValue = internalName;
             valueMap.uri = qName;
             valueMap.label = classLabel;
-            _repository.UpdateMapping(scope, application, mapping);
+            UpdateMapping(scope, application, mapping);
           }
         }
       }
@@ -1518,7 +1527,7 @@ namespace org.iringtools.web.controllers
         ValueMap valueMap = valuelistMap.valueMaps.Find(c => c.uri.Equals(oldClassUrl));
         if (valueMap != null)
           valuelistMap.valueMaps.Remove(valueMap);
-        _repository.UpdateMapping(scope, application, mapping);
+        UpdateMapping(scope, application, mapping);
       }
       catch (Exception ex)
       {
@@ -1555,7 +1564,7 @@ namespace org.iringtools.web.controllers
                     targetMapping.valueListMaps.Add(Utility.CloneSerializableObject(valuelistMap));
                 }
             }
-            _repository.UpdateMapping(targetScope, targetApplication, targetMapping);
+            UpdateMapping(targetScope, targetApplication, targetMapping);
         }
         catch (Exception ex)
         {
@@ -1598,12 +1607,12 @@ namespace org.iringtools.web.controllers
           };
 
           mapping.valueListMaps.Add(valuelistMap);
-          _repository.UpdateMapping(scope, application, mapping);
+          UpdateMapping(scope, application, mapping);
         }
         else
         {
           valueListMap.name = newvalueList;
-          _repository.UpdateMapping(scope, application, mapping);
+          UpdateMapping(scope, application, mapping);
         }
       }
       catch (Exception ex)

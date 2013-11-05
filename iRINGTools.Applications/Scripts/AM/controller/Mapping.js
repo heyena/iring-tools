@@ -130,9 +130,11 @@ Ext.define('AM.controller.Mapping', {
         } else {
             wintitle = 'Add GraphMap';
         }
+
         var conf = {
             id: 'tab-' + node.data.id,
-            title: wintitle
+            title: wintitle,
+            node: node
         };
 
         var win = Ext.widget('graphmapwindow', conf);
@@ -156,8 +158,8 @@ Ext.define('AM.controller.Mapping', {
 
         win.on('save', function () {
             win.close();
-            //tree.store.lastOptions.type = 'ScopesNode';
-            tree.onReload();
+            //tree.onReload();
+            tree.store.load({ node: node });
         }, me);
 
         win.on('reset', function () {

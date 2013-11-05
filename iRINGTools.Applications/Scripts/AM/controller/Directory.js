@@ -492,7 +492,6 @@ Ext.define('AM.controller.Directory', {
       showDialog(300, 300, 'Warning', 'Datalayer ' + datalayer + ' is not configurable...', Ext.msg.OK, null);
       break;
     }
-
   },
 
   showContextMenu: function(dataview, record, item, index, e, eOpts) {
@@ -522,9 +521,7 @@ Ext.define('AM.controller.Directory', {
     } else if (obj.type === "ListMapNode") {
       var valueListMapMenu = Ext.widget('valuelistmapmenu');
       valueListMapMenu.showAt(e.getXY());
-    } else if (obj.type === "GraphsNode") {
-      //scopForExport = node.parentNode.parentNode.data.text;
-      //appForExport = node.parentNode.data.text;  
+    } else if (obj.type === "GraphsNode") { 
       var graphsMenu = Ext.widget('graphsmenu');
       graphsMenu.showAt(e.getXY());
     } else if (obj.type === "GraphNode") {
@@ -1127,8 +1124,6 @@ Ext.define('AM.controller.Directory', {
   },
 
   init: function(application) {
-    //scopForExport = null;
-    //appForExport = null;
     Ext.QuickTips.init();
 
     this.control({
