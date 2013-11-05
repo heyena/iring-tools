@@ -152,7 +152,7 @@ Ext.define('AM.controller.Directory', {
     var path, state, context, description, wintitle, displayName;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
-    
+    var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
     context = node.data.record.context;
 
     if(node.parentNode) {
@@ -244,8 +244,7 @@ Ext.define('AM.controller.Directory', {
     var node = tree.getSelectedNode();
     var cacheImportURI = '';
     var cacheTimeout = '';
-    var context = node.parentNode.data.text;
-
+    var context = node.data.parentId;//node.parentNode.data.text;//node.parentNode.data.record.Name;//node.data.record.ContextName;
     if(item.itemId == 'editendpoint') {
       var name = node.data.record.Name;
       var displayName = node.data.record.DisplayName;
@@ -678,7 +677,7 @@ Ext.define('AM.controller.Directory', {
   },
 
   onAddSettings: function(button, e, eOpts) {
-    var me = this;
+	var me = this;
     var nameID;
     var valueID;
     var myFieldSet = Ext.getCmp('settingfieldset');
@@ -707,12 +706,14 @@ Ext.define('AM.controller.Directory', {
         if (node.data.record.Configuration.AppSettings != null) {
           if(node.data.record.Configuration.AppSettings.Settings!=null){
             for(var i=0;i<node.data.record.Configuration.AppSettings.Settings.length;i++){
-              key = node.data.record.Configuration.AppSettings.Settings[i].Key;
-              value = node.data.record.Configuration.AppSettings.Settings[i].Value;
-              var newSetting = me.addSettings(key,value, ('key'+i), ('value'+i));
-              newSetting[0].items[0].allowBlank = false;
-              if(component.items.map['settingfieldset'])
-              component.items.map['settingfieldset'].add(newSetting);
+              if (node.data.record.Configuration.AppSettings.Settings[i].Key != "iRINGCacheConnStr") {
+				  key = node.data.record.Configuration.AppSettings.Settings[i].Key;
+				  value = node.data.record.Configuration.AppSettings.Settings[i].Value;
+				  var newSetting = me.addSettings(key,value, ('key'+i), ('value'+i));
+				  newSetting[0].items[0].allowBlank = false;
+				  if(component.items.map['settingfieldset'])
+				  component.items.map['settingfieldset'].add(newSetting);
+			  }
             }
           }
         }
@@ -1180,7 +1181,7 @@ Ext.define('AM.controller.Directory', {
       "menuitem[action=filedownload]": {
         click: this.onFileDownload
       },
-      "button[action = addsettings]": {
+      "button[action=addsettings]": {
         click: this.onAddSettings
       },
       "form": {
@@ -1221,7 +1222,6 @@ Ext.define('AM.controller.Directory', {
       }
     });
   },
-
   onShowGrap: function(items, e, eOpts) {
     var me = this;
     var tree = this.getDirTree();
