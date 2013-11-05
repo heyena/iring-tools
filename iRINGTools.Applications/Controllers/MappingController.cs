@@ -1120,7 +1120,7 @@ namespace org.iringtools.web.controllers
           }
         }
 
-        UpdateMapping(scope, app, mapping);
+        DoUpdateMapping(scope, app, mapping);
       }
       catch (Exception ex)
       {
@@ -1137,10 +1137,10 @@ namespace org.iringtools.web.controllers
       string application = form["application"];
       Mapping mapping = GetMapping(scope, application);
 
-      return UpdateMapping(scope, application, mapping);
+      return DoUpdateMapping(scope, application, mapping);
     }
 
-    public JsonResult UpdateMapping(string scope, string application, Mapping mapping)
+    public JsonResult DoUpdateMapping(string scope, string application, Mapping mapping)
     {
         try
         {
@@ -1170,7 +1170,7 @@ namespace org.iringtools.web.controllers
         if (graphMap != null)
         {
           mapping.graphMaps.Remove(graphMap);
-          UpdateMapping(scope, application, mapping);
+          DoUpdateMapping(scope, application, mapping);
         }
       }
       catch (Exception ex)
@@ -1425,7 +1425,7 @@ namespace org.iringtools.web.controllers
         var valueListMap = mapping.valueListMaps.Find(c => c.name == deleteValueList);
         if (valueListMap != null)
           mapping.valueListMaps.Remove(valueListMap);
-        UpdateMapping(scope, application, mapping);
+        DoUpdateMapping(scope, application, mapping);
       }
       catch (Exception ex)
       {
@@ -1486,7 +1486,7 @@ namespace org.iringtools.web.controllers
           if (valuelistMap.valueMaps == null)
             valuelistMap.valueMaps = new ValueMaps();
           valuelistMap.valueMaps.Add(valueMap);
-          UpdateMapping(scope, application, mapping);
+          DoUpdateMapping(scope, application, mapping);
         }
         else
         {
@@ -1496,7 +1496,7 @@ namespace org.iringtools.web.controllers
             valueMap.internalValue = internalName;
             valueMap.uri = qName;
             valueMap.label = classLabel;
-            UpdateMapping(scope, application, mapping);
+            DoUpdateMapping(scope, application, mapping);
           }
         }
       }
@@ -1527,7 +1527,7 @@ namespace org.iringtools.web.controllers
         ValueMap valueMap = valuelistMap.valueMaps.Find(c => c.uri.Equals(oldClassUrl));
         if (valueMap != null)
           valuelistMap.valueMaps.Remove(valueMap);
-        UpdateMapping(scope, application, mapping);
+        DoUpdateMapping(scope, application, mapping);
       }
       catch (Exception ex)
       {
@@ -1564,7 +1564,7 @@ namespace org.iringtools.web.controllers
                     targetMapping.valueListMaps.Add(Utility.CloneSerializableObject(valuelistMap));
                 }
             }
-            UpdateMapping(targetScope, targetApplication, targetMapping);
+            DoUpdateMapping(targetScope, targetApplication, targetMapping);
         }
         catch (Exception ex)
         {
@@ -1607,12 +1607,12 @@ namespace org.iringtools.web.controllers
           };
 
           mapping.valueListMaps.Add(valuelistMap);
-          UpdateMapping(scope, application, mapping);
+          DoUpdateMapping(scope, application, mapping);
         }
         else
         {
           valueListMap.name = newvalueList;
-          UpdateMapping(scope, application, mapping);
+          DoUpdateMapping(scope, application, mapping);
         }
       }
       catch (Exception ex)

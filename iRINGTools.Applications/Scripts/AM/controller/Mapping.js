@@ -158,7 +158,6 @@ Ext.define('AM.controller.Mapping', {
 
         win.on('save', function () {
             win.close();
-            //tree.onReload();
             tree.store.load({ node: node });
         }, me);
 
