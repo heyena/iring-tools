@@ -18,7 +18,8 @@ Ext.define('AM.view.nhibernate.DataKeyForm', {
   alias: 'widget.datakeyform',
 
   bodyPadding: 10,
-  bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
+  bodyStyle: 'background:#fff;padding:10px',
+  title: 'Configure Key',
 
   initComponent: function() {
     var me = this;
@@ -31,12 +32,6 @@ Ext.define('AM.view.nhibernate.DataKeyForm', {
         allowBlank: false
       },
       items: [
-        {
-          xtype: 'label',
-          cls: 'x-form-item',
-          style: 'font-weight:bold;',
-          text: 'Key Properties'
-        },
         {
           xtype: 'textfield',
           anchor: '100%',

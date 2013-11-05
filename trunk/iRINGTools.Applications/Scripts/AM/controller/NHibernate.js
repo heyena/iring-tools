@@ -21,6 +21,8 @@ Ext.define('AM.controller.NHibernate', {
   ],
 
     dataTypes: '',
+    dirTreeNode: null,
+
     models: [
     'AvailItemsModel',
     'TableSelectModel',
@@ -1204,6 +1206,8 @@ Ext.define('AM.controller.NHibernate', {
         var me = this;
         var dirTree = me.getDirTree();
         var dirNode = dirTree.getSelectedNode();
+        this.dirTreeNode = dirNode;
+
         var content = me.getMainContent();
         var dbDict, dbInfo, tree;
 
@@ -1435,43 +1439,22 @@ Ext.define('AM.controller.NHibernate', {
         var propertiesNode = node.parentNode.childNodes[1];
 
         for (var i = 0; i < propertiesNode.childNodes.length; i++) {
-            var itemName = propertiesNode.childNodes[i].data.text; //propertiesNode.childNodes[i].text;
-            var found = false;
+            var itemName = propertiesNode.childNodes[i].data.text;
+            availItems.push(itemName);
 
-            for (var j = 0; j < node.childNodes.length; j++) {
-                if (node.childNodes[j].data.text.toLowerCase() == itemName.toLowerCase()) {//if (node.childNodes[j].text.toLowerCase() == itemName.toLowerCase()) {
-                    found = true;
-                    break;
-                }
-            }
-            //if (!found) {
-            availItems.push([itemName, itemName]);
+            //            var found = false;
+
+            //            for (var j = 0; j < node.childNodes.length; j++) {
+            //                if (node.childNodes[j].data.text.toLowerCase() == itemName.toLowerCase()) {
+            //                    found = true;
+            //                    break;
+            //                }
+            //            }
+            //            //if (!found) {
+            //            availItems.push([itemName, itemName]);
             //}
         }
         return availItems;
-    },
-
-    getSelectedItems: function (node) {
-        var selectedItems = [];
-        var propertiesNode = node.parentNode.childNodes[1];
-
-        for (var i = 0; i < node.childNodes.length; i++) {
-            var keyName = node.childNodes[i].text;
-            selectedItems.push([keyName, keyName]);
-        }
-        return selectedItems;
-
-    },
-
-    getSelectItems: function (node) {
-        var selectItems = [];
-
-        for (var i = 0; i < node.childNodes.length; i++) {
-            var keyName = node.childNodes[i].data.text;
-            selectItems.push(keyName);
-        }
-
-        return selectItems;
     },
 
     showSelectTablesForm: function (nhibernatePanel) {
@@ -1504,8 +1487,7 @@ Ext.define('AM.controller.NHibernate', {
     },
 
     showConnectionStringForm: function (nhibernatePanel) {
-        var me = this,
-      form = me.getConnectionStringForm();
+        var me = this, form = me.getConnectionStringForm();
         var dataTree = nhibernatePanel.down('nhibernatetree');
         var dirNode = me.getDirNode(dataTree.dirNode);
         var dbDict = dirNode.data.record.dbDict;
@@ -1615,12 +1597,13 @@ Ext.define('AM.controller.NHibernate', {
 
         var cmbStore = combo.getStore();
         var cmbProxy = cmbStore.getProxy();
+
         cmbStore.on('beforeload', function (store, action) {
-            cmbProxy.extraParams.baseUrl = node.data.record.BaseUrl;
+            cmbProxy.extraParams.baseUrl = dirNode.data.record.BaseUrl;
         });
+
         cmbStore.load();
-        //if(dirNode.data.record.dbInfo!=undefined)
-        //dirNode.data.record.dbInfo.dbSchema = form.getForm().findField('dbSchema').getValue();
+
         form.setActive(dirNode.data.record.dbInfo);
 
         panel = nhibernatePanel.down('#nhibernateContent');
@@ -1930,9 +1913,8 @@ Ext.define('AM.controller.NHibernate', {
     },
 
     showSelectKeyFieldsForm: function (nhibernatePanel) {
-
-        var me = this, form = me.getSelectKeyFieldsForm();
-        var selected = [];
+        var me = this;
+        var form = me.getSelectKeyFieldsForm();
         var dataTree = nhibernatePanel.down('nhibernatetree');
         var dataNode = dataTree.getSelectedNode();
         var dirNode = me.getDirNode(dataTree.dirNode);
@@ -1941,78 +1923,96 @@ Ext.define('AM.controller.NHibernate', {
         var baseUrl = dirNode.data.record.baseUrl;
 
         var grid = form.down('#multiSelectDataKeys');
-        grid.down('gridcolumn').setText('Select Key Properties');
         var itemSelecter = form.down('#multiselectcomponentgrid');
-        var availItems = [];
+
+        grid.down('gridcolumn').setText('Select Key Properties');
+
+        var availableItems = me.getAvailableItems(dataNode);
+
+        var selectedItems = [];
+        for (var i = 0; i < dataNode.childNodes.length; i++) {
+            var keyName = dataNode.childNodes[i].data.text;
+            selectedItems.push(keyName);
+        }
+
+        grid.loadItems(availableItems);
+        for (var i = 0; i < availableItems.length; i++) {
+            grid.getStore().data.items[i].data.text = availableItems[i];
+            grid.getStore().data.items[i].data.value = availableItems[i];
+        }
+
+        itemSelecter.items.items[0].bindStore(grid.getStore());
+        itemSelecter.items.items[0].setValue(selectedItems);
+
+        panel = nhibernatePanel.down('#nhibernateContent');
+        panel.removeAll();
+        panel.add(form);
+
+        /*var availItems = [];
         var propertiesNode = dataNode.parentNode.childNodes[1];
 
         var selectItems = me.getSelectItems(dataNode);
         Ext.each(selectItems, function (item) {
-            availItems.push(item);
+        availItems.push(item);
         });
 
         var availKeys = [];
         for (var i = 0; i < propertiesNode.data.children.length; i++) {
-            var itemName = propertiesNode.data.children[i].text; //propertiesNode.childNodes[i].text;
-            var found = false;
+        var itemName = propertiesNode.data.children[i].text; //propertiesNode.childNodes[i].text;
+        var found = false;
 
-            for (var j = 0; j < propertiesNode.childNodes.length; j++) {
-                var pNode = propertiesNode.childNodes[j].data.text;
-                if (pNode.substr(0, itemName.length).toLowerCase() == itemName.toLowerCase() || pNode.toLowerCase() == itemName.substr(0, pNode.length).toLowerCase()) {
-                    //if (propertiesNode.childNodes[j].data.text.substr(0,itemName.length).toLowerCase() == itemName.toLowerCase()) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                if (selectItems.indexOf(itemName) == -1) {
-                    availKeys.push([itemName, itemName]);
-                }
-            }
+        for (var j = 0; j < propertiesNode.childNodes.length; j++) {
+        var pNode = propertiesNode.childNodes[j].data.text;
+        if (pNode.substr(0, itemName.length).toLowerCase() == itemName.toLowerCase() || pNode.toLowerCase() == itemName.substr(0, pNode.length).toLowerCase()) {
+        //if (propertiesNode.childNodes[j].data.text.substr(0,itemName.length).toLowerCase() == itemName.toLowerCase()) {
+        found = true;
+        break;
+        }
+        }
+        if (!found) {
+        if (selectItems.indexOf(itemName) == -1) {
+        availKeys.push([itemName, itemName]);
+        }
+        }
         }
         var availableItem = me.getAvailableItems(dataNode);
 
         for (l = 0; l < availKeys.length; l++) {
-            var keyFlag = true;
-            for (k = 0; k < availableItem.length; k++) {
-                if (availKeys[l][0] == selectItems[j])//availableItem[k][0])
-                    keyFlag = false;
-            }
-            if (keyFlag)
-                availableItem.push(availKeys[l]);
+        var keyFlag = true;
+        for (k = 0; k < availableItem.length; k++) {
+        if (availKeys[l][0] == selectItems[j])//availableItem[k][0])
+        keyFlag = false;
+        }
+        if (keyFlag)
+        availableItem.push(availKeys[l]);
         }
         Ext.each(availableItem, function (node) {
-            availItems.push(node[0]);
+        availItems.push(node[0]);
         })
         grid.loadItems(availItems);
         for (var i = 0; i < availItems.length; i++) {
-            grid.getStore().data.items[i].data.text = availItems[i];
-            grid.getStore().data.items[i].data.value = availItems[i];
+        grid.getStore().data.items[i].data.text = availItems[i];
+        grid.getStore().data.items[i].data.value = availItems[i];
         }
 
         itemSelecter.items.items[0].bindStore(grid.getStore());
 
         if (selectItems) {
-            utilsObj.deletedKeyProperties = [];
-            var records = [];
+        utilsObj.deletedKeyProperties = [];
+        var records = [];
 
-            for (var jj = 0; jj < selectItems.length; jj++) {
-                for (var kk = 0; kk < grid.getStore().data.length; kk++) {
-                    if (selectItems[jj] == grid.getStore().data.items[kk].data.text) {
-                        utilsObj.deletedKeyProperties.push(grid.getStore().data.items[kk]);
-                        itemSelecter.items.items[0].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);
-                        break;
-                    }
-                }
-            }
-
-            itemSelecter.items.items[0].items.items[0].items.items[2].getStore().add(utilsObj.deletedKeyProperties);
+        for (var jj = 0; jj < selectItems.length; jj++) {
+        for (var kk = 0; kk < grid.getStore().data.length; kk++) {
+        if (selectItems[jj] == grid.getStore().data.items[kk].data.text) {
+        utilsObj.deletedKeyProperties.push(grid.getStore().data.items[kk]);
+        itemSelecter.items.items[0].items.items[0].items.items[0].getStore().remove(grid.getStore().data.items[kk]);
+        break;
+        }
+        }
         }
 
-        panel = nhibernatePanel.down('#nhibernateContent');
-        panel.removeAll();
-        panel.add(form);
-        Ext.getBody().unmask();
+        itemSelecter.items.items[0].items.items[0].items.items[2].getStore().add(utilsObj.deletedKeyProperties);
+        }*/
     },
 
     showSelectPropertiesForm: function (nhibernatePanel) {
@@ -2026,40 +2026,65 @@ Ext.define('AM.controller.NHibernate', {
         var baseUrl = dirNode.data.record.baseUrl;
 
         var grid = form.down('#propertiesSelectionGrid');
+        var itemSelecter = form.down('#multiselectcomponentgrid');
+
         grid.down('gridcolumn').setText('Select Data Properties');
 
-        var availItems = [];
+        var availableItems = me.getAvailableItems(dataNode);
+        
+        var selectedItems = [];
+        var propertiesNode = dataNode.parentNode.childNodes[1];
+
+        for (var i = 0; i < dataNode.childNodes.length; i++) {
+            var keyName = dataNode.childNodes[i].text;
+            selectedItems.push(keyName);
+        }
+
+        grid.loadItems(availableItems);
+        for (var i = 0; i < availableItems.length; i++) {
+            grid.getStore().data.items[i].data.text = availableItems[i];
+            grid.getStore().data.items[i].data.value = availableItems[i];
+        }
+
+        itemSelecter.items.items[0].bindStore(grid.getStore());
+        itemSelecter.items.items[0].setValue(selectedItems);
+
+        panel = nhibernatePanel.down('#nhibernateContent');
+        panel.removeAll();
+        panel.add(form);
+
+        /*var availItems = [];
         var propertiesNode = dataNode.parentNode.childNodes[1];
         //var hiddenRootNode = propertiesNode.raw.hiddenNodes.hiddenNode;
         var availProperties = [];
         var selectItems = me.getSelectItems(dataNode);
         var availableItems = me.getAvailableItems(dataNode); //me.getAvailableItems(utilsObj.availableDataProperties);//
         Ext.each(selectItems, function (item) {
-            availItems.push(item);
+        availItems.push(item);
         });
 
         for (var i = 0; i < propertiesNode.data.children.length; i++) {
-            var itemName = propertiesNode.data.children[i].text;
-            var found = false;
+        var itemName = propertiesNode.data.children[i].text;
+        var found = false;
 
-            for (var j = 0; j < propertiesNode.childNodes.length; j++) {
-                var pNode = propertiesNode.childNodes[j].data.text;
-                if (pNode.substr(0, itemName.length).toLowerCase() == itemName.toLowerCase() || pNode.toLowerCase() == itemName.substr(0, pNode.length).toLowerCase()) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                var flag = true;
-                for (var k = 0; k < propertiesNode.parentNode.childNodes[0].childNodes.length; k++) {
-                    if (propertiesNode.parentNode.childNodes[0].childNodes[k].data.text == itemName)
-                        flag = false;
-                }
-                if (flag) {
-                    availProperties.push([itemName, itemName]);
-                }
+        for (var j = 0; j < propertiesNode.childNodes.length; j++) {
+        var pNode = propertiesNode.childNodes[j].data.text;
+        if (pNode.substr(0, itemName.length).toLowerCase() == itemName.toLowerCase() || pNode.toLowerCase() == itemName.substr(0, pNode.length).toLowerCase()) {
+        found = true;
+        break;
+        }
+        }
+        if (!found) {
+        var flag = true;
+        for (var k = 0; k < propertiesNode.parentNode.childNodes[0].childNodes.length; k++) {
+        if (propertiesNode.parentNode.childNodes[0].childNodes[k].data.text == itemName)
+        flag = false;
+        }
+        if (flag) {
+        availProperties.push([itemName, itemName]);
+        }
 
-            }
+        }
         }
 
 
@@ -2067,8 +2092,8 @@ Ext.define('AM.controller.NHibernate', {
         //grid.selectItems(selectItems);
         var itemSelecter = form.down('#multiselectcomponentgrid');
         for (var i = 0; i < availItems.length; i++) {
-            grid.getStore().data.items[i].data.text = availItems[i];
-            grid.getStore().data.items[i].data.value = availItems[i];
+        grid.getStore().data.items[i].data.text = availItems[i];
+        grid.getStore().data.items[i].data.value = availItems[i];
         }
 
         var blankStore = Ext.create('AM.store.MultiStore');
@@ -2079,20 +2104,20 @@ Ext.define('AM.controller.NHibernate', {
         panel = nhibernatePanel.down('#nhibernateContent');
         panel.removeAll();
         panel.add(form);
-        Ext.getBody().unmask();
+        Ext.getBody().unmask();*/
     },
 
     showDataKeyForm: function (nhibernatePanel) {
-
-        var me = this,
-    form = me.getDataKeyForm();
-
+        var me = this;
+        var form = me.getDataKeyForm();
         var dataTree = nhibernatePanel.down('nhibernatetree');
         var dirNode = me.getDirNode(dataTree.dirNode);
         var treeNode = nhibernatePanel.treeNode;
 
         form.setActiveRecord(treeNode.data.property);
+
         var property = treeNode.data.property;
+
         if (property.showOnIndex.toString().toLowerCase() == 'true') {
             form.getForm().findField('showOnIndex').setValue(true);
         }
@@ -2110,7 +2135,6 @@ Ext.define('AM.controller.NHibernate', {
         panel = nhibernatePanel.down('#nhibernateContent');
         panel.removeAll();
         panel.add(form);
-        Ext.getBody().unmask();
     },
 
     getDirNode: function (nodeInternalId) {

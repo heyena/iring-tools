@@ -81,7 +81,6 @@ Ext.define('AM.view.nhibernate.SelectTablesForm', {
           xtype: 'hiddenfield',
           itemId: 'enableSummary',
           fieldLabel: 'Enable Summary:',
-          labelWidth: 150,
           name: 'enableSummary',
           value: 'off'
         }
