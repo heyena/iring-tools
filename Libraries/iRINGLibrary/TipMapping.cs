@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using org.iringtools.library;
 using System;
 
-namespace org.iringtools.library
+namespace org.iringtools.library.tip
 {
   [Serializable]
   [DataContractAttribute(Name = "tipMapping", Namespace = "http://www.iringtools.org/tipmapping")]
@@ -47,6 +47,7 @@ namespace org.iringtools.library
     public TipMap()
     {
         parameterMaps = new ParameterMaps();
+        identifiers = new Identifiers();
     }
 
     [DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
@@ -62,10 +63,21 @@ namespace org.iringtools.library
     public string dataObjectName { get; set; }
 
     [DataMemberAttribute(EmitDefaultValue = true, Order = 4)]
+    public string identifierDelimiter { get; set; }
+
+    [DataMember(EmitDefaultValue = true, Order = 5)]
+    public Identifiers identifiers { get; set; }
+
+    [DataMemberAttribute(EmitDefaultValue = true, Order = 6)]
     public string graphName { get; set; }
 
-    [DataMemberAttribute(EmitDefaultValue = false, Order = 5)]
+    [DataMemberAttribute(EmitDefaultValue = false, Order = 7)]
     public ParameterMaps parameterMaps { get; set; }
+  }
+
+  [CollectionDataContractAttribute(Name = "identifiers", Namespace = "http://www.iringtools.org/tipmapping", ItemName = "identifier")]
+  public class Identifiers : System.Collections.Generic.List<string>
+  {
   }
 
   [Serializable]
@@ -74,11 +86,15 @@ namespace org.iringtools.library
   {
       public TipRequest()
       {
+          identifiers = new Identifiers();
           parameterMaps = new ParameterMaps();
       }
 
       [DataMemberAttribute(EmitDefaultValue = false, Order = 1)]
       public ParameterMaps parameterMaps { get; set; }
+
+      [DataMember(EmitDefaultValue = true, Order = 2)]
+      public Identifiers identifiers { get; set; }
   }
       
   [Serializable]
@@ -93,6 +109,11 @@ namespace org.iringtools.library
   public partial class ParameterMap
   {
 
+      public ParameterMap()
+      {
+          identifiers = new Identifiers();
+      }
+
     [DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
     public string path { get; set; }
 
@@ -105,10 +126,10 @@ namespace org.iringtools.library
     [DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
     public string tipId { get; set; }
 
-    //[DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
-    //public string isMapped { get; set; }
+    [DataMember(EmitDefaultValue = true, Order = 4)]
+    public Identifiers identifiers { get; set; }
 
-    [DataMemberAttribute(EmitDefaultValue = true, Order = 4)]
+    [DataMemberAttribute(EmitDefaultValue = true, Order = 5)]
     public string dataPropertyName { get; set; }
 
   }
