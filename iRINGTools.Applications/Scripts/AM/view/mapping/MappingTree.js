@@ -22,7 +22,7 @@ Ext.define('AM.view.mapping.MappingTree', {
   ],
 
     stateId: 'mapping-treestate',
-    stateful: true,
+    stateful: false,
     border: true,
     store: 'MappingStore',
     rootVisible: false,
@@ -283,7 +283,6 @@ Ext.define('AM.view.mapping.MappingTree', {
     },
 
     onReload: function () {
-
         var me = this;
         var mappingPanel = me.up('mappingpanel');
         var graphFullName = me.up('mappingpanel').graph; //me.up('mappingpanel').graphName;

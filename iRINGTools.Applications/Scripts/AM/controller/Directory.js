@@ -18,8 +18,6 @@ Ext.define('AM.controller.Directory', {
 
   models: [
     'DirectoryModel',
-    //'BaseUrlModel',
-    //'ContextModel',
     'DataLayerModel',
     'DynamicModel',
     'FileDownloadModel',
@@ -27,8 +25,6 @@ Ext.define('AM.controller.Directory', {
   ],
   stores: [
     'DirectoryTreeStore',
-    //'BaseUrlStore',
-    //'ContextStore',
     'DataLayerStore',
     'FileDownloadStore',
     'VirtualPropertyStore'
@@ -47,8 +43,6 @@ Ext.define('AM.controller.Directory', {
     'directory.GraphMapWindow',
     'directory.ScopeForm',
     'directory.DataLayerWindow',
-    //'directory.AvailBaseUrlCombo',
-    //'directory.ContextCombo',
     'directory.DataLayerCombo',
     'directory.ApplicationForm',
     'menus.ScopesMenu',
@@ -92,15 +86,7 @@ Ext.define('AM.controller.Directory', {
     {
       ref: 'datalayerCombo',
       selector: 'datalayercombo'
-    }/*,
-    {
-      ref: 'contextCombo',
-      selector: 'contextcombo'
-    },
-    {
-      ref: 'baseUrlCombo',
-      selector: 'availbaseurlcombo'
-    }*/
+    }
   ],
 
   handleMetachange: function() {
@@ -209,29 +195,12 @@ Ext.define('AM.controller.Directory', {
 
     win.on('save', function () {
       win.destroy();
-      //me.onAppDataRefreshClick(item, e, eOpts);
     }, me);
 
     win.on('cancel', function () {
       win.destroy();
     }, me);
-
-
-//    var combo = me.getContextCombo();
-
-//    combo.store.on('load', function(store, action) {
-//      if(context === '') {
-//        if(store)
-//        if(store.data.items[0])
-//        context = store.data.items[0].data.context;
-//      }
-//    }, me);
-
-//    combo.on('afterrender', function (combo, eopts) {
-//      if(context !== '' && context !== undefined && combo.store.data.length == 1)
-//      combo.setValue(context);
-//    }, me);
-
+    
     form.getForm().findField('path').setValue(path);
     form.getForm().findField('state').setValue(state);
     form.getForm().findField('oldContext').setValue(context);
@@ -254,10 +223,6 @@ Ext.define('AM.controller.Directory', {
       method: 'POST',
       params: {
         'nodeid': node.data.id
-        //'path': node.data.id,
-        //'type': 'folder',
-        //'baseUrl': '',
-        //'contextName': node.data.property.Context
       },
       success: function () {
         var parentNode = node.parentNode;
@@ -316,8 +281,6 @@ Ext.define('AM.controller.Directory', {
 
     win.on('save', function () { 
       win.close();
-      //me.onAppDataRefreshClick(item, e, eOpts);
-      //tree.expandPath(node.getPath(), 'text');
     }, me);
 
     win.on('Cancel', function () {
@@ -342,12 +305,10 @@ Ext.define('AM.controller.Directory', {
     form.getForm().findField('state').setValue(state);
     form.getForm().findField('scope').setValue(context);
     form.getForm().findField('oldAssembly').setValue(assembly);
-    //form.getForm().findField('name').setValue(endpoint);
     form.getForm().findField('name').setValue(name);
     form.getForm().findField('displayName').setValue(displayName);
 
     form.getForm().findField('description').setValue(description);
-    //form.getForm().findField('context').setValue(context);
     form.getForm().findField('context').setValue(name);
     form.getForm().findField('assembly').setValue(assembly);
     form.getForm().findField('application').setValue(application);
@@ -366,10 +327,6 @@ Ext.define('AM.controller.Directory', {
       method: 'POST',
       params: {
         nodeid: node.data.id
-        //'path': node.data.id,
-        //'type': 'endpoint',
-        //'baseUrl': node.data.record.BaseUrl,
-        //'contextName': node.data.property.Context
       },
       success: function () {
         var parentNode = node.parentNode;
@@ -378,7 +335,6 @@ Ext.define('AM.controller.Directory', {
         tree.onReload();
       },
       failure: function () {
-        //Ext.Msg.alert('Warning', 'Error!!!');
         var message = 'Error deleting endpoint!';
         showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
       }
@@ -442,15 +398,11 @@ Ext.define('AM.controller.Directory', {
     var me = this;
     var tree = this.getDirTree();
     var node = tree.getSelectedNode();
-    content = me.getMainContent();
-    //contextName = node.data.property.context,
-    contextName = node.parentNode.parentNode.parentNode.data.property['Internal Name'];
-    //endpointName = node.data.property.endpoint,
-    endpointName = node.parentNode.parentNode.data.property['Internal Name'];
-    //baseurl = node.data.property.baseUrl;
-
+    var content = me.getMainContent();
+    var contextName = node.parentNode.parentNode.parentNode.data.property['Internal Name'];
+    var endpointName = node.parentNode.parentNode.data.property['Internal Name'];
+    
     var graph = node.data.text;
-    //var title = 'Data Grid ' + contextName + '.' + endpointName + '.' + graph;
     var title = contextName + '.' + endpointName + '.' + graph;
     var gridPanel = content.down('dynamicgrid[title=' + title + ']');
 
@@ -464,13 +416,10 @@ Ext.define('AM.controller.Directory', {
 
       gridStore.on('beforeload', function (store, action) {
         var params = store.proxy.extraParams;
-        //params.context = contextName;
         params.start = (store.currentPage - 1) * store.pageSize;
         params.limit = store.pageSize;
-        params.app = endpointName;//node.parentNode.parentNode.data.property.Name;
-        params.scope = contextName;//node.parentNode.parentNode.parentNode.data.property.Name ;
-        //params.endpoint = endpointName;
-        //params.baseUrl = baseurl;
+        params.app = endpointName; //node.parentNode.parentNode.data.property.Name;
+        params.scope = contextName; //node.parentNode.parentNode.parentNode.data.property.Name ;
         params.graph = graph;
       }, me);
 
@@ -478,10 +427,6 @@ Ext.define('AM.controller.Directory', {
         content.getEl().unmask();
         gridPanel.destroy();
         var msg = Ext.JSON.decode(response.responseText).message;
-        //var rtext = response.responseText;
-        //var error = 'SUCCESS = FALSE';
-        //var index = rtext.toUpperCase().indexOf(error);
-        //var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
         showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
       }, me);
 
@@ -518,9 +463,7 @@ Ext.define('AM.controller.Directory', {
       url: 'facade/refreshFacade',
       method: 'POST',
       params: {
-        //contextName: node.data.id,
-        scope:node.data.id,
-        //baseUrl: node.data.property.baseUrl
+        scope:node.data.id
       },
       success: function (o) {
         tree.onReload();
@@ -534,7 +477,6 @@ Ext.define('AM.controller.Directory', {
   },
 
   onConfigureEndpoint: function(item, e, eOpts) {
-
     var me = this;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
@@ -557,16 +499,7 @@ Ext.define('AM.controller.Directory', {
   showContextMenu: function(dataview, record, item, index, e, eOpts) {
     var me = this;
     var tree = me.getDirTree();
-    
-    //e.stopEvent();
-    //node = record.store.getAt(index);
-
-    //TODO: need to scope this variable
-    node = tree.getSelectedNode();
-
-    //tree.getSelectionModel().select(node);
-    //tree.onClick(dataview, record, 0, index, e);
-
+    var node = tree.getSelectedNode();
     var obj = record.data;
 
     if (obj.type === "ScopesNode") {
@@ -591,8 +524,8 @@ Ext.define('AM.controller.Directory', {
       var valueListMapMenu = Ext.widget('valuelistmapmenu');
       valueListMapMenu.showAt(e.getXY());
     } else if (obj.type === "GraphsNode") {
-      scopForExport = node.parentNode.parentNode.data.text;
-      appForExport = node.parentNode.data.text;  
+      //scopForExport = node.parentNode.parentNode.data.text;
+      //appForExport = node.parentNode.data.text;  
       var graphsMenu = Ext.widget('graphsmenu');
       graphsMenu.showAt(e.getXY());
     } else if (obj.type === "GraphNode") {
@@ -664,7 +597,6 @@ Ext.define('AM.controller.Directory', {
       var gridProxy = gridStore.getProxy();
       gridStore.currentPage = 1;
       gridProxy.on('exception', function (proxy, response, operation) {
-        //centerPanel.getEl().unmask();
         gridPanel.destroy();
         var rtext = response.responseText;
         if(rtext!=undefined){
@@ -687,7 +619,6 @@ Ext.define('AM.controller.Directory', {
   },
 
   onFileUpload: function(item, e, eOpts) {
-
     var me = this;
     var win = Ext.widget('fileuploadwindow');
     var form = win.down('form');
@@ -719,11 +650,9 @@ Ext.define('AM.controller.Directory', {
     var win = Ext.widget('filedownloadwindows');
     var scope = node.parentNode.data.text;
     var app = node.data.text;
-    //win.scope = node.parentNode.data.text;
-    //win.application = node.data.text ;
     var form = win.down('downloadform');
     var formRecord = {
-      scope: scope,//node.parentNode.data.text,
+      scope: scope,  //node.parentNode.data.text,
       application: app 
     };
     var grid = form.down('grid');
@@ -1006,7 +935,6 @@ Ext.define('AM.controller.Directory', {
             showDialog(300, 80, 'Saving Result', msg, Ext.Msg.OK, null);
             return false;
           }
-
         }			
 
         var gridStore = button.up('form').down('grid').getStore();
@@ -1066,7 +994,6 @@ Ext.define('AM.controller.Directory', {
       params: {
         scope: node.data.id.split('/')[0],
         app: node.data.id.split('/')[1]
-        //tree: Ext.JSON.encode(virtualProperty)
       },
       success: function (response, request) {
         var vProperties = Ext.decode(response.responseText).virtualProperties;
@@ -1144,7 +1071,6 @@ Ext.define('AM.controller.Directory', {
       params: {
         scope: scope,
         app: app
-        //tree: Ext.JSON.encode(virtualProperty)
       },
       success: function (response, request) {
         var res = Ext.decode(response.responseText);
@@ -1200,8 +1126,8 @@ Ext.define('AM.controller.Directory', {
   },
 
   init: function(application) {
-    scopForExport = null;
-    appForExport = null;
+    //scopForExport = null;
+    //appForExport = null;
     Ext.QuickTips.init();
 
     this.control({
@@ -1369,5 +1295,4 @@ Ext.define('AM.controller.Directory', {
       }
     });
   }
-
 });
