@@ -530,10 +530,12 @@ namespace org.iringtools.mapping
     }
 
 
-    public static IDictionary<String, String> GetMappedPropertiesWithPath(this GraphMap graphMap, String templateId, int templateIndex, String parentClassId, int parentClassIndex, IDictionary<String, String> propertyList = null)
+    public static IDictionary<String, IDictionary<String, Identifiers>> GetMappedPropertiesWithPath(this GraphMap graphMap, String templateId, int templateIndex, String parentClassId, int parentClassIndex, IDictionary<String, IDictionary<String, Identifiers>> propertyList = null)
     {
         if (propertyList == null)
-            propertyList = new Dictionary<String, String>();
+        {
+            propertyList = new Dictionary<String, IDictionary<String, Identifiers>>();
+        }
 
         var classTemplateMap = graphMap.GetClassTemplateMap(parentClassId, parentClassIndex);
 
@@ -545,7 +547,9 @@ namespace org.iringtools.mapping
                 foreach (var role in template.roleMaps.Where(x => !String.IsNullOrWhiteSpace(x.propertyName)))
                 {
                     string path = classTemplateMap.classMap.path.ToString() + "/" + classTemplateMap.classMap.id.ToString() +"/" + template.id.ToString() + "/" + role.id.ToString();
-                    propertyList.Add(path, role.propertyName);
+                    Dictionary<String, Identifiers> identifierList = new Dictionary<String, Identifiers>();
+                    identifierList.Add(role.propertyName, classTemplateMap.classMap.identifiers);
+                    propertyList.Add(path, identifierList);
                 }
                 foreach (var role in template.roleMaps.Where(x => x.classMap != null))
                 {
