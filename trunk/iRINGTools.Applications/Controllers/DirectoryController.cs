@@ -382,7 +382,7 @@ namespace org.iringtools.web.controllers
                 node.property.Add("Name", property.propertyName);
                
                 node.property.Add("Datatype", dataType);
-				node.property.Add("Data Length", property.dataLength.ToString());
+				        node.property.Add("Data Length", property.dataLength.ToString());
                 //node.property.Add("isVirtual", property.isVirtual.ToString());
                 if (isKeyProp)
                 {
@@ -418,7 +418,6 @@ namespace org.iringtools.web.controllers
                   node.property.Add("Related", relation.relatedObjectName);
                   nodes.Add(node);
                 }
-
               }
 
               return Json(nodes, JsonRequestBehavior.AllowGet);
