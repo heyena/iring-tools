@@ -17,6 +17,7 @@ using org.iringtools.library;
 using org.iringtools.mapping;
 using org.iringtools.utility;
 using StaticDust.Configuration;
+using org.iringtools.library.tip;
 
 namespace org.iringtools.adapter
 {
@@ -1126,7 +1127,7 @@ namespace org.iringtools.adapter
 
         legacy.ClassMap legacyClassMap = classTemplateListMap.Key;
 
-        Identifiers identifiers = new Identifiers();
+        org.iringtools.mapping.Identifiers identifiers = new org.iringtools.mapping.Identifiers();
 
         foreach (string identifier in legacyClassMap.identifiers)
         {
@@ -1166,7 +1167,7 @@ namespace org.iringtools.adapter
             newClassMap = null;
             if (roleMap.classMap != null)
             {
-              identifiers = new Identifiers();
+              identifiers = new mapping.Identifiers();
 
               foreach (string identifier in roleMap.classMap.identifiers)
               {
