@@ -531,18 +531,19 @@ Ext.define('AM.controller.Directory', {
       var graphMenu = Ext.widget('appdatarefreshmenu');
 
       if (node.data.property["Data Mode"] == "Live") {
-          if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
-              graphMenu.items.map['switchToCached'].setVisible(true);
-//              graphMenu.items.map['switchToLive'].setVisible(false);
-
-          }
-//          graphMenu.items.map['refreshData'].setVisible(true);	
-//          graphMenu.items.map['importData'].setVisible(true);	
-      } else if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
-          graphMenu.items.map['switchToCached'].setVisible(false);
-//              graphMenu.items.map['switchToLive'].setVisible(true);
-//          graphMenu.items.map['refreshData'].setVisible(false);	
-//              graphMenu.items.map['importData'].setVisible(false);	
+         if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
+          graphMenu.items.map['switchToCached'].setVisible(true);
+          graphMenu.items.map['switchToLive'].setVisible(false);
+		  graphMenu.items.map['showCacheInfo'].setVisible(false);
+        }
+        //graphMenu.items.map['refreshCacheId'].setVisible(false);	
+        //graphMenu.items.map['importCacheId'].setVisible(false);	
+      }else if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
+        graphMenu.items.map['switchToCached'].setVisible(false);
+        graphMenu.items.map['switchToLive'].setVisible(true);
+		graphMenu.items.map['showCacheInfo'].setVisible(true);
+        //graphMenu.items.map['refreshCacheId'].setVisible(true);	
+        //graphMenu.items.map['importCacheId'].setVisible(true);	
       }
       graphMenu.showAt(e.getXY());
     } else if(obj.type === "DataPropertyNode"){
@@ -693,7 +694,8 @@ Ext.define('AM.controller.Directory', {
   },
 
   onApplicationFormAfterRender: function(component, eOpts) {
-    var key = '';
+    //Adding settings into setting Field set.
+	var key = '';
     var value = '';
     var me = this;
     var tree = me.getDirTree();
@@ -715,7 +717,7 @@ Ext.define('AM.controller.Directory', {
           }
         }
       }
-    }
+    }// End of adding settings.
   },
 
   onRefreshDataObjectCache: function(item, e, eOpts) {
@@ -774,19 +776,14 @@ Ext.define('AM.controller.Directory', {
     })
   },
 
-  onImportCache: function(item, e, eOpts) {
+  onShowCacheInfo: function(item, e, eOpts) {
     var me = this;
     var win = Ext.widget('importcachewindow');
     var form = win.down('form');
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
-
-    var formRecord = {
-      nodeid: node.data.id 
-    };
-    
-    form.getForm().setValues(formRecord);
-
+	form.node = node;
+	form.display();
     win.on('Save', function () {
       win.destroy();
     }, me);
@@ -794,7 +791,6 @@ Ext.define('AM.controller.Directory', {
     win.on('reset', function () {
       win.destroy();
     }, me);
-
     win.show();
   },
 
@@ -1188,8 +1184,8 @@ Ext.define('AM.controller.Directory', {
       "menuitem[action=refreshcache]": {
         click: this.onRefreshCache
       },
-      "menuitem[action=importcache]": {
-        click: this.onImportCache
+	  "menuitem[action=showCacheInfo]": {
+        click: this.onShowCacheInfo
       },
       "menuitem[action = deletcache]": {
         click: this.onDeleteCache
@@ -1267,7 +1263,9 @@ Ext.define('AM.controller.Directory', {
     var me = this;
     var tree = me.getDirTree();
     var node = tree.getSelectedNode();
-
+	var content = me.getMainContent();
+	content.getEl().mask("Loading...", "x-mask-loading");
+	  
     Ext.Ajax.request({
       url: 'AdapterManager/SwitchDataMode',
       method: 'POST',
@@ -1282,7 +1280,7 @@ Ext.define('AM.controller.Directory', {
         if (responseObj.Level != 0) {
           showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
         }
-
+	    content.getEl().unmask();
         tree.onReload();
       },
       failure: function (response, request) {
