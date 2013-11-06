@@ -21,12 +21,12 @@ Ext.define('AM.view.directory.ImportCacheWindow', {
     'AM.view.directory.ImportCacheForm'
   ],
 
-  height: 119,
+  height: 225,
   width: 482,
   layout: {
     type: 'fit'
   },
-  title: 'Import Cache',
+  title: 'Cache Information',
   modal: true,
 
   initComponent: function() {
