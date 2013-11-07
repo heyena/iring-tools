@@ -64,7 +64,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                 {
                     xtype: 'button',
                     action: 'editdbconnection',
-					itemId: 'editdbconnectionbtn',
+                    itemId: 'editdbconnectionbtn',
                     iconCls: 'am-document-properties',
                     text: 'Edit Connection'
                 },
@@ -97,8 +97,6 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
         var baseUrl = dirNode.data.record.BaseUrl;
         var treeStore = me.getStore();
         var treeProxy = treeStore.getProxy();
-        var content = me.up().up(); //me.getMainContent();
-        content.body.mask('Loading...', 'x-mask-loading');
         var dbDict, dbInfo;
 
         Ext.Ajax.request({
@@ -141,10 +139,8 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
 
                             treeStore.load({
                                 callback: function (records, options, success) {
-                                    var rootNode = treeStore.getRootNode();                                    
+                                    var rootNode = treeStore.getRootNode();
                                     me.refreshTree(rootNode, dbDict);
-                                    //me.up().items.items[2].removeAll();									
-									content.body.unmask();
                                 }
                             });
 
