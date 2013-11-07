@@ -207,31 +207,25 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
         data: mappingProperties
       });
       mapCombo.bindStore(myStore);
-      /* mapCombo.store = Ext.create('Ext.data.SimpleStore', {
-      fields: ['value', 'text', 'name'],
-      autoLoad: true,
-      data: mappingProperties
-      });
-      */
     }
   },
 
   onRelatedObjectCmbChange: function(field, newValue, oldValue, eOpts) {
-
     var me = this;
     var form = field.up('setrelationform');
     var rootNode = form.rootNode;
     var mapCombo = form.down('#mapPropertyNameCmb');
-    var relatedObjectName = newValue;//records[0].data.text;
-    if(newValue == ''){
+    var relatedObjectName = newValue;
+
+    if (newValue == '') {
       var myStore = Ext.create('Ext.data.SimpleStore', {
         fields: ['value', 'text', 'name'],
         autoLoad: true,
         data: []
       });
       mapCombo.bindStore(myStore);
-    }else{
-
+    }
+    else{
       if (relatedObjectName !== '') {
         var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
         var relationConfigPanel = form.getForm();
@@ -243,12 +237,12 @@ Ext.define('AM.view.nhibernate.SetRelationForm', {
           var ii = 0;
 
           keysNode.eachChild(function(child) {
-            mappingProperties.push([ii, child.data.text, child.data.property.columnName]);
+              mappingProperties.push([ii, child.raw.text, child.raw.property.columnName]);
             ii++;
           });
 
           propertiesNode.eachChild(function(child) {
-            mappingProperties.push([ii, child.data.text, child.data.property.columnName]);
+              mappingProperties.push([ii, child.raw.text, child.raw.property.columnName]);
             ii++;
           });
         }

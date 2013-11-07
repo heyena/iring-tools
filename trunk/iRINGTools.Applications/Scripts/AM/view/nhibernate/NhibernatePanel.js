@@ -14,48 +14,46 @@
  */
 
 Ext.define('AM.view.nhibernate.NhibernatePanel', {
-  extend: 'Ext.panel.Panel',
-  alias: 'widget.nhibernatepanel',
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.nhibernatepanel',
 
-  requires: [
+    requires: [
     'AM.view.nhibernate.NhibernateTree'
   ],
 
-  dirNode: null,
-  
-  border: false,
-  layout: {
-    type: 'border'
-  },
-  closable: true,
+    dirNode: null,
 
-  initComponent: function() {
-    var me = this;
+    border: false,
+    layout: {
+        type: 'border'
+    },
+    closable: true,
 
-    var nhTree = Ext.create('AM.view.nhibernate.NhibernateTree', {
-        dirNode: me.dirNode,
-        minWidth: 260,
-        width: 300,
-        floatable: false,
-        region: 'west',
-        split: true
-    });
+    initComponent: function () {
+        var me = this;
 
-    var nhContent = Ext.create('Ext.container.Container', {
-        floatable: false,
-        region: 'center',
-        itemId: 'nhibernateContent',
-        autoScroll: true,
-        layout: {
-            type: 'fit'
-        }
-    });
+        Ext.applyIf(me, {
+            items: [{
+                xtype: 'nhibernatetree',
+                dirNode: me.dirNode,
+                minWidth: 260,
+                width: 300,
+                floatable: false,
+                region: 'west',
+                split: true
+            }, {
+                xtype: 'container',
+                floatable: false,
+                region: 'center',
+                itemId: 'nhibernateContent',
+                autoScroll: true,
+                layout: {
+                    type: 'fit'
+                }
+            }
+        ]
+        });
 
-    Ext.applyIf(me, {
-      items: [ nhTree, nhContent ]
-    });
-
-    me.callParent(arguments);
-  }
-
+        me.callParent(arguments);
+    }
 });
