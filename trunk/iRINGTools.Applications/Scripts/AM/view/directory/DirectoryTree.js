@@ -75,9 +75,11 @@ Ext.define('AM.view.directory.DirectoryTree', {
             };
             storeTreeState(child, nodes);
         });
+
         Ext.apply(state, {
             expandedNodes: nodes
         });
+
         return state;
     },
 
@@ -85,10 +87,13 @@ Ext.define('AM.view.directory.DirectoryTree', {
         var me = this;
         var state = me.getState();
 
+        me.on('beforeload', function (store, action) {
+            me.getStore().getProxy().extraParams.type = 'ScopesNode';
+        });
+
         me.getEl().mask("Loading", 'x-mask-loading');
 
-        //NOTE: must call reload for node selection to be honored 
-        me.store.reload({
+        me.store.load({
             callback: function (records, options, success) {
                 var nodes = state.expandedNodes || [];
 

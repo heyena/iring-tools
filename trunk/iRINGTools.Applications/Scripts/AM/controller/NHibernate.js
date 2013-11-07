@@ -138,7 +138,7 @@ Ext.define('AM.controller.NHibernate', {
 
         var dbObjectsTree = nhPanel.down('nhibernatetree');
         var gridSelected = dbObjectsTree.selectedTables;
-        var dirNode = me.getDirNode(dbObjectsTree.dirNode);
+        var dirNode = dbObjectsTree.dirNode;
 
         if (gridSelected.length === 0) {
             gridSelected = dirNode.data.record.dbInfo.dbTableNames.items;
@@ -197,7 +197,7 @@ Ext.define('AM.controller.NHibernate', {
         var panel = form.up('nhibernatepanel');
         var tree = panel.down('nhibernatetree');
         var treeNode = tree.getSelectedNode();
-        var dirNode = me.getDirNode(tree.dirNode);
+        var dirNode = tree.dirNode;
         var dbDict = dirNode.data.record.dbDict;
         var relationFolderNode;
         if (treeNode) {
@@ -281,7 +281,7 @@ Ext.define('AM.controller.NHibernate', {
         var form = button.up('dataobjectform');
         var panel = form.up('nhibernatepanel');
         var tree = panel.down('nhibernatetree');
-        var dirNode = me.getDirNode(tree.dirNode);
+        var dirNode = tree.dirNode;
         var dbDict = dirNode.data.record.dbDict;
         var treeNode = tree.getSelectedNode();
         var dObject;
@@ -416,7 +416,7 @@ Ext.define('AM.controller.NHibernate', {
 
         var panel = form.up('nhibernatepanel');
         var dataTree = panel.down('nhibernatetree');
-        var dirNode = me.getDirNode(dataTree.dirNode);
+        var dirNode = dataTree.dirNode;
         var rootNode = dataTree.getRootNode();
         var dataNode = dataTree.getSelectedNode();
         var selectKeys = [];
@@ -581,8 +581,6 @@ Ext.define('AM.controller.NHibernate', {
                     break;
             }
         }
-
-
     },
 
     onConnectToDatabase: function (button, e, eOpts) {
@@ -590,7 +588,7 @@ Ext.define('AM.controller.NHibernate', {
         var form = button.up('connectionstringform');
         var panel = form.up('nhibernatepanel');
         var dataTree = panel.down('nhibernatetree');
-        var dirNode = me.getDirNode(dataTree.dirNode);
+        var dirNode = dataTree.dirNode;
         var context = dirNode.parentNode.data.text; //dirNode.data.record.ContextName;
         var endpoint = dirNode.data.record.Name; //dirNode.data.record.Endpoint;
         var baseUrl = dirNode.data.record.BaseUrl;
@@ -664,7 +662,7 @@ Ext.define('AM.controller.NHibernate', {
         var content = this.getMainContent();
         var panel = button.up('nhibernatepanel');
         var dbObjectsTree = panel.down('nhibernatetree');
-        var dirNode = me.getDirNode(dbObjectsTree.dirNode);
+        var dirNode = dbObjectsTree.dirNode;
         var rootNode = dbObjectsTree.getRootNode();
         var form = panel.down('selecttablesform');
         var selected = form.down('multiselectcomponentgrid').items.items[0].items.items[2].store.data.items;
@@ -747,7 +745,7 @@ Ext.define('AM.controller.NHibernate', {
 
         var panel = form.up('nhibernatepanel');
         var dataTree = panel.down('nhibernatetree');
-        var dirNode = me.getDirNode(dataTree.dirNode);
+        var dirNode = dataTree.dirNode;
         var dbInfo = dirNode.data.record.dbInfo;
         var dbDict = dirNode.data.record.dbDict;
         var rootNode = dataTree.getRootNode();
@@ -811,7 +809,7 @@ Ext.define('AM.controller.NHibernate', {
 
         var panel = form.up('nhibernatepanel');
         var dataTree = panel.down('nhibernatetree');
-        var dirNode = me.getDirNode(dataTree.dirNode);
+        var dirNode = dataTree.dirNode;
         var rootNode = dataTree.getRootNode();
         var dataNode = dataTree.getSelectedNode();
         var selectKeys = [];
@@ -860,33 +858,17 @@ Ext.define('AM.controller.NHibernate', {
             itemSelector.items.items[0].items.items[0].items.items[0].getStore().add(records);
             itemSelector.items.items[0].items.items[0].items.items[2].getStore().removeAll();
             itemSelector.items.items[0].items.items[0].items.items[2].getStore().add(dataNode.childNodes);
-            //itemSelector.items.items[2].getStore().add(records);
         }
-
-
-        //grid.selectItems(selectTableNamesSingle);
     },
 
     onResetConnectionForm: function (button, e, eOpts) {
-
         var me = this;
         var form = button.up('connectionstringform');
         var panel = form.up('nhibernatepanel');
         var tree = panel.down('nhibernatetree');
-        var dirNode = me.getDirNode(tree.dirNode);
+        var dirNode = tree.dirNode;
         var dbInfo = dirNode.data.record.dbInfo;
         var dbDict = dirNode.data.record.dbDict;
-
-        /*if(dbInfo && dbDict){
-        form.getForm().findField('dbProvider').setValue(dbDict.Provider);
-        form.getForm().findField('dbServer').setValue(dbInfo.dbServer);
-        form.getForm().findField('dbInstance').setValue(dbInfo.dbInstance);
-        form.getForm().findField('dbName').setValue(dbInfo.dbName);
-        form.getForm().findField('dbUserName').setValue(dbInfo.dbUserName);
-        form.getForm().findField('dbPassword').setValue(dbInfo.dbPassword);
-        form.getForm().findField('dbSchema').setValue(dbDict.SchemaName);
-        }
-        */
 
         var dsConfigForm = button.up('connectionstringform').getForm(); //dsConfigPane.getForm();
         var Provider = null;
@@ -992,32 +974,28 @@ Ext.define('AM.controller.NHibernate', {
 
     onConfigNHibernate: function () {
         var me = this;
-        var dirTree = me.getDirTree();
-        var dirNode = dirTree.getSelectedNode();
+        var dirNode = me.getDirTree().getSelectedNode();
+        var context = dirNode.parentNode.data.text;
+        var endpoint = dirNode.data.record.Name;
 
         var content = me.getMainContent();
-        var dbDict, dbInfo, tree;
-
-        var context = dirNode.parentNode.data.text;
-        var datalayer = dirNode.data.record.DataLayer;
-        var endpoint = dirNode.data.record.Name;
-        var baseUrl = dirNode.data.record.BaseUrl;
         var title = 'NHConfig.' + context + '.' + endpoint;
         var panel = content.down('nhibernatepanel[title=' + title + ']');
 
         if (!panel) {
-            panel = Ext.widget('nhibernatepanel', {
-                'title': title
+            me.getDataTypes();
+
+            var panel = Ext.create('AM.view.nhibernate.NhibernatePanel', {
+                title: title,
+                dirNode: dirNode
             });
 
             tree = panel.down('nhibernatetree');
-            tree.dirNode = dirNode.internalId; 
-                       
             tree.onReload();
+
             content.add(panel);
         }
 
-        me.getDataTypes();
         content.setActiveTab(panel);
     },
 
@@ -1170,7 +1148,7 @@ Ext.define('AM.controller.NHibernate', {
     showSelectTablesForm: function (nhibernatePanel) {
         var me = this, form = me.getSelectTablesForm();
         var dataTree = nhibernatePanel.down('nhibernatetree');
-        var dirNode = me.getDirNode(dataTree.dirNode);
+        var dirNode = dataTree.dirNode;
         var selected = [];
         var dict = dataTree.getStore().tree.root.childNodes;
 
@@ -1199,7 +1177,7 @@ Ext.define('AM.controller.NHibernate', {
     showConnectionStringForm: function (nhibernatePanel) {
         var me = this, form = me.getConnectionStringForm();
         var dataTree = nhibernatePanel.down('nhibernatetree');
-        var dirNode = me.getDirNode(dataTree.dirNode);
+        var dirNode = dataTree.dirNode;
         var dbDict = dirNode.data.record.dbDict;
         var dbInfo = dirNode.data.record.dbInfo;
         var combo = form.down('#providerCombo');
@@ -1322,18 +1300,20 @@ Ext.define('AM.controller.NHibernate', {
     },
 
     showDataObjectForm: function (nhibernatePanel) {
-        var me = this,
-    form = me.getDataObjectForm();
+        var me = this, form = me.getDataObjectForm();
         var keyDelimeter;
         var description;
         var objectNamespace;
         var dataTree = nhibernatePanel.down('nhibernatetree');
         var treeNode = dataTree.getSelectedNode();
+
         objectNamespace = treeNode.raw.property.objectNamespace;
         description = treeNode.raw.property.description;
         keyDelimeter = treeNode.raw.property.keyDelimeter;
-        var dirNode = me.getDirNode(dataTree.dirNode);
+
+        var dirNode = dataTree.dirNode;
         var dbDict = dirNode.data.record.dbDict;
+
         if (dbDict) {
             for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
                 var dataObject = dbDict.dataObjects[ijk];
@@ -1366,14 +1346,14 @@ Ext.define('AM.controller.NHibernate', {
     },
 
     showRelationsForm: function (nhibernatePanel) {
-        var me = this,
-    form = me.getRelationsForm();
+        var me = this, form = me.getRelationsForm();
         var grid = form.down('relationsgrid');
 
         var gridStore = grid.getStore();
         gridStore.removeAll();
+
         var dataTree = nhibernatePanel.down('nhibernatetree');
-        var dirNode = me.getDirNode(dataTree.dirNode);
+        var dirNode = dataTree.dirNode;
         var treeNode = dataTree.getSelectionModel().getSelection()[0];
 
         var context = dirNode.data.property.Context;
@@ -1394,17 +1374,12 @@ Ext.define('AM.controller.NHibernate', {
     },
 
     showSetRelationForm: function (nhibernatepanel) {
-
         var me = this;
         var panel = nhibernatepanel.down('#nhibernateContent');
         var dataTree = nhibernatepanel.down('nhibernatetree');
         var dataNode = dataTree.getSelectedNode();
-        var dirNode = me.getDirNode(dataTree.dirNode);
-        var relationFolderNode,
-    contextName,
-    endpoint,
-    rootNode,
-    relationName;
+        var dirNode = dataTree.dirNode;
+        var relationFolderNode, contextName, endpoint, rootNode, relationName;
 
         rootNode = dataTree.getRootNode();
         endpoint = dirNode.data.text; //dirNode.data.record.endpoint;
@@ -1625,7 +1600,7 @@ Ext.define('AM.controller.NHibernate', {
         var form = me.getSelectKeyFieldsForm();
         var dataTree = nhibernatePanel.down('nhibernatetree');
         var selNode = dataTree.getSelectedNode();
-        var dirNode = me.getDirNode(dataTree.dirNode);
+        var dirNode = dataTree.dirNode;
         var context = dirNode.parentNode.data.text; //dirNode.data.record.context;
         var endpoint = dirNode.data.record.Name; //dirNode.data.record.endpoint;
         var baseUrl = dirNode.data.record.baseUrl;
@@ -1667,7 +1642,7 @@ Ext.define('AM.controller.NHibernate', {
         var me = this, form = me.getSelectPropertiesForm();
         var dataTree = nhibernatePanel.down('nhibernatetree');
         var selNode = dataTree.getSelectedNode();
-        var dirNode = me.getDirNode(dataTree.dirNode);
+        var dirNode = dataTree.dirNode;
         var context = dirNode.data.record.context;
         var endpoint = dirNode.data.record.endpoint;
         var baseUrl = dirNode.data.record.baseUrl;
@@ -1712,7 +1687,7 @@ Ext.define('AM.controller.NHibernate', {
         var me = this;
         var form = me.getDataKeyForm();
         var dataTree = nhibernatePanel.down('nhibernatetree');
-        var dirNode = me.getDirNode(dataTree.dirNode);
+        var dirNode = dataTree.dirNode;
         var treeNode = nhibernatePanel.treeNode;
 
         form.setActiveRecord(treeNode.data.property);
@@ -1738,19 +1713,11 @@ Ext.define('AM.controller.NHibernate', {
         panel.add(form);
     },
 
-    getDirNode: function (nodeInternalId) {
-        var me = this;
-        var dirTree = me.getDirTree();
-        var treeStore = dirTree.getStore();
-        return treeStore.getNodeById(nodeInternalId);
-    },
-
     showDataPropertyForm: function (nhibernatePanel) {
-        var me = this,
-    form = me.getDataPropertyForm();
+        var me = this, form = me.getDataPropertyForm();
 
         var dataTree = nhibernatePanel.down('nhibernatetree');
-        var dirNode = me.getDirNode(dataTree.dirNode);
+        var dirNode = dataTree.dirNode;
         var treeNode = nhibernatePanel.treeNode;
 
         form.setActiveRecord(treeNode.data.property);
