@@ -47,37 +47,9 @@ Ext.define('AM.view.mapping.MappingPanel', {
           region: 'east',
           split: true
         }
-      ],
-      listeners: {
-        beforeclose: {
-          fn: me.onPanelBeforeClose,
-          scope: me
-        }
-      }
+      ]
     });
 
-    me.processMappingMappingPanel(me);
     me.callParent(arguments);
-  },
-
-  processMappingMappingPanel: function(config) {
-
-  },
-
-  onPanelBeforeClose: function(panel, eOpts) {
-    /*var me = this;
-    var tree = me.down('mappingtree');
-    Ext.Msg.show({
-    title: 'Close Mapping?',
-    msg: 'Do you want to save changes to ' + me.title,
-    buttons: Ext.Msg.YESNO,
-    fn: function (response) {
-    if(response === 'yes') {
-    tree.onSave();
-    }
-    }
-    });
-    */
   }
-
 });
