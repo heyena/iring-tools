@@ -913,9 +913,9 @@ namespace iRINGTools.Web.Models
           string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber, string serName)
         {
             List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
-            bool hasDBDictionary = false;
-            bool hasDataObjectinDBDictionary = false;
-            DatabaseDictionary dbDictionary = null;
+            //bool hasDBDictionary = false;
+            //bool hasDataObjectinDBDictionary = false;
+            //DatabaseDictionary dbDictionary = null;
             string uri = String.Format("/{0}/{1}/objects", scope, application);
 
             Request request = new Request();
@@ -933,26 +933,26 @@ namespace iRINGTools.Web.Models
             WebHttpClient client = CreateWebClient(_hibernateServiceUri);
             List<DataObject> dataObjects = client.Post<Request, List<DataObject>>(uri, request, true);
 
-            try
-            {
-                dbDictionary = GetDBDictionary(scope, application);
+            //try
+            //{
+            //    dbDictionary = GetDBDictionary(scope, application);
 
-                if (dbDictionary != null)
-                    if (dbDictionary.dataObjects.Count > 0)
-                        hasDBDictionary = true;
-            }
-            catch (Exception)
-            {
-                hasDBDictionary = false;
-            }
+            //    if (dbDictionary != null)
+            //        if (dbDictionary.dataObjects.Count > 0)
+            //            hasDBDictionary = true;
+            //}
+            //catch (Exception)
+            //{
+            //    hasDBDictionary = false;
+            //}
 
             foreach (DataObject dataObject in dataObjects)
             {
-                hasDataObjectinDBDictionary = false;
+                //hasDataObjectinDBDictionary = false;
 
-                if (hasDBDictionary)
-                    if (dbDictionary.dataObjects.FirstOrDefault<DataObject>(o => o.tableName.ToLower() == dataObject.tableName.ToLower()) != null)
-                        hasDataObjectinDBDictionary = true;
+                //if (hasDBDictionary)
+                //    if (dbDictionary.dataObjects.FirstOrDefault<DataObject>(o => o.tableName.ToLower() == dataObject.tableName.ToLower()) != null)
+                //        hasDataObjectinDBDictionary = true;
 
                 JsonTreeNode keyPropertiesNode = new JsonTreeNode()
                 {
@@ -995,7 +995,7 @@ namespace iRINGTools.Web.Models
                     {
                         keyPropertiesNode, dataPropertiesNode, relationshipsNode
                     },
-                    properties = new Dictionary<string, string>
+                    property = new Dictionary<string, string>
                     {
                         {"objectNamespace", "org.iringtools.adapter.datalayer.proj_" + scope + "." + application},
                         {"objectName", dataObject.objectName},
@@ -1018,7 +1018,7 @@ namespace iRINGTools.Web.Models
                         {"isHidden", dataProperty.isHidden.ToString()},
                     };
 
-                    if (dataObject.isKeyProperty(dataProperty.propertyName) && !hasDataObjectinDBDictionary)
+                    if (dataObject.isKeyProperty(dataProperty.propertyName))
                     {
                         properties.Add("keyType", dataProperty.keyType.ToString());
 
@@ -1026,7 +1026,6 @@ namespace iRINGTools.Web.Models
                         {
                             text = dataProperty.columnName,
                             type = "keyProperty",
-                            properties = properties,
                             iconCls = "treeKey",
                             leaf = true,
                             property = properties
@@ -1042,8 +1041,6 @@ namespace iRINGTools.Web.Models
                             type = "dataProperty",
                             iconCls = "treeProperty",
                             leaf = true,
-                            hidden = true,
-                            properties = properties,
                             property = properties
                         };
 
