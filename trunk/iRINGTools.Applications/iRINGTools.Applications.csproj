@@ -362,7 +362,6 @@
     <Content Include="Scripts\AM\view\override\directory\DataGridPanel.js" />
     <Content Include="Scripts\AM\view\override\mapping\MappingTree.js" />
     <Content Include="Scripts\AM\view\override\nhibernate\MultiSelectComponentGrid.js" />
-    <Content Include="Scripts\AM\view\override\nhibernate\NhibernateTree.js" />
     <Content Include="Scripts\AM\view\override\nhibernate\RelationPropertyGrid.js" />
     <Content Include="Scripts\AM\view\override\search\SearchTree.js" />
     <Content Include="Scripts\AM\view\search\SearchPanel.js" />
