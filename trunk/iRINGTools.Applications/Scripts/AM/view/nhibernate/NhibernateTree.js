@@ -64,6 +64,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                 {
                     xtype: 'button',
                     action: 'editdbconnection',
+					itemId: 'editdbconnectionbtn',
                     iconCls: 'am-document-properties',
                     text: 'Edit Connection'
                 },
@@ -137,14 +138,17 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                                 params.app = endpoint;
                                 params.baseUrl = baseUrl;
                             }, me);
-                            
+
                             treeStore.load({
                                 callback: function (records, options, success) {
-                                    var rootNode = treeStore.getRootNode();
+                                    var rootNode = treeStore.getRootNode();                                    
                                     me.reloadTree(rootNode, dbDict);
                                     me.up().items.items[2].removeAll();
+									
+									var btn = me.down('#editdbconnectionbtn');
+                                    btn.fireEvent('click', btn);
+									
                                     content.body.unmask();
-
                                 }
                             });
 
@@ -294,9 +298,9 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                     continue;
 
                 // sync data object
-                dataObjectNode.raw.properties.objectNamespace = dataObject.objectNamespace;
-                dataObjectNode.raw.properties.objectName = dataObject.objectName;
-                dataObjectNode.raw.properties.keyDelimiter = dataObject.keyDelimeter;
+                dataObjectNode.raw.property.objectNamespace = dataObject.objectNamespace;
+                dataObjectNode.raw.property.objectName = dataObject.objectName;
+                dataObjectNode.raw.property.keyDelimiter = dataObject.keyDelimeter;
                 dataObjectNode.data.text = dataObject.objectName;
 
                 if (dataObject.objectName.toLowerCase() == dataObjectNode.data.text.toLowerCase()) {
@@ -308,6 +312,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                     var selectedItems = [];
                     var availableItems = [];
                     var myFlag;
+
                     // sync data properties
                     for (var j = 0; j < propertiesNode.data.children.length; j++) {
                         myFlag = true;
@@ -318,14 +323,13 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                                 shownProperty.push(propertiesNode.data.children[j].text.toLowerCase());
                                 propertiesNode.data.children[j].hidden = true;
                                 }*/
-                                propertiesNode.childNodes[j].data.text = dataObject.dataProperties[jj].propertyName;
-                                propertiesNode.childNodes[j].data.property.propertyName = dataObject.dataProperties[jj].propertyName;
-                                propertiesNode.childNodes[j].data.property.isHidden = dataObject.dataProperties[jj].isHidden;
-
-
+//                                propertiesNode.childNodes[j].data.text = dataObject.dataProperties[jj].propertyName;
+//                                propertiesNode.childNodes[j].data.property.propertyName = dataObject.dataProperties[jj].propertyName;
+//                                propertiesNode.childNodes[j].data.property.isHidden = dataObject.dataProperties[jj].isHidden;
+                                
                                 propertiesNode.data.children[j].text = dataObject.dataProperties[jj].propertyName;
-                                propertiesNode.data.children[j].properties.propertyName = dataObject.dataProperties[jj].propertyName;
-                                propertiesNode.data.children[j].properties.isHidden = dataObject.dataProperties[jj].isHidden;
+                                propertiesNode.data.children[j].property.propertyName = dataObject.dataProperties[jj].propertyName;
+                                propertiesNode.data.children[j].property.isHidden = dataObject.dataProperties[jj].isHidden;
                                 selectedItems.push(propertiesNode.data.children[j]);
                                 myFlag = false;
                             }
@@ -364,7 +368,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                                 if (dataObject.keyProperties[ij].keyPropertyName.toLowerCase() == dataObject.dataProperties[ikk].propertyName.toLowerCase()) {
                                     if (keysNode.data.children[k].text.toLowerCase() == dataObject.dataProperties[ikk].columnName.toLowerCase()) {
                                         keysNode.data.children[k].text = dataObject.keyProperties[ij].keyPropertyName;
-                                        //keysNode.data.children[k].properties.propertyName = dataObject.keyProperties[ij].keyPropertyName;
+                                        //keysNode.data.children[k].property.propertyName = dataObject.keyProperties[ij].keyPropertyName;
                                         keysNode.data.children[k].property.propertyName = dataObject.keyProperties[ij].keyPropertyName;
                                         keysNode.data.children[k].property.isHidden = dataObject.keyProperties[ij].isHidden;
                                         ij++;
@@ -378,7 +382,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                             for (var ijj = 0; ijj < propertiesNode.data.children.length; ijj++) {
                                 var nodeText = dataObject.keyProperties[ij].keyPropertyName;
                                 if (propertiesNode.data.children[ijj].text.toLowerCase() == nodeText.toLowerCase()) {
-                                    var properties = propertiesNode.data.children[ijj].properties;
+                                    var properties = propertiesNode.data.children[ijj].property;
                                     properties.propertyName = nodeText;
                                     //properties.keyType = 'assigned';
                                     //properties.nullable = false;
