@@ -142,13 +142,9 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                             treeStore.load({
                                 callback: function (records, options, success) {
                                     var rootNode = treeStore.getRootNode();                                    
-                                    me.reloadTree(rootNode, dbDict);
-                                    me.up().items.items[2].removeAll();
-									
-									var btn = me.down('#editdbconnectionbtn');
-                                    btn.fireEvent('click', btn);
-									
-                                    content.body.unmask();
+                                    me.refreshTree(rootNode, dbDict);
+                                    //me.up().items.items[2].removeAll();									
+									content.body.unmask();
                                 }
                             });
 
@@ -162,6 +158,170 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
             }
         });
 
+    },
+
+    refreshTree: function (rootNode, dbDict) {
+        var me = this;
+        var relationTypeStr = ['OneToOne', 'OneToMany'];
+
+        // sync data object tree with data dictionary
+        for (var i = 0; i < rootNode.childNodes.length; i++) {
+            var dataObjectNode = rootNode.childNodes[i];
+
+            for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
+                var dataObject = dbDict.dataObjects[ijk];
+
+                if (dataObjectNode.data.text.toUpperCase() != dataObject.tableName.toUpperCase())
+                    continue;
+
+                // sync data object
+                dataObjectNode.raw.property.objectNamespace = dataObject.objectNamespace;
+                dataObjectNode.raw.property.objectName = dataObject.objectName;
+                dataObjectNode.raw.property.keyDelimiter = dataObject.keyDelimeter;
+
+                dataObjectNode.data.text = dataObject.objectName;
+                dataObjectNode.data.tableName = dataObject.tableName;
+
+                if (dataObject.objectName.toLowerCase() == dataObjectNode.data.text.toLowerCase()) {
+                    var keysNode = dataObjectNode.childNodes[0];
+                    var propertiesNode = dataObjectNode.childNodes[1];
+                    var relationshipsNode = dataObjectNode.childNodes[2];
+                    utilsObj.availableDataProperties = propertiesNode.data.children;
+                    var selectedItems = [];
+                    var availableItems = [];
+                    var myFlag;
+
+                    // sync data properties
+                    for (var j = 0; j < propertiesNode.data.children.length; j++) {
+                        myFlag = true;
+                        for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {
+                            if (propertiesNode.data.children[j].text.toLowerCase() == dataObject.dataProperties[jj].columnName.toLowerCase()) {
+
+                                propertiesNode.data.children[j].text = dataObject.dataProperties[jj].propertyName;
+                                propertiesNode.data.children[j].property.propertyName = dataObject.dataProperties[jj].propertyName;
+                                propertiesNode.data.children[j].property.isHidden = dataObject.dataProperties[jj].isHidden;
+
+                                selectedItems.push(propertiesNode.data.children[j]);
+                                myFlag = false;
+                            }
+                        }
+                        if (myFlag) {
+                            availableItems.push(propertiesNode.data.children[j]);
+                        }
+                    }
+
+                    for (m = 0; m < availableItems.length; m++) {
+                        for (n = 0; n < propertiesNode.childNodes.length; n++) {
+                            if (propertiesNode.childNodes[n].data.text == availableItems[m].text)
+                                propertiesNode.removeChild(propertiesNode.childNodes[n]);
+                        }
+                    }
+                    for (jj = 0; jj < dataObject.keyProperties.length; jj++) {
+                        for (kk = 0; kk < propertiesNode.childNodes.length; kk++) {
+                            if (propertiesNode.childNodes[kk].data.text == dataObject.keyProperties[jj].keyPropertyName)
+                                propertiesNode.removeChild(propertiesNode.childNodes[kk]);
+                        }
+                    }
+
+                    // sync key properties
+                    for (var ij = 0; ij < dataObject.keyProperties.length; ij++) {
+                        for (var k = 0; k < keysNode.data.children.length; k++) {
+                            for (var ikk = 0; ikk < dataObject.dataProperties.length; ikk++) {
+                                if (dataObject.keyProperties[ij].keyPropertyName.toLowerCase() == dataObject.dataProperties[ikk].propertyName.toLowerCase()) {
+                                    if (keysNode.data.children[k].text.toLowerCase() == dataObject.dataProperties[ikk].columnName.toLowerCase()) {
+                                        keysNode.data.children[k].text = dataObject.keyProperties[ij].keyPropertyName;
+                                        keysNode.data.children[k].property.propertyName = dataObject.keyProperties[ij].keyPropertyName;
+                                        keysNode.data.children[k].property.isHidden = dataObject.keyProperties[ij].isHidden;
+                                        ij++;
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        if (ij < dataObject.keyProperties.length) {
+                            for (var ijj = 0; ijj < propertiesNode.data.children.length; ijj++) {
+                                var nodeText = dataObject.keyProperties[ij].keyPropertyName;
+                                if (propertiesNode.data.children[ijj].text.toLowerCase() == nodeText.toLowerCase()) {
+                                    var properties = propertiesNode.data.children[ijj].property;
+                                    properties.propertyName = nodeText;
+
+                                    newKeyNode = {
+                                        text: nodeText,
+                                        type: "keyProperty",
+                                        leaf: true,
+                                        iconCls: 'treeKey',
+                                        hidden: false,
+                                        property: properties,
+                                        properties: properties
+                                    };
+                                    newKeyNode.iconCls = 'treeKey';
+                                    propertiesNode.data.children.splice(ijj, 1);
+                                    ijj--;
+
+                                    if (newKeyNode)
+                                        keysNode.appendChild(newKeyNode);
+
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    var nodeToDelete = [];
+                    if (keysNode.childNodes.length > dataObject.keyProperties.length) {
+                        for (var z = 0; z < keysNode.childNodes.length; z++) {
+                            var availFlag = true;
+                            for (var x = 0; x < dataObject.keyProperties.length; x++) {
+                                if (keysNode.childNodes[z].data.text == dataObject.keyProperties[x].keyPropertyName) {
+                                    availFlag = false;
+                                }
+                            }
+                            if (availFlag)
+                                nodeToDelete.push(keysNode.childNodes[z]);
+                        }
+                        for (var s = 0; s < nodeToDelete.length; s++) {
+                            keysNode.childNodes.splice(s, 1);
+                            s--;
+                            nodeToDelete.length = nodeToDelete.length - 1;
+                        }
+                    }
+
+                    // sync relationships
+                    for (var kj = 0; kj < dataObject.dataRelationships.length; kj++) {
+                        var newNode = {
+                            text: dataObject.dataRelationships[kj].relationshipName,
+                            type: 'relationship',
+                            leaf: true,
+                            iconCls: 'treeRelation',
+                            relatedObjMap: [],
+                            objectName: dataObjectNode.data.text,
+                            relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
+                            relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],
+                            relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,
+                            propertyMap: []
+                        };
+                        var mapArray = new Array();
+                        for (var kjj = 0; kjj < dataObject.dataRelationships[kj].propertyMaps.length; kjj++) {
+                            var mapItem = new Array();
+                            mapItem['dataPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].dataPropertyName;
+                            mapItem['relatedPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].relatedPropertyName;
+                            mapArray.push(mapItem);
+                        }
+                        newNode.iconCls = 'treeRelation';
+                        newNode.propertyMap = mapArray;
+                        relationshipsNode.expanded = true;
+                        relationshipsNode.appendChild(newNode);
+                    }
+                }
+            }
+            ijk++;
+        }
+
+        if (rootNode.childNodes.length == 1 && rootNode.childNodes[0].text == "")
+            rootNode.removeChild(rootNode.childNodes[0], true);
+
+        var btn = me.down('#editdbconnectionbtn');
+        btn.fireEvent('click', btn);
     },
 
     getSelectedNode: function () {
@@ -282,212 +442,6 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                     showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
             }
         });
-    },
-
-    reloadTree: function (rootNode, dbDict) {
-        var me = this;
-        var relationTypeStr = ['OneToOne', 'OneToMany'];
-
-        // sync data object tree with data dictionary
-        for (var i = 0; i < rootNode.childNodes.length; i++) {
-            var dataObjectNode = rootNode.childNodes[i];
-            for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
-                var dataObject = dbDict.dataObjects[ijk];
-
-                if (dataObjectNode.data.text.toUpperCase() != dataObject.tableName.toUpperCase())
-                    continue;
-
-                // sync data object
-                dataObjectNode.raw.property.objectNamespace = dataObject.objectNamespace;
-                dataObjectNode.raw.property.objectName = dataObject.objectName;
-                dataObjectNode.raw.property.keyDelimiter = dataObject.keyDelimeter;
-                dataObjectNode.data.text = dataObject.objectName;
-
-                if (dataObject.objectName.toLowerCase() == dataObjectNode.data.text.toLowerCase()) {
-                    var shownProperty = new Array();
-                    var keysNode = dataObjectNode.childNodes[0]; //dataObjectNode.attributes.children[0];
-                    var propertiesNode = dataObjectNode.childNodes[1]; //dataObjectNode.attributes.children[1];
-                    var relationshipsNode = dataObjectNode.childNodes[2]; //dataObjectNode.attributes.children[2];
-                    utilsObj.availableDataProperties = propertiesNode.data.children;
-                    var selectedItems = [];
-                    var availableItems = [];
-                    var myFlag;
-
-                    // sync data properties
-                    for (var j = 0; j < propertiesNode.data.children.length; j++) {
-                        myFlag = true;
-                        for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {
-                            if (propertiesNode.data.children[j].text.toLowerCase() == dataObject.dataProperties[jj].columnName.toLowerCase()) {
-
-                                /*if (!me.shown(shownProperty, propertiesNode.data.children[j].text.toLowerCase())) {
-                                shownProperty.push(propertiesNode.data.children[j].text.toLowerCase());
-                                propertiesNode.data.children[j].hidden = true;
-                                }*/
-//                                propertiesNode.childNodes[j].data.text = dataObject.dataProperties[jj].propertyName;
-//                                propertiesNode.childNodes[j].data.property.propertyName = dataObject.dataProperties[jj].propertyName;
-//                                propertiesNode.childNodes[j].data.property.isHidden = dataObject.dataProperties[jj].isHidden;
-                                
-                                propertiesNode.data.children[j].text = dataObject.dataProperties[jj].propertyName;
-                                propertiesNode.data.children[j].property.propertyName = dataObject.dataProperties[jj].propertyName;
-                                propertiesNode.data.children[j].property.isHidden = dataObject.dataProperties[jj].isHidden;
-                                selectedItems.push(propertiesNode.data.children[j]);
-                                myFlag = false;
-                            }
-                        }
-                        if (myFlag) {
-                            availableItems.push(propertiesNode.data.children[j]);
-                            //propertiesNode.data.children.splice(j, 1);
-                            //propertiesNode.removeChild(propertiesNode.data.children[j], false);
-                        }
-                    }
-                    //propertiesNode.removeAll();
-                    /*for(p = 0;p<dataObject.keyProperties.length;p++){
-                    for(q = 0;q<selectedItems.length;q++){
-                    if(dataObject.keyProperties[p].keyPropertyName == selectedItems[q].text)
-                    selectedItems.splice(selectedItems[q],1);
-                    break;
-                    }
-                    }*/
-                    for (m = 0; m < availableItems.length; m++) {
-                        for (n = 0; n < propertiesNode.childNodes.length; n++) {
-                            if (propertiesNode.childNodes[n].data.text == availableItems[m].text)
-                                propertiesNode.removeChild(propertiesNode.childNodes[n]);
-                        }
-                    }
-                    for (jj = 0; jj < dataObject.keyProperties.length; jj++) {
-                        for (kk = 0; kk < propertiesNode.childNodes.length; kk++) {
-                            if (propertiesNode.childNodes[kk].data.text == dataObject.keyProperties[jj].keyPropertyName)
-                                propertiesNode.removeChild(propertiesNode.childNodes[kk]);
-                        }
-                    }
-
-                    // sync key properties
-                    for (var ij = 0; ij < dataObject.keyProperties.length; ij++) {
-                        for (var k = 0; k < keysNode.data.children.length; k++) {
-                            for (var ikk = 0; ikk < dataObject.dataProperties.length; ikk++) {
-                                if (dataObject.keyProperties[ij].keyPropertyName.toLowerCase() == dataObject.dataProperties[ikk].propertyName.toLowerCase()) {
-                                    if (keysNode.data.children[k].text.toLowerCase() == dataObject.dataProperties[ikk].columnName.toLowerCase()) {
-                                        keysNode.data.children[k].text = dataObject.keyProperties[ij].keyPropertyName;
-                                        //keysNode.data.children[k].property.propertyName = dataObject.keyProperties[ij].keyPropertyName;
-                                        keysNode.data.children[k].property.propertyName = dataObject.keyProperties[ij].keyPropertyName;
-                                        keysNode.data.children[k].property.isHidden = dataObject.keyProperties[ij].isHidden;
-                                        ij++;
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
-                        }
-                        if (ij < dataObject.keyProperties.length) {
-                            for (var ijj = 0; ijj < propertiesNode.data.children.length; ijj++) {
-                                var nodeText = dataObject.keyProperties[ij].keyPropertyName;
-                                if (propertiesNode.data.children[ijj].text.toLowerCase() == nodeText.toLowerCase()) {
-                                    var properties = propertiesNode.data.children[ijj].property;
-                                    properties.propertyName = nodeText;
-                                    //properties.keyType = 'assigned';
-                                    //properties.nullable = false;
-
-                                    /*newKeyNode = new Ext.tree.TreeNode({
-                                    text: nodeText,
-                                    type: "keyProperty",
-                                    leaf: true,
-                                    iconCls: 'treeKey',
-                                    hidden: false,
-                                    properties: properties
-                                    });*/
-                                    newKeyNode = {
-                                        text: nodeText,
-                                        type: "keyProperty",
-                                        leaf: true,
-                                        iconCls: 'treeKey',
-                                        hidden: false,
-                                        property: properties,
-                                        properties: properties
-                                    };
-                                    newKeyNode.iconCls = 'treeKey';
-                                    propertiesNode.data.children.splice(ijj, 1);
-                                    ijj--;
-
-                                    if (newKeyNode)
-                                        keysNode.appendChild(newKeyNode);
-                                    //keysNode.data.children.push(newKeyNode);
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    var nodeToDelete = [];
-                    if (keysNode.childNodes.length > dataObject.keyProperties.length) {
-                        for (var z = 0; z < keysNode.childNodes.length; z++) {
-                            var availFlag = true;
-                            for (var x = 0; x < dataObject.keyProperties.length; x++) {
-                                if (keysNode.childNodes[z].data.text == dataObject.keyProperties[x].keyPropertyName) {
-                                    availFlag = false;
-                                }
-                            }
-                            if (availFlag)
-                                nodeToDelete.push(keysNode.childNodes[z]);
-                            //keysNode.childNodes.splice(z, 1);
-                        }
-                        for (var s = 0; s < nodeToDelete.length; s++) {
-                            keysNode.childNodes.splice(s, 1);
-                            s--;
-                            nodeToDelete.length = nodeToDelete.length - 1;
-                        }
-                    }
-
-                    // sync relationships
-                    for (var kj = 0; kj < dataObject.dataRelationships.length; kj++) {
-                        /*var newNode = new Ext.tree.TreeNode({
-                        text: dataObject.dataRelationships[kj].relationshipName,
-                        type: 'relationship',
-                        leaf: true,
-                        iconCls: 'treeRelation',
-                        relatedObjMap: [],
-                        objectName: dataObjectNode.text,
-                        relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
-                        relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],
-                        relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,
-                        propertyMap: []
-                        });
-                        */
-                        var newNode = {
-                            text: dataObject.dataRelationships[kj].relationshipName,
-                            type: 'relationship',
-                            leaf: true,
-                            iconCls: 'treeRelation',
-                            relatedObjMap: [],
-                            objectName: dataObjectNode.data.text,
-                            relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
-                            relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],
-                            relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,
-                            propertyMap: []
-                        };
-                        var mapArray = new Array();
-                        for (var kjj = 0; kjj < dataObject.dataRelationships[kj].propertyMaps.length; kjj++) {
-                            var mapItem = new Array();
-                            mapItem['dataPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].dataPropertyName;
-                            mapItem['relatedPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].relatedPropertyName;
-                            mapArray.push(mapItem);
-                        }
-                        newNode.iconCls = 'treeRelation';
-                        //newNode.attributes.propertyMap = mapArray;
-                        newNode.propertyMap = mapArray;
-                        relationshipsNode.expanded = true;
-                        //relationshipsNode.children.push(newNode);
-                        relationshipsNode.appendChild(newNode);
-                        //relationshipsNode.data.children.push(newNode);
-
-                    }
-                }
-            }
-            ijk++;
-        }
-
-        if (rootNode.childNodes.length == 1)
-            if (rootNode.childNodes[0].text == "")
-                rootNode.removeChild(rootNode.childNodes[0], true);
     },
 
     setTableNames: function (dbDict) {

@@ -483,14 +483,11 @@ Ext.define('AM.controller.Directory', {
 
     switch(datalayer) {
       case 'NHibernateLibrary':
-      me.application.fireEvent('confignhibernate', me);
-      break;
-//      case 'SpreadsheetLibrary':
-//      me.application.fireEvent('configspreadsheet', me);
-//      break;
+        me.application.fireEvent('confignhibernate', me);
+        break;
       default:
-      showDialog(300, 300, 'Warning', 'Datalayer ' + datalayer + ' is not configurable...', Ext.msg.OK, null);
-      break;
+        showDialog(300, 300, 'Warning', 'Datalayer ' + datalayer + ' is not configurable...', Ext.msg.OK, null);
+        break;
     }
   },
 
