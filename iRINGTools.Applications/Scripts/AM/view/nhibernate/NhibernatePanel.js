@@ -21,8 +21,8 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
     'AM.view.nhibernate.NhibernateTree'
   ],
 
-  dirNode: '',
-  treeNode: '',
+  dirNode: null,
+  
   border: false,
   layout: {
     type: 'border'
@@ -32,27 +32,27 @@ Ext.define('AM.view.nhibernate.NhibernatePanel', {
   initComponent: function() {
     var me = this;
 
-    Ext.applyIf(me, {
-      items: [
-        {
-          xtype: 'nhibernatetree',
-          minWidth: 260,
-          width: 300,
-          floatable: false,
-          region: 'west',
-          split: true
-        },
-        {
-          xtype: 'container',
-          floatable: false,
-          region: 'center',
-          itemId: 'nhibernateContent',
-          autoScroll: true,
-          layout: {
+    var nhTree = Ext.create('AM.view.nhibernate.NhibernateTree', {
+        dirNode: me.dirNode,
+        minWidth: 260,
+        width: 300,
+        floatable: false,
+        region: 'west',
+        split: true
+    });
+
+    var nhContent = Ext.create('Ext.container.Container', {
+        floatable: false,
+        region: 'center',
+        itemId: 'nhibernateContent',
+        autoScroll: true,
+        layout: {
             type: 'fit'
-          }
         }
-      ]
+    });
+
+    Ext.applyIf(me, {
+      items: [ nhTree, nhContent ]
     });
 
     me.callParent(arguments);

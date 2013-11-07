@@ -17,9 +17,8 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
     extend: 'Ext.tree.Panel',
     alias: 'widget.nhibernatetree',
 
-    dirNode: '',
+    dirNode: null,
     selectedTables: '',
-    bodyStyle: 'padding:0.5px 0px 1px 1px',
     store: 'NHibernateTreeStore',
 
     initComponent: function () {
@@ -89,9 +88,7 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
 
     onReload: function () {
         var me = this;
-        var dirTree = Ext.getCmp('directoryTreeID').items.items[0];
-        var treeStore = dirTree.getStore();
-        var dirNode = treeStore.getNodeById(me.dirNode);
+        var dirNode = me.dirNode;
         var context = dirNode.parentNode.data.text;
         var endpoint = dirNode.data.record.Name;
         var baseUrl = dirNode.data.record.BaseUrl;
