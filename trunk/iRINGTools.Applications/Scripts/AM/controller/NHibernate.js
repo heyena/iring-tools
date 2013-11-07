@@ -458,10 +458,10 @@ Ext.define('AM.controller.NHibernate', {
         var propertyName = propertyNameField.getValue();
         var isHidden = form.getForm().findField('isHidden').getValue();
         if (propertyNameField.validate()) {
-//            node.data.propert.propertyName = propertyName;
-//            node.data.property.isHidden = isHidden;
-//            node.data.property.nullable = form.getForm().findField('isNullable').getValue();
-//            node.data.property.showOnIndex = form.getForm().findField('showOnIndex').getValue();
+            //            node.data.propert.propertyName = propertyName;
+            //            node.data.property.isHidden = isHidden;
+            //            node.data.property.nullable = form.getForm().findField('isNullable').getValue();
+            //            node.data.property.showOnIndex = form.getForm().findField('showOnIndex').getValue();
             node.raw.property.propertyName = propertyName;
             node.raw.property.isHidden = isHidden;
             node.raw.property.nullable = form.getForm().findField('isNullable').getValue();
@@ -506,10 +506,10 @@ Ext.define('AM.controller.NHibernate', {
         var propertyName = propertyNameField.getValue();
 
         if (propertyNameField.validate()) {
-//            node.data.property.propertyName = propertyName;
-//            node.data.property.isHidden = isHidden;
-//            node.data.property.nullable = form.getForm().findField('isNullable').getValue();
-//            node.data.property.showOnIndex = form.getForm().findField('showOnIndex').getValue();
+            //            node.data.property.propertyName = propertyName;
+            //            node.data.property.isHidden = isHidden;
+            //            node.data.property.nullable = form.getForm().findField('isNullable').getValue();
+            //            node.data.property.showOnIndex = form.getForm().findField('showOnIndex').getValue();
             node.raw.property.propertyName = propertyName;
             node.raw.property.isHidden = isHidden;
             node.raw.property.nullable = form.getForm().findField('isNullable').getValue();
@@ -1011,74 +1011,10 @@ Ext.define('AM.controller.NHibernate', {
             });
 
             tree = panel.down('nhibernatetree');
-            tree.dirNode = dirNode.internalId;
-
-            var treeStore = tree.getStore();
-            var treeProxy = treeStore.getProxy();
-
-            content.body.mask('Loading...', 'x-mask-loading');
-            dbDict = me.getDbDictionary(context, endpoint, baseUrl, function (dbDict) {
-                if (dbDict.ConnectionString !== null && dbDict.ConnectionString != undefined) {
-                    var base64 = AM.view.nhibernate.Utility;
-                    dbDict.ConnectionString = base64.decode(dbDict.ConnectionString);
-
-                    if (dbDict) {
-                        var cstr = dbDict.ConnectionString;
-
-                        if (cstr) {
-                            dirNode.data.record.dbDict = dbDict;
-                            dbInfo = me.getConnStringParts(cstr, dirNode);
-                            var selectTableNames = me.setTableNames(dbDict);
-
-                            treeStore.on('beforeload', function (store, action) {
-                                var params = treeProxy.extraParams;
-                                params.dbProvider = dbDict.Provider;
-                                params.dbServer = dbInfo.dbServer;
-                                params.dbInstance = dbInfo.dbInstance;
-                                params.dbName = dbInfo.dbName;
-                                params.dbSchema = dbDict.SchemaName;
-                                params.dbPassword = dbInfo.dbPassword;
-                                params.dbUserName = dbInfo.dbUserName;
-                                params.portNumber = dbInfo.portNumber;
-                                params.tableNames = selectTableNames;
-                                params.serName = dbInfo.serName;
-                                params.scope = context;
-                                params.app = endpoint;
-                                params.baseUrl = baseUrl;
-                            }, me);
-
-                            treeStore.load({
-                                callback: function (records, options, success) {
-                                    var rootNode = treeStore.getRootNode();
-                                    content.body.unmask();
-                                    tree.refreshTree(rootNode, dbDict);
-                                }
-                            });
-
-                            me.getTableNames(context, endpoint, baseUrl, dirNode);
-                        }
-                    }
-                }
-                else {
-                    if (dbInfo !== null && dbInfo !== undefined)
-                        dirNode.data.record.dbInfo = dbInfo;
-
-                    if (dbDict !== null && dbDict !== undefined)
-                        dirNode.data.record.dbDict = dbDict;
-
-                    var rootNode = tree.items.items[0].node;
-
-                    if (rootNode.isExpanded())
-                        rootNode.collapse();
-
-                    tree.disable();
-                }
-
-                me.showConnectionStringForm(panel);
-            });
-
+            tree.dirNode = dirNode.internalId; 
+                       
+            tree.onReload();
             content.add(panel);
-            content.body.unmask();
         }
 
         me.getDataTypes();
@@ -1984,7 +1920,7 @@ Ext.define('AM.controller.NHibernate', {
         folder.dataProperties = [];
         folder.dataRelationships = [];
 
-//        folderNode.eachChild(function (child) {});
+        //        folderNode.eachChild(function (child) {});
 
         for (var j = 0; j < folderNode.childNodes.length; j++) {
             if (folderNode.childNodes[0])
@@ -2136,7 +2072,7 @@ Ext.define('AM.controller.NHibernate', {
                 var propertyNodeProf = propertyNode.data.property; //propertyNode.raw.property;
 
             var props = {};
-            
+
             props.columnName = propertyNodeProf.columnName; //propertyNode.raw.property.columnName;
             props.propertyName = propertyNodeProf.propertyName; //propertyNode.raw.property.propertyName;
 
