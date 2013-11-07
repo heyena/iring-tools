@@ -231,7 +231,6 @@
     <Content Include="Scripts\AM\store\FileDownloadStore.js" />
     <Content Include="Scripts\AM\store\MappingStore.js" />
     <Content Include="Scripts\AM\store\MultiStore.js" />
-    <Content Include="Scripts\AM\store\NHibernateTreeStore.js" />
     <Content Include="Scripts\AM\store\PropertyMap.js" />
     <Content Include="Scripts\AM\store\ProviderStore.js" />
     <Content Include="Scripts\AM\store\RelatedObjectStore.js" />

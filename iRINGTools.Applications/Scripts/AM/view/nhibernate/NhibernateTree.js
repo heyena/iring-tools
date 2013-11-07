@@ -19,20 +19,54 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
 
     dirNode: null,
     selectedTables: '',
-    store: 'NHibernateTreeStore',
 
     initComponent: function () {
         var me = this;
 
+        var store = {
+            xtype: 'Ext.data.TreeStore',
+            model: 'AM.model.NHibernateTreeModel',
+            root: {
+                expanded: true,
+                text: 'Data Objects',
+                iconCls: 'folder',
+                loaded: true
+            },
+            proxy: {
+                type: 'ajax',
+                actionMethods: {
+                    read: 'POST'
+                },
+                extraParams: {
+                    scope: null,
+                    app: null,
+                    dbProvider: null,
+                    dbServer: null,
+                    dbInstance: null,
+                    dbName: null,
+                    dbSchema: null,
+                    dbUserName: null,
+                    dbPassword: null,
+                    portNumber: null,
+                    tableNames: null,
+                    serName: null,
+                    baseUrl: null
+                },
+                timeout: 600000,
+                url: 'AdapterManager/DBObjects',
+                reader: {
+                    type: 'json'
+                }
+            }
+        };
+
         Ext.applyIf(me, {
+            store: store,
             root: {
                 expanded: true,
                 type: 'DATAOBJECTS',
                 text: 'Data Objects',
                 iconCls: 'folder'
-            },
-            viewConfig: {
-
             },
             dockedItems: [{
                 xtype: 'toolbar',
@@ -135,9 +169,8 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
                             }, me);
 
                             treeStore.load({
-                                callback: function (records, options, success) {
-                                    var rootNode = treeStore.getRootNode();
-                                    me.refreshTree(rootNode, dbDict);
+                                callback: function (dbObjects, options, success) {
+                                    me.refreshTree(dbObjects, dbDict);
                                 }
                             });
 
@@ -153,9 +186,10 @@ Ext.define('AM.view.nhibernate.NhibernateTree', {
 
     },
 
-    refreshTree: function (rootNode, dbDict) {
+    refreshTree: function (dbObjects, dbDict) {
         var me = this;
         var relationTypeStr = ['OneToOne', 'OneToMany'];
+        var rootNode = me.getRootNode();
 
         // sync data object tree with data dictionary
         for (var i = 0; i < rootNode.childNodes.length; i++) {

@@ -93,7 +93,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
         me.getEl().mask("Loading", 'x-mask-loading');
 
-        me.store.load({
+        me.store.reload({
             callback: function (records, options, success) {
                 var nodes = state.expandedNodes || [];
 
