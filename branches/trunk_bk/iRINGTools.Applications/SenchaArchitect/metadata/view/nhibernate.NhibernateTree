@@ -1,0 +1,712 @@
+{
+    "type": "Ext.tree.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "dirNode": "",
+        "selectedTables": "",
+        "height": null,
+        "width": null,
+        "designer|userClassName": "nhibernate.NhibernateTree",
+        "designer|userAlias": "nhibernatetree",
+        "bodyStyle": [
+            "padding:0.5px 0px 1px 1px"
+        ],
+        "title": null,
+        "store": "NHibernateTreeStore",
+        "root": [
+            "{\r",
+            "    expanded: true,\r",
+            "    type: 'DATAOBJECTS',\r",
+            "    text: 'Data Objects',\r",
+            "    iconCls: 'folder'\r",
+            "  }"
+        ]
+    },
+    "designerId": "c72f1844-42ae-497d-ac17-9b294bfd2e8c",
+    "customConfigs": [
+        {
+            "group": "(Custom Properties)",
+            "name": "dirNode",
+            "type": "string"
+        },
+        {
+            "group": "(Custom Properties)",
+            "name": "selectedTables",
+            "type": "string"
+        }
+    ],
+    "cn": [
+        {
+            "type": "Ext.tree.View",
+            "reference": {
+                "name": "viewConfig",
+                "type": "object"
+            },
+            "codeClass": null,
+            "designerId": "e2c9d3b4-41b2-49a3-8e67-cc364497b778"
+        },
+        {
+            "type": "Ext.toolbar.Toolbar",
+            "reference": {
+                "name": "dockedItems",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "dock": "top",
+                "container|padding": 4
+            },
+            "designerId": "04368cd6-39b4-4ee0-bd5c-78aca6d98411",
+            "cn": [
+                {
+                    "type": "Ext.toolbar.Spacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "width": 4
+                    },
+                    "designerId": "faae635d-589e-44a9-82cd-445d037d8037"
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "reloaddataobjects",
+                        "layout|flex": null,
+                        "icon": null,
+                        "iconCls": "am-view-refresh",
+                        "text": "Reload",
+                        "tooltip": [
+                            "Reload Data Objects"
+                        ]
+                    },
+                    "designerId": "c7a39f43-bb9d-4eae-9301-7a04509f5502",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ],
+                    "cn": [
+                        {
+                            "type": "fixedfunction",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "handler",
+                                "designer|params": [
+                                    "button",
+                                    "event"
+                                ],
+                                "implHandler": [
+                                    "me.onReload();"
+                                ]
+                            },
+                            "designerId": "f7776a1e-670d-4824-af50-95fa9c2a4a83"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.toolbar.Spacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "width": 2
+                    },
+                    "designerId": "11969168-77af-4831-8f7c-526532c75a67"
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "editdbconnection",
+                        "layout|flex": null,
+                        "icon": null,
+                        "iconCls": "am-document-properties",
+                        "text": "Edit Connection"
+                    },
+                    "designerId": "a1bc84d2-f24d-429a-97f7-581bebceb40e",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.toolbar.Spacer",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": null,
+                        "width": 2
+                    },
+                    "designerId": "88ee6909-7a21-43d9-8b27-ea1e0d88da93"
+                },
+                {
+                    "type": "Ext.button.Button",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "action": "savedbobjectstree",
+                        "layout|flex": null,
+                        "icon": null,
+                        "iconCls": "am-document-save",
+                        "text": "Save",
+                        "tooltip": [
+                            "Save the data objects tree to the back-end server"
+                        ]
+                    },
+                    "designerId": "80c04a5f-b06e-437a-9c83-31c8c1e3d0f3",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "action",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onReload",
+                "implHandler": [
+                    "/*var me = this;\r",
+                    "var selection = me.getSelectionModel();\r",
+                    "var store = me.store;\r",
+                    "var node = selection.getSelection()[0];\r",
+                    "\r",
+                    "if(node){\r",
+                    "store.load(node);\r",
+                    "node.expand();\r",
+                    "}\r",
+                    "*/\r",
+                    "\r",
+                    "\r",
+                    "var me = this;\r",
+                    "var dirTree = Ext.getCmp('directoryTreeID').items.items[0];\r",
+                    "var treeStore = dirTree.getStore();\r",
+                    "var dirNode = treeStore.getNodeById(me.dirNode);\r",
+                    "var context = dirNode.parentNode.data.text;\r",
+                    "var endpoint = dirNode.data.record.Name;\r",
+                    "var baseUrl = dirNode.data.record.BaseUrl;\r",
+                    "var treeStore = me.getStore();\r",
+                    "var treeProxy = treeStore.getProxy();\r",
+                    "var content = me.up().up();//me.getMainContent();\r",
+                    "content.body.mask('Loading...', 'x-mask-loading');\r",
+                    "//var nhPanel = button.up('nhibernatepanel');\r",
+                    "var dbDict, dbInfo;\r",
+                    "Ext.Ajax.request({\r",
+                    "  url: 'AdapterManager/DBDictionary',//'NHibernate/DBDictionary',\r",
+                    "  method: 'POST',\r",
+                    "  timeout: 6000000,\r",
+                    "  params: {\r",
+                    "    scope: context,\r",
+                    "    app: endpoint,\r",
+                    "    baseUrl: baseUrl\r",
+                    "  },\r",
+                    "  success: function (response, request) {\r",
+                    "    dbDict = Ext.JSON.decode(response.responseText);\r",
+                    "    if(dbDict.ConnectionString !== null && dbDict.ConnectionString !=undefined ) {\r",
+                    "      var base64 = AM.view.nhibernate.Utility;\r",
+                    "      dbDict.ConnectionString = base64.decode(dbDict.ConnectionString);\r",
+                    "      if(dbDict) {\r",
+                    "        var cstr = dbDict.ConnectionString;\r",
+                    "        if(cstr) {\r",
+                    "          dirNode.data.record.dbDict = dbDict;\r",
+                    "          dbInfo = me.getConnStrParts(cstr, dirNode);//me.getConnStringParts(cstr, dirNode);\r",
+                    "          var selectTableNames = me.setTableNames(dbDict);\r",
+                    "\r",
+                    "          treeStore.on('beforeload', function (store, action) {\r",
+                    "            var params = treeProxy.extraParams;\r",
+                    "            params.dbProvider = dbDict.Provider;\r",
+                    "            params.dbServer = dbInfo.dbServer;\r",
+                    "            params.dbInstance = dbInfo.dbInstance;\r",
+                    "            params.dbName = dbInfo.dbName;\r",
+                    "            params.dbSchema = dbDict.SchemaName;\r",
+                    "            params.dbPassword = dbInfo.dbPassword;\r",
+                    "            params.dbUserName = dbInfo.dbUserName;\r",
+                    "            params.portNumber = dbInfo.portNumber;\r",
+                    "            params.tableNames = selectTableNames;\r",
+                    "            params.serName = dbInfo.serName;\r",
+                    "            params.scope = context;\r",
+                    "            params.app = endpoint;\r",
+                    "            params.baseUrl = baseUrl;\r",
+                    "          }, me);\r",
+                    "\r",
+                    "\r",
+                    "          treeStore.load({\r",
+                    "            callback: function (records, options, success) {\r",
+                    "              var rootNode = treeStore.getRootNode();\r",
+                    "              me.reloadTree(rootNode, dbDict);\r",
+                    "              me.up().items.items[2].removeAll();    \r",
+                    "              content.body.unmask();\r",
+                    "\r",
+                    "            }\r",
+                    "          });\r",
+                    "\r",
+                    "          me.getTableNames(context, endpoint, baseUrl, dirNode);\r",
+                    "        }\r",
+                    "      }\r",
+                    "    }\r",
+                    "  },\r",
+                    "  failure: function (response, request) {\r",
+                    "    //var dataObjPanel = content.items.map[contextName + '.' + endpoint + '.-nh-config'];;\r",
+                    "  }\r",
+                    "});\r",
+                    ""
+                ]
+            },
+            "designerId": "19483211-1f6c-4fc2-be1e-95e30f6e7430"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "getSelectedNode",
+                "implHandler": [
+                    "var me = this;\r",
+                    "var selection = me.getSelectionModel().getSelection();\r",
+                    "return selection[0];"
+                ]
+            },
+            "designerId": "1e9b78d6-79fa-40c8-8d83-f17ee28c3605"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "getConnStrParts",
+                "designer|params": [
+                    "connString",
+                    "dirNode"
+                ],
+                "implHandler": [
+                    "\r",
+                    "var me = this;\r",
+                    "var dsValue, serName;\r",
+                    "var connStrParts = connString.split(';');\r",
+                    "var dbDict ;\r",
+                    "var provider\r",
+                    "if(dirNode.data.record && dirNode.data.record.dbDict){\r",
+                    "  dbDict = dirNode.data.record.dbDict;\r",
+                    "  provider = dbDict.Provider.toUpperCase();\r",
+                    "}\r",
+                    "\r",
+                    "\r",
+                    "if (dirNode.data.record && dirNode.data.record.dbInfo === undefined) {\r",
+                    "  dirNode.data.record.dbInfo = {};\r",
+                    "}\r",
+                    "\r",
+                    "if (dirNode.data.record && dirNode.data.record.dbInfo && dbDict && !dirNode.data.record.dbInfo.dbUserName)\r",
+                    "dirNode.data.record.dbInfo.dbName = dbDict.SchemaName;\r",
+                    "\r",
+                    "for (var i = 0; i < connStrParts.length; i++) {\r",
+                    "  var pair = connStrParts[i].split('=');\r",
+                    "  switch (pair[0].toUpperCase()) {\r",
+                    "    case 'DATA SOURCE':\r",
+                    "    if (provider.indexOf('MSSQL') > -1) {\r",
+                    "      dsValue = pair[1].split('\\\\');\r",
+                    "      dirNode.data.record.dbInfo.dbServer = (dsValue[0].toLowerCase() == '.' ? 'localhost' : dsValue[0]);\r",
+                    "      dirNode.data.record.dbInfo.dbInstance = dsValue[1];\r",
+                    "      dirNode.data.record.dbInfo.portNumber = 1433;\r",
+                    "      dirNode.data.record.dbInfo.serName = '';\r",
+                    "    }\r",
+                    "    else if (provider.indexOf('MYSQL') > -1) {\r",
+                    "      dirNode.data.record.dbInfo.dbServer = (pair[1].toLowerCase() == '.' ? 'localhost' : pair[1]);\r",
+                    "      dirNode.data.record.dbInfo.portNumber = 3306;\r",
+                    "    }\r",
+                    "    else if (provider.indexOf('ORACLE') > -1) {\r",
+                    "      var dsStr = connStrParts[i].substring(12, connStrParts[i].length);\r",
+                    "      dsValue = dsStr.split('=');\r",
+                    "      for (var j = 0; j < dsValue.length; j++) {\r",
+                    "        dsValue[j] = dsValue[j].substring(dsValue[j].indexOf('(') + 1, dsValue[j].length);\r",
+                    "        switch (dsValue[j].toUpperCase()) {\r",
+                    "          case 'HOST':\r",
+                    "          var server = dsValue[j + 1];\r",
+                    "          var port = dsValue[j + 2];\r",
+                    "          var index = server.indexOf(')');\r",
+                    "          server = server.substring(0, index);\r",
+                    "          dirNode.data.record.dbInfo.portNumber = port.substring(0, 4);\r",
+                    "          dirNode.data.record.dbInfo.dbServer = (server.toLowerCase() == '.' ? 'localhost' : server);\r",
+                    "          break;\r",
+                    "          case 'SERVICE_NAME':\r",
+                    "          serName = dsValue[j + 1];\r",
+                    "          index = sername.indexOf(')');\r",
+                    "          dirNode.data.record.dbInfo.dbInstance = serName.substring(0, index);\r",
+                    "          dirNode.data.record.dbInfo.serName = 'SERVICE_NAME';\r",
+                    "          break;\r",
+                    "          case 'SID':\r",
+                    "          serName = dsValue[j + 1];\r",
+                    "          index = sername.indexOf(')');\r",
+                    "          dirNode.data.record.dbInfo.dbInstance = serName.substring(0, index);\r",
+                    "          dirNode.data.record.dbInfo.serName = 'SID';\r",
+                    "          break;\r",
+                    "        }\r",
+                    "      }\r",
+                    "    }\r",
+                    "    break;\r",
+                    "    case 'INITIAL CATALOG':\r",
+                    "    dirNode.data.record.dbInfo.dbName = pair[1];\r",
+                    "    break;\r",
+                    "    case 'USER ID':\r",
+                    "    dirNode.data.record.dbInfo.dbUserName = pair[1];\r",
+                    "    break;\r",
+                    "    case 'PASSWORD':\r",
+                    "    dirNode.data.record.dbInfo.dbPassword = pair[1];\r",
+                    "    break;\r",
+                    "  }\r",
+                    "}\r",
+                    "if(dirNode.data.record)\r",
+                    "return dirNode.data.record.dbInfo;\r",
+                    "else\r",
+                    "return {};"
+                ]
+            },
+            "designerId": "f73bcc84-b5f8-438c-81cd-09826874acd2"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "getTableNames",
+                "designer|params": [
+                    "context",
+                    "endpoint",
+                    "baseUrl",
+                    "dirNode"
+                ],
+                "implHandler": [
+                    "\r",
+                    "var me = this;\r",
+                    "var dbInfo = dirNode.data.record.dbInfo;\r",
+                    "var dbDict = dirNode.data.record.dbDict;\r",
+                    "\r",
+                    "Ext.Ajax.request({\r",
+                    "  url: 'AdapterManager/TableNames',\r",
+                    "  method: 'POST',\r",
+                    "  timeout: 6000000,\r",
+                    "  params: {\r",
+                    "    scope: context,\r",
+                    "    app: endpoint,\r",
+                    "    dbProvider: dbDict.Provider,\r",
+                    "    dbServer: dbInfo.dbServer,\r",
+                    "    dbInstance: dbInfo.dbInstance,\r",
+                    "    dbName: dbInfo.dbName,\r",
+                    "    dbSchema: dbDict.SchemaName,\r",
+                    "    dbUserName: dbInfo.dbUserName,\r",
+                    "    dbPassword: dbInfo.dbPassword,\r",
+                    "    portNumber: dbInfo.portNumber,\r",
+                    "    serName: dbInfo.serName,\r",
+                    "    baseUrl: baseUrl\r",
+                    "  },\r",
+                    "  success: function (response, request) {\r",
+                    "    dirNode.data.record.dbInfo.dbTableNames = Ext.JSON.decode(response.responseText);\r",
+                    "  },\r",
+                    "  failure: function (f, a) {\r",
+                    "    if (a.response)\r",
+                    "    showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);\r",
+                    "  }\r",
+                    "});"
+                ]
+            },
+            "designerId": "e30c1c58-f7a0-40b0-a7f1-d4308f7448b3"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "reloadTree",
+                "designer|params": [
+                    "rootNode",
+                    "dbDict"
+                ],
+                "implHandler": [
+                    "\r",
+                    "var me = this;\r",
+                    "var relationTypeStr = ['OneToOne', 'OneToMany'];\r",
+                    "\r",
+                    "// sync data object tree with data dictionary\r",
+                    "for (var i = 0; i < rootNode.childNodes.length; i++) {\r",
+                    "  var dataObjectNode = rootNode.childNodes[i];\r",
+                    "  for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {\r",
+                    "    var dataObject = dbDict.dataObjects[ijk];\t\t  \r",
+                    "\r",
+                    "    if (dataObjectNode.data.text.toUpperCase() != dataObject.tableName.toUpperCase())\r",
+                    "    continue;\r",
+                    "\r",
+                    "    // sync data object\r",
+                    "    dataObjectNode.raw.properties.objectNamespace = dataObject.objectNamespace;\r",
+                    "    dataObjectNode.raw.properties.objectName = dataObject.objectName;\r",
+                    "    dataObjectNode.raw.properties.keyDelimiter = dataObject.keyDelimeter;\r",
+                    "    dataObjectNode.data.text = dataObject.objectName;\r",
+                    "\r",
+                    "    if (dataObject.objectName.toLowerCase() == dataObjectNode.data.text.toLowerCase()) {\r",
+                    "      var shownProperty = new Array();\t\r",
+                    "      var keysNode = dataObjectNode.childNodes[0];//dataObjectNode.attributes.children[0];\r",
+                    "      var propertiesNode = dataObjectNode.childNodes[1];//dataObjectNode.attributes.children[1];\r",
+                    "      var relationshipsNode = dataObjectNode.childNodes[2];//dataObjectNode.attributes.children[2];\r",
+                    "      utilsObj.availableDataProperties = propertiesNode.data.children;\r",
+                    "      var selectedItems = [];\r",
+                    "      var availableItems = [];\r",
+                    "      var myFlag;\r",
+                    "      // sync data properties\r",
+                    "      for (var j = 0; j < propertiesNode.data.children.length; j++) {\r",
+                    "        myFlag = true;\r",
+                    "        for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {\r",
+                    "          if (propertiesNode.data.children[j].text.toLowerCase() == dataObject.dataProperties[jj].columnName.toLowerCase()) {\r",
+                    "\r",
+                    "            /*if (!me.shown(shownProperty, propertiesNode.data.children[j].text.toLowerCase())) {\r",
+                    "            shownProperty.push(propertiesNode.data.children[j].text.toLowerCase());\r",
+                    "            propertiesNode.data.children[j].hidden = true;\r",
+                    "            }*/\r",
+                    "            propertiesNode.childNodes[j].data.text = dataObject.dataProperties[jj].propertyName;\r",
+                    "            propertiesNode.childNodes[j].data.property.propertyName = dataObject.dataProperties[jj].propertyName;\r",
+                    "            propertiesNode.childNodes[j].data.property.isHidden = dataObject.dataProperties[jj].isHidden;\r",
+                    "\r",
+                    "\r",
+                    "            propertiesNode.data.children[j].text = dataObject.dataProperties[jj].propertyName;\r",
+                    "            propertiesNode.data.children[j].properties.propertyName = dataObject.dataProperties[jj].propertyName;\r",
+                    "            propertiesNode.data.children[j].properties.isHidden = dataObject.dataProperties[jj].isHidden;\r",
+                    "            selectedItems.push(propertiesNode.data.children[j]);\r",
+                    "            myFlag = false;\r",
+                    "          }\r",
+                    "        }\r",
+                    "        if(myFlag){\r",
+                    "          availableItems.push(propertiesNode.data.children[j]);\r",
+                    "          //propertiesNode.data.children.splice(j, 1);\r",
+                    "          //propertiesNode.removeChild(propertiesNode.data.children[j], false);\r",
+                    "        }\r",
+                    "      }\r",
+                    "      //propertiesNode.removeAll();\r",
+                    "      /*for(p = 0;p<dataObject.keyProperties.length;p++){\r",
+                    "      for(q = 0;q<selectedItems.length;q++){\r",
+                    "      if(dataObject.keyProperties[p].keyPropertyName == selectedItems[q].text)\r",
+                    "      selectedItems.splice(selectedItems[q],1);\r",
+                    "      break;\r",
+                    "      }\r",
+                    "      }*/\r",
+                    "      for(m =0;m<availableItems.length;m++){\r",
+                    "        for(n = 0;n<propertiesNode.childNodes.length;n++){\r",
+                    "          if(propertiesNode.childNodes[n].data.text == availableItems[m].text)\r",
+                    "          propertiesNode.removeChild(propertiesNode.childNodes[n]);\r",
+                    "        }\r",
+                    "      }\r",
+                    "      for(jj =0;jj<dataObject.keyProperties.length;jj++){\r",
+                    "        for(kk = 0;kk<propertiesNode.childNodes.length;kk++){\r",
+                    "          if(propertiesNode.childNodes[kk].data.text == dataObject.keyProperties[jj].keyPropertyName)\r",
+                    "          propertiesNode.removeChild(propertiesNode.childNodes[kk]);\r",
+                    "        }\r",
+                    "      }\r",
+                    "\r",
+                    "      // sync key properties\r",
+                    "      for (var ij = 0; ij < dataObject.keyProperties.length; ij++) {\r",
+                    "        for (var k = 0; k < keysNode.data.children.length; k++) {\r",
+                    "          for (var ikk = 0; ikk < dataObject.dataProperties.length; ikk++) {\r",
+                    "            if (dataObject.keyProperties[ij].keyPropertyName.toLowerCase() == dataObject.dataProperties[ikk].propertyName.toLowerCase()) {\r",
+                    "              if (keysNode.data.children[k].text.toLowerCase() == dataObject.dataProperties[ikk].columnName.toLowerCase()) {\r",
+                    "                keysNode.data.children[k].text = dataObject.keyProperties[ij].keyPropertyName;\r",
+                    "                //keysNode.data.children[k].properties.propertyName = dataObject.keyProperties[ij].keyPropertyName;\r",
+                    "                keysNode.data.children[k].property.propertyName = dataObject.keyProperties[ij].keyPropertyName; \r",
+                    "                keysNode.data.children[k].property.isHidden = dataObject.keyProperties[ij].isHidden;\r",
+                    "                ij++;\r",
+                    "                break;\r",
+                    "              }\r",
+                    "            }\r",
+                    "          }\r",
+                    "          break;\r",
+                    "        }\r",
+                    "        if (ij < dataObject.keyProperties.length) {\r",
+                    "          for (var ijj = 0; ijj < propertiesNode.data.children.length; ijj++) {\r",
+                    "            var nodeText = dataObject.keyProperties[ij].keyPropertyName;\r",
+                    "            if (propertiesNode.data.children[ijj].text.toLowerCase() == nodeText.toLowerCase()) {\r",
+                    "              var properties = propertiesNode.data.children[ijj].properties;\r",
+                    "              properties.propertyName = nodeText;\r",
+                    "              //properties.keyType = 'assigned';\r",
+                    "              //properties.nullable = false;\r",
+                    "\r",
+                    "              /*newKeyNode = new Ext.tree.TreeNode({\r",
+                    "              text: nodeText,\r",
+                    "              type: \"keyProperty\",\r",
+                    "              leaf: true,\r",
+                    "              iconCls: 'treeKey',\r",
+                    "              hidden: false,\r",
+                    "              properties: properties\r",
+                    "              });*/\r",
+                    "              newKeyNode = {\r",
+                    "                text: nodeText,\r",
+                    "                type: \"keyProperty\",\r",
+                    "                leaf: true,\r",
+                    "                iconCls: 'treeKey',\r",
+                    "                hidden: false,\r",
+                    "                property: properties,\r",
+                    "                properties:properties\r",
+                    "              };\r",
+                    "              newKeyNode.iconCls = 'treeKey';\r",
+                    "              propertiesNode.data.children.splice(ijj, 1);\r",
+                    "              ijj--;\r",
+                    "\r",
+                    "              if (newKeyNode)\r",
+                    "              keysNode.appendChild(newKeyNode);\r",
+                    "              //keysNode.data.children.push(newKeyNode);\r",
+                    "\r",
+                    "              break;\r",
+                    "            }\r",
+                    "          }\r",
+                    "        }\r",
+                    "      }\r",
+                    "      var nodeToDelete = [];  \r",
+                    "      if(keysNode.childNodes.length > dataObject.keyProperties.length){\r",
+                    "        for(var z = 0;z<keysNode.childNodes.length;z++){\r",
+                    "          var availFlag = true;\r",
+                    "          for(var x = 0; x< dataObject.keyProperties.length;x++){\r",
+                    "            if(keysNode.childNodes[z].data.text == dataObject.keyProperties[x].keyPropertyName){\r",
+                    "              availFlag = false;\r",
+                    "            }\r",
+                    "          }\r",
+                    "          if(availFlag)\r",
+                    "          nodeToDelete.push(keysNode.childNodes[z]);\r",
+                    "          //keysNode.childNodes.splice(z, 1);\r",
+                    "        }\r",
+                    "        for(var s = 0;s<nodeToDelete.length;s++){\r",
+                    "          keysNode.childNodes.splice(s, 1);\r",
+                    "          s--;\r",
+                    "          nodeToDelete.length = nodeToDelete.length-1;\r",
+                    "        }\r",
+                    "      }\r",
+                    "\r",
+                    "      // sync relationships\r",
+                    "      for (var kj = 0; kj < dataObject.dataRelationships.length; kj++) {\r",
+                    "        /*var newNode = new Ext.tree.TreeNode({\r",
+                    "        text: dataObject.dataRelationships[kj].relationshipName,\r",
+                    "        type: 'relationship',\r",
+                    "        leaf: true,\r",
+                    "        iconCls: 'treeRelation',\r",
+                    "        relatedObjMap: [],\r",
+                    "        objectName: dataObjectNode.text,\r",
+                    "        relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,\r",
+                    "        relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],\r",
+                    "        relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,\r",
+                    "        propertyMap: []\r",
+                    "        });\r",
+                    "        */\r",
+                    "        var newNode = {\r",
+                    "          text: dataObject.dataRelationships[kj].relationshipName,\r",
+                    "          type: 'relationship',\r",
+                    "          leaf: true,\r",
+                    "          iconCls: 'treeRelation',\r",
+                    "          relatedObjMap: [],\r",
+                    "          objectName: dataObjectNode.data.text,\r",
+                    "          relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,\r",
+                    "          relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],\r",
+                    "          relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,\r",
+                    "          propertyMap: []\r",
+                    "        };\r",
+                    "        var mapArray = new Array();\r",
+                    "        for (var kjj = 0; kjj < dataObject.dataRelationships[kj].propertyMaps.length; kjj++) {\r",
+                    "          var mapItem = new Array();\r",
+                    "          mapItem['dataPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].dataPropertyName;\r",
+                    "          mapItem['relatedPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].relatedPropertyName;\r",
+                    "          mapArray.push(mapItem);\r",
+                    "        }\r",
+                    "        newNode.iconCls = 'treeRelation';\r",
+                    "        //newNode.attributes.propertyMap = mapArray;\r",
+                    "        newNode.propertyMap = mapArray;  \r",
+                    "        relationshipsNode.expanded = true;\r",
+                    "        //relationshipsNode.children.push(newNode);\r",
+                    "        relationshipsNode.appendChild(newNode);\r",
+                    "        //relationshipsNode.data.children.push(newNode);\r",
+                    "\r",
+                    "      }\r",
+                    "    }\r",
+                    "  }\r",
+                    "  ijk++;\r",
+                    "}\r",
+                    "\r",
+                    "if (rootNode.childNodes.length == 1)\r",
+                    "if (rootNode.childNodes[0].text == \"\")\r",
+                    "rootNode.removeChild(rootNode.childNodes[0], true);"
+                ]
+            },
+            "designerId": "f198ea09-4650-4e96-bcc5-d51ba76f8bfc"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "setTableNames",
+                "designer|params": [
+                    "dbDict"
+                ],
+                "implHandler": [
+                    "var selectTableNames = [];\r",
+                    "\r",
+                    "for (var i = 0; i < dbDict.dataObjects.length; i++) {\r",
+                    "  var tableName = (dbDict.dataObjects[i].tableName ? dbDict.dataObjects[i].tableName : dbDict.dataObjects[i]);\r",
+                    "  selectTableNames.push(tableName);\r",
+                    "}\r",
+                    "return selectTableNames;"
+                ]
+            },
+            "designerId": "105552ec-bbfd-4bd4-8bbd-db42a0ff34d9"
+        }
+    ]
+}

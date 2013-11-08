@@ -1,0 +1,90 @@
+{
+    "type": "Ext.menu.Menu",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "height": 98,
+        "width": 139,
+        "designer|userClassName": "menus.ValueListMenu",
+        "designer|userAlias": "valuelistmenu"
+    },
+    "designerId": "4d5a5695-f281-47a6-8f8b-63eeccfa1450",
+    "cn": [
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "editnewvaluelist",
+                "itemId": "editvaluelist",
+                "icon": "Content/img/16x16/edit.png",
+                "text": "Edit Value List Name"
+            },
+            "designerId": "a2ed2783-91bb-41d5-9b0b-b34c9d3f212f",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "deletevaluelist",
+                "icon": "Content/img/16x16/delete.png",
+                "text": "Delete Value List"
+            },
+            "designerId": "56c3edfd-9dc4-4b55-a99b-e079e0b796ad",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Separator",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "designerId": "a7a65672-c3a9-4b06-9ca5-9d51419ad526"
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "editnewvaluemap",
+                "icon": "Content/img/16x16/document-new.png",
+                "text": "New Value Map"
+            },
+            "designerId": "f7095e6e-f384-42f5-85d2-aca2c0208a18",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,164 @@
+{
+    "type": "Ext.menu.Menu",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "width": 130,
+        "designer|userClassName": "menus.RolemapMenu",
+        "designer|userAlias": "rolemapmenu"
+    },
+    "designerId": "da94e311-ccae-4d19-a64e-3fb703924c97",
+    "cn": [
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "addclassmap",
+                "icon": "Content/img/class-map.png",
+                "text": "Add/Edit ClassMap"
+            },
+            "designerId": "f104c717-7bc6-46a1-a57a-9ee6a833ddbd",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "makepossessor",
+                "icon": "Content/img/relation.png",
+                "text": "Make Possessor"
+            },
+            "designerId": "42d21458-aaed-42d3-9409-a28bcfb0dd66",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "makereference",
+                "hidden": true,
+                "icon": "Content/img/16x16/map.png",
+                "text": "Make Reference"
+            },
+            "designerId": "928f718c-d20a-4160-b03c-dbfa2703e41f",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "mapproperty",
+                "icon": "Content/img/property.png",
+                "text": "Map Property"
+            },
+            "designerId": "8f914b5c-0a7a-4d35-9e5e-4934a0a8c458",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "mapvaluelist",
+                "icon": "Content/img/value.png",
+                "text": "Map ValueList"
+            },
+            "designerId": "f6e9be1d-fe43-439a-8269-8c972c524bf4",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "mapliteral",
+                "icon": "Content/img/valuelist.png",
+                "text": "Map Literal"
+            },
+            "designerId": "4fc1d4e0-5840-467d-8861-1d31cb6622a4",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "type": "Ext.menu.Item",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "action": "resetmapping",
+                "icon": "Content/img/16x16/reset.png",
+                "text": "Reset Mapping"
+            },
+            "designerId": "6b9ab722-1f82-4200-94c7-c787299aca98",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "action",
+                    "type": "string"
+                }
+            ]
+        }
+    ]
+}
