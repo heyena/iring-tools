@@ -239,11 +239,15 @@ a:active {color: black}
     margin: 0;
 }
 
+.am-reset
+{
+  background-image: url("../img/16x16/reset.png") !important;
+}
+
 .am-edit-clear
 {
   background-image: url("../img/16x16/edit-clear.png") !important;
 }
-
 .am-apply
 {
   background-image: url("../img/16x16/apply.png") !important;
@@ -261,7 +265,7 @@ a:active {color: black}
 
 .am-view-refresh
 {
-  background-image: url("../img/16x16/view-refresh.png") !important;
+  background-image: url("../img/16x16/refresh.png") !important;
 }
 
 .am-document-properties
