@@ -535,40 +535,6 @@ namespace org.iringtools.adapter
             return response;
         }
 
-        //private static bool IsApplicationDataChanged(ScopeApplication updatedApp, ScopeApplication oldApp)
-        //{
-        //  bool Ischanged = false;
-        //  try
-        //  {
-        //    if (oldApp.Name != updatedApp.Name || oldApp.Description != updatedApp.Description || oldApp.Assembly != updatedApp.Assembly)
-        //    {
-        //      Ischanged = true;
-        //    }
-        //    else if (oldApp.Configuration.AppSettings.Settings.Count != updatedApp.Configuration.AppSettings.Settings.Count)
-        //    {
-        //      Ischanged = true;
-        //    }
-        //    else
-        //    {
-        //      for (int i = 0; i < updatedApp.Configuration.AppSettings.Settings.Count; i++)
-        //      {
-        //        if (updatedApp.Configuration.AppSettings.Settings[i].Value != oldApp.Configuration.AppSettings.Settings[i].Value)
-        //        {
-        //          Ischanged = true;
-        //          break;
-        //        }
-        //      }
-        //    }
-        //  }
-        //  catch
-        //  {
-        //    Ischanged = true;
-        //  }
-        //  return Ischanged;
-        //}
-
-        // delete all application artifacts except for its mapping
-
         private void DeleteApplicationArtifacts(string scopeName, string appName)
         {
             string path = _settings["AppDataPath"];
@@ -2390,20 +2356,23 @@ namespace org.iringtools.adapter
             {
 
                 base.format = format;
-                DataDictionary dictionary = GetDictionary(project, application);
-                _dataObjDef = dictionary.GetDataObject(resource);
-
-                AddURIsInSettingCollection(project, application, resource);
-
-                if (_dataObjDef != null)
-                    filter.AppendFilter(_dataObjDef.dataFilter);
 
                 _logger.DebugFormat("Initializing Scope: {0}.{1}", project, application);
                 InitializeScope(project, application);
                 _logger.Debug("Initializing DataLayer.");
                 InitializeDataLayer();
                 _logger.DebugFormat("Initializing Projection: {0} as {1}", resource, format);
-                InitializeProjection(GetTipFromResouce(resource), ref format, false);
+                InitializeProjection(resource, ref format, false);
+
+                DataDictionary dictionary = GetDictionary(project, application);
+                _dataObjDef = dictionary.GetDataObject(_tipMap.dataObjectName);
+
+                AddURIsInSettingCollection(project, application, resource);
+
+                if (_dataObjDef != null)
+                    filter.AppendFilter(_dataObjDef.dataFilter);
+
+                
 
                 _projectionEngine.Start = start;
                 _projectionEngine.Limit = limit;
@@ -3005,7 +2974,7 @@ namespace org.iringtools.adapter
                 base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
-                InitializeProjection(GetTipFromResouce(resource), ref format, false);
+                InitializeProjection(resource, ref format, false);
 
                 AddURIsInSettingCollection(project, application, resource, id, relatedResource);
 
@@ -3013,7 +2982,7 @@ namespace org.iringtools.adapter
                 IDataObject parentDataObject = _dataLayerGateway.Get(_dataObjDef, new List<string> { id }).FirstOrDefault<IDataObject>();
                 if (parentDataObject == null) return new XDocument();
 
-                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
+                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == _tipMap.dataObjectName.ToLower());
 
                 if (objectType == null)
                 {
@@ -3084,7 +3053,7 @@ namespace org.iringtools.adapter
                 }
 
                 //XDocument xdoc = _projectionEngine.ToXml(relatedType.objectName, ref _dataObjects);
-                XDocument xdoc = _projectionEngine.ToXml(_tipMap.graphName, ref _dataObjects, resource, relatedType.objectName);
+                XDocument xdoc = _projectionEngine.ToXml(_tipMap.graphName, ref _dataObjects, relatedResource, relatedType.objectName);
 
                 return xdoc;
             }
@@ -3103,7 +3072,7 @@ namespace org.iringtools.adapter
                 base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
-                InitializeProjection(GetTipFromResouce(resource), ref format, false);
+                InitializeProjection(resource, ref format, false);
 
                 AddURIsInSettingCollection(project, application, resource, id, relatedResource, relatedId);
 
@@ -3115,7 +3084,7 @@ namespace org.iringtools.adapter
                     ? String.Format("/{0}/{1}/{2}/{3}", application, resource, id, relatedResource)
                     : String.Format("/{0}/{1}/{2}/{3}/{4}", application, project, resource, id, relatedResource);
 
-                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
+                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == _tipMap.dataObjectName.ToLower());
 
                 if (objectType == null)
                 {
@@ -3145,7 +3114,7 @@ namespace org.iringtools.adapter
                     _projectionEngine.Count = _dataObjects.Count;
                 }
 
-                XDocument xdoc = _projectionEngine.ToXml(_tipMap.graphName, ref _dataObjects, resource, relatedType.objectName);
+                XDocument xdoc = _projectionEngine.ToXml(_tipMap.graphName, ref _dataObjects, relatedResource, relatedType.objectName);
                 return xdoc;
             }
             catch (Exception ex)
@@ -3429,7 +3398,7 @@ namespace org.iringtools.adapter
                 base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
-                InitializeProjection(GetTipFromResouce(resource), ref format, false);
+                InitializeProjection(resource, ref format, false);
 
                 if (_projectionEngine == null)
                 {
@@ -3449,7 +3418,7 @@ namespace org.iringtools.adapter
                 }
 
 
-                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
+                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == _tipMap.dataObjectName.ToLower());
 
                 if (objectType == null)
                 {
@@ -3501,7 +3470,9 @@ namespace org.iringtools.adapter
                 string baseUri = _settings["GraphBaseUri"] +
                                  _settings["applicationName"] + "/" +
                                  _settings["projectName"] + "/" +
-                                 resource + "/";
+                                 resource + "/" +
+                                 id + "/" +
+                                 relatedResource + "/";
 
                 response.PrepareResponse(baseUri);
             }
@@ -3756,7 +3727,7 @@ namespace org.iringtools.adapter
                 base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
-                InitializeProjection(GetTipFromResouce(resource), ref format, false);
+                InitializeProjection(resource, ref format, false);
 
                 if (_dataObjDef.isReadOnly || _settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
                 {
@@ -3772,7 +3743,7 @@ namespace org.iringtools.adapter
 
                 id = Utility.ConvertSpecialCharOutbound(id, arrSpecialcharlist, arrSpecialcharValue);
 
-                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == resource.ToLower());
+                DataObject objectType = _dictionary.dataObjects.Find(c => c.objectName.ToLower() == _tipMap.dataObjectName.ToLower());
 
                 if (objectType == null)
                 {

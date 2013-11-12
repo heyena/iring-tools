@@ -19,7 +19,7 @@ using org.iringtools.library.tip;
 
 namespace org.iringtools.adapter
 {
-    public class JsonLDProjectionEngine : BasePart7ProjectionEngine// BaseDataProjectionEngine
+    public class JsonLDProjectionEngine : BasePart7ProjectionEngine
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(JsonProjectionEngine));
         private string[] arrSpecialcharlist;
@@ -31,22 +31,6 @@ namespace org.iringtools.adapter
         private string _graphBaseUri;
         private XElement _rdfXml;
         private NameValueCollection tableMapping;
-
-        //[Inject]
-        //public JsonLDProjectionEngine(AdapterSettings settings, DataDictionary dictionary, Mapping mapping)
-        //    : base(settings, dictionary, mapping)
-        //{
-        //    _dictionary = dictionary;
-        //    _individualsCache = new Dictionary<string, List<string>>();
-        //    tableMapping = new NameValueCollection();
-        //    JD = new JsonLDBase();
-
-        //    if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
-        //    {
-        //        arrSpecialcharlist = _settings["SpCharList"].ToString().Split(',');
-        //        arrSpecialcharValue = _settings["SpCharValue"].ToString().Split(',');
-        //    }
-        //}
 
         [Inject]
         public JsonLDProjectionEngine(AdapterSettings settings, DataDictionary dictionary, TipMapping tipMapping)
@@ -63,64 +47,6 @@ namespace org.iringtools.adapter
             }
         }
 
-        //public XDocument ToXml(string graphName, ref List<IDataObject> dataObjects, GraphMap gp)
-        //{
-        //    return ToXml(graphName, ref dataObjects);
-        //}
-
-
-        //public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects)
-        //{
-        //    XDocument rdfDoc = null;
-
-
-        //    _rdfXml = new XElement(RDF_NS + "JSON-LD",
-        //      new XAttribute(XNamespace.Xmlns + "json-ld", RDF_NS),
-        //      new XAttribute(XNamespace.Xmlns + "owl", OWL_NS),
-        //      new XAttribute(XNamespace.Xmlns + "xsd", XSD_NS),
-        //      new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
-
-
-        //    //JD.Serialize();
-
-        //    //_rdfXml = JsonConvert.SerializeObject(JD).ToXElement();
-
-        //    //rdfDoc = new XDocument(_rdfXml);
-
-        //    //return rdfDoc;
-
-        //    try
-        //    {
-        //        _graphMap = _mapping.FindGraphMap(graphName);
-
-        //        if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 &&
-        //          dataObjects != null && dataObjects.Count > 0)
-        //        {
-        //            string baseUri = _settings["GraphBaseUri"];
-        //            string project = _settings["ProjectName"];
-        //            string app = _settings["ApplicationName"];
-        //            string appBaseUri = Utility.FormEndpointBaseURI(_uriMaps, baseUri, project, app);
-
-        //            _graphBaseUri = appBaseUri + _graphMap.name + "/";
-        //            _dataObjects = dataObjects;
-        //            rdfDoc = new XDocument(BuildRdfXml());
-        //        }
-        //        else
-        //        {
-        //            rdfDoc = new XDocument(_rdfXml);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.Error("Error in ToXml: " + ex);
-        //        throw ex;
-        //    }
-
-        //    return rdfDoc;
-        //}
-
-
-
 
         public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects)
         {
@@ -134,18 +60,13 @@ namespace org.iringtools.adapter
 
                 string appBaseUri = Utility.FormEndpointBaseURI(_uriMaps, baseUri, proj, app);
 
-                // GraphMap graphMap = _mapping.FindGraphMap(graphName);
 
                 TipMap tipMap = _tipMapping.FindTipMap(graphName);
 
 
-                //_graphBaseUri = appBaseUri + graphMap.name + "/";
                 _graphBaseUri = appBaseUri + tipMap.name + "/";
                 _dataObjects = dataObjects;
-                //rdfDoc = new XDocument(BuildRdfXml());
 
-
-                //createFields(tipMap);
                 createFields(false);
 
 
@@ -179,7 +100,7 @@ namespace org.iringtools.adapter
                         {
                             if (i == 0)
                             {
-                                dataItems.type = tipMap.dataObjectName;
+                                dataItems.type = tipMap.graphName;
                             }
 
                             DataItem dataItem = new DataItem()
@@ -348,10 +269,10 @@ namespace org.iringtools.adapter
             }
         }
 
-        public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects, string parnt, string child)
+        public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects, string related, string child)
         {
 
-            if(parnt.Equals(""))
+            if (related.Equals(""))
             {
                 return ToXml(graphName, ref dataObjects);
             }
@@ -365,18 +286,13 @@ namespace org.iringtools.adapter
 
                 string appBaseUri = Utility.FormEndpointBaseURI(_uriMaps, baseUri, proj, app);
 
-                // GraphMap graphMap = _mapping.FindGraphMap(graphName);
 
                 TipMap tipMap = _tipMapping.FindTipMap(graphName);
 
 
-                //_graphBaseUri = appBaseUri + graphMap.name + "/";
                 _graphBaseUri = appBaseUri + graphName + "/";
                 _dataObjects = dataObjects;
-                //rdfDoc = new XDocument(BuildRdfXml());
 
-
-                //createFields(tipMap);
                 createFields(true);
 
 
@@ -410,7 +326,7 @@ namespace org.iringtools.adapter
                         {
                             if (i == 0)
                             {
-                                dataItems.type = child.ToUpper();
+                                dataItems.type = related.ToUpper();
                             }
 
                             DataItem dataItem = new DataItem()
@@ -585,7 +501,6 @@ namespace org.iringtools.adapter
             try
             {
                 
-                //TipMap tipMap = _tipMapping.FindTipMap(graphName);
                 String sGraphName = graphName;
                 string[] sGraphParts = sGraphName.Split('.');
                 List<IDataObject> dataObjects = new List<IDataObject>();
@@ -595,14 +510,13 @@ namespace org.iringtools.adapter
                 if (sGraphParts.Count() > 1)
                 {
                     objectType = FindGraphDataObject(sGraphParts[1]);
-                    createFieldsReverse(true);
                 }
                 else
                 {
                     objectType = FindGraphDataObject(graphName);
-                    createFieldsReverse(true);
                 }
 
+                createFieldsReverse(true);
                 
 
                 if (objectType != null)
@@ -620,14 +534,7 @@ namespace org.iringtools.adapter
                             if (objectType.keyProperties.Count == 1)
                             {
                                 string keyProp = objectType.keyProperties[0].keyPropertyName;
-                                //object id = dataItem.properties[keyProp];
 
-                                //if (id == null || id.ToString() == string.Empty)
-                                //{
-                                //  throw new Exception("Value of key property: " + keyProp + " cannot be null.");
-                                //}
-
-                                //dataItem.id = id.ToString();
                                 if (dataItem.properties.ContainsKey(keyProp))
                                 {
                                     object id = dataItem.properties[keyProp];
@@ -707,7 +614,10 @@ namespace org.iringtools.adapter
                         //
                         foreach (var pair in dataItem.properties)
                         {
-                            dataObject.SetPropertyValue(tableMapping[pair.Key], pair.Value);
+                            if (tableMapping[pair.Key] != null)
+                            {
+                                dataObject.SetPropertyValue(tableMapping[pair.Key], pair.Value);
+                            }
                         }
 
                         dataObjects.Add(dataObject);
@@ -748,11 +658,6 @@ namespace org.iringtools.adapter
                     dataType == DataType.Int64);
         }
         #endregion
-
-
-        //////////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////
-
 
         private XElement BuildRdfXml()
         {
@@ -800,10 +705,6 @@ namespace org.iringtools.adapter
                     if (individualElement != null)
                     {
                         _rdfXml.Add(individualElement);
-
-
-                        //JLD.name.id = baseUri + classIdentifier;
-                        //JLD.AddListType(classId);
 
                         // add primary classification template
                         if (isRootClass && _primaryClassificationStyle == ClassificationStyle.Both)
@@ -1240,54 +1141,6 @@ namespace org.iringtools.adapter
                 }
             }
         }
-
-
-
-        //private void createFields(GraphMap graph)
-        //{
-        //    tableMapping.Clear();
-
-        //    foreach (ClassTemplateMap classTemplate in graph.classTemplateMaps)
-        //    {
-        //        if (classTemplate != null && classTemplate.templateMaps != null)
-        //        {
-        //            String className = Utility.TitleCase(graph.name);
-        //            String classTemplateclassMapName = Utility.TitleCase(classTemplate.classMap.name);
-        //            foreach (TemplateMap template in classTemplate.templateMaps)
-        //            {
-        //                foreach (RoleMap role in template.roleMaps)
-        //                {
-        //                    RoleType roleType = role.type;
-        //                    // Cardinality cardinality = role.getCardinality();
-
-        //                    if (roleType == null || roleType == RoleType.Property || roleType == RoleType.DataProperty ||
-        //                                        roleType == RoleType.ObjectProperty || roleType == RoleType.FixedValue)
-        //                    //|| (cardinality != null && cardinality == Cardinality.SELF))
-        //                    {
-
-        //                        String fieldName;
-        //                        string colName;
-
-        //                        fieldName = classTemplateclassMapName + '.' + template.name + "." + role.name;
-        //                        colName = role.propertyName.Remove(0, className.Length + 1);
-        //                        tableMapping.Add(colName, fieldName);
-        //                        //tableMapping.Add(colName, role.parameterName);
-        //                    }
-        //                    //else if (role.getClazz() != null && (cardinality == null || cardinality == Cardinality.ONE_TO_ONE))
-        //                    //{
-        //                    //    String classId = role.getClazz().getId();
-        //                    //    String clsPath = role.getClazz().getPath();
-        //                    //    int clsIndex = role.getClazz().getIndex();
-
-
-        //                    //    ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId, clsPath);
-        //                    //    createFields(fields, graph, clsPath, clsIndex);
-        //                    //}
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
 
     }
 
