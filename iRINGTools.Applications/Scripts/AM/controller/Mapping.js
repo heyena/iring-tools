@@ -287,7 +287,9 @@ Ext.define('AM.controller.Mapping', {
 
             treeStore.load({
                 callback: function (records, options, success) {
-                    mapTree.getRootNode().firstChild.expand();
+                    if(mapTree.getRootNode().firstChild!=undefined)
+					   mapTree.getRootNode().firstChild.expand();
+						
                     content.getEl().unmask();
                 }
             });

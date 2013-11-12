@@ -23,6 +23,8 @@ Ext.define('AM.view.directory.ImportCacheWindow', {
 
   height: 225,
   width: 482,
+  minHeight: 220,
+  minWidth: 350,
   layout: {
     type: 'fit'
   },

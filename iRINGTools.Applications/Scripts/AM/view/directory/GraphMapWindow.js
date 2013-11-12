@@ -16,17 +16,17 @@
 Ext.define('AM.view.directory.GraphMapWindow', {
   extend: 'Ext.window.Window',
   alias: 'widget.graphmapwindow',
-
   requires: [
     'AM.view.directory.GraphMapForm'
   ],
-
   border: false,
-  resizable: false,
+  //resizable: false,
   layout: {
-    type: 'anchor'
+    //type: 'anchor'
+	type: 'fit'
   },
-
+  minHeight: 320,
+  minWidth: 350,
   initComponent: function() {
     var me = this;
 

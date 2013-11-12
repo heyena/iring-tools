@@ -20,9 +20,10 @@ Ext.define('AM.view.mapping.ValueListMapWindow', {
   requires: [
     'AM.view.mapping.ValueListMapForm'
   ],
-
   height: 155,
   width: 430,
+  minHeight: 150,
+  minWidth: 280,
   layout: {
     type: 'fit'
   },

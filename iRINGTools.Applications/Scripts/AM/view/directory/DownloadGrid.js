@@ -16,12 +16,10 @@
 Ext.define('AM.view.directory.DownloadGrid', {
   extend: 'Ext.grid.Panel',
   alias: 'widget.downloadgrid',
-
   store: 'FileDownloadStore',
-
+  autoScroll:true,
   initComponent: function() {
     var me = this;
-
     Ext.applyIf(me, {
       columns: [
         {

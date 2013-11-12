@@ -17,8 +17,8 @@ Ext.define('AM.view.directory.FileUpoadForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.fileuploadform',
 
-  height: 128,
-  width: 503,
+  //height: 128,
+  //width: 503,
   bodyPadding: 10,
   frameHeader: false,
   header: false,

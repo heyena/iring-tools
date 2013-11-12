@@ -24,6 +24,8 @@ Ext.define('AM.view.directory.ScopeWindow', {
   border: false,
   height: 242,
   width: 467,
+  minHeight:250,
+  minWidth:250,
   layout: {
     type: 'fit'
   },
