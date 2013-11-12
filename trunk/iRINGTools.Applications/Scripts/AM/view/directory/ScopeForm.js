@@ -18,8 +18,9 @@ Ext.define('AM.view.directory.ScopeForm', {
     alias: 'widget.scopeform',
 
     node: '',
-    height: 250,
-    width: 400,
+    //height: 250,
+    //width: 400,
+	border:2,
     bodyPadding: 10,
     bodyStyle: 'padding:10px 5px 0',
     url: 'directory/Scope',

@@ -23,6 +23,8 @@ Ext.define('AM.view.directory.FileDownloadWindow', {
 
   height: 300,
   width: 530,
+  minHeight: 200,
+  minWidth: 350,
   layout: {
     type: 'fit'
   },

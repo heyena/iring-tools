@@ -16,27 +16,22 @@
 Ext.define('AM.view.directory.GraphMapForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.graphmapform',
-
   height: 300,
   width: 490,
-  bodyBorder: false,
+  //bodyBorder: false,
   bodyStyle: 'padding:10px 5px 0',
   method: 'POST',
   url: 'mapping/graphMap',
-
   initComponent: function() {
     var me = this;
-
     me.addEvents(
       'save',
       'reset'
     );
-
     me.initialConfig = Ext.apply({
       method: 'POST',
       url: 'mapping/graphMap'
     }, me.initialConfig);
-
     Ext.applyIf(me, {
       items: [
         {
@@ -190,7 +185,6 @@ Ext.define('AM.view.directory.GraphMapForm', {
     var me = this;
     var ptarget = me.down('#gmfpcontainer');
     var ctarget = me.down('#gmfccontainer');
-
     var propertyDd = new Ext.dd.DropTarget(ptarget.getEl(), {
       ddGroup: 'propertyGroup',
       notifyEnter: function (propertyDd, e, data) {
@@ -212,11 +206,8 @@ Ext.define('AM.view.directory.GraphMapForm', {
         else {
           var ident = getLastXString(data.records[0].data.id, 1);
           var object = getLastXString(data.records[0].data.id, 2);
-          //var key1 = getLastXString(data.records[0].data.id, 2)
-          //var key2 = getLastXString(data.records[0].data.id, 1);
           var key = object+'.'+ident;//key1+'.'+key2;
           if(me.getForm().findField('identifier').getValue()!='Drop property node(s) here.'){
-
             var existingIdentifier =  me.getForm().findField('identifier').getValue();
             if(existingIdentifier!=''){
               var tempObjName = existingIdentifier.split('.')[0];
@@ -239,9 +230,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
             me.getForm().findField('identifier').setValue(key);
           }
           me.getForm().findField('objectName').setValue(object);
-
-          //ptarget.update(msg);
-          ptarget.update(key);
+		  ptarget.update(key);
           return true;
         }
       }   

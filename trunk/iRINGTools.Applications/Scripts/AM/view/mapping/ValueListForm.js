@@ -16,14 +16,11 @@
 Ext.define('AM.view.mapping.ValueListForm', {
   extend: 'Ext.form.Panel',
   alias: 'widget.valuelistform',
-
   bodyStyle: 'padding:10px 5px 0',
   method: 'POST',
   url: 'mapping/valueList',
-
   initComponent: function() {
     var me = this;
-
     me.initialConfig = Ext.apply({
       method: 'POST',
       url: 'mapping/valueList'
