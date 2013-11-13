@@ -84,48 +84,59 @@
   </namespacelist>
   <repositorylist>
     <repository>
-      <description>iRING Sandbox</description>
+      <description>iRING Sandbox Part8</description>
       <encryptedcredentials i:nil="true"/>
       <id>1</id>
       <isreadonly>false</isreadonly>
-      <name>iRING Sandbox</name>
+      <name>iRING Sandbox Part8</name>
       <namespaces i:nil="true"/>
       <repositorytype>Part8</repositorytype>
       <updateuri i:nil="true"/>
       <uri>http://www.iringsandbox.org/repositories/SandboxPt8/query</uri>
     </repository>
     <repository>
-      <description>Proto and P7 Initial Set Templates</description>
+      <description>RDS/WIP Part 4 Reference Data Library</description>
+      <encryptedcredentials i:nil="true"/>
+      <id>2</id>
+      <isreadonly>false</isreadonly>
+      <name>ReferenceData</name>
+      <namespaces i:nil="true"/>
+      <repositorytype>Part8</repositorytype>
+      <updateuri i:nil="true"/>
+      <uri>http://rdl.rdlfacade.org/data</uri>
+    </repository>
+    <repository>
+      <description>EntityTypes Data Library</description>
+      <encryptedcredentials i:nil="true"/>
+      <id>3</id>
+      <isreadonly>false</isreadonly>
+      <name>EntityTypes</name>
+      <namespaces i:nil="true"/>
+      <repositorytype>Part8</repositorytype>
+      <updateuri i:nil="true"/>
+      <uri>http://dm.rdlfacade.org/data</uri>
+    </repository>
+    <repository>
+      <description>RDS/Proto and P7 Initial Set Templates</description>
       <encryptedcredentials i:nil="true"/>
       <id>4</id>
       <isreadonly>false</isreadonly>
-      <name>Proto and Initial Set</name>
+      <name>Proto and Initial Part8</name>
       <namespaces i:nil="true"/>
       <repositorytype>Part8</repositorytype>
       <updateuri i:nil="true"/>
       <uri>http://www.iringsandbox.org/repositories/TempInitSetPt8/query</uri>
     </repository>
     <repository>
-      <description>PCA Endpoint</description>
+      <description>JORD Endpoint</description>
       <encryptedcredentials i:nil="true"/>
       <id>5</id>
       <isreadonly>false</isreadonly>
-      <name>PCA</name>
+      <name>JORD</name>
       <namespaces i:nil="true"/>
       <repositorytype>JORD</repositorytype>
       <updateuri i:nil="true"/>
       <uri>http://posccaesar.org/endpoint/sparql</uri>
-    </repository> 
-	<!--<repository> 
-      <description>iRING Sandbox Part8 Classes</description> 
-      <encryptedcredentials i:nil="true"/> 
-      <id>6</id> 
-      <isreadonly>false</isreadonly> 
-      <name>iRING Sandbox Part8 Classes</name> 
-      <namespaces i:nil="true"/> 
-      <repositorytype>Part8</repositorytype> 
-      <updateuri>http://www.iringsandbox.org/repositories/SandboxPt8Classes/update</updateuri> 
-      <uri>http://www.iringsandbox.org/repositories/SandboxPt8Classes/query</uri> 
-    </repository>-->
+    </repository>
   </repositorylist>
 </federation>
