@@ -33,6 +33,10 @@ namespace org.iringtools.adapter
       RouteTable.Routes.Add(new ServiceRoute("dxfr", new WebServiceHostFactory(), typeof(org.iringtools.services.DataTransferService)));
 
       RouteTable.Routes.Add(new ServiceRoute("adata", new RawServiceHostFactory(), typeof(org.iringtools.services.AdapterDataService)));
+
+      RouteTable.Routes.Add(new ServiceRoute("abstract", new RawServiceHostFactory(), typeof(org.iringtools.services.AbstractDataService)));
+
+      RouteTable.Routes.Add(new ServiceRoute("generate", new RawServiceHostFactory(), typeof(org.iringtools.services.TipGeneratorService)));
     }
   }
 }

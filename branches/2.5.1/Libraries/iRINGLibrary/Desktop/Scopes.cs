@@ -53,6 +53,9 @@ namespace org.iringtools.library
 
     [DataMember(Name = "configuration", Order = 4, EmitDefaultValue = false)]
     public Configuration Configuration { get; set; }
+
+    [DataMember(Name = "permissionGroup", Order = 5, EmitDefaultValue = false)]
+    public PermissionGroups PermissionGroup { get; set; }
   }
 
   [DataContract(Name = "application", Namespace = "http://www.iringtools.org/library")]
@@ -90,6 +93,9 @@ namespace org.iringtools.library
 
     [DataMember(Name = "cacheInfo", Order = 6, EmitDefaultValue = false)]
     public CacheInfo CacheInfo { get; set; }
+
+    [DataMember(Name = "permissionGroup", Order = 7, EmitDefaultValue = false)]
+    public PermissionGroups PermissionGroup { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/library", Name = "cacheInfo")]
@@ -125,5 +131,15 @@ namespace org.iringtools.library
     Live, 
     [EnumMember]
     Cache
+  }
+
+  /// <summary>
+  /// This class represents a permission group which is managed by Ldap for UI security.
+  /// </summary>
+  //[DataContract(Name = "permissionGroup", Namespace = "http://www.iringtools.org/library")]
+  [CollectionDataContract(Name = "permissionGroup", Namespace = "http://www.iringtools.org/library", ItemName = "group")]
+  public class PermissionGroups : List<String>
+  {
+
   }
 }

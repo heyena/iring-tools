@@ -127,6 +127,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractProvider.cs" />
     <Compile Include="AdapterModule.cs" />
     <Compile Include="BaseDataProjectionEngine.cs" />
     <Compile Include="BasePart7ProjectionEngine.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="DBManager.cs" />
     <Compile Include="DtiTask.cs" />
     <Compile Include="InboundDtoTask.cs" />
+    <Compile Include="JsonLDProjectionEngine.cs" />
     <Compile Include="OutboundDtoTask.cs" />
     <Compile Include="DataItemSerializer.cs" />
     <Compile Include="JsonProjectionEngine.cs" />
