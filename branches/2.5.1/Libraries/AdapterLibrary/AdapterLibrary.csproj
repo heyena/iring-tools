@@ -147,7 +147,6 @@
     <Compile Include="DtoProvider.cs" />
     <Compile Include="DataTransferIndices.cs" />
     <Compile Include="DataTransferObjects.cs" />
-    <Compile Include="dotNetRDFEngine.cs" />
     <Compile Include="AdapterProvider.cs" />
     <Compile Include="DtoProjectionEngine.cs" />
     <Compile Include="FacadeProvider.cs" />
