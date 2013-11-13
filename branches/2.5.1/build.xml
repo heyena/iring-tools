@@ -17,9 +17,7 @@
     <ApplicationsDir>$(MSBuildProjectDirectory)\iRINGTools.Applications</ApplicationsDir>
     <LandingPageDir>$(MSBuildProjectDirectory)\iRINGTools.Landing</LandingPageDir>
     <UtilitiesDir>$(MSBuildProjectDirectory)\Utilities</UtilitiesDir>
-    <RDFImportExportDir>$(UtilitiesDir)\RDFImportExport\RDFImportExport</RDFImportExportDir>
     <QMXFGeneratorDir>$(UtilitiesDir)\QMXFGenerator</QMXFGeneratorDir>
-    <FacadeExchangeDir>$(UtilitiesDir)\FacadeExchange</FacadeExchangeDir>
     <UnitTestsDir>$(MSBuildProjectDirectory)\Tests\NUnit.Tests</UnitTestsDir>  
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
     <ServicesDeploymentDir>$(DeploymentDir)\iRINGTools\Services</ServicesDeploymentDir>
@@ -98,20 +96,13 @@
                Utilities\EncryptCredentials\bin\release\*.dll;
                Utilities\ConfigurationTool\bin\release\*.exe;
                Utilities\ConfigurationTool\bin\release\*.dll;
-               Utilities\RDFImportExport\RDFImportExport\bin\release\*.exe;
-               Utilities\RDFImportExport\RDFImportExport\bin\release\*.dll;
-               Utilities\RDFImportExport\RDFImportExport\RDFImportExport_Default.config;
                Utilities\QMXFGenerator\bin\release\*.exe;
                Utilities\QMXFGenerator\bin\release\*.dll;
                Utilities\QMXFGenerator\QMXFGenerator_Default.config;
                Utilities\QMXFGenerator\InformationModel.xlsx;
                Utilities\QMXFTransforms\*.dtd;
                Utilities\QMXFTransforms\*.xsd;
-               Utilities\QMXFTransforms\*.xsl;
-               Utilities\FacadeExchange\bin\release\*.exe;
-               Utilities\FacadeExchange\bin\release\*.dll;
-               Utilities\FacadeExchange\bin\release\*.xml;
-               Utilities\FacadeExchange\App_Default.config;">
+               Utilities\QMXFTransforms\*.xsl;">
     </UtilitiesDeployment>
   </ItemGroup>
 
@@ -153,12 +144,8 @@
           Command="Copy $(ServicesDir)\App_Data\config_Default.ttl $(ServicesDir)\App_Data\config.ttl" />
     <Exec Condition="!Exists('$(ApplicationsDir)\Web.config')"
           Command="Copy $(ApplicationsDir)\Web_Default.config $(ApplicationsDir)\Web.config" />
-    <Exec Condition="!Exists('$(FacadeExchangeDir)\App.config')"
-      Command="Copy $(FacadeExchangeDir)\App_Default.config $(FacadeExchangeDir)\App.config" />
     <Exec Condition="!Exists('$(QMXFGeneratorDir)\App.config')"
           Command="Copy $(QMXFGeneratorDir)\QMXFGenerator_Default.config $(QMXFGeneratorDir)\App.config" />
-    <Exec Condition="!Exists('$(RDFImportExportDir)\App.config')"
-          Command="Copy $(RDFImportExportDir)\RDFImportExport_Default.config $(RDFImportExportDir)\App.config" />
   </Target>
 
   <Target Name="CoreBuild">
@@ -192,10 +179,8 @@
     <Message Text="Creating Utilities deployment ..." />
     <Copy SourceFiles="@(UtilitiesDeployment)"
           DestinationFiles="@(UtilitiesDeployment->'$(UtilitiesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(UtilitiesDeploymentDir)\App_Default.config $(UtilitiesDeploymentDir)\FacadeExchange.exe.config" />
     <Exec Command="Move /Y $(UtilitiesDeploymentDir)\QMXFGenerator_Default.config $(UtilitiesDeploymentDir)\QMXFGenerator.exe.config" />
-    <Exec Command="Move /Y $(UtilitiesDeploymentDir)\RDFImportExport_Default.config $(UtilitiesDeploymentDir)\RDFImportExport.exe.config" />
-
+    
     <Message Text="Creating landing page deployment ..." />
     <Copy SourceFiles="@(LandingDeployment)"
           DestinationFiles="@(LandingDeployment->'$(LandingDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
