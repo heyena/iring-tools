@@ -10,6 +10,7 @@ using org.iringtools.mapping;
 using log4net;
 using System.IO;
 using System.Web;
+using org.iringtools.library.tip;
 
 namespace org.iringtools.adapter.projection
 {
@@ -85,6 +86,9 @@ namespace org.iringtools.adapter.projection
     protected string _fixedIdentifierBoundary = "#";
     protected Properties _uriMaps;
 
+    protected TipMapping _tipMapping = null;
+    protected TipMap _tipMap = null;
+
     // key is related object type at a data object index and value is list of related objects 
     protected Dictionary<string, IList<IDataObject>>[] _relatedObjects = null;
 
@@ -103,6 +107,12 @@ namespace org.iringtools.adapter.projection
     public int Limit { get; set; }
     public string BaseURI { get; set; }
     public DataLayerGateway dataLayerGateway { get; set; }
+
+    public BasePart7ProjectionEngine(AdapterSettings settings, DataDictionary dictionary, TipMapping tipMapping)
+        : this(settings, dictionary, (Mapping)null)
+    {
+        _tipMapping = tipMapping;
+    }
 
     public BasePart7ProjectionEngine(AdapterSettings settings, DataDictionary dictionary, Mapping mapping)
     {

@@ -1013,7 +1013,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        _logger.Info("Update owner: " + _settings["DomainName"] + "\\" + _settings["UserName"]);
+
 
         string cacheId = string.Empty;
         string tableName = string.Empty;
