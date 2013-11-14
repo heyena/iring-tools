@@ -546,7 +546,7 @@ namespace org.iringtools.mapping
             {
                 foreach (var role in template.roleMaps.Where(x => !String.IsNullOrWhiteSpace(x.propertyName)))
                 {
-                    string path = classTemplateMap.classMap.path.ToString() + "/" + classTemplateMap.classMap.id.ToString() +"/" + template.id.ToString() + "/" + role.id.ToString();
+                    string path = (string.IsNullOrEmpty(classTemplateMap.classMap.path) ? "" : classTemplateMap.classMap.path)  + "/" + classTemplateMap.classMap.id.ToString() +"/" + template.id.ToString() + "/" + role.id.ToString();
                     Dictionary<String, Identifiers> identifierList = new Dictionary<String, Identifiers>();
                     identifierList.Add(role.propertyName, classTemplateMap.classMap.identifiers);
                     propertyList.Add(path, identifierList);
