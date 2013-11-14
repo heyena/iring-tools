@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGTools.Applications", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGLibrary", "Libraries\iRINGLibrary\iRINGLibrary.csproj", "{46FB3942-D0A5-4BFF-97B0-739E56BFB111}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TipMapGenerator", "Utilities\TipMapGenerator\TipMapGenerator.csproj", "{098F8975-31CC-420F-81C5-14DB5FC4AEB3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -491,6 +493,31 @@ Global
 		{46FB3942-D0A5-4BFF-97B0-739E56BFB111}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{46FB3942-D0A5-4BFF-97B0-739E56BFB111}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{46FB3942-D0A5-4BFF-97B0-739E56BFB111}.Release|x86.ActiveCfg = Release|Any CPU
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Debug|x86.ActiveCfg = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Debug|x86.Build.0 = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Default|Any CPU.ActiveCfg = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Default|Mixed Platforms.ActiveCfg = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Default|Mixed Platforms.Build.0 = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Default|x86.ActiveCfg = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Default|x86.Build.0 = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Demo|Any CPU.ActiveCfg = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Demo|Mixed Platforms.ActiveCfg = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Demo|Mixed Platforms.Build.0 = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Demo|x86.ActiveCfg = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Demo|x86.Build.0 = Debug|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.MobileDev|Any CPU.ActiveCfg = Release|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.MobileDev|Mixed Platforms.ActiveCfg = Release|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.MobileDev|Mixed Platforms.Build.0 = Release|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.MobileDev|x86.ActiveCfg = Release|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.MobileDev|x86.Build.0 = Release|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Release|Any CPU.ActiveCfg = Release|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Release|Mixed Platforms.Build.0 = Release|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Release|x86.ActiveCfg = Release|x86
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -511,6 +538,7 @@ Global
 		{66E98657-D742-4775-82A3-9B02BB17B035} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{DAFE844A-E5C9-4D6D-82B9-3D977D0FA40A} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{91086100-C634-450F-A560-4B5EFCBBF8E6} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
+		{098F8975-31CC-420F-81C5-14DB5FC4AEB3} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = C:\Enterprise Library
