@@ -152,9 +152,8 @@ namespace org.iringtools.nhibernate
         }
         catch (Exception ex)
         {
-          throw new Exception("Error generating application entities " + ex);
-
-          //no need to status, thrown exception will be statused above.
+          response.Level = StatusLevel.Error;
+          response.Messages.Add("Error generating entities: " + ex.ToString());
         }
       }
 
