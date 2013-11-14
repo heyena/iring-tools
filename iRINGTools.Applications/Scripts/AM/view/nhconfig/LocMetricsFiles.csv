@@ -1,0 +1,12 @@
+File,LOC,SLOC-P,SLOC-L,MVG,BLOC,C&SLOC,CLOC,CWORD,HCLOC,HCWORD
+C:\iring-tools\adapter\iRINGTools.Applications\Scripts\AM\view\nhconfig\ConnectionPanel.js,167,155,47,4,12,0,0,0,0,0
+C:\iring-tools\adapter\iRINGTools.Applications\Scripts\AM\view\nhconfig\KeyConfigPanel.js,115,108,29,0,7,0,0,0,0,0
+C:\iring-tools\adapter\iRINGTools.Applications\Scripts\AM\view\nhconfig\KeySelectionPanel.js,103,90,38,1,13,0,0,0,0,0
+C:\iring-tools\adapter\iRINGTools.Applications\Scripts\AM\view\nhconfig\MainConfigPanel.js,49,45,18,0,4,0,0,0,0,0
+C:\iring-tools\adapter\iRINGTools.Applications\Scripts\AM\view\nhconfig\ObjectConfigPanel.js,94,87,25,0,7,0,0,0,0,0
+C:\iring-tools\adapter\iRINGTools.Applications\Scripts\AM\view\nhconfig\ObjectsTreePanel.js,79,74,19,0,5,0,0,0,0,0
+C:\iring-tools\adapter\iRINGTools.Applications\Scripts\AM\view\nhconfig\PropertyConfigPanel.js,110,103,28,0,7,0,0,0,0,0
+C:\iring-tools\adapter\iRINGTools.Applications\Scripts\AM\view\nhconfig\PropertySelectionPanel.js,113,100,46,3,13,1,0,2,0,0
+C:\iring-tools\adapter\iRINGTools.Applications\Scripts\AM\view\nhconfig\RelationshipConfigPanel.js,287,250,106,6,25,0,12,14,0,0
+C:\iring-tools\adapter\iRINGTools.Applications\Scripts\AM\view\nhconfig\RelationshipsPanel.js,128,118,40,1,10,0,0,0,0,0
+C:\iring-tools\adapter\iRINGTools.Applications\Scripts\AM\view\nhconfig\TableSelectionPanel.js,103,90,38,1,13,0,0,0,0,0

@@ -1044,8 +1044,7 @@ namespace org.iringtools.utility
                 graph = (T)serializer.Deserialize<T>(jsonString);
             }
             else
-            {
-                
+            {                
                 DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
                 byte[] byteArray = encoding.GetBytes(jsonString);
                 MemoryStream stream = new MemoryStream(byteArray);
@@ -1057,7 +1056,6 @@ namespace org.iringtools.utility
         {
             throw new Exception("Error deserializing [" + typeof(T).Name + "].", exception);
         }
-
     }
 
     public static T DeserializeFromXElement<T>(XElement element)

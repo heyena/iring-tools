@@ -311,11 +311,7 @@ namespace org.iringtools.library
     public string relationshipName { get; set; }
 
 		[DataMember(Order = 3, Name = "relationshipType", IsRequired = true)]
-    public RelationshipType relationshipType { get; set; }
-
-		
-
-		
+    public RelationshipType relationshipType { get; set; }		
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/library")]

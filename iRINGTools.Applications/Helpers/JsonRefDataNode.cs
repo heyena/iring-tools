@@ -13,6 +13,6 @@ namespace iRINGTools.Web.Helpers
       iconCls = string.Empty;
     }
 
-    public string Namespace { get; set; }
+    //public string Namespace { get; set; }
   }
 }

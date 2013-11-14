@@ -7,7 +7,7 @@ namespace iRINGTools.Web.Helpers
 {
   public class TreeNode : JsonTreeNode
   {
-    public List<JsonTreeNode> children;
+    //public List<JsonTreeNode> children;
 
     public List<JsonTreeNode> getChildren()
     {

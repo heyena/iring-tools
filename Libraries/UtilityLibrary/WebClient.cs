@@ -178,7 +178,7 @@ namespace org.iringtools.utility
             }
           }
         }
-        catch (Exception e)
+        catch (Exception)
         {
           _logger.Warn("Unable to obtain authorization token from request headers.");
         }
@@ -218,7 +218,7 @@ namespace org.iringtools.utility
             }
           }
         }
-        catch (Exception e)
+        catch (Exception)
         {
           _logger.Warn("Unable to obtain application key from request headers.");
         }
