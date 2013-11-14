@@ -203,7 +203,6 @@
     <Content Include="Scripts\AM\controller\NHConfig.js" />
     <Content Include="Scripts\AM\controller\Directory.js" />
     <Content Include="Scripts\AM\controller\Mapping.js" />
-    <Content Include="Scripts\AM\controller\NHibernate.js" />
     <Content Include="Scripts\AM\controller\Search.js" />
     <Content Include="Scripts\AM\controller\Spreadsheet.js" />
     <Content Include="Scripts\AM\model\AvailItemsModel.js" />
@@ -374,8 +373,6 @@
     <Content Include="Scripts\AM\view\nhibernate\Utility.js" />
     <Content Include="Scripts\AM\view\override\directory\DataGridPanel.js" />
     <Content Include="Scripts\AM\view\override\mapping\MappingTree.js" />
-    <Content Include="Scripts\AM\view\override\nhibernate\MultiSelectComponentGrid.js" />
-    <Content Include="Scripts\AM\view\override\nhibernate\RelationPropertyGrid.js" />
     <Content Include="Scripts\AM\view\override\search\SearchTree.js" />
     <Content Include="Scripts\AM\view\search\SearchPanel.js" />
     <Content Include="Scripts\AM\view\search\SearchToolbar.js" />
