@@ -79,12 +79,11 @@ Ext.define('AM.controller.Mapping', {
                 index: node.parentNode.indexOf(node),
                 parentClassIndex: me.parentClassIndex
             },
-            success: function () {
+            success: function (response, request) {
                 tree.onReload();
-
             },
-            failure: function () {
-
+            failure: function (response, request) {
+				showDialog(500, 160, 'Error', 'An error has occurred while deleting Template Map.', Ext.Msg.OK, null);
             }
         });
     },
@@ -296,7 +295,6 @@ Ext.define('AM.controller.Mapping', {
 
             content.add(mapPanel);
         }
-
         content.setActiveTab(mapPanel);
     },
 
@@ -313,9 +311,7 @@ Ext.define('AM.controller.Mapping', {
         if (roleName.indexOf('unmapped') != -1) {
             roleName = roleName.split('[')[0];
         }
-
         me.getParentClass(node);
-
         var index = node.parentNode.parentNode.indexOf(node.parentNode);
         var win = Ext.widget('classmapwindow', {
             mappingNode: node,
@@ -403,7 +399,6 @@ Ext.define('AM.controller.Mapping', {
         parentNode = node.parentNode;
         var tempId = node.parentNode.data.parentId;
         var contextParts = tempId.split('/');
-
         Ext.Ajax.request({
             url: 'mapping/makereference',
             method: 'POST',
@@ -416,10 +411,12 @@ Ext.define('AM.controller.Mapping', {
                 classIndex: parentNode.parentNode.data.identifierIndex,
                 templateIndex: parentNode.parentNode.indexOf(parentNode)
             },
-            success: function () {
+            success: function (response, request) {
                 tree.onReload();
             },
-            failure: function () { }
+            failure: function (response, request) {
+			  showDialog(500, 160, 'Error', 'An error has occurred while Making Reference.', Ext.Msg.OK, null);
+			}
         });
     },
 
@@ -429,7 +426,6 @@ Ext.define('AM.controller.Mapping', {
         var tree = this.getDirTree(),
       node = tree.getSelectedNode(),
       record = node.data.record;
-
         if (item.itemId == 'editvaluemap') {
             wintitle = 'Edit ValueMap';
         } else {
@@ -441,20 +437,16 @@ Ext.define('AM.controller.Mapping', {
             classUrl = node.data.record.uri;
             classLabel = node.data.text.split('[')[0];
         }
-
         contextName = node.data.property.context;
         endpoint = node.data.property.endpoint;
         baseUrl = node.data.property.baseUrl;
-
         var arr = [];
         arr = node.data.id.split('ValueList');
         var arr1 = arr[arr.length - 1];
         valueList = arr1.split('/')[1];
-
         var win = Ext.widget('valuelistmapwindow', {
             id: 'tab-' + node.data.id, title: wintitle
         });
-
         var formRecord = {
             'contextName': contextName,
             'endpoint': endpoint,
@@ -466,32 +458,25 @@ Ext.define('AM.controller.Mapping', {
             'classLabel': classLabel,
             'oldClassUrl': classUrl
         };
-
         var form = win.down('form');
         form.getForm().setValues(formRecord);
-
         win.on('save', function () {
             win.close();
             tree.onReload();
             if (node.get('expanded') === false)
                 node.expand();
         }, me);
-
         win.on('reset', function () {
             win.close();
         }, me);
-
         win.down('form').updateDDContainer(record);
-
         win.show();
-
     },
 
     onDeleteValueMap: function (item, e, eOpts) {
         var me = this;
         var tree = me.getDirTree(),
       node = tree.getSelectedNode();
-
         Ext.Ajax.request({
             url: 'mapping/deleteValueMap',
             method: 'POST',
@@ -503,12 +488,14 @@ Ext.define('AM.controller.Mapping', {
                 oldClassUrl: node.data.record.uri,
                 mappingNode: node.data.id
             },
-            success: function () {
+            success: function (response, request) {
                 var parentNode = node.parentNode;
                 tree.getSelectionModel().select(parentNode);
                 tree.onReload();
             },
-            failure: function () { }
+            failure: function (response, request) {
+				showDialog(500, 160, 'Error', 'An error has occurred while deleting Value Map.', Ext.Msg.OK, null);	
+			}
 
         });
     },
@@ -540,10 +527,12 @@ Ext.define('AM.controller.Mapping', {
                 index: node.parentNode.parentNode.indexOf(node.parentNode),
                 parentClassIndex: node.parentNode.parentNode.data.identifierIndex
             },
-            success: function () {
+            success: function (response, request) {
                 tree.onReload();
             },
-            failure: function () { }
+            failure: function (response, request) {
+				showDialog(500, 160, 'Error', 'An error has occurred while Reset Mapping.', Ext.Msg.OK, null);	
+			}
         });
     },
 
@@ -659,10 +648,12 @@ Ext.define('AM.controller.Mapping', {
                 index: parentNode.parentNode.indexOf(parentNode),
                 classIndex: parentNode.parentNode.data.identifierIndex
             },
-            success: function () {
+            success: function (response, request) {
                 tree.onReload();
             },
-            failure: function () { }
+            failure: function (response, request) {
+				showDialog(500, 160, 'Error', 'An error has occurred while Making Possessor.', Ext.Msg.OK, null);	
+			}
         });
     },
 
@@ -681,12 +672,14 @@ Ext.define('AM.controller.Mapping', {
                 mappingNode: node.id,
                 graphName: getLastXString(node.id, 1)
             },
-            success: function () {
+            success: function (response, request) {
                 var parentNode = node.parentNode;
                 tree.getSelectionModel().select(parentNode);
                 tree.onReload();
             },
-            failure: function () { }
+            failure: function (response, request) {
+				showDialog(500, 160, 'Error', 'An error has occurred while deleting Graph Map.', Ext.Msg.OK, null);	
+			}
         });
     },
 
@@ -704,11 +697,13 @@ Ext.define('AM.controller.Mapping', {
                 valueList: valueList,
                 mappingNode: node.data.id
             },
-            success: function () {
+            success: function (response, request) {
                 tree.getSelectionModel().select(parentNode);
                 tree.onReload();
             },
-            failure: function () { }
+            failure: function (response, request) { 
+				showDialog(500, 160, 'Error', 'An error has occurred while deleting Value List.', Ext.Msg.OK, null);	
+			}
         });
     },
 
@@ -743,7 +738,9 @@ Ext.define('AM.controller.Mapping', {
             success: function (result, request) {
                 tree.onReload();
             },
-            failure: function (result, request) { }
+            failure: function (result, request) {
+				showDialog(500, 160, 'Error', 'An error has occurred while deleting Class Map.', Ext.Msg.OK, null);	
+			}
         })
     },
 

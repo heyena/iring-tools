@@ -1083,7 +1083,8 @@ Ext.define('AM.controller.NHibernate', {
                 successCallback(dbDict);
             },
             failure: function (response, request) {
-                //TODO: show error
+                if (request.response)
+                    showDialog(500, 400, 'Error', request.response.responseText, Ext.Msg.OK, null);	
             }
         });
     },
