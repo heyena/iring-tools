@@ -2713,6 +2713,38 @@ namespace org.iringtools.adapter
             }
         }
 
+        public void GenerateAllTIPs(string project, string application)
+        {
+            try
+            {
+                _logger.DebugFormat("Initializing Scope: {0}.{1}", project, application);
+                InitializeScope(project, application);
+                InitializeDataLayer(false);
+                foreach (GraphMap graph in _mapping.graphMaps)
+                {
+                    string resource = graph.name;
+                    _graphMap = _mapping.FindGraphMap(resource);
+                    UpdateTipMapping("tip", "findparameters", project, application);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+                throw ex;
+            }
+        }
+
+        public void GenerateAllTips()
+        {
+            foreach (ScopeProject scope in _scopes)
+            {
+                foreach (ScopeApplication app in scope.Applications)
+                {
+                    GenerateAllTIPs(scope.Name, app.Name);
+                }
+            }
+        }
+
 
         public TipMapping UpdateTipMapping(string tip, string method, string project, string application)
         {
