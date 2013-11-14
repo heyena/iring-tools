@@ -477,13 +477,12 @@ Ext.define('AM.controller.Directory', {
 
   onConfigureEndpoint: function(item, e, eOpts) {
     var me = this;
-    var tree = me.getDirTree();
-    var node = tree.getSelectedNode();
+    var node = me.getDirTree().getSelectedNode();
     var datalayer = node.data.record.DataLayer;
 
     switch(datalayer) {
       case 'NHibernateLibrary':
-        me.application.fireEvent('confignhibernate', me);
+        me.application.fireEvent('nhconfig', node);
         break;
       default:
         showDialog(300, 300, 'Warning', 'Datalayer ' + datalayer + ' is not configurable...', Ext.msg.OK, null);
