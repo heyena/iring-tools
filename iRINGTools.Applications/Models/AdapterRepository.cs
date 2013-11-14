@@ -880,32 +880,14 @@ namespace iRINGTools.Web.Models
         #region NHibernate Configuration Wizard support methods
         public DataProviders GetDBProviders()
         {
-            WebHttpClient client = CreateWebClient(_hibernateServiceUri);
-            return client.Get<DataProviders>("/providers");
-        }
+            DataProviders providers = new DataProviders();
 
-        public string SaveDBDictionary(string scope, string application, string tree)
-        {
-            DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
-
-            string connStr = dbDictionary.ConnectionString;
-            if (!String.IsNullOrEmpty(connStr))
+            foreach (Provider provider in System.Enum.GetValues(typeof(Provider)))
             {
-                string urlEncodedConnStr = Utility.DecodeFrom64(connStr);
-                dbDictionary.ConnectionString = HttpUtility.UrlDecode(urlEncodedConnStr);
+                providers.Add(provider);
             }
 
-            string postResult = null;
-            try
-            {
-                WebHttpClient client = CreateWebClient(_hibernateServiceUri);
-                postResult = client.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error posting DatabaseDictionary." + ex);
-            }
-            return postResult;
+            return providers;
         }
 
         public DatabaseDictionary GetDBDictionary(string scope, string application)
@@ -922,24 +904,57 @@ namespace iRINGTools.Web.Models
             return dbDictionary;
         }
 
-        public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer,
-          string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string portNumber, string serName)
+        public Response SaveDBDictionary(string scope, string app, DatabaseDictionary dictionary)
         {
-            var uri = String.Format("/{0}/{1}/tables", scope, application);
+            Response response = null;
+
+            try
+            {
+                WebHttpClient client = CreateWebClient(_hibernateServiceUri);
+                response = client.Post<DatabaseDictionary, Response>("/" + scope + "/" + app + "/dictionary", dictionary);
+            }
+            catch (Exception ex)
+            {
+                response = new Response()
+                {
+                    Level = StatusLevel.Error,
+                    Messages = new Messages() { ex.ToString() }
+                };
+            }
+
+            return response;
+        }
+
+        public List<string> GetTableNames(string scope, string app, Dictionary<string, string> conElts)
+        {
+            var uri = String.Format("/{0}/{1}/tables", scope, app);
 
             Request request = new Request();
-            request.Add("dbProvider", dbProvider);
-            request.Add("dbServer", dbServer);
-            request.Add("portNumber", portNumber);
-            request.Add("dbInstance", dbInstance);
-            request.Add("dbName", dbName);
-            request.Add("dbSchema", dbSchema);
-            request.Add("dbUserName", dbUserName);
-            request.Add("dbPassword", dbPassword);
-            request.Add("serName", serName);
+            foreach (var pair in conElts)
+            {
+                request.Add(pair.Key, pair.Value);
+            }
 
             WebHttpClient client = CreateWebClient(_hibernateServiceUri);
             return client.Post<Request, List<string>>(uri, request, true);
+        }
+
+        public List<DataObject> GetDBObjects(string scope, string app, 
+            Dictionary<string, string> conElts, List<string> tableNames)
+        {
+            string uri = String.Format("/{0}/{1}/objects", scope, app);
+
+            Request request = new Request();
+            foreach (var pair in conElts)
+            {
+                request.Add(pair.Key, pair.Value);
+            }
+
+            request.Add("tableNames", string.Join(",", tableNames));
+
+            WebHttpClient client = CreateWebClient(_hibernateServiceUri);
+            List<DataObject> dbObjects = client.Post<Request, List<DataObject>>(uri, request, true);
+            return dbObjects;
         }
 
         // use appropriate icons especially node with children
