@@ -151,13 +151,13 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
 
         if (newValue == null) return;
 
-        if (newValue.toLowerCase().startsWith('oracle')) {
+        if (newValue.toLowerCase().indexOf('oracle') != -1) {
             me.down('#oracleopts').setDisabled(false);
             me.getForm().findField('portNumber').setValue(1521);
             me.getForm().findField('serName').setValue('SERVICE_NAME');
         }
         else {
-            if (newValue.toLowerCase().startsWith('mssql')) {
+            if (newValue.toLowerCase().indexOf('mssql') != -1) {
                 me.getForm().findField('portNumber').setValue(1433);
             }
 
