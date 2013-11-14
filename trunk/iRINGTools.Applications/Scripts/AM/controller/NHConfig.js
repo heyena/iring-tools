@@ -488,15 +488,13 @@ Ext.define('AM.controller.NHConfig', {
                 });
             });
 
-            Ext.each(keyNodes.concat(propNodes), function (keyNode) {
-                var props = keyNode.raw.properties;
+            Ext.each(keyNodes.concat(propNodes), function (node) {
+                var props = node.raw.properties;
+                
                 var keyType = 0;
-
-                if (props.keyType === 'unassigned') keyType = 0;
-                else if (props.keyType === 'assigned') keyType = 1;
-                else if (props.keyType === 'foreign') keyType = 2;
-                else if (props.keyType === 'identity') keyType = 3;
-                else if (props.keyType === 'sequence') keyType = 4;
+                if (node.raw.type === 'keyProperty') {
+                    keyType = 1;
+                }
 
                 dataObject.dataProperties.push({
                     columnName: props.columnName,
