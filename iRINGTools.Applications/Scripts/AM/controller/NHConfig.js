@@ -8,7 +8,6 @@ Ext.define('AM.controller.NHConfig', {
     views: [
         'directory.DirectoryPanel',
         'common.CenterPanel',
-        'common.PropertyPanel',
         'common.ContentPanel',
         'nhconfig.MainConfigPanel',
         'nhconfig.ObjectsTreePanel',
@@ -444,7 +443,7 @@ Ext.define('AM.controller.NHConfig', {
         configPanel.setLoading();
 
         var connInfo = configPanel.down('connectionpanel').getForm().getValues();
-        var connStr = (connInfo.dbProvider.toLowerCase().startsWith('mssql'))
+        var connStr = (connInfo.dbProvider.toLowerCase().indexOf('mssql') != -1)
             ? 'Data Source=' + connInfo.dbServer + '\\' + connInfo.dbInstance + ';' + 'Initial Catalog=' +
                connInfo.dbName + ';User ID=' + connInfo.dbUserName + ';Password=' + connInfo.dbPassword
             : 'Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=' + connInfo.dbServer + ')(PORT=' +
