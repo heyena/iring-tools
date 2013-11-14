@@ -31,6 +31,8 @@ namespace org.iringtools.adapter
         private string _graphBaseUri;
         private XElement _rdfXml;
         private NameValueCollection tableMapping;
+        private static readonly Int16 TABLE = 0;
+        private static readonly Int16 FIELD = 1;
 
         [Inject]
         public JsonLDProjectionEngine(AdapterSettings settings, DataDictionary dictionary, TipMapping tipMapping)
@@ -168,42 +170,57 @@ namespace org.iringtools.adapter
                                 }
                             }
 
-                            foreach (DataProperty dataProperty in dataObject.dataProperties)
+                            foreach (string key in tableMapping.Keys)
                             {
-                                if (!dataProperty.isHidden)
+                                string[] parts = key.Split('.');
+                                if (dataObject.objectName == parts[TABLE])
                                 {
-                                    object value = dataObj.GetPropertyValue(dataProperty.propertyName);
-
+                                    object value = dataObj.GetPropertyValue(parts[FIELD]);
                                     if (value != null)
                                     {
-                                        if (dataProperty.dataType == DataType.Char ||
-                                              dataProperty.dataType == DataType.DateTime ||
-                                              dataProperty.dataType == DataType.Date ||
-                                              dataProperty.dataType == DataType.String ||
-                                              dataProperty.dataType == DataType.TimeStamp)
-                                        {
-                                            string valueStr = Convert.ToString(value);
-
-                                            if (dataProperty.dataType == DataType.DateTime ||
-                                                dataProperty.dataType == DataType.Date)
-                                                valueStr = Utility.ToXsdDateTime(valueStr);
-
-                                            value = valueStr;
-                                        }
-
-                                        string dataParameterName = tipMap.dataObjectName + "." + dataProperty.propertyName;
-
-                                        if (tableMapping[dataParameterName] != null)
-                                        {
-                                            dataItem.properties.Add(tableMapping.Get(dataParameterName).ToString(), value);
-                                        }
+                                        value = Convert.ToString(value);
+                                        dataItem.properties.Add(tableMapping.Get(key).ToString(), value);
                                     }
                                 }
-                                else if (showNullValue)
-                                {
-                                    dataItem.properties.Add(dataProperty.propertyName, null);
-                                }
+
                             }
+
+                            //foreach (DataProperty dataProperty in dataObject.dataProperties)
+                            //{
+                            //    if (!dataProperty.isHidden)
+                            //    {
+                            //        object value = dataObj.GetPropertyValue(dataProperty.propertyName);
+
+                            //        if (value != null)
+                            //        {
+                            //            if (dataProperty.dataType == DataType.Char ||
+                            //                  dataProperty.dataType == DataType.DateTime ||
+                            //                  dataProperty.dataType == DataType.Date ||
+                            //                  dataProperty.dataType == DataType.String ||
+                            //                  dataProperty.dataType == DataType.TimeStamp)
+                            //            {
+                            //                string valueStr = Convert.ToString(value);
+
+                            //                if (dataProperty.dataType == DataType.DateTime ||
+                            //                    dataProperty.dataType == DataType.Date)
+                            //                    valueStr = Utility.ToXsdDateTime(valueStr);
+
+                            //                value = valueStr;
+                            //            }
+
+                            //            string dataParameterName = tipMap.dataObjectName + "." + dataProperty.propertyName;
+
+                            //            if (tableMapping[dataParameterName] != null)
+                            //            {
+                            //                dataItem.properties.Add(tableMapping.Get(dataParameterName).ToString(), value);
+                            //            }
+                            //        }
+                            //    }
+                            //    else if (showNullValue)
+                            //    {
+                            //        dataItem.properties.Add(dataProperty.propertyName, null);
+                            //    }
+                            //}
 
                             if (_settings["DisplayLinks"].ToLower() == "true")
                             {
@@ -272,7 +289,7 @@ namespace org.iringtools.adapter
         public override XDocument ToXml(string graphName, ref List<IDataObject> dataObjects, string related, string child)
         {
 
-            if (related.Equals(""))
+            if (string.IsNullOrEmpty(related))
             {
                 return ToXml(graphName, ref dataObjects);
             }
@@ -293,7 +310,7 @@ namespace org.iringtools.adapter
                 _graphBaseUri = appBaseUri + graphName + "/";
                 _dataObjects = dataObjects;
 
-                createFields(true);
+                createFields(false);
 
 
                 string resource = child;
@@ -394,42 +411,57 @@ namespace org.iringtools.adapter
                                 }
                             }
 
-                            foreach (DataProperty dataProperty in dataObject.dataProperties)
+                            foreach (string key in tableMapping.Keys)
                             {
-                                if (!dataProperty.isHidden)
+                                string[] parts = key.Split('.');
+                                if (related.ToUpper() == parts[TABLE])
                                 {
-                                    object value = dataObj.GetPropertyValue(dataProperty.propertyName);
-
+                                    object value = dataObj.GetPropertyValue(parts[FIELD]);
                                     if (value != null)
                                     {
-                                        if (dataProperty.dataType == DataType.Char ||
-                                              dataProperty.dataType == DataType.DateTime ||
-                                              dataProperty.dataType == DataType.Date ||
-                                              dataProperty.dataType == DataType.String ||
-                                              dataProperty.dataType == DataType.TimeStamp)
-                                        {
-                                            string valueStr = Convert.ToString(value);
-
-                                            if (dataProperty.dataType == DataType.DateTime ||
-                                                dataProperty.dataType == DataType.Date)
-                                                valueStr = Utility.ToXsdDateTime(valueStr);
-
-                                            value = valueStr;
-                                        }
-
-                                        string dataParameterName = dataProperty.propertyName;
-
-                                        if (tableMapping[dataParameterName] != null)
-                                        {
-                                            dataItem.properties.Add(tableMapping.Get(dataParameterName).ToString(), value);
-                                        }
+                                        value = Convert.ToString(value);
+                                        dataItem.properties.Add(tableMapping.Get(key).ToString(), value);
                                     }
                                 }
-                                else if (showNullValue)
-                                {
-                                    dataItem.properties.Add(dataProperty.propertyName, null);
-                                }
+
                             }
+
+                            //foreach (DataProperty dataProperty in dataObject.dataProperties)
+                            //{
+                            //    if (!dataProperty.isHidden)
+                            //    {
+                            //        object value = dataObj.GetPropertyValue(dataProperty.propertyName);
+
+                            //        if (value != null)
+                            //        {
+                            //            if (dataProperty.dataType == DataType.Char ||
+                            //                  dataProperty.dataType == DataType.DateTime ||
+                            //                  dataProperty.dataType == DataType.Date ||
+                            //                  dataProperty.dataType == DataType.String ||
+                            //                  dataProperty.dataType == DataType.TimeStamp)
+                            //            {
+                            //                string valueStr = Convert.ToString(value);
+
+                            //                if (dataProperty.dataType == DataType.DateTime ||
+                            //                    dataProperty.dataType == DataType.Date)
+                            //                    valueStr = Utility.ToXsdDateTime(valueStr);
+
+                            //                value = valueStr;
+                            //            }
+
+                            //            string dataParameterName = dataProperty.propertyName;
+
+                            //            if (tableMapping[dataParameterName] != null)
+                            //            {
+                            //                dataItem.properties.Add(tableMapping.Get(dataParameterName).ToString(), value);
+                            //            }
+                            //        }
+                            //    }
+                            //    else if (showNullValue)
+                            //    {
+                            //        dataItem.properties.Add(dataProperty.propertyName, null);
+                            //    }
+                            //}
 
                             if (_settings["DisplayLinks"].ToLower() == "true")
                             {
@@ -662,8 +694,6 @@ namespace org.iringtools.adapter
         private XElement BuildRdfXml()
         {
             ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
-
-            
 
             if (classTemplateMap != null)
             {
@@ -1109,7 +1139,7 @@ namespace org.iringtools.adapter
                 {
                     if (child)
                     {
-                        tableMapping.Add(parameterMap.dataPropertyName.Split('.').GetValue(1).ToString(), parameterMap.name);
+                        tableMapping.Add(parameterMap.dataPropertyName.Split('.').GetValue(FIELD).ToString(), parameterMap.name);
                     }
                     else
                     {
@@ -1131,7 +1161,7 @@ namespace org.iringtools.adapter
                 {
                     if (child)
                     {
-                        tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName.Split('.').GetValue(1).ToString());
+                        tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName.Split('.').GetValue(FIELD).ToString());
                     }
                     else
                     {
