@@ -261,7 +261,7 @@ namespace org.iringtools.utility
             }
         }
 
-        public static List<string> GetAllGroups(string userName)
+        public static List<string> GetUserGroups(string userName)
         {
             List<string> lstgroups = new List<string>();
             try
@@ -269,7 +269,7 @@ namespace org.iringtools.utility
                 GetAppSettings();
                 SearchRequest request = new SearchRequest
                 {
-                    DistinguishedName = "ou=groups,o=iringtools,dc=iringug,dc=org",
+                    DistinguishedName = "ou=securitygroups,o=iringtools,dc=iringug,dc=org",
                     // Filter = filter,
                     Scope = System.DirectoryServices.Protocols.SearchScope.Subtree,
                 };
@@ -317,6 +317,52 @@ namespace org.iringtools.utility
             catch (Exception ex)
             {
                 _logger.Error("Error in getting groups from LDAP server for the current user: " + ex);
+                throw ex;
+            }
+        }
+
+        public static List<string> GetAllGroups()
+        {
+            List<string> lstgroups = new List<string>();
+            try
+            {
+                GetAppSettings();
+                SearchRequest request = new SearchRequest
+                {
+                    DistinguishedName = "ou=securitygroups,o=iringtools,dc=iringug,dc=org",
+                    // Filter = filter,
+                    Scope = System.DirectoryServices.Protocols.SearchScope.Subtree,
+                };
+
+                LdapConnection ldapConnection = Connect();
+
+                if (ldapConnection != null)
+                {
+                    SearchResponse response = (SearchResponse)ldapConnection.SendRequest(request);
+                    UTF8Encoding utf8 = new UTF8Encoding(false, true);
+
+                    if (response.Entries.Count > 0)
+                    {
+                        SearchResultEntryCollection entries = response.Entries;
+                        string[] names = null;
+                        for (int i = 0; i < entries.Count; i++)
+                        {
+                            SearchResultEntry entry = entries[i];
+                            if (entries[i].DistinguishedName.StartsWith("cn="))
+                            {
+                                names = entry.DistinguishedName.Split(',');
+
+                                string groupName = names.First().Substring(names.First().IndexOf("=") + 1);
+                                lstgroups.Add(groupName);
+                            }
+                        }
+                    }
+                }
+                return lstgroups;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error in getting security groups from LDAP server: " + ex);
                 throw ex;
             }
         }

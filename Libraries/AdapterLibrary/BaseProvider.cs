@@ -40,6 +40,9 @@ namespace org.iringtools.adapter
     protected static ConcurrentDictionary<string, RequestStatus> _requests =
      new ConcurrentDictionary<string, RequestStatus>();
 
+    protected bool _enableUISecurity = false;
+    protected bool _isAdministrator = false;
+    protected List<string> _lstSecurityGroups = new List<string>();
 
     protected Dictionary<string, KeyValuePair<string, Dictionary<string, string>>> _qmxfTemplateResultCache = null;
     protected WebHttpClient _webHttpClient = null;  // for old mapping conversion
@@ -167,7 +170,9 @@ namespace org.iringtools.adapter
 
     protected void InitializeAuthorizedScopes()
     {
+        _enableUISecurity = Convert.ToBoolean(_settings["EnableUISecurity"]);
         _authorizedscopes = GetAuthorizedScope(_settings["UserName"]);
+        //_lstSecurityGroups = GetAllSecurityGroups(); 
     }
 
     protected void InitializeDataLayer()
@@ -243,35 +248,36 @@ namespace org.iringtools.adapter
     public ScopeProject GetScope(string scopeName)
     {
         ScopeProjects scopeProjects;
-        if (string.IsNullOrEmpty(_settings["EnableUISecurity"]) ||
-                             _settings["EnableUISecurity"].ToLower() == "false")
+        if (_enableUISecurity == false)
         {
             scopeProjects = _scopes;
         }
         else
+        {
             scopeProjects = _authorizedscopes;
+        }
 
         foreach (ScopeProject scope in scopeProjects)
-      {
-        if (scope.Name.ToLower() == scopeName.ToLower())
         {
-          foreach (ScopeApplication app in scope.Applications)
-          {
-            string bindingConfigPath =
-              string.Format("{0}BindingConfiguration.{1}.{2}.xml",
-              _settings["AppDataPath"], scope.Name, app.Name);
+            if (scope.Name.ToLower() == scopeName.ToLower())
+            {
+                foreach (ScopeApplication app in scope.Applications)
+                {
+                    string bindingConfigPath =
+                      string.Format("{0}BindingConfiguration.{1}.{2}.xml",
+                      _settings["AppDataPath"], scope.Name, app.Name);
 
-            XElement binding = Utility.GetxElementObject(bindingConfigPath);
+                    XElement binding = Utility.GetxElementObject(bindingConfigPath);
 
-            if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
-              app.DataMode = DataMode.Cache;
-          }
+                    if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
+                        app.DataMode = DataMode.Cache;
+                }
 
-          return scope;
+                return scope;
+            }
         }
-      }
 
-      throw new Exception("Scope [" + scopeName + "] not found.");
+        throw new Exception("Scope [" + scopeName + "] not found.");
     }
 
     public ScopeProjects GetAuthorizedScope(string userName)
@@ -284,48 +290,56 @@ namespace org.iringtools.adapter
 
         try
         {
-            if (string.IsNullOrEmpty(_settings["EnableUISecurity"]) ||
-                              _settings["EnableUISecurity"].ToLower() == "false")
+            if (_enableUISecurity == false)
                 return null;
 
-            lstGroups = GetUserGroups(userName);  //Get all groups from LDAP to which user belongs.
-
             authorizedScopes = Utility.CloneDataContractObject<ScopeProjects>(_scopes);
-            foreach (ScopeProject scope in _scopes)
+            lstGroups = GetUserGroups(userName);  //Get all groups from LDAP to which user belongs.
+            if (lstGroups.Contains("administrator"))
             {
-                if (scope.PermissionGroup != null)
-                    exist = lstGroups.Any(s => scope.PermissionGroup.Contains(s));
-
-                if (!exist)    // If no access on scope, check on apps level.
+                _isAdministrator = true;
+            }
+            else
+            {
+                foreach (ScopeProject scope in _scopes)
                 {
-                    appcount = 0;
-                    foreach (ScopeApplication app in scope.Applications)
+                    if (scope.PermissionGroup != null)
+                        exist = lstGroups.Any(s => scope.PermissionGroup.Contains(s));
+
+                    if (!exist)    // If no access on scope, check on apps level.
                     {
-                        if (app.PermissionGroup == null)
+                        appcount = 0;
+                        foreach (ScopeApplication app in scope.Applications)
                         {
+                            if (app.PermissionGroup == null)
+                            {
+                                if (scope.PermissionGroup != null)  //If no access on scope and rights not defined on app, app will not be shown.
+                                    authorizedScopes[count].Applications.RemoveAt(appcount);
+                                else
+                                    appcount++;
+                                continue;
+                            }
+                            else
+                            {
+                                appsPermission = true;
+                            }
+                            exist = lstGroups.Any(s => app.PermissionGroup.Contains(s));
+                            if (!exist)  // If no access on app, remove it
+                            {
+                                authorizedScopes[count].Applications.RemoveAt(appcount);
+                                appcount--;
+                            }
                             appcount++;
-                            continue;
                         }
-                        else
+                        if ((authorizedScopes[count].Applications.Count == 0 && scope.PermissionGroup != null) ||
+                                         (scope.PermissionGroup != null && !appsPermission))
                         {
-                            appsPermission = true;
+                            authorizedScopes.RemoveAt(count);
+                            count--;
                         }
-                        exist = lstGroups.Any(s => app.PermissionGroup.Contains(s));
-                        if (!exist)  // If no access on app, remove it
-                        {
-                            authorizedScopes[count].Applications.RemoveAt(appcount);
-                            appcount--;
-                        }
-                        appcount++;
                     }
-                    if ((authorizedScopes[count].Applications.Count == 0 && scope.PermissionGroup != null) ||
-                                     (scope.PermissionGroup != null && !appsPermission))
-                    {
-                        authorizedScopes.RemoveAt(count);
-                        count--;
-                    }
+                    count++;
                 }
-                count++;
             }
         }
         catch (Exception e)
@@ -337,8 +351,23 @@ namespace org.iringtools.adapter
 
     public List<string> GetUserGroups(string userName)
     {
-        List<string> lstGroups = ConfigurationRepository.GetAllGroups(userName);
+        List<string> lstGroups = ConfigurationRepository.GetUserGroups(userName);
         return lstGroups;
+    }
+
+    public List<string> GetAllSecurityGroups()
+    {
+        List<string> lstGroups = ConfigurationRepository.GetAllGroups();
+        return lstGroups;
+    }
+
+    public NameValueList GetGlobalUISettings()
+    {
+        NameValueList nvc = new NameValueList();
+        nvc.Add(new ListItem() { Name = "isUISecurityEnabled", Value = _enableUISecurity.ToString() });
+        nvc.Add(new ListItem() { Name = "isAdmin", Value = _isAdministrator.ToString() });
+
+        return nvc;
     }
 
     public ScopeApplication GetApplication(string scopeName, string appName)
