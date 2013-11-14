@@ -188,6 +188,40 @@ namespace iRINGTools.Web.Models
             return obj;
         }
 
+        public List<string> GetSecurityGroups()
+        {
+            List<string> lstobj = null;
+
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                lstobj = client.Get<List<string>>("/groups");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
+
+            return lstobj;
+        }
+
+        public NameValueList GetGlobalVariables()
+        {
+            NameValueList nvlobj = null;
+
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                nvlobj = client.Get<NameValueList>("/settings");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
+
+            return nvlobj;
+        }
+
         public Entity GetClassLabel(string classId)
         {
             Entity entity = new Entity();

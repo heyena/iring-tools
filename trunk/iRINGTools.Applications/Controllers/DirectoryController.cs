@@ -663,6 +663,30 @@ namespace org.iringtools.web.controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
+    public ActionResult SecurityGroups()
+    {
+        List<string> lstgroups = _repository.GetSecurityGroups();
+
+        JsonContainer<List<string>> container = new JsonContainer<List<string>>();
+        container.items = lstgroups;
+        container.success = true;
+        container.total = lstgroups.Count;
+
+        return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    public ActionResult InitializeUISettings()
+    {
+        NameValueList nvlSettings = _repository.GetGlobalVariables();
+
+        JsonContainer<NameValueList> container = new JsonContainer<NameValueList>();
+        container.items = nvlSettings;
+        container.success = true;
+        container.total = nvlSettings.Count;
+
+        return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
     #region Private Methods
 
     private Mapping GetMapping(string scope, string application)

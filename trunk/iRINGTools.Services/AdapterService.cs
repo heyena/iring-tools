@@ -530,6 +530,13 @@ namespace org.iringtools.services
         return _adapterProvider.GetUserGroups(username);
     }
 
+    [Description("Get all the security groups from LDAP.")]
+    [WebGet(UriTemplate = "/groups")]
+    public List<string> GetAllLDAPSecurityGroups()
+    {
+        return _adapterProvider.GetAllSecurityGroups();
+    }
+
     [Description("Gets the authorized scopes (project and application combinations) available from the service.")]
     [WebGet(UriTemplate = "/{username}/authorizedscopes")]
     public ScopeProjects GetAuthorizedScopes(string username)
@@ -538,6 +545,16 @@ namespace org.iringtools.services
         context.ContentType = "application/xml";
 
         return _adapterProvider.GetAuthorizedScope(username);
+    }
+
+    [Description("Gets the settings for UI available from this service.")]
+    [WebGet(UriTemplate = "/settings")]
+    public NameValueList GetUISettings()
+    {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        context.ContentType = "application/xml";
+
+        return _adapterProvider.GetGlobalUISettings();
     }
 
     private void FormatOutgoingMessage<T>(T graph, bool useDataContractSerializer)
