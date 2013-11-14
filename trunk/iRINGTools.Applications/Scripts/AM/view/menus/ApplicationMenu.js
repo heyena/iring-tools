@@ -50,13 +50,13 @@ Ext.define('AM.view.menus.ApplicationMenu', {
         {
           xtype: 'menuitem',
           action: 'fileupload',
-          icon: 'Content/img/16x16/document-down.png',
+          icon: 'Content/img/16x16/document-up.png',
           text: 'Upload File'
         },
         {
           xtype: 'menuitem',
           action: 'filedownload',
-          icon: 'Content/img/16x16/document-up.png',
+          icon: 'Content/img/16x16/document-down.png',
           text: 'Download File'
         }
       ]

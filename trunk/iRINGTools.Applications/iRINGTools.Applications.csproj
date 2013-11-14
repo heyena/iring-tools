@@ -112,6 +112,7 @@
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\AppEditorController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\NHibernateController.cs" />
     <Compile Include="Controllers\FacadeController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
     <Compile Include="Controllers\FileController.cs" />
@@ -199,6 +200,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="about.aspx" />
+    <Content Include="Scripts\AM\controller\NHConfig.js" />
     <Content Include="Scripts\AM\controller\Directory.js" />
     <Content Include="Scripts\AM\controller\Mapping.js" />
     <Content Include="Scripts\AM\controller\NHibernate.js" />
@@ -225,6 +227,7 @@
     <Content Include="Scripts\AM\store\AvailItemsStore.js" />
     <Content Include="Scripts\AM\store\BaseUrlStore.js" />
     <Content Include="Scripts\AM\store\ContextStore.js" />
+    <Content Include="Scripts\AM\store\DBProviderStore.js" />
     <Content Include="Scripts\AM\store\DataGridStore.js" />
     <Content Include="Scripts\AM\store\DataLayerStore.js" />
     <Content Include="Scripts\AM\store\DirectoryTreeStore.js" />
@@ -341,6 +344,17 @@
     <Content Include="Scripts\AM\view\menus\ValueListMenu.js" />
     <Content Include="Scripts\AM\view\menus\ValueListsMenu.js" />
     <Content Include="Scripts\AM\view\menus\VirtualPropertyMenu.js" />
+    <Content Include="Scripts\AM\view\nhconfig\MainConfigPanel.js" />
+    <Content Include="Scripts\AM\view\nhconfig\ConnectionPanel.js" />
+    <Content Include="Scripts\AM\view\nhconfig\RelationshipsPanel.js" />
+    <Content Include="Scripts\AM\view\nhconfig\ObjectConfigPanel.js" />
+    <Content Include="Scripts\AM\view\nhconfig\KeyConfigPanel.js" />
+    <Content Include="Scripts\AM\view\nhconfig\PropertySelectionPanel.js" />
+    <Content Include="Scripts\AM\view\nhconfig\KeySelectionPanel.js" />
+    <Content Include="Scripts\AM\view\nhconfig\ObjectsTreePanel.js" />
+    <Content Include="Scripts\AM\view\nhconfig\PropertyConfigPanel.js" />
+    <Content Include="Scripts\AM\view\nhconfig\RelationshipConfigPanel.js" />
+    <Content Include="Scripts\AM\view\nhconfig\TableSelectionPanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\ConnectionStringForm.js" />
     <Content Include="Scripts\AM\view\nhibernate\DataKeyForm.js" />
     <Content Include="Scripts\AM\view\nhibernate\DataObjectForm.js" />

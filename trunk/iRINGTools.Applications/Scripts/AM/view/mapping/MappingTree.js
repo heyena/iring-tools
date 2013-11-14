@@ -61,7 +61,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                         var node = tree.getRootNode();
                         tree.onReload(node);
                     },
-                    icon: 'Content/img/16x16/view-refresh.png',
+                    icon: 'Content/img/16x16/refresh.png',
                     text: 'Reload Tree'
                 },
                 {
