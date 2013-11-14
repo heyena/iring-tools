@@ -4339,96 +4339,16 @@ namespace org.iringtools.adapter
 
     public DataLayers GetDataLayers()
     {
-      DataLayers dataLayers = new DataLayers();
-
-      // Load NHibernate data layer
-      Type nhType = typeof(NHibernateDataLayer);
-      string nhLibrary = nhType.Assembly.GetName().Name;
-      string nhAssembly = string.Format("{0}, {1}", nhType.FullName, nhLibrary);
-      DataLayer nhDataLayer = new DataLayer { Assembly = nhAssembly, Name = nhLibrary, Configurable = true };
-      dataLayers.Add(nhDataLayer);
-
-      // Load Spreadsheet data layer
-      Type ssType = typeof(SpreadsheetDatalayer);
-      string ssLibrary = ssType.Assembly.GetName().Name;
-      string ssAssembly = string.Format("{0}, {1}", ssType.FullName, ssLibrary);
-      DataLayer ssDataLayer = new DataLayer { Assembly = ssAssembly, Name = ssLibrary, Configurable = true };
-      dataLayers.Add(ssDataLayer);
-
       try
       {
-        Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-        GetDataLayerTypes(ref dataLayers, domainAssemblies);
+          string path = AppDomain.CurrentDomain.BaseDirectory + "\\App_Data\\DataLayers.xml";
+          DataLayers dataLayers = Utility.Read<DataLayers>(path);
+          return dataLayers;
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error loading data layer: {0}" + ex));
+        _logger.Error(string.Format("Error getting data layer: {0}" + ex));
         throw ex;
-      }
-
-      return dataLayers;
-    }
-
-    private void GetDataLayerTypes(ref DataLayers dataLayers, Assembly[] domainAssemblies)
-    {
-      foreach (Assembly asm in domainAssemblies)
-      {
-        Type[] asmTypes = null;
-        try
-        {
-          asmTypes = asm.GetTypes().Where(a => a != null && (
-            (typeof(IDataLayer).IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract)) ||
-            (typeof(ILightweightDataLayer).IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract)))
-          ).ToArray();
-        }
-        catch (ReflectionTypeLoadException e)
-        {
-          // if we are running the the iRing site under Anonymous authentication with the DefaultApplicationPool Identity we
-          // can run into ReflectionPermission issues but as our datalayer assemblies are in our web site's bin folder we
-          // should be able to ignore the exceptions and work with the accessibe types loaded in e.Types.
-          asmTypes = e.Types.Where(a => a != null && (
-            (typeof(IDataLayer).IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract)) ||
-            (typeof(ILightweightDataLayer).IsAssignableFrom(a) && !(a.IsInterface || a.IsAbstract)))
-          ).ToArray();
-          _logger.Warn("GetTypes() for " + asm.FullName + " cannot access all types, but datalayer loading is continuing: " + e);
-        }
-
-        try
-        {
-          if (asmTypes.Any())
-          {
-            _logger.Debug("assembly:" + asm.FullName);
-            foreach (System.Type asmType in asmTypes)
-            {
-              _logger.Debug("asmType:" + asmType.ToString());
-              
-              bool isLW = typeof(ILightweightDataLayer).IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract);
-              bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-              string name = asm.FullName.Split(',')[0];
-
-              if (name.ToLower() == "NHibernateExtension".ToLower())
-                continue;
-
-              if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
-              {
-                string assembly = string.Format("{0}, {1}", asmType.FullName, name);
-                  
-                DataLayer dataLayer = new DataLayer { 
-                  Assembly = assembly, 
-                  Name = name,
-                  IsLightweight = isLW,
-                  Configurable = configurable 
-                };
-                  
-                dataLayers.Add(dataLayer);
-              }
-            }
-          }
-        }
-        catch (Exception e)
-        {
-          _logger.Error("Error loading data layer (while getting assemblies): " + e);
-        }
       }
     }
 
