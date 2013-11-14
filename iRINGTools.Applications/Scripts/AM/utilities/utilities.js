@@ -41,11 +41,10 @@ String.format = String.prototype.format = function () {
   return string;
 };  
 
-
 function showDialog(width, height, title, msg, buttons, callback) {
   while (msg.indexOf('\\r\\n') != -1)
-    msg = msg.replace('\\r\\n', ' \r\n');
-
+		msg = msg.replace('\\r\\n', ' \r\n');
+		
   var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
   Ext.Msg.show({
     title: title,

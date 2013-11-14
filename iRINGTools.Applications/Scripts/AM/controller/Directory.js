@@ -224,14 +224,14 @@ Ext.define('AM.controller.Directory', {
       params: {
         'nodeid': node.data.id
       },
-      success: function () {
+      success: function (response, request) {
         var parentNode = node.parentNode;
         parentNode.removeChild(node);                   
         tree.getSelectionModel().select(parentNode);
         tree.onReload();
       },
-      failure: function () {
-        var message = 'Error deleting folder!';
+      failure: function (response, request) {
+        var message = 'Error deleting scope!';
         showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
       }
     });
@@ -327,14 +327,14 @@ Ext.define('AM.controller.Directory', {
       params: {
         nodeid: node.data.id
       },
-      success: function () {
+      success: function (response, request) {
         var parentNode = node.parentNode;
         parentNode.removeChild(node);                   
         tree.getSelectionModel().select(parentNode);
         tree.onReload();
       },
-      failure: function () {
-        var message = 'Error deleting endpoint!';
+      failure: function (response, request) {
+        var message = 'Error deleting application!';
         showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
       }
     });
@@ -426,7 +426,7 @@ Ext.define('AM.controller.Directory', {
         content.getEl().unmask();
         gridPanel.destroy();
         var msg = Ext.JSON.decode(response.responseText).message;
-        showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
+        showDialog(400, 150, 'Error', msg, Ext.Msg.OK, null);
       }, me);
 
       gridStore.load({
@@ -464,11 +464,11 @@ Ext.define('AM.controller.Directory', {
       params: {
         scope:node.data.id
       },
-      success: function (o) {
+      success: function (response, request) {
         tree.onReload();
         tree.getEl().unmask();
       },
-      failure: function (f, a) {
+      failure: function (response, request) {
         tree.getEl().unmask();
         showDialog(400,300, 'Warning', 'Error Refreshing Facade!!!', Ext.Msg.OK, null);
       }
@@ -565,7 +565,11 @@ Ext.define('AM.controller.Directory', {
     var state = tree.getState();
     var nodeState = '/Scopes/'+node.internalId;
     tree.body.mask('Loading...', 'x-mask-loading');
-    
+    var storeProxy = store.getProxy();
+	  storeProxy.on('exception', function (proxy, response, operation) {
+		var msg = Ext.JSON.decode(response.responseText).message;
+		showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
+	  }, me);
     store.load({
       node:node,
       callback: function (records, options, success) {
@@ -658,7 +662,14 @@ Ext.define('AM.controller.Directory', {
       params.scope = scope;
       params.application = app;
     }, me);
-
+	  storeProxy.on('exception', function (proxy, response, operation) {
+		var msg = Ext.JSON.decode(response.responseText).message;
+		showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
+	  }, me);
+	  /*store.on('exception',function( store, records, options ){
+		alert('exception occeured...');
+	},me);
+	*/
     store.load({
       callback: function (records, options, success) {
         if(store.data.length == 0){
@@ -667,7 +678,6 @@ Ext.define('AM.controller.Directory', {
         }
       }
     });
-
     win.show();
   },
 
@@ -732,7 +742,6 @@ Ext.define('AM.controller.Directory', {
       },
       success: function (response, request) {
         var responseObj = Ext.decode(response.responseText);
-
         if (responseObj.Level == 0) {
           showDialog(450, 100, 'Refresh Cache Result', 'Object cache refreshed successfully.', Ext.Msg.OK, null);
         }
@@ -741,6 +750,7 @@ Ext.define('AM.controller.Directory', {
         }
       },
       failure: function (response, request) {
+		var responseObj = Ext.decode(response.responseText);
         showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
       }
     })
@@ -768,6 +778,7 @@ Ext.define('AM.controller.Directory', {
         }
       },
       failure: function (response, request) {
+		var responseObj = Ext.decode(response.responseText);
         showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
       }
     })
@@ -813,7 +824,8 @@ Ext.define('AM.controller.Directory', {
         }
       },
       failure: function (response, request) {
-        showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+        var responseObj = Ext.decode(response.responseText);
+		showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
       }
     })
   },
@@ -1044,7 +1056,6 @@ Ext.define('AM.controller.Directory', {
       },
       failure: function (response, request) {
         showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
-
       }
     });
   },
@@ -1055,7 +1066,6 @@ Ext.define('AM.controller.Directory', {
     var node = tree.getSelectedNode();
     var scope = node.data.id.split('/')[0];
     var app = node.data.id.split('/')[1];
-
     Ext.Ajax.request({
       url: 'AdapterManager/VirtualProperties',
       timeout: 600000,
@@ -1065,7 +1075,6 @@ Ext.define('AM.controller.Directory', {
       },
       success: function (response, request) {
         var res = Ext.decode(response.responseText);
-
         for(var i=0;i<res.virtualProperties.length;i++){
           if(res.virtualProperties[i].propertyName == node.data.text){
             res.virtualProperties.splice(i,1);
@@ -1083,19 +1092,16 @@ Ext.define('AM.controller.Directory', {
             tree:Ext.JSON.encode(res)
           },
           success: function (response, request) {
-
             me.getDirTree().onReload();
           },
           failure: function (response, request) {
             showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
-
           }
         });
 
       },
       failure: function (response, request) {
         showDialog(400, 100, 'Error', 'An error has occurred while deleting virtual property.', Ext.Msg.OK, null);
-
       }
     });
 
@@ -1113,12 +1119,10 @@ Ext.define('AM.controller.Directory', {
 
   refreshScopes: function(item, e, eOpts) {
     this.getDirTree().onReload();
-
   },
 
   init: function(application) {
     Ext.QuickTips.init();
-
     this.control({
       "gridpanel": {
         metachange: this.handleMetachange
@@ -1262,7 +1266,6 @@ Ext.define('AM.controller.Directory', {
     var node = tree.getSelectedNode();
 	var content = me.getMainContent();
 	content.getEl().mask("Loading...", "x-mask-loading");
-	  
     Ext.Ajax.request({
       url: 'AdapterManager/SwitchDataMode',
       method: 'POST',
@@ -1273,7 +1276,6 @@ Ext.define('AM.controller.Directory', {
       },
       success: function (response, request) {
         var responseObj = Ext.decode(response.responseText);
-
         if (responseObj.Level != 0) {
           showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
         }
@@ -1281,6 +1283,7 @@ Ext.define('AM.controller.Directory', {
         tree.onReload();
       },
       failure: function (response, request) {
+		var responseObj = Ext.decode(response.responseText);
         showDialog(500, 160, 'Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
       }
     });

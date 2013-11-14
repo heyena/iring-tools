@@ -259,8 +259,10 @@ display: function () {
                 panel.setDisabled(false);
                 panel.getEl().unmask();
 
-                var responseObj = Ext.decode(response.responseText);
-                showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+                //var responseObj = Ext.decode(response.responseText);
+                //showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+				showDialog(500, 160, 'Import Cache Error', response.statusText, Ext.Msg.OK, null);
+				
             }
         });
   },
