@@ -23,14 +23,11 @@ Ext.define('AM.view.directory.ApplicationWindow', {
 
   node: '',
   border: false,
-  height: 467,
-  width: 734,
-  minHeight: 450,
-  minWidth: 350,
+  height: 446,
+  width: 590,
   layout: {
     type: 'fit'
   },
-  bodyPadding: 1,
 
   initComponent: function() {
     var me = this;
@@ -43,9 +40,7 @@ Ext.define('AM.view.directory.ApplicationWindow', {
     Ext.applyIf(me, {
       items: [
         {
-          xtype: 'applicationform',
-          height: 402,
-          width: 721
+          xtype: 'applicationform'
         }
       ]
     });
