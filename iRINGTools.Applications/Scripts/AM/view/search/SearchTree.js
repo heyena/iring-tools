@@ -35,7 +35,8 @@ Ext.define('AM.view.search.SearchTree', {
             dragText: '{0}',
             enableDrop: false
           })
-        ]
+        ],
+        copy: true
       }
     });
 
