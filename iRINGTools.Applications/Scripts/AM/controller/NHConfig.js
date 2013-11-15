@@ -576,7 +576,7 @@ Ext.define('AM.controller.NHConfig', {
                             });
                         }
                         else {
-                            Ext.example.msg('Notification', 'Dictionary saved successfully!');
+                            Ext.example.msg('Notification', 'Configuration saved successfully!');
                             me.dirNode.expand();
                         }
                     }
