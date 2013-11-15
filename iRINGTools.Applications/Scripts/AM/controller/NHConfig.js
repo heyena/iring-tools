@@ -9,6 +9,7 @@ Ext.define('AM.controller.NHConfig', {
         'directory.DirectoryPanel',
         'common.CenterPanel',
         'common.ContentPanel',
+        'common.MessagePanel',
         'nhconfig.MainConfigPanel',
         'nhconfig.ObjectsTreePanel',
         'nhconfig.ConnectionPanel',
@@ -131,12 +132,8 @@ Ext.define('AM.controller.NHConfig', {
                     treePanel.getRootNode().expand();
                 }
                 else {
-                    Ext.Msg.show({
-                        title: 'Load Error',
-                        msg: operation.request.scope.reader.jsonData.message,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.ERROR
-                    });
+                    var msg = operation.request.scope.reader.jsonData.message;
+                    Ext.widget('messagepanel', { title: 'Load Error', msg: msg });
                 }
             }
         });
@@ -231,12 +228,8 @@ Ext.define('AM.controller.NHConfig', {
                 },
                 failure: function (form, action) {
                     configPanel.setLoading(false);
-                    Ext.Msg.show({
-                        title: 'Error',
-                        msg: action.result.message,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.ERROR
-                    });
+                    var msg = action.result.message;
+                    Ext.widget('messagepanel', { title: 'Connection Error', msg: msg });
                 }
             });
         }
@@ -490,7 +483,7 @@ Ext.define('AM.controller.NHConfig', {
 
             Ext.each(keyNodes.concat(propNodes), function (node) {
                 var props = node.raw.properties;
-                
+
                 var keyType = 0;
                 if (node.raw.type === 'keyProperty') {
                     keyType = 1;
@@ -549,12 +542,7 @@ Ext.define('AM.controller.NHConfig', {
 
                 var result = Ext.decode(response.responseText);
                 if (!result.success) {
-                    Ext.Msg.show({
-                        title: 'Save Error',
-                        msg: result.message,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.ERROR
-                    });
+                    Ext.widget('messagepanel', { title: 'Save Error', msg: result.message });
                     return;
                 }
 
@@ -567,30 +555,21 @@ Ext.define('AM.controller.NHConfig', {
                     callback: function (records, operation, success) {
                         dirTree.setLoading(false);
 
-                        if (!success) {
-                            Ext.Msg.show({
-                                title: 'Refresh DataObjects Error',
-                                msg: operation.request.scope.reader.jsonData.message,
-                                buttons: Ext.Msg.OK,
-                                icon: Ext.Msg.ERROR
-                            });
-                        }
-                        else {
+                        if (success) {
                             Ext.example.msg('Notification', 'Configuration saved successfully!');
                             me.dirNode.expand();
+                        }
+                        else {
+                            var msg = operation.request.scope.reader.jsonData.message;
+                            Ext.widget('messagepanel', { title: 'Refresh Error', msg: msg });
                         }
                     }
                 });
             },
             failure: function (response, request) {
                 configPanel.setLoading(false);
-
-                Ext.Msg.show({
-                    title: 'Save Error',
-                    msg: response.responseText,
-                    buttons: Ext.Msg.OK,
-                    icon: Ext.Msg.ERROR
-                });
+                var msg = operation.request.scope.reader.jsonData.message;
+                Ext.widget('messagepanel', { title: 'Save Error', msg: response.responseText });
             }
         });
     }
