@@ -114,7 +114,8 @@ Ext.define('AM.view.directory.ApplicationForm', {
           name: 'context'
         },
         {
-          xtype: 'datalayercombo'
+          xtype: 'datalayercombo',
+		  value: ''
         },
         {
           xtype: 'textfield',
