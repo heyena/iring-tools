@@ -296,7 +296,7 @@ Ext.define('AM.controller.Directory', {
 
     dlCmb.on('afterrender', function (combo, eopts) {
       if (assembly !== '') {
-        combo.setValue(assembly);
+        combo.setValue(assembly.substring(assembly.indexOf(',')+2));
       }
     }, me);
 
