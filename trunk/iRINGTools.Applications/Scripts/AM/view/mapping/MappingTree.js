@@ -39,9 +39,9 @@ Ext.define('AM.view.mapping.MappingTree', {
             viewConfig: {
                 plugins: [
                     Ext.create('Ext.tree.plugin.TreeViewDragDrop', {
-                      ddGroup: 'refdataGroup',
-                      enableDrag: false
-                  })
+                        ddGroup: 'refdataGroup',
+                        enableDrag: false
+                    })
                 ],
                 listeners: {
                     beforedrop: {
@@ -75,7 +75,7 @@ Ext.define('AM.view.mapping.MappingTree', {
               ]
             }
           ],
-          listeners: {
+            listeners: {
                 itemcontextmenu: {
                     fn: me.showContextMenu,
                     scope: me
@@ -101,8 +101,8 @@ Ext.define('AM.view.mapping.MappingTree', {
         var tempArr = pan.graph.split('/'); //pan.graphName;
         var graphName = tempArr[tempArr.length - 1];
         var modelType = data.records[0].data.type;
-        if (overModel.data.type == 'RoleMapNode') {
 
+        if (overModel.data.type == 'RoleMapNode') {
             reference = data.records[0].data.record.Uri;
             label = data.records[0].data.record.Label;
             roleId = overModel.data.record.id;
@@ -113,7 +113,7 @@ Ext.define('AM.view.mapping.MappingTree', {
             f = false;
             var classIndex = me.parentClassIndex;
             var index = overModel.parentNode.parentNode.indexOf(overModel.parentNode);
-            me.getEl().mask('Loading...');
+            //me.getEl().mask('Loading...');
             //this.getEl().mask('Loading...');
             Ext.Ajax.request({
                 url: 'mapping/makereference', //'mapping/mapreference',
@@ -131,16 +131,15 @@ Ext.define('AM.view.mapping.MappingTree', {
                     classIndex: classIndex
                 },
                 success: function (result, request) {
-                    me.getEl().unmask();
+                    //me.getEl().unmask();
                     me.onReload();
                 },
                 failure: function (result, request) {
                     //don't drop it
-                    return false;
                 }
             });
         }
-        if (modelType == 'TemplateNode') { //(data.records[0].data.type == 'TemplateNode') {
+        else if (modelType == 'TemplateNode') { //(data.records[0].data.type == 'TemplateNode') {
             ntype = overModel.data.type;
             parentid = overModel.data.identifier;
             classMapIndex = overModel.data.identifierIndex;
@@ -151,14 +150,15 @@ Ext.define('AM.view.mapping.MappingTree', {
             rec = data.records[0].data.record;
             context = overModel.data.id + '/' + txt;
             lf = false;
-            me.getEl().mask('Loading...');
+
+            //me.setLoading();
             Ext.Ajax.request({
                 url: 'mapping/addtemplatemap',
                 timeout: 600000,
                 method: 'POST',
                 params: {
                     contextName: pan.contextName,
-                    ctx: context, //overModel.internalId,
+                    ctx: context,
                     endpoint: pan.endpoint,
                     baseUrl: pan.baseUrl,
                     nodetype: thistype,
@@ -169,21 +169,15 @@ Ext.define('AM.view.mapping.MappingTree', {
                     graphName: graphName
                 },
                 success: function (result, request) {
+                    //me.setLoading(false);
                     me.onReload();
-                    me.getEl().unmask();
-                    return false;
                 },
                 failure: function (result, request) {
+                    me.setLoading(false);
                     //TODO: show error
-                    return false;
                 }
             });
         }
-        else {
-            return false;
-        }
-
-        return false;
     },
 
     showContextMenu: function (dataview, record, item, index, e, eOpts) {
@@ -205,7 +199,7 @@ Ext.define('AM.view.mapping.MappingTree', {
     onBeforeLoad: function (store, operation, eOpts) {
         store.proxy.extraParams.type = operation.node.data.type;
         store.proxy.extraParams.index = operation.node.data.index;
-        
+
         if (store.proxy.extraParams !== undefined) {
             store.proxy.extraParams.id = operation.node.data.id;
 
@@ -253,10 +247,10 @@ Ext.define('AM.view.mapping.MappingTree', {
         var graphName = graphNameArr[graphNameArr.length - 1];
         var path, graphNode, context, endpoint, id;
         var node = me.getSelectedNode();
-        
+
         if (!node) {
             node = me.getRootNode();
-        } 
+        }
 
         var store = me.store;
         var params = store.getProxy().extraParams;
