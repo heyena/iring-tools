@@ -5,8 +5,8 @@
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
     <Major>2</Major>
     <Minor>5</Minor>
-    <Build>0</Build>
-    <Revision>5785</Revision>
+    <Build>1</Build>
+    <Revision>0</Revision>
   </PropertyGroup>
 
   <PropertyGroup>
