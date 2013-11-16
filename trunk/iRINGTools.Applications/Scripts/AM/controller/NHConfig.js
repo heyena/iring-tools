@@ -31,6 +31,10 @@ Ext.define('AM.controller.NHConfig', {
     {
         ref: 'contentPanel',
         selector: 'viewport > centerpanel > contentpanel'
+    },
+    {
+        ref: 'searchPanel',
+        selector: 'viewport > centerpanel > searchpanel'
     }],
 
     init: function (application) {
@@ -108,6 +112,8 @@ Ext.define('AM.controller.NHConfig', {
         else {
             contentPanel.setActiveTab(configPanel);
         }
+
+        me.getSearchPanel().collapse();
     },
 
     reload: function (configPanel) {
