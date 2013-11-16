@@ -44,11 +44,11 @@ namespace RdfImportExport
             }
             if (method.ToUpper() == "IMPORT")
             {
-              DoImport();
+              //DoImport();
             }
             else if (method.ToUpper() == "EXPORT")
             {
-              DoExport();
+              //DoExport();
             }
             else
             {
@@ -63,12 +63,12 @@ namespace RdfImportExport
           if (method.ToUpper() == "IMPORT")
           {
             GetAppSettings();
-            DoImport();
+            //DoImport();
           }
           else
           {
             GetAppSettings();
-            DoExport();
+            //DoExport();
           }
         }
       }
@@ -102,72 +102,72 @@ namespace RdfImportExport
       }
     }
 
-    private static void DoExport()
-    {
-      MicrosoftSqlStoreManager msStore = new MicrosoftSqlStoreManager(dbServer, dbName, dbUser, dbPassword);
-      SqlGraph sqlGraph = null;
-      List<Uri> graphUris = msStore.GetGraphUris();
-      FastRdfXmlWriter rdfXmlWriter = new FastRdfXmlWriter();
+    //private static void DoExport()
+    //{
+    //  MicrosoftSqlStoreManager msStore = new MicrosoftSqlStoreManager(dbServer, dbName, dbUser, dbPassword);
+    //  SqlGraph sqlGraph = null;
+    //  List<Uri> graphUris = msStore.GetGraphUris();
+    //  FastRdfXmlWriter rdfXmlWriter = new FastRdfXmlWriter();
 
-      if (graphUri == null || graphUri == string.Empty)
-      {
-          sqlGraph = new SqlGraph(graphUris[0], msStore);
-      }
-      else
-      {
-          bool exist = msStore.Exists(new Uri(graphUri));
-          if (exist) 
-              sqlGraph = new SqlGraph(new Uri(graphUri), msStore);
-          else
-              throw new Exception(graphUri + " does not exist in Sql store ...");
-      }
+    //  if (graphUri == null || graphUri == string.Empty)
+    //  {
+    //      sqlGraph = new SqlGraph(graphUris[0], msStore);
+    //  }
+    //  else
+    //  {
+    //      bool exist = msStore.Exists(new Uri(graphUri));
+    //      if (exist) 
+    //          sqlGraph = new SqlGraph(new Uri(graphUri), msStore);
+    //      else
+    //          throw new Exception(graphUri + " does not exist in Sql store ...");
+    //  }
 
-      rdfXmlWriter.Save(sqlGraph, rdfFullFilename);
+    //  rdfXmlWriter.Save(sqlGraph, rdfFullFilename);
 
-      if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
-      Console.WriteLine("Graph[" + graphUri + "] written to " + rdfFullFilename);
-      Console.WriteLine("Press any key to continue....");
-      Console.ReadKey();
+    //  if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
+    //  Console.WriteLine("Graph[" + graphUri + "] written to " + rdfFullFilename);
+    //  Console.WriteLine("Press any key to continue....");
+    //  Console.ReadKey();
 
-    }
+    //}
 
-    private static void DoImport()
-    {
-      MicrosoftSqlStoreManager msStore = new MicrosoftSqlStoreManager(dbServer, dbName, dbUser, dbPassword);
+    //private static void DoImport()
+    //{
+    //  MicrosoftSqlStoreManager msStore = new MicrosoftSqlStoreManager(dbServer, dbName, dbUser, dbPassword);
       
-      List<Uri> graphUris = msStore.GetGraphUris();
-      SqlGraph sqlGraph = null;
-        // let's load the existing graph
-      if (graphUri == null || graphUri == string.Empty)
-      {
-         sqlGraph  = new SqlGraph(graphUris[0], msStore);
-      }
-      else
-      {
-          bool uriExist = msStore.Exists(new Uri(graphUri));
-          if (uriExist)
-          sqlGraph = new SqlGraph(new Uri(graphUri), msStore);
-          else 
-              throw new Exception(graphUri + " does not exists in Sql Store ... ");
-      }
-        // do we need to clear it first?
-      if (clearBeforeImport)
-      {
-          sqlGraph.Clear();
-      }
-      Graph g = new Graph();
-      FileLoader.Load(g, rdfFullFilename);
-      foreach (Triple t in g.Triples)
-      {
-          sqlGraph.Assert(t);
-      }
+    //  List<Uri> graphUris = msStore.GetGraphUris();
+    //  SqlGraph sqlGraph = null;
+    //    // let's load the existing graph
+    //  if (graphUri == null || graphUri == string.Empty)
+    //  {
+    //     sqlGraph  = new SqlGraph(graphUris[0], msStore);
+    //  }
+    //  else
+    //  {
+    //      bool uriExist = msStore.Exists(new Uri(graphUri));
+    //      if (uriExist)
+    //      sqlGraph = new SqlGraph(new Uri(graphUri), msStore);
+    //      else 
+    //          throw new Exception(graphUri + " does not exists in Sql Store ... ");
+    //  }
+    //    // do we need to clear it first?
+    //  if (clearBeforeImport)
+    //  {
+    //      sqlGraph.Clear();
+    //  }
+    //  Graph g = new Graph();
+    //  FileLoader.Load(g, rdfFullFilename);
+    //  foreach (Triple t in g.Triples)
+    //  {
+    //      sqlGraph.Assert(t);
+    //  }
 
-      sqlGraph.Manager.Flush();
+    //  sqlGraph.Manager.Flush();
 
-      if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
-      Console.WriteLine("Graph[" + graphUri + "] imported from " + rdfFullFilename);
-      Console.ReadKey();
-    }
+    //  if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
+    //  Console.WriteLine("Graph[" + graphUri + "] imported from " + rdfFullFilename);
+    //  Console.ReadKey();
+    //}
 
     static void PrintUsage()
     {
