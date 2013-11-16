@@ -25,12 +25,19 @@ Ext.define('AM.view.nhconfig.RelationshipsPanel', {
                     xtype: 'textfield',
                     flex: 1,
                     allowBlank: false,
-                    name: 'relationshipName'
+                    name: 'relationshipName',
+                    listeners: {
+                        specialkey: {
+                            fn: me.onSpecialkey,
+                            scope: me
+                        }
+                    }
                 }, {
                     xtype: 'tbspacer',
                     width: 2
                 }, {
                     xtype: 'button',
+                    itemId: 'addrelationshipbtn',
                     iconCls: 'am-list-add',
                     action: 'addrelationship',
                     scope: me,
@@ -99,6 +106,14 @@ Ext.define('AM.view.nhconfig.RelationshipsPanel', {
         });
 
         me.callParent(arguments);
+    },
+
+    onSpecialkey: function (field, e, eOpts) {
+        var me = this;
+        if (e.getKey() === e.ENTER) {
+            var btn = me.down('#addrelationshipbtn');
+            me.addRelationship(btn);
+        }
     },
 
     addRelationship: function (button, e) {
