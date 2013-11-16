@@ -32,7 +32,7 @@
     <br/><br/><br/><br/>
 	<div style="height: 32px;text-align:justify;">
             <p style="font-family:Arial;font-size:8pt;">
-            Copyright © 2009 - 2013, iringug.org All rights reserved.
+            Copyright © 2009 - 2014, iringug.org All rights reserved.
             <a href="http://iringug.org" target="_blank"><img src="Content/img/iringug-logo.png" style="float: right" />
             </a></p>
 	</div>

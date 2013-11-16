@@ -8,7 +8,7 @@
   <body>
     <div class="banner">
       <h1>
-        <img src="img/iring-tools-logo.png" />&nbsp; Version 2.04.00
+        <img src="img/iring-tools-logo.png" />&nbsp; Version 2.05.01
       </h1>
     </div>
     <div class="main">
@@ -39,18 +39,6 @@
                 <a href="Apps/AdapterManager">
                 AdapterManager</a>
               </li>
-              <!--<li>
-                <a href="Apps/RefDataEditor">
-                Reference Data Editor</a>
-              </li>-->
-              <li>
-                <a href="services/facade/sparql/query">
-                Facade Query</a>
-              </li>
-              <li>
-                <a href="services/sandbox/sparql/query">
-                Sandbox Query</a>
-              </li>
             </ul>
           </td>
           <td>
@@ -75,14 +63,6 @@
               <li>
                 <a href="services/dxfr/help">
                 Data Transfer Service</a>
-              </li>
-              <li>
-                <a href="services/facade/svc/help">
-                Facade Service</a>
-              </li>
-              <li>
-                <a href="services/sandbox/svc/help">
-                Sandbox Service</a>
               </li>
             </ul>
           </td>
