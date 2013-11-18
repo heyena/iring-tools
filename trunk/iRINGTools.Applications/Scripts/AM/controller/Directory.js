@@ -221,8 +221,9 @@ Ext.define('AM.controller.Directory', {
                 tree.onReload();
             },
             failure: function (response, request) {
-                var message = 'Error deleting scope!';
-                showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+                //var message = 'Error deleting scope!';
+                Ext.widget('messagepanel', { title: 'Warning', msg: 'Error deleting scope!' });
+				//showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
             }
         });
     },
@@ -285,7 +286,7 @@ Ext.define('AM.controller.Directory', {
         }, me);
 
         dlCmb.on('afterrender', function (combo, eopts) {
-            if (assembly !== '') {
+            if (assembly!=undefined && assembly !== '') {
                 combo.setValue(assembly.substring(assembly.indexOf(',') + 2));
             }
         }, me);
@@ -324,8 +325,9 @@ Ext.define('AM.controller.Directory', {
                 tree.onReload();
             },
             failure: function (response, request) {
-                var message = 'Error deleting application!';
-                showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+                //var message = 'Error deleting application!';
+                Ext.widget('messagepanel', { title: 'Warning', msg: 'Error deleting application!' });
+				//showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
             }
         });
     },
@@ -374,11 +376,13 @@ Ext.define('AM.controller.Directory', {
                         msg += '    ' + status.Messages[j] + '\r\n';
                     }
                 }
-                showDialog(600, 340, 'NHibernate Regeneration Result', msg, Ext.Msg.OK, null);
+                Ext.widget('messagepanel', { title: 'NHibernate Regeneration Result', msg: msg });
+				//showDialog(600, 340, 'NHibernate Regeneration Result', msg, Ext.Msg.OK, null);
             },
             failure: function (result, request) {
                 var msg = result.responseText;
-                showDialog(500, 240, 'NHibernate Regeneration Error', msg, Ext.Msg.OK, null);
+                //showDialog(500, 240, 'NHibernate Regeneration Error', msg, Ext.Msg.OK, null);
+				Ext.widget('messagepanel', { title: 'NHibernate Regeneration Error', msg: msg });
             }
         });
     },
@@ -416,7 +420,8 @@ Ext.define('AM.controller.Directory', {
                 content.getEl().unmask();
                 gridPanel.destroy();
                 var msg = Ext.JSON.decode(response.responseText).message;
-                showDialog(400, 150, 'Error', msg, Ext.Msg.OK, null);
+                //showDialog(400, 150, 'Error', msg, Ext.Msg.OK, null);
+				Ext.widget('messagepanel', { title: 'Error', msg: msg});
             }, me);
 
             gridStore.load({
@@ -460,7 +465,8 @@ Ext.define('AM.controller.Directory', {
             },
             failure: function (response, request) {
                 tree.getEl().unmask();
-                showDialog(400, 300, 'Warning', 'Error Refreshing Facade!!!', Ext.Msg.OK, null);
+                Ext.widget('messagepanel', { title: 'Warning', msg: 'Error Refreshing Facade!!!'});
+				//showDialog(400, 300, 'Warning', 'Error Refreshing Facade!!!', Ext.Msg.OK, null);
             }
         });
     },
@@ -475,7 +481,7 @@ Ext.define('AM.controller.Directory', {
                 me.application.fireEvent('nhconfig', node);
                 break;
             default:
-                showDialog(300, 300, 'Warning', 'Datalayer ' + datalayer + ' is not configurable...', Ext.msg.OK, null);
+                Ext.widget('messagepanel', { title: 'Warning', msg: 'Datalayer ' + datalayer + ' is not configurable...'});//showDialog(300, 300, 'Warning', 'Datalayer ' + datalayer + ' is not configurable...', Ext.msg.OK, null);
                 break;
         }
     },
@@ -557,7 +563,8 @@ Ext.define('AM.controller.Directory', {
         var storeProxy = store.getProxy();
         storeProxy.on('exception', function (proxy, response, operation) {
             var msg = Ext.JSON.decode(response.responseText).message;
-            showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
+			Ext.widget('messagepanel', { title: 'Error', msg: msg });
+            //showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
         }, me);
         store.load({
             node: node,
@@ -593,7 +600,8 @@ Ext.define('AM.controller.Directory', {
                     var error = 'SUCCESS = FALSE';
                     var index = rtext.toUpperCase().indexOf(error);
                     msg = rtext;
-                    showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
+                    Ext.widget('messagepanel', { title: 'Error', msg: msg });
+					//showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
                 }
             }, me);
             gridStore.load({
@@ -655,7 +663,8 @@ Ext.define('AM.controller.Directory', {
         }, me);
         storeProxy.on('exception', function (proxy, response, operation) {
             var msg = Ext.JSON.decode(response.responseText).message;
-            showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
+            Ext.widget('messagepanel', { title: 'Error', msg: msg });
+			//showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
         }, me);
         /*store.on('exception',function( store, records, options ){
         alert('exception occeured...');
@@ -734,15 +743,18 @@ Ext.define('AM.controller.Directory', {
             success: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
                 if (responseObj.Level == 0) {
-                    showDialog(450, 100, 'Refresh Cache Result', 'Object cache refreshed successfully.', Ext.Msg.OK, null);
+                    Ext.widget('messagepanel', { title: 'Refresh Cache Result', msg: 'Object cache refreshed successfully.'});
+					//showDialog(450, 100, 'Refresh Cache Result', 'Object cache refreshed successfully.', Ext.Msg.OK, null);
                 }
                 else {
-                    showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+                    Ext.widget('messagepanel', { title: 'Refresh Cache Error', msg: responseObj.Messages.join()});
+					//showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
                 }
             },
             failure: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
-                showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+                Ext.widget('messagepanel', { title: 'Refresh Cache Error', msg: responseObj.Messages.join()});
+				//showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
             }
         })
     },
@@ -762,15 +774,18 @@ Ext.define('AM.controller.Directory', {
                 var responseObj = Ext.decode(response.responseText);
 
                 if (responseObj.Level == 0) {
-                    showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
+                    Ext.widget('messagepanel', { title: 'Refresh Cache Result', msg: 'Cache refreshed successfully.' });
+					//showDialog(450, 100, 'Refresh Cache Result', 'Cache refreshed successfully.', Ext.Msg.OK, null);
                 }
                 else {
-                    showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+					Ext.widget('messagepanel', { title: 'Refresh Cache Error', msg: responseObj.Messages.join()});
+                    //showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
                 }
             },
             failure: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
-                showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+                Ext.widget('messagepanel', { title: 'Refresh Cache Error', msg: responseObj.Messages.join()});
+				//showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
             }
         })
     },
@@ -808,15 +823,18 @@ Ext.define('AM.controller.Directory', {
                 var responseObj = Ext.decode(response.responseText);
 
                 if (responseObj.Level == 0) {
-                    showDialog(450, 100, 'Delete Cache Result', 'Cache deleted successfully.', Ext.Msg.OK, null);
+                    Ext.widget('messagepanel', { title: 'Delete Cache Result', msg: 'Cache deleted successfully.'});
+					//showDialog(450, 100, 'Delete Cache Result', 'Cache deleted successfully.', Ext.Msg.OK, null);
                 }
                 else {
-                    showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+                     Ext.widget('messagepanel', { title: 'Delete Cache Error', msg: responseObj.Messages.join()});
+					//showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
                 }
             },
             failure: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
-                showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
+                Ext.widget('messagepanel', { title: 'Delete Cache Error', msg: responseObj.Messages.join()});
+				//showDialog(500, 160, 'Delete Cache Error', responseObj.Messages.join(), Ext.Msg.OK, null);
             }
         })
     },
@@ -926,8 +944,9 @@ Ext.define('AM.controller.Directory', {
                         properties.virtualProperties.push(folder);
                     else {
                         var msg = 'Can not add duplicate property.'
-                        showDialog(300, 80, 'Saving Result', msg, Ext.Msg.OK, null);
-                        return false;
+                        //showDialog(300, 80, 'Saving Result', msg, Ext.Msg.OK, null);
+                         Ext.widget('messagepanel', { title: 'Saving Result', msg: msg});
+						return false;
                     }
                 }
 
@@ -961,12 +980,14 @@ Ext.define('AM.controller.Directory', {
                         me.getDirTree().onReload();
                     },
                     failure: function (response, request) {
-                        showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
+                         Ext.widget('messagepanel', { title: 'Saving Result', msg: 'An error has occurred while saving virtual property.'});
+						//showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
                     }
                 });
             },
             failure: function (response, request) {
-                showDialog(400, 100, 'Error', 'An error has occurred while getting virtual property.', Ext.Msg.OK, null);
+                 Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while getting virtual property.'});
+				//showDialog(400, 100, 'Error', 'An error has occurred while getting virtual property.', Ext.Msg.OK, null);
             }
         });
     },
@@ -1046,7 +1067,8 @@ Ext.define('AM.controller.Directory', {
                 win.show();
             },
             failure: function (response, request) {
-                showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
+                Ext.widget('messagepanel', { title: 'Saving Result', msg: 'An error has occurred while saving virtual property.'});
+				//showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
             }
         });
     },
@@ -1086,13 +1108,15 @@ Ext.define('AM.controller.Directory', {
                         me.getDirTree().onReload();
                     },
                     failure: function (response, request) {
-                        showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
+                        Ext.widget('messagepanel', { title: 'Saving Result', msg: 'An error has occurred while saving virtual property.'});
+						//showDialog(400, 100, 'Saving Result', 'An error has occurred while saving virtual property.', Ext.Msg.OK, null);
                     }
                 });
 
             },
             failure: function (response, request) {
-                showDialog(400, 100, 'Error', 'An error has occurred while deleting virtual property.', Ext.Msg.OK, null);
+                Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting virtual property.'});
+				//showDialog(400, 100, 'Error', 'An error has occurred while deleting virtual property.', Ext.Msg.OK, null);
             }
         });
 
@@ -1268,14 +1292,16 @@ Ext.define('AM.controller.Directory', {
             success: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
                 if (responseObj.Level != 0) {
-                    showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+                    //showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+					Ext.widget('messagepanel', { title: 'Result', msg: responseObj.Messages.join('\n')});
                 }
                 content.getEl().unmask();
                 tree.onReload();
             },
             failure: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
-                showDialog(500, 160, 'Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+                Ext.widget('messagepanel', { title: 'Error', msg: responseObj.Messages.join('\n')});
+				//showDialog(500, 160, 'Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
             }
         });
     }
