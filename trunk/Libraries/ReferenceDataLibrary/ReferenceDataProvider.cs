@@ -1934,6 +1934,10 @@ namespace org.iringtools.refdata
       try
       {
         var endpoint = new SparqlRemoteEndpoint(new Uri(repository.Uri));
+        if (string.IsNullOrEmpty(repository.AcceptHeader))
+        {
+            endpoint.ResultsAcceptHeader = repository.AcceptHeader;
+        }
         
         var encryptedCredentials = repository.EncryptedCredentials;
         var cred = new WebCredentials(encryptedCredentials);
@@ -1955,7 +1959,6 @@ namespace org.iringtools.refdata
       catch (Exception ex)
       {
         _logger.Error(string.Format("Failed to read repository['{0}']", repository.Uri), ex);
-        //throw ex;
         return new SparqlResultSet();
       }
     }

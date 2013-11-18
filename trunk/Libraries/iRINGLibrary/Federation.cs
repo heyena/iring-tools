@@ -76,6 +76,8 @@ namespace org.iringtools.refdata.federation
    public List<Namespace> Namespaces { get; set; }
    [DataMember(Name = "encryptedcredentials")]
    public string EncryptedCredentials { get; set; }
+   [DataMember(Name = "acceptheader")]
+   public string AcceptHeader { get; set; }
   }
 
   /// <remarks/>
