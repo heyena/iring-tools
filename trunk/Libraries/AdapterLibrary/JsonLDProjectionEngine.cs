@@ -31,6 +31,7 @@ namespace org.iringtools.adapter
         private string _graphBaseUri;
         private XElement _rdfXml;
         private NameValueCollection tableMapping;
+        private Dictionary<string, ValueListWithParameter> valueListMapping;
         private static readonly Int16 TABLE = 0;
         private static readonly Int16 FIELD = 1;
 
@@ -41,6 +42,7 @@ namespace org.iringtools.adapter
             _dictionary = dictionary;
             _individualsCache = new Dictionary<string, List<string>>();
             tableMapping = new NameValueCollection();
+            valueListMapping = new Dictionary<string, ValueListWithParameter>();
 
             if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
             {
@@ -69,7 +71,8 @@ namespace org.iringtools.adapter
                 _graphBaseUri = appBaseUri + tipMap.name + "/";
                 _dataObjects = dataObjects;
 
-                createFields(false);
+                createTableMapping(false);
+                createValueListMapping(false);
 
 
                 string resource = graphName.ToLower();
@@ -180,10 +183,39 @@ namespace org.iringtools.adapter
                                     {
                                         value = Convert.ToString(value);
                                         dataItem.properties.Add(tableMapping.Get(key).ToString(), value);
+
                                     }
                                 }
 
                             }
+
+                            //foreach (string key in valueListMapping.Keys)
+                            //{
+                            //    string[] parts = key.Split('.');
+                            //    if (dataObject.objectName == parts[TABLE])
+                            //    {
+                            //        object value = dataObj.GetPropertyValue(parts[FIELD]);
+                            //        if (value != null)
+                            //        {
+                            //            value = Convert.ToString(value);
+                            //            dataItem.properties.Add(tableMapping.Get(key).ToString(), value);
+
+                            //        }
+                            //    }
+
+                            //}
+
+                            dataItem.valueListName = valueListMapping["ISKEY"].parameterName;
+                            dataItem.valueList = valueListMapping["ISKEY"].valueList;
+
+                            //dataItem.valueListName = "Parm999";
+                            //dataItem.valueList = new ValueList {
+                            //                                    label = "length",
+                            //                                    value = "100",
+                            //                                    internalValue = new List<string>{"METER", "INCH"},
+                            //                                    uri = new List<string>{"rdl:1234568", "rdl:56477804"}
+                            //                                    };
+                            //dataItem.properties.Add("Parm9999", dataItem.valueList);
 
                             //foreach (DataProperty dataProperty in dataObject.dataProperties)
                             //{
@@ -310,7 +342,8 @@ namespace org.iringtools.adapter
                 _graphBaseUri = appBaseUri + graphName + "/";
                 _dataObjects = dataObjects;
 
-                createFields(false);
+                createTableMapping(false);
+                createValueListMapping(false);
 
 
                 string resource = child;
@@ -1129,7 +1162,7 @@ namespace org.iringtools.adapter
             return individualElement;
         }
 
-        private void createFields(bool child = true)
+        private void createTableMapping(bool child = true)
         {
             tableMapping.Clear();
 
@@ -1148,6 +1181,28 @@ namespace org.iringtools.adapter
 
                 }
             }
+        }
+
+        private void createValueListMapping(bool child = true)
+        {
+            valueListMapping.Clear();
+
+            ValueList vl = new ValueList
+            {
+                label = "length",
+                value = "100",
+                internalValues = new internalValues { "METER", "INCH" },
+                uris = new uris { "rdl:1234568", "rdl:56477804" }
+            };
+
+
+            ValueListWithParameter VLWP = new ValueListWithParameter
+            {
+                parameterName = "Parm999",
+                valueList = vl
+            };
+
+            valueListMapping.Add("ISKEY", VLWP);
         }
 
 

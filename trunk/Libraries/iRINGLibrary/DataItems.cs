@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using org.iringtools.library.tip;
 
 namespace org.iringtools.library
 {
@@ -42,10 +43,18 @@ namespace org.iringtools.library
 
     [DataMember(Name = "hasContent", Order = 3, EmitDefaultValue = false)]
     public bool hasContent { get; set; }
+
     [DataMember(Name = "content", Order = 4, EmitDefaultValue = false)]
     public string content { get; set; }
+
     [DataMember(Name = "contentType", Order = 5, EmitDefaultValue = false)]
     public string contentType { get; set; }
+
+    [DataMember(Name = "valueLIstName", Order = 6, EmitDefaultValue = false)]
+    public string valueListName { get; set; }
+
+    [DataMember(Name = "valueLIst", Order = 7, EmitDefaultValue = false)]
+    public ValueList valueList { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/data", Name = "link")]

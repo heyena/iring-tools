@@ -168,6 +168,12 @@ namespace org.iringtools.adapter
                 result[property.Key] = property.Value;
             }
 
+            if(!string.IsNullOrEmpty(dataItem.valueListName))
+            {
+                
+                result[dataItem.valueListName] = dataItem.valueList;
+            }
+
             if (_displayLinks)
             {
                 result[_linksFieldName] = dataItem.links;
