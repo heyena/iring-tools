@@ -42,7 +42,7 @@ Ext.define('AM.view.mapping.MappingPanel', {
         },
         {
           xtype: 'propertypanel',
-          width: 300,
+          width: 260,
           title: 'Mapping Details',
           region: 'east',
           split: true
