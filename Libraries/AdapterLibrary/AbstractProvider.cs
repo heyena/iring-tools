@@ -2701,7 +2701,7 @@ namespace org.iringtools.adapter
             {
                 _logger.DebugFormat("Initializing Scope: {0}.{1}", project, application);
                 InitializeScope(project, application);
-                InitializeDataLayer(false);
+                //InitializeDataLayer(false);
                 _graphMap = _mapping.FindGraphMap(resource);
 
                 return UpdateTipMapping("tip", "findparameters", project, application);
@@ -2718,19 +2718,28 @@ namespace org.iringtools.adapter
             try
             {
                 _logger.DebugFormat("Initializing Scope: {0}.{1}", project, application);
+                Console.WriteLine("Initializing Scope: {0}.{1}", project, application);
                 InitializeScope(project, application);
-                InitializeDataLayer(false);
-                foreach (GraphMap graph in _mapping.graphMaps)
+               // InitializeDataLayer(false);
+                if (_mapping.graphMaps.Count == 0)
                 {
-                    string resource = graph.name;
-                    _graphMap = _mapping.FindGraphMap(resource);
-                    UpdateTipMapping("tip", "findparameters", project, application);
+                    _logger.DebugFormat("Mapping: {0}.{1}, doesn't exist", project, application);
+                    Console.WriteLine("Mapping: {0}.{1}, doesn't exist", project, application);
+                }
+                else
+                {
+                    foreach (GraphMap graph in _mapping.graphMaps)
+                    {
+                        string resource = graph.name;
+                        _graphMap = _mapping.FindGraphMap(resource);
+                        UpdateTipMapping("tip", "findparameters", project, application);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-                throw ex;
+               // throw ex;
             }
         }
 
@@ -2783,6 +2792,8 @@ namespace org.iringtools.adapter
                             parameters.identifiers = new library.tip.Identifiers();
                             parameters.identifiers.AddRange(item.Value.ToList());
                         }
+
+                        
                     }
                 }
 

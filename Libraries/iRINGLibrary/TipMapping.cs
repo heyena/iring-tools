@@ -132,6 +132,45 @@ namespace org.iringtools.library.tip
     [DataMemberAttribute(EmitDefaultValue = true, Order = 5)]
     public string dataPropertyName { get; set; }
 
+    [DataMemberAttribute(EmitDefaultValue = true, Order = 6)]
+    public ValueList valueList { get; set; }
+
+  }
+
+  [CollectionDataContractAttribute(Name = "internalValues", Namespace = "http://www.iringtools.org/tipmapping", ItemName = "internalValue")]
+  public class internalValues : System.Collections.Generic.List<string>
+  {
+  }
+
+  [CollectionDataContractAttribute(Name = "uris", Namespace = "http://www.iringtools.org/tipmapping", ItemName = "uri")]
+  public class uris : System.Collections.Generic.List<string>
+  {
+  }
+
+  [DataContract(Namespace = "http://www.iringtools.org/tipmapping", Name = "valueList")]
+  public class ValueList
+  {
+      [DataMember(Name = "label", Order = 0)]
+      public string label { get; set; }
+
+      [DataMember(Name = "value", Order = 1)]
+      public string value { get; set; }
+
+      [DataMember(Name = "internalValues", Order = 2)]
+      public internalValues internalValues { get; set; }
+
+      [DataMember(Name = "uris", Order = 3)]
+      public uris uris { get; set; }
+  }
+
+  [DataContract(Namespace = "http://www.iringtools.org/tipmapping", Name = "valueListWithParameter")]
+  public class ValueListWithParameter
+  {
+      [DataMember(Name = "parameterName", Order = 0)]
+      public string parameterName { get; set; }
+
+      [DataMember(Name = "valueList", Order = 1)]
+      public ValueList valueList { get; set; }
   }
 }
 
