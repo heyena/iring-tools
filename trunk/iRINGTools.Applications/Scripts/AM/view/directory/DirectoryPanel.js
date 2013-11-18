@@ -10,7 +10,7 @@ Ext.define('AM.view.directory.DirectoryPanel', {
     split: true,
     border: true,
     padding: 2,
-    width: 300,
+    width: 260,
     layout: {
         type: 'border'
     },
