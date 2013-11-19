@@ -98,8 +98,9 @@ Ext.define('AM.view.mapping.ValueListForm', {
     var win = me.up('window');
     var form = me.getForm();
     if (form.findField('valueList').getValue() === '') {
-      showDialog(400, 100, 'Warning', 'Please type in a value list name before saving.', Ext.Msg.OK, null);
-      return;
+      //showDialog(400, 100, 'Warning', 'Please type in a value list name before saving.', Ext.Msg.OK, null);
+       Ext.widget('messagepanel', { title: 'Warning', msg: 'Please type in a value list name before saving.'});
+	  return;
     }
     form.submit({
       waitMsg: 'Saving Data...',
@@ -107,8 +108,9 @@ Ext.define('AM.view.mapping.ValueListForm', {
         win.fireEvent('Save', me);
       },
       failure: function (f, a) {
-        var message = 'Error saving changes!';
-        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+        //var message = 'Error saving changes!';
+        //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+		Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});
       }
     });
   },

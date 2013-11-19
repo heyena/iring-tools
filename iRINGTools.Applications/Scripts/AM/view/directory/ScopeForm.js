@@ -129,7 +129,8 @@ Ext.define('AM.view.directory.ScopeForm', {
         node.eachChild(function (n) {
             if (n.data.text == folderName) {
                 if (state == 'new') {
-                    showDialog(400, 100, 'Warning', 'Scope name \"' + folderName + '\" already exists.', Ext.Msg.OK, null);
+                     Ext.widget('messagepanel', { title: 'Warning', msg: 'Scope name \"' + folderName + '\" already exists.'});
+					//showDialog(400, 100, 'Warning', 'Scope name \"' + folderName + '\" already exists.', Ext.Msg.OK, null);
                     return;
                 }
             }
@@ -145,15 +146,18 @@ Ext.define('AM.view.directory.ScopeForm', {
                 failure: function (response, request) {
                     if (response.items != undefined && response.items[3].value !== undefined) {
                         var rtext = response.items[3].value;
-                        showDialog(400, 100, 'Error saving folder changes', 'Changes of ' + rtext + ' are not saved.', Ext.Msg.OK, null);
+                         Ext.widget('messagepanel', { title: 'Error saving folder changes', msg: 'Changes of ' + rtext + ' are not saved.'});
+						//showDialog(400, 100, 'Error saving folder changes', 'Changes of ' + rtext + ' are not saved.', Ext.Msg.OK, null);
                         return;
                     }
-                    var message = 'Error saving changes!';
-                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+                    //var message = 'Error saving changes!';
+                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});
+					//showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
                 }
             });
         } else {
-            showDialog(400, 100, 'Warning', 'Please complete all required fields...', Ext.Msg.OK, null);
+            Ext.widget('messagepanel', { title: 'Warning', msg: 'Please complete all required fields.'});
+			//showDialog(400, 100, 'Warning', 'Please complete all required fields...', Ext.Msg.OK, null);
             return;
         }
     },

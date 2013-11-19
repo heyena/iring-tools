@@ -135,8 +135,9 @@ Ext.define('AM.view.directory.ImportCacheForm', {
                 var panel = Ext.getCmp(request.params.panelId);
                 panel.close();
 
-                var message = 'Error getting cache information!';
-                showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
+                //var message = 'Error getting cache information!';
+                 Ext.widget('messagepanel', { title: 'Error', msg: 'Error getting cache information!' });
+				//showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
             }
         });
     },
@@ -167,13 +168,15 @@ Ext.define('AM.view.directory.ImportCacheForm', {
                     Ext.example.msg('Notification', 'Cache refreshed successfully!');
                 }
                 else {
-                    showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+                     Ext.widget('messagepanel', { title: 'Refresh Cache Error', msg: responseObj.Messages.join('\n')});
+					//showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
                 }
             },
             failure: function (response, request) {
                 me.setDisabled(false);
                 me.getEl().unmask();
-                showDialog(500, 160, 'Refresh Cache Error', response.statusText, Ext.Msg.OK, null);
+                Ext.widget('messagepanel', { title: 'Refresh Cache Error', msg: response.statusText});
+				//showDialog(500, 160, 'Refresh Cache Error', response.statusText, Ext.Msg.OK, null);
             }
         });
     },
@@ -209,13 +212,15 @@ Ext.define('AM.view.directory.ImportCacheForm', {
                     Ext.example.msg('Notification', 'Cache imported successfully!');
                 }
                 else {
-                    showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+                    Ext.widget('messagepanel', { title: 'Import Cache Error', msg: responseObj.Messages.join('\n')});
+					//showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
                 }
             },
             failure: function (response, request) {
                 me.setDisabled(false);
-                panel.getEl().unmask();
-                showDialog(500, 160, 'Import Cache Error', response.statusText, Ext.Msg.OK, null);
+                me.getEl().unmask();
+                Ext.widget('messagepanel', { title: 'Import Cache Error', msg: response.statusText});
+				//showDialog(500, 160, 'Import Cache Error', response.statusText, Ext.Msg.OK, null);
             }
         });
     },

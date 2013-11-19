@@ -68,7 +68,8 @@ Ext.define('AM.controller.Mapping', {
                 tree.onReload();
             },
             failure: function (response, request) {
-				showDialog(500, 160, 'Error', 'An error has occurred while deleting Template Map.', Ext.Msg.OK, null);
+				Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Template Map.'});
+				//showDialog(500, 160, 'Error', 'An error has occurred while deleting Template Map.', Ext.Msg.OK, null);
             }
         });
     },
@@ -400,7 +401,8 @@ Ext.define('AM.controller.Mapping', {
                 tree.onReload();
             },
             failure: function (response, request) {
-			  showDialog(500, 160, 'Error', 'An error has occurred while Making Reference.', Ext.Msg.OK, null);
+			  Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while Making Reference.'});
+			  //showDialog(500, 160, 'Error', 'An error has occurred while Making Reference.', Ext.Msg.OK, null);
 			}
         });
     },
@@ -479,7 +481,8 @@ Ext.define('AM.controller.Mapping', {
                 tree.onReload();
             },
             failure: function (response, request) {
-				showDialog(500, 160, 'Error', 'An error has occurred while deleting Value Map.', Ext.Msg.OK, null);	
+				Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Value Map.'});
+				//showDialog(500, 160, 'Error', 'An error has occurred while deleting Value Map.', Ext.Msg.OK, null);	
 			}
 
         });
@@ -516,7 +519,8 @@ Ext.define('AM.controller.Mapping', {
                 tree.onReload();
             },
             failure: function (response, request) {
-				showDialog(500, 160, 'Error', 'An error has occurred while Reset Mapping.', Ext.Msg.OK, null);	
+				Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while Reset Mapping.'});
+				//showDialog(500, 160, 'Error', 'An error has occurred while Reset Mapping.', Ext.Msg.OK, null);	
 			}
         });
     },
@@ -637,7 +641,8 @@ Ext.define('AM.controller.Mapping', {
                 tree.onReload();
             },
             failure: function (response, request) {
-				showDialog(500, 160, 'Error', 'An error has occurred while Making Possessor.', Ext.Msg.OK, null);	
+				Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while Making Possessor.'});
+				//showDialog(500, 160, 'Error', 'An error has occurred while Making Possessor.', Ext.Msg.OK, null);	
 			}
         });
     },
@@ -663,7 +668,8 @@ Ext.define('AM.controller.Mapping', {
                 tree.onReload();
             },
             failure: function (response, request) {
-				showDialog(500, 160, 'Error', 'An error has occurred while deleting Graph Map.', Ext.Msg.OK, null);	
+				Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Graph Map.'});
+				//showDialog(500, 160, 'Error', 'An error has occurred while deleting Graph Map.', Ext.Msg.OK, null);	
 			}
         });
     },
@@ -687,7 +693,8 @@ Ext.define('AM.controller.Mapping', {
                 tree.onReload();
             },
             failure: function (response, request) { 
-				showDialog(500, 160, 'Error', 'An error has occurred while deleting Value List.', Ext.Msg.OK, null);	
+				Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Value List.'});
+				//showDialog(500, 160, 'Error', 'An error has occurred while deleting Value List.', Ext.Msg.OK, null);	
 			}
         });
     },
@@ -724,7 +731,8 @@ Ext.define('AM.controller.Mapping', {
                 tree.onReload();
             },
             failure: function (result, request) {
-				showDialog(500, 160, 'Error', 'An error has occurred while deleting Class Map.', Ext.Msg.OK, null);	
+				Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Class Map.'});
+				//showDialog(500, 160, 'Error', 'An error has occurred while deleting Class Map.', Ext.Msg.OK, null);	
 			}
         })
     },

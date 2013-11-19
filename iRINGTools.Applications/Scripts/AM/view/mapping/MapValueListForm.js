@@ -191,9 +191,10 @@ Ext.define('AM.view.mapping.MapValueListForm', {
       notifyDrop: function (classdd, e, data) {
 
         if (data.records[0].data.type!= 'ValueListNode') {
-          var message = 'Please slect a ValueList Node...';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-          return false;
+          //var message = 'Please slect a ValueList Node...';
+          //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+           Ext.widget('messagepanel', { title: 'Warning', msg: 'Please slect a ValueList Node.'});
+		  return false;
         }
         //me.getForm().findField('valueListName').setValue(data.records[0].data.record.name);
         me.getForm().findField('objectNames').setValue(data.records[0].data.id);
@@ -222,8 +223,9 @@ Ext.define('AM.view.mapping.MapValueListForm', {
         win.fireEvent('save', me);
       },
       failure: function (result, request) {
-        var message = 'Failed to Map ValueList to RoleMap';
-        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+        //var message = 'Failed to Map ValueList to RoleMap';
+        //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+		Ext.widget('messagepanel', { title: 'Warning', msg: 'Failed to Map ValueList to RoleMap.'});
       }
     });
   },

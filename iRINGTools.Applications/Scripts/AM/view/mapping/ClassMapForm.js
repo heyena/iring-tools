@@ -216,15 +216,17 @@ Ext.define('AM.view.mapping.ClassMapForm', {
             if(existingIdentifier!=''){
               var tempObjName = existingIdentifier.split('.')[0];
               if (object != tempObjName) {
-                var message = 'Properties must root from the same data object as graph!';
-                showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
-                return false;
+                //var message = 'Properties must root from the same data object as graph!';
+                //showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
+                 Ext.widget('messagepanel', { title: 'Error', msg: 'Properties must root from the same data object as graph!'});
+				return false;
               }
 
               if(existingIdentifier.indexOf(key)!= -1) {
-                var message = 'Duplicate properties are not allowed!';
-                showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
-                return false;
+                //var message = 'Duplicate properties are not allowed!';
+                //showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
+                 Ext.widget('messagepanel', { title: 'Error', msg: 'Duplicate properties are not allowed!'});
+				return false;
               }
               key = existingIdentifier+','+ key;
             }else
@@ -268,9 +270,10 @@ Ext.define('AM.view.mapping.ClassMapForm', {
       },
       notifyDrop: function(dragSource, event, data){
         if (data.records[0].data.type != 'ClassNode') {
-          var message = 'Please slect a RDL Class...';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-          return false;
+          //var message = 'Please slect a RDL Class...';
+          //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+           Ext.widget('messagepanel', { title: 'Warning', msg: 'Please slect a RDL Class.'});
+		  return false;
         }
         me.getForm().findField('className').setValue(data.records[0].data.record.Label);
         me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
@@ -295,9 +298,10 @@ Ext.define('AM.view.mapping.ClassMapForm', {
     var message;
     if (form.findField('identifier').getValue() == 'Drop property node(s) here.' ||
     form.findField('className').getValue() == 'Drop a class node here.') {
-      message = 'Required fields can not be blank!';
-      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-      return;
+      //message = 'Required fields can not be blank!';
+      //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      Ext.widget('messagepanel', { title: 'Warning', msg: 'Required fields can not be blank!'});
+	  return;
     }
 
     if(me.getForm().isValid()) {
@@ -307,13 +311,15 @@ Ext.define('AM.view.mapping.ClassMapForm', {
           win.fireEvent('save', me);
         },
         failure: function (result, request) {
-          message = 'Failed to Add ClassMap to RoleMap';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+          //message = 'Failed to Add ClassMap to RoleMap';
+          //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+		  Ext.widget('messagepanel', { title: 'Warning', msg: 'Failed to Add ClassMap to RoleMap'});
         }
       });
     } else {
-      message = 'Form is not complete. Cannot save record.';
-      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
+      //message = 'Form is not complete. Cannot save record.';
+      //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
+		Ext.widget('messagepanel', { title: 'Warning', msg: 'Form is not complete. Cannot save record.'});
     }
 
 

@@ -205,15 +205,17 @@ Ext.define('AM.view.directory.ApplicationForm', {
           Ext.ComponentQuery.query('directorytree')[0].onReload();
         },
         failure: function (response, request) {
-          var message = 'Error saving changes!';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+          //var message = 'Error saving changes!';
+          Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});
+		  //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
           return;
         }
       });
     }
     else {
-      var message = 'Scope & Application name cannot be same!';
-      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      //var message = 'Scope & Application name cannot be same!';
+		Ext.widget('messagepanel', { title: 'Warning', msg: 'Scope & Application name cannot be same!'});
+	  //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
     }
 
     ////////////////////////////////////
