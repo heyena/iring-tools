@@ -212,14 +212,16 @@ Ext.define('AM.view.directory.GraphMapForm', {
             if(existingIdentifier!=''){
               var tempObjName = existingIdentifier.split('.')[0];
               if (object != tempObjName) {
-                var message = 'Properties must root from the same data object as graph!';
-                showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
-                return false;
+                //var message = 'Properties must root from the same data object as graph!';
+                //showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
+                Ext.widget('messagepanel', { title: 'Error', msg: 'Properties must root from the same data object as graph!'});
+				return false;
               }
 
               if(existingIdentifier.indexOf(key)!= -1) {
-                var message = 'Duplicate properties are not allowed!';
-                showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
+                //var message = 'Duplicate properties are not allowed!';
+                Ext.widget('messagepanel', { title: 'Error', msg: 'Duplicate properties are not allowed!'});
+				//showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
                 return false;
               }
               key = existingIdentifier+','+ key;
@@ -252,9 +254,10 @@ Ext.define('AM.view.directory.GraphMapForm', {
       },
       notifyDrop: function (classdd, e, data) {
         if (data.records[0].data.type != 'ClassNode') {
-          var message = 'Please slect a RDL Class...';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-          return false;
+          //var message = 'Please slect a RDL Class...';
+          //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+          Ext.widget('messagepanel', { title: 'Warning', msg: 'Please slect a RDL Class.'});
+		  return false;
         } else {
           var tempClassLabel = me.getForm().findField('className').getValue();
           var tempClassUrl = me.getForm().findField('classId').getValue();
@@ -317,7 +320,8 @@ Ext.define('AM.view.directory.GraphMapForm', {
     if (me.getForm().findField('objectName').getValue() === '' ||
     me.getForm().findField('graphName').getValue() === '' ||
     me.getForm().findField('className').getValue() === '') {
-      showDialog(400, 50, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
+      Ext.widget('messagepanel', { title: 'Warning', msg: 'Please fill in every field in this form.'});
+	  //showDialog(400, 50, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
       return;
     }
     me.getForm().submit({
@@ -327,8 +331,9 @@ Ext.define('AM.view.directory.GraphMapForm', {
         win.fireEvent('save', me);
       },
       failure: function (f, a) {
-        var message = 'Error saving changes!';
-        showDialog(400, 50, 'Warning', message, Ext.Msg.OK, null);
+        //var message = 'Error saving changes!';
+        //showDialog(400, 50, 'Warning', message, Ext.Msg.OK, null);
+		 Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});
       }
     });
   },

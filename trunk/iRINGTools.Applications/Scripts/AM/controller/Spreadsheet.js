@@ -91,7 +91,8 @@ Ext.define('AM.controller.Spreadsheet', {
         'DataLayer': datalayer
       },
       success: function (f, a) {
-        showDialog(350, 80, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);          
+        Ext.widget('messagepanel', { title: 'Saving Result', msg: 'Configuration has been saved successfully.'});
+		//showDialog(350, 80, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);          
         tree.onReload();
       },   // function called on success
       failure: function (f, a) {

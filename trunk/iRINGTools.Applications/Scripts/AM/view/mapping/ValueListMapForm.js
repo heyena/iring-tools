@@ -123,9 +123,10 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
       ddGroup: 'refdataGroup',
       notifyDrop: function (classdd, e, data) {
         if (data.records[0].data.type != 'ClassNode') {
-          var message = 'Please slect a RDL Class...';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-          return false;
+          //var message = 'Please slect a RDL Class...';
+          //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+          Ext.widget('messagepanel', { title: 'Warning', msg: 'Please slect a RDL Class.'});
+		  return false;
         }
         me.getForm().findField('classUrl').setValue(data.records[0].data.record.Uri);
         me.getForm().findField('classLabel').setValue(data.records[0].data.record.Label);
@@ -154,7 +155,8 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
     var form = me.getForm();
     if (form.findField('internalName').getValue() === '' || 
     form.findField('classUrl').getValue() === '') {
-      showDialog(400, 100, 'Warning', 'Please fill in both fields in this form.', Ext.Msg.OK, null);
+      Ext.widget('messagepanel', { title: 'Warning', msg: 'Please fill in both fields in this form.'});
+	  //showDialog(400, 100, 'Warning', 'Please fill in both fields in this form.', Ext.Msg.OK, null);
       return;
     }
     form.submit({
@@ -163,8 +165,9 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
         win.fireEvent('save', me);
       },
       failure: function (f, a) {
-        var message = 'Error saving changes!';
-        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+        //var message = 'Error saving changes!';
+        //(400, 100, 'Warning', message, Ext.Msg.OK, null);
+		Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});
       }
     });
   },

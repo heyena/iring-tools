@@ -103,21 +103,25 @@ Ext.define('AM.view.directory.DataLayerForm', {
         waitMsg: 'Processing ...',
         success: function (response, request) {
           me.close();
-          showDialog(320, 80, 'Saving Data Layer Result', request.result.messages[0], Ext.Msg.OK, null);
+          Ext.widget('messagepanel', { title: 'Saving Data Layer Result', msg: request.result.messages[0]});
+		  //showDialog(320, 80, 'Saving Data Layer Result', request.result.messages[0], Ext.Msg.OK, null);
         },
         failure: function (response, request) {
           me.close();
 
           if (request.result.level === 0) {
-            showDialog(320, 80, 'Saving Data Layer Result', request.result.messages[0], Ext.Msg.OK, null);
+            Ext.widget('messagepanel', { title: 'Saving Data Layer Result', msg: request.result.messages[0]});
+			//showDialog(320, 80, 'Saving Data Layer Result', request.result.messages[0], Ext.Msg.OK, null);
           }
           else {
-            showDialog(320, 300, 'Saving Data Layer Result', request.result.messages[0], Ext.Msg.OK, null);
+            Ext.widget('messagepanel', { title: 'Saving Data Layer Result', msg: request.result.messages[0]});
+			//showDialog(320, 300, 'Saving Data Layer Result', request.result.messages[0], Ext.Msg.OK, null);
           }
         }
       });
     } else {
-      showDialog(320, 150, 'Saving Data Layer Result', 'Data Layer Form not Complete....', Ext.Msg.OK, null);
+      Ext.widget('messagepanel', { title: 'Saving Data Layer Result', msg: 'Data Layer Form not Complete....'});
+	  //showDialog(320, 150, 'Saving Data Layer Result', 'Data Layer Form not Complete....', Ext.Msg.OK, null);
     }
   }
 

@@ -120,13 +120,15 @@ Ext.define('AM.view.mapping.LiteralForm', {
           win.fireEvent('save', me);
         },
         failure: function (result, request) {
-          message = 'Failed to Map Constant to RoleMap';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+          //message = 'Failed to Map Constant to RoleMap';
+          //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+		  Ext.widget('messagepanel', { title: 'Warning', msg: 'Failed to Map Constant to RoleMap'});
         }
       });
     } else {
-      message = 'Form is not complete. Cannot save record.';
-      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
+      //message = 'Form is not complete. Cannot save record.';
+      //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
+	  Ext.widget('messagepanel', { title: 'Warning', msg: 'Form is not complete. Cannot save record.'});
     }
 
   }

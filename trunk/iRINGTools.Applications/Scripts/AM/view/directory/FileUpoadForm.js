@@ -101,13 +101,15 @@ Ext.define('AM.view.directory.FileUpoadForm', {
           win.fireEvent('save', me);
         },
         failure: function (result, request) {
-          message = 'Failed to upload file.';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+          //message = 'Failed to upload file.';
+          Ext.widget('messagepanel', { title: 'Upload Error', msg: 'Failed to upload file.'});
+		  //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }
       });
     } else {
-      message = 'Please Select a file to upload.';
-      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
+      //message = 'Please Select a file to upload.';
+		Ext.widget('messagepanel', { title: 'Warning', msg: 'Please Select a file to upload.'});
+	  //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
     }
 
   },

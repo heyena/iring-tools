@@ -29,7 +29,6 @@ Ext.define('AM.view.directory.DataGridPanel', {
 
     initComponent: function () {
         var me = this;
-
         Ext.applyIf(me, {
             columns: [
         {
@@ -46,7 +45,7 @@ Ext.define('AM.view.directory.DataGridPanel', {
     },
 
     handleBeforeLoad: function (store, operation, e) {
-        var me = this;
+       /* var me = this;
         store.on({
             metachange: {
                 fn: function (store, meta, e) {
@@ -55,11 +54,12 @@ Ext.define('AM.view.directory.DataGridPanel', {
                 scope: me,
                 single: true
             }
-        });
+        });*/
     },
 
     handleMetaChange: function (grid, meta) {
-        grid.reconfigure(grid.getStore(), meta.columns);
-        grid.features[0].filters = meta.fields;
+		//alert('metaChange in gridpanel...');
+        //grid.reconfigure(grid.getStore(), meta.columns);
+        //grid.features[0].filters = meta.fields;
     }
 });

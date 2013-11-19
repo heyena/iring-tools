@@ -80,7 +80,8 @@ Ext.define('AM.controller.Directory', {
     }],
 
     handleMetachange: function () {
-        var me = this,
+	  alert('handlemetachange in controler..');
+      var me = this,
       store = grid.getStore(),
       columns = meta.columns;
 
@@ -429,7 +430,7 @@ Ext.define('AM.controller.Directory', {
                     if (records != undefined) {
                         if (records[0]) {
                             gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
-                            content.getEl().unmask();
+                            //content.getEl().unmask();
                         } else {
                             if (response) {
                                 //showDialog(200, 50, 'Warning', 'Authentication failure', Ext.Msg.OK, null);
@@ -587,7 +588,8 @@ Ext.define('AM.controller.Directory', {
     },
 
     onTextfieldBlur: function (component, e, eOpts) {
-        if (component.dataIndex != undefined) {
+	
+        /*if (component.dataIndex != undefined) {
             var me = this;
             var gridPanel = me.getMainContent().activeTab;
             var gridStore = gridPanel.getStore();
@@ -612,7 +614,7 @@ Ext.define('AM.controller.Directory', {
 
                 }
             });
-        }
+        }*/
     },
 
     onFileUpload: function (item, e, eOpts) {
@@ -1179,9 +1181,9 @@ Ext.define('AM.controller.Directory', {
             "menuitem[action=refreshdata]": {
                 click: this.onAppDataRefreshClick
             },
-            "textfield": {
+            /*"textfield": {
                 blur: this.onTextfieldBlur
-            },
+            },*/
             "menuitem[action=fileupload]": {
                 click: this.onFileUpload
             },

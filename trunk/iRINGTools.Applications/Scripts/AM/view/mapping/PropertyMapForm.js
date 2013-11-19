@@ -182,12 +182,14 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
         },
         failure: function (f, a) {
           message = 'Map property failed: ' + a.response.responseText;
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+          //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+		  Ext.widget('messagepanel', { title: 'Warning', msg: message});
         }
       });
     } else {
       message = 'Form is not complete. Cannot save record.';
-      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
+      //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
+	   Ext.widget('messagepanel', { title: 'Warning', msg: message});
     }
   }
 });
