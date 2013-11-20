@@ -2704,7 +2704,7 @@ namespace org.iringtools.adapter
                 //InitializeDataLayer(false);
                 _graphMap = _mapping.FindGraphMap(resource);
 
-                return UpdateTipMapping("tip", "findparameters", project, application);
+                return BuildTipMapping("tip", "findparameters", project, application);
             }
             catch (Exception ex)
             {
@@ -2719,6 +2719,8 @@ namespace org.iringtools.adapter
             {
                 _logger.DebugFormat("Initializing Scope: {0}.{1}", project, application);
                 Console.WriteLine("Initializing Scope: {0}.{1}", project, application);
+                //Force to re-initialize scope.
+                _isScopeInitialized = false;
                 InitializeScope(project, application);
                // InitializeDataLayer(false);
                 if (_mapping.graphMaps.Count == 0)
@@ -2732,7 +2734,7 @@ namespace org.iringtools.adapter
                     {
                         string resource = graph.name;
                         _graphMap = _mapping.FindGraphMap(resource);
-                        UpdateTipMapping("tip", "findparameters", project, application);
+                        BuildTipMapping("tip", "findparameters", project, application);
                     }
                 }
             }
@@ -2755,7 +2757,7 @@ namespace org.iringtools.adapter
         }
 
 
-        public TipMapping UpdateTipMapping(string tip, string method, string project, string application)
+        public TipMapping BuildTipMapping(string tip, string method, string project, string application)
         {
 
             WebHttpClient _tipServiceClient = null;
@@ -2763,7 +2765,8 @@ namespace org.iringtools.adapter
             _tipServiceClient = new WebHttpClient(tipServiceUri);
 
             IDictionary<String, IDictionary<String, org.iringtools.mapping.Identifiers>> mappedProperties = null;
-            TipRequest tipRequest = BuildTipRequest(ref mappedProperties);
+            IDictionary<String, IDictionary<String, ValueList>> mappedValueLists = null;
+            TipRequest tipRequest = BuildTipRequest(ref mappedProperties, ref mappedValueLists);
 
             XElement trXml = XElement.Parse(Utility.SerializeDataContract<TipRequest>(tipRequest));
 
@@ -2791,9 +2794,18 @@ namespace org.iringtools.adapter
                             parameters.dataPropertyName = item.Key;
                             parameters.identifiers = new library.tip.Identifiers();
                             parameters.identifiers.AddRange(item.Value.ToList());
-                        }
 
-                        
+                            if(mappedValueLists.ContainsKey(parameters.path))
+                            {
+                                foreach (var valITem in mappedValueLists[parameters.path])
+                                {
+                                    parameters.valueList = new ValueList();
+                                    parameters.valueList.name = valITem.Value.name;
+                                    parameters.valueList.values.AddRange(valITem.Value.values);
+                                }
+                            }
+
+                        }
                     }
                 }
 
@@ -2808,7 +2820,8 @@ namespace org.iringtools.adapter
             }
         }
 
-        private TipRequest BuildTipRequest(ref IDictionary<String, IDictionary<String, org.iringtools.mapping.Identifiers>> mappedProperties)
+        private TipRequest BuildTipRequest(ref IDictionary<String, IDictionary<String, org.iringtools.mapping.Identifiers>> mappedProperties,
+                                            ref IDictionary<String, IDictionary<String, ValueList>> mappedValueLists)
         {
             TipRequest tipRequest = new TipRequest();
 
@@ -2828,16 +2841,13 @@ namespace org.iringtools.adapter
 
                         foreach (var templateMap in templateMaps.templateMaps)
                         {
-
                             mappedProperties = _graphMap.GetMappedPropertiesWithPath(templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
-
-
+                            mappedValueLists = _graphMap.GetMappedValueListsWithPath(_mapping.valueListMaps, templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
                             templateIndex++;
                         }
                     }
                 }
             }
-
 
             foreach (var item in mappedProperties)
             {

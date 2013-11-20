@@ -72,8 +72,6 @@ namespace org.iringtools.adapter
                 _dataObjects = dataObjects;
 
                 createTableMapping(false);
-                createValueListMapping(false);
-
 
                 string resource = graphName.ToLower();
 
@@ -83,6 +81,7 @@ namespace org.iringtools.adapter
                     start = this.Start,
                     items = new List<DataItem>()
                 };
+
 
                 if (dataObjects.Count > 0)
                 {
@@ -111,6 +110,7 @@ namespace org.iringtools.adapter
                             DataItem dataItem = new DataItem()
                             {
                                 properties = new Dictionary<string, object>(),
+                                valueList = new Dictionary<string,ValueList>()
                             };
 
                             if (dataObj is GenericDataObject)
@@ -182,77 +182,34 @@ namespace org.iringtools.adapter
                                     if (value != null)
                                     {
                                         value = Convert.ToString(value);
-                                        dataItem.properties.Add(tableMapping.Get(key).ToString(), value);
+                                        
+
+                                        if (valueListMapping.ContainsKey(key))
+                                        {
+
+                                            ValueList vl = new ValueList();
+                                            ValueCollection vc = new ValueCollection();
+                                            foreach (var item in valueListMapping[key].valueList.values)
+                                            {
+                                                if (item.internalValue.Equals(value))
+                                                {
+                                                    vc.Add(new ValueItem() { value = item.label, uri = item.uri, label = valueListMapping[key].valueList.name});
+                                                    vl.values = vc;
+                                                    
+                                                    dataItem.valueList.Add(valueListMapping[key].parameterName, vl);
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            dataItem.properties.Add(tableMapping.Get(key).ToString(), value);
+                                        }
+                                        
 
                                     }
                                 }
 
                             }
-
-                            //foreach (string key in valueListMapping.Keys)
-                            //{
-                            //    string[] parts = key.Split('.');
-                            //    if (dataObject.objectName == parts[TABLE])
-                            //    {
-                            //        object value = dataObj.GetPropertyValue(parts[FIELD]);
-                            //        if (value != null)
-                            //        {
-                            //            value = Convert.ToString(value);
-                            //            dataItem.properties.Add(tableMapping.Get(key).ToString(), value);
-
-                            //        }
-                            //    }
-
-                            //}
-
-                            dataItem.valueListName = valueListMapping["ISKEY"].parameterName;
-                            dataItem.valueList = valueListMapping["ISKEY"].valueList;
-
-                            //dataItem.valueListName = "Parm999";
-                            //dataItem.valueList = new ValueList {
-                            //                                    label = "length",
-                            //                                    value = "100",
-                            //                                    internalValue = new List<string>{"METER", "INCH"},
-                            //                                    uri = new List<string>{"rdl:1234568", "rdl:56477804"}
-                            //                                    };
-                            //dataItem.properties.Add("Parm9999", dataItem.valueList);
-
-                            //foreach (DataProperty dataProperty in dataObject.dataProperties)
-                            //{
-                            //    if (!dataProperty.isHidden)
-                            //    {
-                            //        object value = dataObj.GetPropertyValue(dataProperty.propertyName);
-
-                            //        if (value != null)
-                            //        {
-                            //            if (dataProperty.dataType == DataType.Char ||
-                            //                  dataProperty.dataType == DataType.DateTime ||
-                            //                  dataProperty.dataType == DataType.Date ||
-                            //                  dataProperty.dataType == DataType.String ||
-                            //                  dataProperty.dataType == DataType.TimeStamp)
-                            //            {
-                            //                string valueStr = Convert.ToString(value);
-
-                            //                if (dataProperty.dataType == DataType.DateTime ||
-                            //                    dataProperty.dataType == DataType.Date)
-                            //                    valueStr = Utility.ToXsdDateTime(valueStr);
-
-                            //                value = valueStr;
-                            //            }
-
-                            //            string dataParameterName = tipMap.dataObjectName + "." + dataProperty.propertyName;
-
-                            //            if (tableMapping[dataParameterName] != null)
-                            //            {
-                            //                dataItem.properties.Add(tableMapping.Get(dataParameterName).ToString(), value);
-                            //            }
-                            //        }
-                            //    }
-                            //    else if (showNullValue)
-                            //    {
-                            //        dataItem.properties.Add(dataProperty.propertyName, null);
-                            //    }
-                            //}
 
                             if (_settings["DisplayLinks"].ToLower() == "true")
                             {
@@ -343,8 +300,6 @@ namespace org.iringtools.adapter
                 _dataObjects = dataObjects;
 
                 createTableMapping(false);
-                createValueListMapping(false);
-
 
                 string resource = child;
 
@@ -382,6 +337,7 @@ namespace org.iringtools.adapter
                             DataItem dataItem = new DataItem()
                             {
                                 properties = new Dictionary<string, object>(),
+                                valueList = new Dictionary<string, ValueList>()
                             };
 
                             if (dataObj is GenericDataObject)
@@ -453,48 +409,30 @@ namespace org.iringtools.adapter
                                     if (value != null)
                                     {
                                         value = Convert.ToString(value);
-                                        dataItem.properties.Add(tableMapping.Get(key).ToString(), value);
+
+                                        if (valueListMapping.ContainsKey(key))
+                                        {
+
+                                            ValueList vl = new ValueList();
+                                            ValueCollection vc = new ValueCollection();
+                                            foreach (var item in valueListMapping[key].valueList.values)
+                                            {
+                                                if (item.internalValue.Equals(value))
+                                                {
+                                                    vc.Add(new ValueItem() { value = item.label, uri = item.uri, label = valueListMapping[key].valueList.name });
+                                                    vl.values = vc;
+
+                                                    dataItem.valueList.Add(valueListMapping[key].parameterName, vl);
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            dataItem.properties.Add(tableMapping.Get(key).ToString(), value);
+                                        }
                                     }
                                 }
-
                             }
-
-                            //foreach (DataProperty dataProperty in dataObject.dataProperties)
-                            //{
-                            //    if (!dataProperty.isHidden)
-                            //    {
-                            //        object value = dataObj.GetPropertyValue(dataProperty.propertyName);
-
-                            //        if (value != null)
-                            //        {
-                            //            if (dataProperty.dataType == DataType.Char ||
-                            //                  dataProperty.dataType == DataType.DateTime ||
-                            //                  dataProperty.dataType == DataType.Date ||
-                            //                  dataProperty.dataType == DataType.String ||
-                            //                  dataProperty.dataType == DataType.TimeStamp)
-                            //            {
-                            //                string valueStr = Convert.ToString(value);
-
-                            //                if (dataProperty.dataType == DataType.DateTime ||
-                            //                    dataProperty.dataType == DataType.Date)
-                            //                    valueStr = Utility.ToXsdDateTime(valueStr);
-
-                            //                value = valueStr;
-                            //            }
-
-                            //            string dataParameterName = dataProperty.propertyName;
-
-                            //            if (tableMapping[dataParameterName] != null)
-                            //            {
-                            //                dataItem.properties.Add(tableMapping.Get(dataParameterName).ToString(), value);
-                            //            }
-                            //        }
-                            //    }
-                            //    else if (showNullValue)
-                            //    {
-                            //        dataItem.properties.Add(dataProperty.propertyName, null);
-                            //    }
-                            //}
 
                             if (_settings["DisplayLinks"].ToLower() == "true")
                             {
@@ -565,7 +503,6 @@ namespace org.iringtools.adapter
         {
             try
             {
-                
                 String sGraphName = graphName;
                 string[] sGraphParts = sGraphName.Split('.');
                 List<IDataObject> dataObjects = new List<IDataObject>();
@@ -1165,6 +1102,7 @@ namespace org.iringtools.adapter
         private void createTableMapping(bool child = true)
         {
             tableMapping.Clear();
+            valueListMapping.Clear();
 
             foreach (TipMap tipMap in _tipMapping.tipMaps)
             {
@@ -1177,34 +1115,22 @@ namespace org.iringtools.adapter
                     else
                     {
                         tableMapping.Add(parameterMap.dataPropertyName, parameterMap.name);
+
+                        if (parameterMap.valueList != null)
+                        {
+                            ValueListWithParameter valueListWithParameter = new ValueListWithParameter
+                            {
+                                parameterName = parameterMap.name,
+                                valueList = parameterMap.valueList
+                            };
+
+                            valueListMapping.Add(parameterMap.dataPropertyName, valueListWithParameter);
+                        }
                     }
 
                 }
             }
         }
-
-        private void createValueListMapping(bool child = true)
-        {
-            valueListMapping.Clear();
-
-            ValueList vl = new ValueList
-            {
-                label = "length",
-                value = "100",
-                internalValues = new internalValues { "METER", "INCH" },
-                uris = new uris { "rdl:1234568", "rdl:56477804" }
-            };
-
-
-            ValueListWithParameter VLWP = new ValueListWithParameter
-            {
-                parameterName = "Parm999",
-                valueList = vl
-            };
-
-            valueListMapping.Add("ISKEY", VLWP);
-        }
-
 
         private void createFieldsReverse(bool child = true)
         {
