@@ -80,8 +80,7 @@ Ext.define('AM.controller.Directory', {
     }],
 
     handleMetachange: function () {
-	  alert('handlemetachange in controler..');
-      var me = this,
+	  var me = this,
       store = grid.getStore(),
       columns = meta.columns;
 
