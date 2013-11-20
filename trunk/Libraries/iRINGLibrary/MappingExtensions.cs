@@ -30,6 +30,7 @@ using System.Linq;
 using org.iringtools.dxfr.manifest;
 using org.iringtools.utility;
 using org.iringtools.library;
+using org.iringtools.library.tip;
 using log4net;
 
 namespace org.iringtools.mapping
@@ -546,10 +547,13 @@ namespace org.iringtools.mapping
             {
                 foreach (var role in template.roleMaps.Where(x => !String.IsNullOrWhiteSpace(x.propertyName)))
                 {
-                    string path = (string.IsNullOrEmpty(classTemplateMap.classMap.path) ? "" : classTemplateMap.classMap.path)  + "/" + classTemplateMap.classMap.id.ToString() +"/" + template.id.ToString() + "/" + role.id.ToString();
-                    Dictionary<String, Identifiers> identifierList = new Dictionary<String, Identifiers>();
-                    identifierList.Add(role.propertyName, classTemplateMap.classMap.identifiers);
-                    propertyList.Add(path, identifierList);
+                 //   if (role.type != RoleType.ObjectProperty)
+                  //  {
+                        string path = (string.IsNullOrEmpty(classTemplateMap.classMap.path) ? "" : classTemplateMap.classMap.path) + "/" + classTemplateMap.classMap.id.ToString() + "/" + template.id.ToString() + "/" + role.id.ToString();
+                        Dictionary<String, Identifiers> identifierList = new Dictionary<String, Identifiers>();
+                        identifierList.Add(role.propertyName, classTemplateMap.classMap.identifiers);
+                        propertyList.Add(path, identifierList);
+                  //  }
                 }
                 foreach (var role in template.roleMaps.Where(x => x.classMap != null))
                 {
@@ -565,6 +569,75 @@ namespace org.iringtools.mapping
             }
         }
         return propertyList;
+    }
+
+    public static ValueMaps GetValueListMap(ValueListMaps valueListMaps, String valueListName)
+    {
+        ValueListMap valueListMapReturn = new ValueListMap();
+        foreach (var item in valueListMaps)
+        {
+            if(item.name.ToUpper().Equals(valueListName.ToUpper()))
+            {
+                return item.valueMaps;
+            }
+        }
+
+        return null;
+    }
+
+    public static IDictionary<String, IDictionary<String, ValueList>> GetMappedValueListsWithPath(this GraphMap graphMap, ValueListMaps valueListMaps, String templateId, int templateIndex, String parentClassId, int parentClassIndex, IDictionary<String, IDictionary<String, ValueList>> valueList = null)
+    {
+        if (valueList == null)
+        {
+            valueList = new Dictionary<String, IDictionary<String, ValueList>>();
+        }
+
+        var classTemplateMap = graphMap.GetClassTemplateMap(parentClassId, parentClassIndex);
+
+        
+
+        if (classTemplateMap != null)
+        {
+            var template = classTemplateMap.templateMaps.SingleOrDefault(x => (x.id == templateId && x.index == templateIndex));
+            if (template != null)
+            {
+                foreach (var role in template.roleMaps.Where(x => !String.IsNullOrWhiteSpace(x.propertyName)))
+                {
+                    if (role.type == RoleType.ObjectProperty)
+                    {
+                        string path = (string.IsNullOrEmpty(classTemplateMap.classMap.path) ? "" : classTemplateMap.classMap.path) + "/" + classTemplateMap.classMap.id.ToString() + "/" + template.id.ToString() + "/" + role.id.ToString();
+                        Dictionary<String, ValueList> valListDict = new Dictionary<String, ValueList>();
+                        ValueMaps valueMaps = GetValueListMap(valueListMaps, role.valueListName);
+                        ValueList valList = new ValueList();
+                        ValueCollection valCol = new ValueCollection();
+                        valList.name = role.valueListName;
+                        foreach (var item in valueMaps)
+                        {
+                            ValueItem valItem = new ValueItem();
+                            valItem.label = item.label;
+                            valItem.internalValue = item.internalValue;
+                            valItem.uri = item.uri;
+                            valCol.Add(valItem);
+                        }
+                        valList.values = valCol;
+                        valListDict.Add(role.propertyName, valList);
+                        valueList.Add(path, valListDict);
+                    }
+                }
+                foreach (var role in template.roleMaps.Where(x => x.classMap != null))
+                {
+                    var classTemplate = graphMap.GetClassTemplateMap(role.classMap.id, role.classMap.index);
+                    foreach (var tmpl in classTemplate.templateMaps)
+                    {
+                        if (tmpl != null)
+                        {
+                            graphMap.GetMappedValueListsWithPath(valueListMaps, tmpl.id, tmpl.index, role.classMap.id, role.classMap.index, valueList);
+                        }
+                    }
+                }
+            }
+        }
+        return valueList;
     }
 
 

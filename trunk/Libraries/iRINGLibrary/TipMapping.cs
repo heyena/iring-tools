@@ -112,6 +112,7 @@ namespace org.iringtools.library.tip
       public ParameterMap()
       {
           identifiers = new Identifiers();
+          valueList = new ValueList();
       }
 
     [DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
@@ -137,32 +138,47 @@ namespace org.iringtools.library.tip
 
   }
 
-  [CollectionDataContractAttribute(Name = "internalValues", Namespace = "http://www.iringtools.org/tipmapping", ItemName = "internalValue")]
-  public class internalValues : System.Collections.Generic.List<string>
+
+  [Serializable]
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "values", Namespace = "http://www.iringtools.org/tipmapping", ItemName = "value")]
+  public class ValueCollection : System.Collections.Generic.List<ValueItem>
   {
   }
 
-  [CollectionDataContractAttribute(Name = "uris", Namespace = "http://www.iringtools.org/tipmapping", ItemName = "uri")]
-  public class uris : System.Collections.Generic.List<string>
+  [Serializable]
+  [System.Runtime.Serialization.DataContractAttribute(Name = "value", Namespace = "http://www.iringtools.org/tipmapping")]
+  public partial class ValueItem
   {
-  }
-
-  [DataContract(Namespace = "http://www.iringtools.org/tipmapping", Name = "valueList")]
-  public class ValueList
-  {
-      [DataMember(Name = "label", Order = 0)]
-      public string label { get; set; }
+      [DataMember(Name = "internalValue", EmitDefaultValue = false, Order = 0)]
+      public string internalValue { get; set; }
 
       [DataMember(Name = "value", Order = 1)]
       public string value { get; set; }
 
-      [DataMember(Name = "internalValues", Order = 2)]
-      public internalValues internalValues { get; set; }
+      [DataMember(Name = "uri", Order = 2)]
+      public string uri { get; set; }
 
-      [DataMember(Name = "uris", Order = 3)]
-      public uris uris { get; set; }
+      [DataMember(Name = "label", Order = 3)]
+      public string label { get; set; }
   }
 
+  [Serializable]
+  [DataContract(Namespace = "http://www.iringtools.org/tipmapping", Name = "valueList")]
+  public class ValueList
+  {
+      [DataMember(Name = "name", Order = 0)]
+      public string name { get; set; }
+
+      [DataMember(Name = "values", Order = 1)]
+      public ValueCollection values { get; set; }
+
+      public ValueList()
+      {
+          values = new ValueCollection();
+      }
+  }
+
+  
   [DataContract(Namespace = "http://www.iringtools.org/tipmapping", Name = "valueListWithParameter")]
   public class ValueListWithParameter
   {

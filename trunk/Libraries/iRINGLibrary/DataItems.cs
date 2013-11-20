@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using org.iringtools.library.tip;
+using org.iringtools.mapping;
 
 namespace org.iringtools.library
 {
@@ -50,11 +51,8 @@ namespace org.iringtools.library
     [DataMember(Name = "contentType", Order = 5, EmitDefaultValue = false)]
     public string contentType { get; set; }
 
-    [DataMember(Name = "valueLIstName", Order = 6, EmitDefaultValue = false)]
-    public string valueListName { get; set; }
-
-    [DataMember(Name = "valueLIst", Order = 7, EmitDefaultValue = false)]
-    public ValueList valueList { get; set; }
+    [DataMember(Name = "valueList", Order = 7, EmitDefaultValue = false)]
+    public Dictionary<string, ValueList> valueList { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/data", Name = "link")]
