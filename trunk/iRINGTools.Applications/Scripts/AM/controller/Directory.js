@@ -586,9 +586,10 @@ Ext.define('AM.controller.Directory', {
         }
     },
 
-    onTextfieldBlur: function (component, e, eOpts) {
+    /*onTextfieldBlur: function (component, e, eOpts) {
 	
-        /*if (component.dataIndex != undefined) {
+        if (component.dataIndex != undefined) {
+			
             var me = this;
             var gridPanel = me.getMainContent().activeTab;
             var gridStore = gridPanel.getStore();
@@ -607,14 +608,16 @@ Ext.define('AM.controller.Directory', {
             }, me);
             gridStore.load({
                 callback: function (records, response) {
+				alert('load in textBlur...');
                     if (records != undefined && records[0] != undefined && records[0].store.proxy.reader.metaData) {
-                        gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
+                        //gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
+						gridPanel.reconfigure(gridStore);
                     }
 
                 }
             });
-        }*/
-    },
+        }
+    },*/
 
     onFileUpload: function (item, e, eOpts) {
         var me = this;
@@ -1179,11 +1182,14 @@ Ext.define('AM.controller.Directory', {
             },
             "menuitem[action=refreshdata]": {
                 click: this.onAppDataRefreshClick
-            },
-            /*"textfield": {
+            },/*
+            "textfield": {
                 blur: this.onTextfieldBlur
             },*/
-            "menuitem[action=fileupload]": {
+            "textfield": {
+                specialkey: this.onSpecialKey
+            },
+			"menuitem[action=fileupload]": {
                 click: this.onFileUpload
             },
             "menuitem[action=filedownload]": {
@@ -1230,6 +1236,38 @@ Ext.define('AM.controller.Directory', {
             }
         });
     },
+	onSpecialKey: function(f,e){
+	if (f.dataIndex != undefined) {
+		if (e.getKey() == e.ENTER) {
+            if(!f.up('grid').filters.menuItem.checked)
+			   f.up('grid').filters.menuItem.setChecked(true,true);
+			var me = this;
+            var gridPanel = me.getMainContent().activeTab;
+            var gridStore = gridPanel.getStore();
+            var gridProxy = gridStore.getProxy();
+            gridStore.currentPage = 1;
+            gridProxy.on('exception', function (proxy, response, operation) {
+                gridPanel.destroy();
+                var rtext = response.responseText;
+                if (rtext != undefined) {
+                    var error = 'SUCCESS = FALSE';
+                    var index = rtext.toUpperCase().indexOf(error);
+                    msg = rtext;
+                    Ext.widget('messagepanel', { title: 'Error', msg: msg });
+					//showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
+                }
+            }, me);
+            gridStore.load({
+                callback: function (records, response) {
+                    if (records != undefined && records[0] != undefined && records[0].store.proxy.reader.metaData) {
+                        //gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
+						gridPanel.reconfigure(gridStore);
+                    }
+                }
+            });
+		}
+	  }
+	},
     onShowGrap: function (items, e, eOpts) {
         var me = this;
         var tree = this.getDirTree();

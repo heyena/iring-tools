@@ -111,7 +111,7 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
      * Set this to false to prevent the datastore from being reloaded if there
      * are changes to the filters.  See <code>{@link #updateBuffer}</code>.
      */
-    autoReload : true,
+    autoReload : false,
     /**
      * @cfg {Boolean} encode
      * Specify true for {@link #buildQuery} to use Ext.util.JSON.encode to
@@ -459,7 +459,8 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
 
     /** @private */
     onCheckChange : function (item, value) {
-        this.getMenuFilter().setActive(value);
+		this.getMenuFilter().setActive(value);
+		this.reload();
     },
 
     /** @private */
@@ -479,7 +480,9 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
                 grid = me.getGridPanel();
 
             if (filter == me.getMenuFilter()) {
-                me.menuItem.setChecked(filter.active, false);
+				if(filter.getValue()!=null && me.menuItem.checked != false){
+					me.menuItem.setChecked(filter.active, false);
+				}
             }
 
             if ((me.autoReload || me.local) && !me.applyingState) {
