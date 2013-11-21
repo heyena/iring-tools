@@ -75,11 +75,8 @@ namespace ExchangeTask
         {
           WebCredentials credential = new WebCredentials(_proxyCredentialToken);
           _httpClient = new WebHttpClient(_baseUrl, credential.userName, credential.password, credential.domain, _proxyHost, _proxyPort);
-          _httpClient.Headers.Add("X-myPSN-UserID", credential.userName);
-          _httpClient.Headers.Add("X-myPSN-BechtelDomain", credential.domain);
-
         }
-        _httpClient.Headers.Add("BearerToken", _bearerToken);
+        _httpClient.Headers.Add("ClientToken", _bearerToken);
 
         _logger.Debug("Send exchange request...");
         Console.WriteLine("Send exchange request...");
