@@ -354,7 +354,7 @@ namespace org.iringtools.adapter
         List<string> lstGroups = new List<string>();
 
         if (_enableUISecurity == true)
-            lstGroups = ConfigurationRepository.GetUserGroups(userName);
+            lstGroups = ConfigurationRepository.GetUserGroups(userName, _settings["AppDataPath"]);
 
         return lstGroups;
     }
@@ -363,7 +363,7 @@ namespace org.iringtools.adapter
     {
         List<string> lstGroups = new List<string>();
         if (_enableUISecurity == true)
-            lstGroups = ConfigurationRepository.GetAllGroups();
+            lstGroups = ConfigurationRepository.GetAllGroups(_settings["AppDataPath"]);
 
         return lstGroups;
     }
