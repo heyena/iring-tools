@@ -18,7 +18,8 @@ Ext.define('AM.view.directory.ApplicationForm', {
   alias: 'widget.applicationform',
 
   requires: [
-    'AM.view.directory.DataLayerCombo'
+    'AM.view.directory.DataLayerCombo',
+    'Ext.ux.form.CheckboxListCombo'
   ],
 
   record: '',
@@ -126,6 +127,23 @@ Ext.define('AM.view.directory.ApplicationForm', {
           xtype: 'textfield',
           fieldLabel: 'Cache Timeout (in minutes)',
           name: 'cacheTimeout'
+        },
+        {
+            xtype: 'checkboxlistcombo',
+            width: 180,
+            multiSelect: true,
+            itemId: 'permissionitem',
+            fieldLabel: 'Permissions:',
+            labelSeparator: '',
+            emptyText: '',
+            allowBlank: true,
+            name: 'permissions',
+            displayField: 'permission',
+            autoSelect: false,
+            queryMode: 'remote',
+            store: 'PermissionsS',
+            valueField: 'permission'
+
         },
         {
           xtype: 'container',

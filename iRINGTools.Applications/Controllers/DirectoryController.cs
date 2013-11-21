@@ -118,7 +118,8 @@ namespace org.iringtools.web.controllers
                       Assembly = dataLayer.Assembly,
                       Configuration = application.Configuration,
                       CacheImportURI = application.CacheInfo == null ? "" : application.CacheInfo.ImportURI,
-                      CacheTimeout = application.CacheInfo == null ? "" : Convert.ToString(application.CacheInfo.Timeout)
+                      CacheTimeout = application.CacheInfo == null ? "" : Convert.ToString(application.CacheInfo.Timeout),
+                      PermissionGroups = application.PermissionGroup
                     }
                   };
                   
@@ -571,11 +572,11 @@ namespace org.iringtools.web.controllers
 
       if (form["state"]=="new")//if (String.IsNullOrEmpty(form["scope"]))
       {
-          success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"]);
+          success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
       }
       else
       {
-          success = _repository.UpdateScope(form["contextName"], form["displayName"], form["description"],form["cacheDBConnStr"]);
+          success = _repository.UpdateScope(form["contextName"], form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
       }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -583,66 +584,81 @@ namespace org.iringtools.web.controllers
 
     public JsonResult Application(FormCollection form)
     {
-      string success = String.Empty;
-      string scopeName = form["Scope"];
-      string cacheImportURI = form["cacheImportURI"];
-      long cacheTimeout = String.IsNullOrWhiteSpace(form["cacheTimeout"])?0:Convert.ToInt64(form["cacheTimeout"]);
-     
-      library.Configuration configuration = new Configuration
-      {
-        AppSettings = new AppSettings 
-        { 
-           Settings = new List<Setting>()
+        string success = String.Empty;
+        string scopeName = form["Scope"];
+        string cacheImportURI = form["cacheImportURI"];
+        long cacheTimeout = String.IsNullOrWhiteSpace(form["cacheTimeout"]) ? 0 : Convert.ToInt64(form["cacheTimeout"]);
+        string permissions = form["permissions"];
+
+        library.Configuration configuration = new Configuration
+        {
+            AppSettings = new AppSettings
+            {
+                Settings = new List<Setting>()
+            }
+        };
+
+        CacheInfo cacheInfo = new CacheInfo
+        {
+            ImportURI = cacheImportURI,
+            Timeout = cacheTimeout
+        };
+
+        for (int i = 0; i < form.AllKeys.Length; i++)
+        {
+            //if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && 
+            //  form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val"
+            //  && form.GetKey(i).ToLower() != "cacheimporturi" && form.GetKey(i).ToLower() != "cachetimeout")
+            if (form.GetKey(i).ToLower().StartsWith("key"))
+            {
+                String key = form[i];
+                if (i + 1 < form.AllKeys.Length)
+                {
+                    String value = form[i + 1];
+                    configuration.AppSettings.Settings.Add(new Setting()
+                    {
+                        Key = key,
+                        Value = value
+                    });
+                }
+            }
         }
-      };
 
-      CacheInfo cacheInfo = new CacheInfo
-      {
-        ImportURI = cacheImportURI,
-        Timeout =  cacheTimeout
-      };
+        List<string> groups = new List<string>();
+        if (permissions.Contains(","))
+        {
+            string[] arrstring = permissions.Split(',');
+            groups = new List<string>(arrstring);
+        }
+        else
+        {
+            groups.Add(permissions);
+        }
 
-      for (int i = 0; i < form.AllKeys.Length; i++)
-      {
-          //if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && 
-          //  form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val"
-          //  && form.GetKey(i).ToLower() != "cacheimporturi" && form.GetKey(i).ToLower() != "cachetimeout")
-        if(form.GetKey(i).ToLower().StartsWith("key"))
-          {
-              String key = form[i];
-              if (i + 1 < form.AllKeys.Length)
-              {
-                  String value = form[i + 1];
-                  configuration.AppSettings.Settings.Add(new Setting()
-                  {
-                      Key = key,
-                      Value = value
-                  });
-              }
-          }
-      }
+        ScopeApplication application = new ScopeApplication()
+        {
+            DisplayName = form["displayName"],//form["Name"],
+            Name = form["Name"],
+            Description = form["Description"],
+            Assembly = form["assembly"],
+            Configuration = configuration,
+            CacheInfo = cacheInfo,
+            PermissionGroup = new PermissionGroups()
+        };
+        if (!string.IsNullOrEmpty(permissions))
+            application.PermissionGroup.AddRange(groups);
 
-      ScopeApplication application = new ScopeApplication()
-      {
-        DisplayName = form["displayName"],//form["Name"],
-        Name = form["Name"],
-        Description = form["Description"],
-        Assembly = form["assembly"],
-        Configuration = configuration,
-        CacheInfo = cacheInfo
-      };
+        if (String.IsNullOrEmpty(form["Application"]))
+        {
+            success = _repository.AddApplication(scopeName, application);
+        }
+        else
+        {
+            success = _repository.UpdateApplication(scopeName, form["Application"], application);
+        }
 
-      if (String.IsNullOrEmpty(form["Application"]))
-      {
-        success = _repository.AddApplication(scopeName, application);
-      }
-      else
-      {
-        success = _repository.UpdateApplication(scopeName, form["Application"], application);
-      }
-
-      JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
-      return result;
+        JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        return result;
     }
 
     public JsonResult DeleteScope(FormCollection form)
@@ -665,9 +681,8 @@ namespace org.iringtools.web.controllers
 
     public ActionResult SecurityGroups()
     {
-        List<string> lstgroups = _repository.GetSecurityGroups();
-
-        JsonContainer<List<string>> container = new JsonContainer<List<string>>();
+        List<Dictionary<string, string>> lstgroups = _repository.GetSecurityGroups();
+        JsonContainer<List<Dictionary<string, string>>> container = new JsonContainer<List<Dictionary<string, string>>>();
         container.items = lstgroups;
         container.success = true;
         container.total = lstgroups.Count;

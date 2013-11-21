@@ -172,7 +172,6 @@ namespace org.iringtools.adapter
     {
         _enableUISecurity = Convert.ToBoolean(_settings["EnableUISecurity"]);
         _authorizedscopes = GetAuthorizedScope(_settings["UserName"]);
-        //_lstSecurityGroups = GetAllSecurityGroups(); 
     }
 
     protected void InitializeDataLayer()
@@ -303,7 +302,8 @@ namespace org.iringtools.adapter
             {
                 foreach (ScopeProject scope in _scopes)
                 {
-                    if (scope.PermissionGroup != null)
+                    appsPermission = false;
+                    if (scope.PermissionGroup != null && scope.PermissionGroup.Count != 0)
                         exist = lstGroups.Any(s => scope.PermissionGroup.Contains(s));
 
                     if (!exist)    // If no access on scope, check on apps level.
@@ -311,9 +311,9 @@ namespace org.iringtools.adapter
                         appcount = 0;
                         foreach (ScopeApplication app in scope.Applications)
                         {
-                            if (app.PermissionGroup == null)
+                            if (app.PermissionGroup == null || app.PermissionGroup.Count == 0)
                             {
-                                if (scope.PermissionGroup != null)  //If no access on scope and rights not defined on app, app will not be shown.
+                                if (scope.PermissionGroup != null && scope.PermissionGroup.Count != 0)  //If no access on scope and rights not defined on app, app will not be shown.
                                     authorizedScopes[count].Applications.RemoveAt(appcount);
                                 else
                                     appcount++;
@@ -331,8 +331,8 @@ namespace org.iringtools.adapter
                             }
                             appcount++;
                         }
-                        if ((authorizedScopes[count].Applications.Count == 0 && scope.PermissionGroup != null) ||
-                                         (scope.PermissionGroup != null && !appsPermission))
+                        if ((authorizedScopes[count].Applications.Count == 0 && scope.PermissionGroup != null && scope.PermissionGroup.Count != 0) 
+                                        || (scope.PermissionGroup != null && scope.PermissionGroup.Count != 0  && !appsPermission))
                         {
                             authorizedScopes.RemoveAt(count);
                             count--;

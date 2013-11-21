@@ -16,7 +16,7 @@
 Ext.define('AM.view.directory.ScopeForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.scopeform',
-
+    requires: ['Ext.ux.form.CheckboxListCombo'],
     node: '',
     //height: 250,
     //width: 400,
@@ -63,46 +63,85 @@ Ext.define('AM.view.directory.ScopeForm', {
           ]
         }
       ],
-            items: [
-        {
-            xtype: 'hiddenfield',
-            name: 'path'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'state'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'oldContext'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'name'
-        },
-        {
-            xtype: 'textfield',
-            fieldLabel: 'Name',
-            name: 'displayName',
-            allowBlank: false
-        },
-        {
-            xtype: 'hiddenfield',
-            itemId: 'contextname',
-            name: 'contextName'
-        },
-        {
-        xtype: 'textareafield',
-        fieldLabel: 'Description',
-        name: 'description'
-    },
-        {
-            xtype: 'textareafield',
-            fieldLabel: 'Cache ConnStr',
-            name: 'cacheDBConnStr',
-            value: this.cacheConnStrTpl
-        }
-      ]
+        items: [
+            {
+                xtype: 'hiddenfield',
+                name: 'path'
+            },
+            {
+                xtype: 'hiddenfield',
+                name: 'state'
+            },
+            {
+                xtype: 'hiddenfield',
+                name: 'oldContext'
+            },
+            {
+                xtype: 'hiddenfield',
+                name: 'name'
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: 'Name',
+                name: 'displayName',
+                allowBlank: false
+            },
+            {
+                xtype: 'hiddenfield',
+                itemId: 'contextname',
+                name: 'contextName'
+            },
+            {
+                xtype: 'textareafield',
+                fieldLabel: 'Description',
+                name: 'description'
+            },
+            {
+                xtype: 'textareafield',
+                fieldLabel: 'Cache ConnStr',
+                name: 'cacheDBConnStr',
+                value: this.cacheConnStrTpl
+            },
+            {
+                xtype: 'checkboxlistcombo',
+                width: 180,
+                multiSelect: true,
+                itemId : 'permissionitem',
+                fieldLabel: 'Permissions:',
+                labelSeparator: '',
+                emptyText: '',
+                allowBlank: true,
+                name: 'permissions',
+                displayField: 'permission',
+                autoSelect: false,
+                queryMode: 'remote',
+                store: 'PermissionsS',
+                valueField: 'permission'
+                /*store: new TIP.store.RepositoryStore({
+                proxy: {
+                    type: 'ajax',
+                    url: 'getRepositories',
+                    reader: {
+                        type: 'json'
+                    },
+                    extraParams:{
+                        isReadOnly : true
+                    }
+                }
+                }),
+                ,
+                listeners: {
+                    beforequery : function(qe, eopt){
+                    	var me  = this;
+                    	me.store.reload();
+                    	me.store.on('beforeload', function(store, action) {
+                    		var params = store.proxy.extraParams;
+                    		params.isReadOnly = true;
+                    	}, me);
+                    }
+                }*/
+            }
+          ]
         });
 
         me.callParent(arguments);

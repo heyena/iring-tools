@@ -19,14 +19,16 @@ var ifExistSibling = function (str, node, state) {
 
   return ifExist;
 };
-Ext.ux.Utils = function(src) {  
+Ext.ux.Utils = function (src) {
     this.deletedRecords = [];
-	this.deletedTables = [];
-	this.availableDataProperties = [];
-	this.deletedDataProperties = [];
-	this.deletedKeyProperties = [];
-	this.relationGridStore = [];
-	//this.relationGridDeletedRec = [];
+    this.deletedTables = [];
+    this.availableDataProperties = [];
+    this.deletedDataProperties = [];
+    this.deletedKeyProperties = [];
+    this.relationGridStore = [];
+    this.isSecEnable = "";
+    this.isAdmin = "";
+    //this.relationGridDeletedRec = [];
 
 };
 Ext.ux.Utils.prototype = {
