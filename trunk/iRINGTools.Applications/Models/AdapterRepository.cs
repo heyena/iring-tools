@@ -188,21 +188,30 @@ namespace iRINGTools.Web.Models
             return obj;
         }
 
-        public List<string> GetSecurityGroups()
+        public List<Dictionary<string, string>> GetSecurityGroups()
         {
-            List<string> lstobj = null;
+            List<Dictionary<string, string>> dicSecuritygroups = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                lstobj = client.Get<List<string>>("/groups");
+                List<string> lstgroup = client.Get<List<string>>("/groups");
+
+               dicSecuritygroups = new List<Dictionary<string, string>>();
+               Dictionary<string, string> dicobj = null;
+               foreach (string group in lstgroup)
+               {
+                   dicobj = new Dictionary<string, string>();
+                   dicobj.Add("permission", group);
+                   dicSecuritygroups.Add(dicobj);
+               }
             }
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
             }
 
-            return lstobj;
+            return dicSecuritygroups;
         }
 
         public NameValueList GetGlobalVariables()
@@ -439,18 +448,31 @@ namespace iRINGTools.Web.Models
             return dataLayer;
         }
 
-        public string AddScope(string name, string description, string cacheDBConnStr)
+        public string AddScope(string name, string description, string cacheDBConnStr, string permissions)
         {
             string obj = null;
 
             try
             {
+                List<string> groups = new List<string>();
+                if (permissions.Contains(","))
+                {
+                    string[] arrstring = permissions.Split(',');
+                    groups = new List<string>(arrstring);
+                }
+                else
+                {
+                    groups.Add(permissions);
+                }
                 ScopeProject scope = new ScopeProject()
                 {
                     Name = name,
                     Description = description,
-                    Configuration = new org.iringtools.library.Configuration() { AppSettings = new AppSettings() }
+                    Configuration = new org.iringtools.library.Configuration() { AppSettings = new AppSettings() },
+                    PermissionGroup = new PermissionGroups()
                 };
+                if (!string.IsNullOrEmpty(permissions))
+                    scope.PermissionGroup.AddRange(groups);
 
                 if (!String.IsNullOrWhiteSpace(cacheDBConnStr))
                 {
@@ -473,19 +495,32 @@ namespace iRINGTools.Web.Models
             return obj;
         }
 
-        public string UpdateScope(string oldName, string displayName, string newDescription, string cacheDBConnStr)
+        public string UpdateScope(string oldName, string displayName, string newDescription, string cacheDBConnStr, string permissions)
         {
             string obj = null;
 
             try
             {
+                List<string> groups = new List<string>();
+                if (permissions.Contains(","))
+                {
+                    string[] arrstring = permissions.Split(',');
+                    groups = new List<string>(arrstring);
+                }
+                else
+                {
+                    groups.Add(permissions);
+                }
                 ScopeProject scope = new ScopeProject()
                 {
                     Name = oldName,
                     DisplayName = displayName,
                     Description = newDescription,
-                    Configuration = new org.iringtools.library.Configuration() { AppSettings = new AppSettings() }
+                    Configuration = new org.iringtools.library.Configuration() { AppSettings = new AppSettings() },
+                    PermissionGroup = new PermissionGroups()
                 };
+                if (!string.IsNullOrEmpty(permissions))
+                    scope.PermissionGroup.AddRange(groups);
 
                 if (!String.IsNullOrWhiteSpace(cacheDBConnStr))
                 {

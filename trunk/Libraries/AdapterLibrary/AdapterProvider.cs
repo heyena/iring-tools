@@ -181,8 +181,10 @@ namespace org.iringtools.adapter
         else
         {
           sc.DisplayName = scope.DisplayName;
-            sc.Description = scope.Description;
-          _scopes.Sort(new ScopeComparer());
+          sc.Description = scope.Description;
+          sc.PermissionGroup = scope.PermissionGroup;
+          
+            _scopes.Sort(new ScopeComparer());
 
           if (scope.Configuration.AppSettings.Settings != null)
           {
@@ -468,6 +470,7 @@ namespace org.iringtools.adapter
           application.DisplayName = updatedApp.DisplayName;
           application.Description = updatedApp.Description;
           application.DataMode = updatedApp.DataMode;
+          application.PermissionGroup = updatedApp.PermissionGroup;
 
           if (application.CacheInfo == null)
             application.CacheInfo = new CacheInfo();

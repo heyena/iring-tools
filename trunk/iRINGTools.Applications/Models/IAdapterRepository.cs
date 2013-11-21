@@ -26,9 +26,9 @@ namespace iRINGTools.Web.Models
 
     Entity GetClassLabel(string classId);
 
-    string AddScope(string name, string description, string cacheDBConnStr);
+    string AddScope(string name, string description, string cacheDBConnStr, string permissions);
 
-    string UpdateScope(string name, string newName, string newDescription, string cacheDBConnStr);
+    string UpdateScope(string name, string newName, string newDescription, string cacheDBConnStr, string permissions);
 
     string DeleteScope(string name);
 

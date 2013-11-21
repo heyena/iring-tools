@@ -66,5 +66,28 @@ Ext.application({
   
   name: 'AM',
   appFolder: 'Scripts/AM',
-  autoCreateViewport: true
+  autoCreateViewport: true,
+  launch: function() {
+		Ext.Ajax.request({
+			url: 'directory/InitializeUISettings',
+			success: function(response){
+				var text = Ext.JSON.decode(response.responseText);
+				for(var i = 0; i<text.items.length; i++){
+				    var name = text.items[i].Name;
+					var val = text.items[i].Value;
+					if(name == 'isUISecurityEnabled'){
+					   //utilsObj.isSecEnable = "False";
+					   utilsObj.isSecEnable = val;
+					}
+					if(name == 'isAdmin'){
+					   //utilsObj.isAdmin = "False";
+					   utilsObj.isAdmin = val;
+					}
+				}
+				// process server response here
+			},
+			failure: function(response){
+			}
+		});
+   }
 });
