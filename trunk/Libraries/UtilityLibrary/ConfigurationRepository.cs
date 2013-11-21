@@ -39,6 +39,32 @@ namespace org.iringtools.utility
             password = EncryptionUtility.Decrypt(tmpPassword, keyFile);
         }
 
+        public static void GetAppSettings(string basePath)
+        {
+            Properties _uriMaps = new Properties();
+
+            string uriMapsFilePath = basePath + "ldap.conf";
+
+            if (File.Exists(uriMapsFilePath))
+            {
+                try
+                {
+                    _uriMaps.Load(uriMapsFilePath);
+                }
+                catch (Exception e)
+                {
+                    _logger.Info("Error loading [ldap.config]: " + e);
+                }
+            }
+
+            server = _uriMaps["server"];
+            portNumber = int.Parse(_uriMaps["portNumber"]);
+            userName = _uriMaps["userName"];
+            string tmpPassword = _uriMaps["password"];
+            string keyFile = ConfigurationManager.AppSettings["keyfile"];
+            password = EncryptionUtility.Decrypt(tmpPassword, keyFile);
+        }
+
         /// <summary>
         /// Save Binary File in Ldap.
         /// </summary>
@@ -261,12 +287,12 @@ namespace org.iringtools.utility
             }
         }
 
-        public static List<string> GetUserGroups(string userName)
+        public static List<string> GetUserGroups(string userName, string basePath)
         {
             List<string> lstgroups = new List<string>();
             try
             {
-                GetAppSettings();
+                GetAppSettings(basePath);
                 SearchRequest request = new SearchRequest
                 {
                     DistinguishedName = "ou=securitygroups,o=iringtools,dc=iringug,dc=org",
@@ -321,12 +347,12 @@ namespace org.iringtools.utility
             }
         }
 
-        public static List<string> GetAllGroups()
+        public static List<string> GetAllGroups(string basePath)
         {
             List<string> lstgroups = new List<string>();
             try
             {
-                GetAppSettings();
+                GetAppSettings(basePath);
                 SearchRequest request = new SearchRequest
                 {
                     DistinguishedName = "ou=securitygroups,o=iringtools,dc=iringug,dc=org",
