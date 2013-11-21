@@ -1237,7 +1237,7 @@ Ext.define('AM.controller.Directory', {
         });
     },
 	onSpecialKey: function(f,e){
-	if (f.dataIndex != undefined) {
+	//if (f.dataIndex != undefined) {
 		if (e.getKey() == e.ENTER) {
             if(!f.up('grid').filters.menuItem.checked)
 			   f.up('grid').filters.menuItem.setChecked(true,true);
@@ -1266,7 +1266,7 @@ Ext.define('AM.controller.Directory', {
                 }
             });
 		}
-	  }
+	  //}
 	},
     onShowGrap: function (items, e, eOpts) {
         var me = this;
