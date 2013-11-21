@@ -276,7 +276,7 @@ Ext.define('AM.view.mapping.ClassMapForm', {
 		  return false;
         }
         me.getForm().findField('className').setValue(data.records[0].data.record.Label);
-        me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
+        //me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
         var msg = data.records[0].data.record.Label;//'Class Label: ' + data.records[0].data.record.Label;
         ccont.update(msg);
         return true;
