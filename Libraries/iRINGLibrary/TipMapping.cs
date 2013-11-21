@@ -149,16 +149,13 @@ namespace org.iringtools.library.tip
   [System.Runtime.Serialization.DataContractAttribute(Name = "value", Namespace = "http://www.iringtools.org/tipmapping")]
   public partial class ValueItem
   {
-      [DataMember(Name = "internalValue", EmitDefaultValue = false, Order = 0)]
-      public string internalValue { get; set; }
-
-      [DataMember(Name = "value", Order = 1)]
+      [DataMember(Name = "value", EmitDefaultValue = false, Order = 0)]
       public string value { get; set; }
 
-      [DataMember(Name = "uri", Order = 2)]
+      [DataMember(Name = "uri", Order = 1)]
       public string uri { get; set; }
 
-      [DataMember(Name = "label", Order = 3)]
+      [DataMember(Name = "label", Order = 2)]
       public string label { get; set; }
   }
 
