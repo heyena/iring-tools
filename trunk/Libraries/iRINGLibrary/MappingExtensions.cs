@@ -615,7 +615,7 @@ namespace org.iringtools.mapping
                         {
                             ValueItem valItem = new ValueItem();
                             valItem.label = item.label;
-                            valItem.internalValue = item.internalValue;
+                            valItem.value = item.internalValue;
                             valItem.uri = item.uri;
                             valCol.Add(valItem);
                         }
