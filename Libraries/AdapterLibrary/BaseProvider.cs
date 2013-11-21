@@ -351,13 +351,20 @@ namespace org.iringtools.adapter
 
     public List<string> GetUserGroups(string userName)
     {
-        List<string> lstGroups = ConfigurationRepository.GetUserGroups(userName);
+        List<string> lstGroups = new List<string>();
+
+        if (_enableUISecurity == true)
+            lstGroups = ConfigurationRepository.GetUserGroups(userName);
+
         return lstGroups;
     }
 
     public List<string> GetAllSecurityGroups()
     {
-        List<string> lstGroups = ConfigurationRepository.GetAllGroups();
+        List<string> lstGroups = new List<string>();
+        if (_enableUISecurity == true)
+            lstGroups = ConfigurationRepository.GetAllGroups();
+
         return lstGroups;
     }
 
