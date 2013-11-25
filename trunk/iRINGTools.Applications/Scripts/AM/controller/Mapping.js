@@ -41,15 +41,16 @@ Ext.define('AM.controller.Mapping', {
   ],
 
     onDeleteTemplateMap: function (item, e, eOpts) {
-        var me = this;
-        var content = me.getMainContent();
-        var dirTree = me.getDirTree();
-        var panel = content.down('mappingpanel');
-        var tree = content.getActiveTab().items.items[0];
-        node = tree.getSelectedNode();
-        var nodeId = node.data.id.split('/');
-        var text = nodeId[nodeId.length - 1];
-        var mapingNode = node.data.parentId + '/' + text;
+    var me = this;
+    var content = me.getMainContent();
+    var dirTree = me.getDirTree();
+    var tree = content.getActiveTab().items.items[0];
+    node = tree.getSelectedNode();
+    var nodeId = node.data.id.split('/');
+    var text = nodeId[nodeId.length-1];
+    var mapingNode = node.data.parentId+'/'+text;
+    var graph = mapingNode.split('/')[1];
+    var panel = content.items.map['GraphMap-' + graph];
         me.getParentClass(node);
         Ext.Ajax.request({
             url: 'mapping/deleteTemplateMap',
@@ -163,17 +164,18 @@ Ext.define('AM.controller.Mapping', {
         var endpoint = node.parentNode.parentNode.data.text
         var graphName = node.internalId;
         var title = 'Graph.' + context + "." + endpoint + '.' + node.data.text;
-
+		var panelItemId = 'GraphMap-' + node.data.text;
         var templateTypes = ['Qualification', 'Definition']
         var roleTypes = ['Unknown', 'Property', 'Possessor', 'Reference', 'FixedValue', 'DataProperty', 'ObjectProperty'];
-
         var mapPanel = content.down('mappingpanel[title=' + title + ']');
+		
         if (!mapPanel) {
             mapPanel = Ext.widget('mappingpanel', {
                 'title': title,
                 'contextName': context,
                 'graph': graphName,
-                'endpoint': endpoint
+                'endpoint': endpoint,
+		'itemId':panelItemId
             });
             var mapProp = mapPanel.down('propertypanel');
 
@@ -285,14 +287,13 @@ Ext.define('AM.controller.Mapping', {
     },
 
     addClassMap: function (item, e, eOpts) {
-        var me = this;
-        var content = me.getMainContent();
-        var mapPanel = content.down('mappingpanel');
-        var tree = content.getActiveTab().items.items[0];
-        var graph = mapPanel.graph.split('/');
-        graph = graph[graph.length - 1];
-        node = tree.getSelectedNode();
-        record = node.data.record;
+		var me = this;
+		var content = me.getMainContent();
+		var tree = content.getActiveTab().items.items[0];
+		node = tree.getSelectedNode();
+		var graph = node.parentNode.data.parentId.split('/')[1]; 
+		var mapPanel = content.items.map['GraphMap-' + graph];
+		record = node.data.record;
         var roleName = node.data.text;
         if (roleName.indexOf('unmapped') != -1) {
             roleName = roleName.split('[')[0];
@@ -337,14 +338,14 @@ Ext.define('AM.controller.Mapping', {
     mapProperty: function (item, e, eOpts) {
 
         var me = this;
-        var content = me.getMainContent();
-        var mapPanel = content.down('mappingpanel');
-        var tree = content.getActiveTab().items.items[0];
-        node = tree.getSelectedNode();
-        var id = node.parentNode.data.id.split('/');
-        var mappingNode = node.parentNode.data.parentId + '/' + id[id.length - 1] + '/' + node.data.record.name;
-        var graphArr = mapPanel.graph.split('/');
-        var graph = graphArr[graphArr.length - 1];
+		var content = me.getMainContent();
+		var tree = content.getActiveTab().items.items[0];
+		node = tree.getSelectedNode();
+		var id = node.parentNode.data.id.split('/');
+		var mappingNode  = node.parentNode.data.parentId+'/'+id[id.length-1]+'/'+node.data.record.name;
+		var graph = mappingNode.split('/')[1];
+		var mapPanel = content.items.map['GraphMap-' + graph];
+		
         win = Ext.widget('propertymapwindow', {
             'classId': node.parentNode.parentNode.data.identifier,
             'mappingNode': node
@@ -411,8 +412,8 @@ Ext.define('AM.controller.Mapping', {
         var me = this;
         var wintitle, contextName, endpoint, baseUrl, valueList, interName, classUrl, classLabel;
         var tree = this.getDirTree(),
-      node = tree.getSelectedNode(),
-      record = node.data.record;
+		node = tree.getSelectedNode(),
+		record = node.data.record;
         if (item.itemId == 'editvaluemap') {
             wintitle = 'Edit ValueMap';
         } else {
@@ -463,7 +464,7 @@ Ext.define('AM.controller.Mapping', {
     onDeleteValueMap: function (item, e, eOpts) {
         var me = this;
         var tree = me.getDirTree(),
-      node = tree.getSelectedNode();
+        node = tree.getSelectedNode();
         Ext.Ajax.request({
             url: 'mapping/deleteValueMap',
             method: 'POST',
@@ -490,17 +491,15 @@ Ext.define('AM.controller.Mapping', {
 
     onResetMapping: function (item, e, eOpts) {
         var me = this;
-        var content = me.getMainContent();
-        var mapPanel = content.down('mappingpanel');
-        var tree = content.getActiveTab().items.items[0];
-        node = tree.getSelectedNode();
-        var parentId = node.parentNode.parentNode.data.id;
-        var idArr = node.data.id.split('/');
-        var mappingNode = parentId + '/' + idArr[idArr.length - 2] + '/' + idArr[idArr.length - 1];
-        var graphArr = mapPanel.graph.split('/');
-        var graph = graphArr[graphArr.length - 1];
-
-        me.getParentClass(node);
+		var content = me.getMainContent();
+		var tree = content.getActiveTab().items.items[0];
+		node = tree.getSelectedNode();
+		var parentId = node.parentNode.parentNode.data.id;
+		var idArr = node.data.id.split('/');
+		var mapingNode = parentId+'/'+idArr[idArr.length-2]+'/'+idArr[idArr.length-1];
+		var graph = mapingNode.split('/')[1];
+		var mapPanel = content.items.map['GraphMap-' + graph];
+		me.getParentClass(node);
         Ext.Ajax.request({
             url: 'mapping/resetmapping',
             method: 'POST',
@@ -508,7 +507,7 @@ Ext.define('AM.controller.Mapping', {
                 contextName: mapPanel.contextName,
                 endpoint: mapPanel.endpoint,
                 graphName: graph,
-                mappingNode: mappingNode,
+                mappingNode:mapingNode,
                 roleId: node.data.record.id,
                 templateId: node.parentNode.data.record.id,
                 parentClassId: node.parentNode.parentNode.data.identifier,
@@ -528,17 +527,17 @@ Ext.define('AM.controller.Mapping', {
     onMapValueList: function (item, e, eOpts) {
 
         var me = this;
-        var content = me.getMainContent();
-        var mapPanel = content.down('mappingpanel');
-        var tree = content.getActiveTab().items.items[0];
-        node = tree.getSelectedNode();
-        me.getParentClass(node);
-        var parentId = node.parentNode.parentNode.data.id;
-        var idArr = node.data.id.split('/');
-        var mappingNode = parentId + '/' + idArr[idArr.length - 2] + '/' + idArr[idArr.length - 1];
-        var win = Ext.widget('mapvaluelistwindow');
-        var graphArr = mapPanel.graph.split('/');
-        var graph = graphArr[graphArr.length - 1];
+		var content = me.getMainContent();
+		var tree = content.getActiveTab().items.items[0];
+		node = tree.getSelectedNode();
+		me.getParentClass(node);
+		var parentId = node.parentNode.parentNode.data.id;
+		var idArr = node.data.id.split('/');
+		var mappingNode = parentId+'/'+idArr[idArr.length-2]+'/'+idArr[idArr.length-1];
+		var win = Ext.widget('mapvaluelistwindow');
+		var graph = mappingNode.split('/')[1];
+		var mapPanel = content.items.map['GraphMap-' + graph];
+		
         var formRecord = {
             'mappingNode': mappingNode, //node,
             'index': node.parentNode.parentNode.indexOf(node.parentNode),
@@ -568,9 +567,7 @@ Ext.define('AM.controller.Mapping', {
         var me = this;
         var state, oldValueList, contextName, endpoint, baseUrl, valueList, wintitle;
         var tree = this.getDirTree(),
-      node = tree.getSelectedNode();
-
-
+		node = tree.getSelectedNode();
         if (item.itemId == 'editvaluelist') {
             state = 'edit';
             nodeId = node.data.id;
@@ -612,17 +609,16 @@ Ext.define('AM.controller.Mapping', {
 
     onMakePossessor: function (item, e, eOpts) {
         var me = this;
-        var content = me.getMainContent();
-        var mapPanel = content.down('mappingpanel');
-        var tree = content.getActiveTab().items.items[0];
-        node = tree.getSelectedNode();
-        parentNode = node.parentNode;
-        var tempId = node.parentNode.data.parentId;
-        var nodeId = node.data.id.split('/');
-        var text = nodeId[nodeId.length - 1];
-        var mapingNode = tempId + '/' + text;
-        var graphArr = mapPanel.graph.split('/');
-        var graph = graphArr[graphArr.length - 1];
+		var content = me.getMainContent();
+		var tree = content.getActiveTab().items.items[0];
+		node = tree.getSelectedNode();
+		parentNode = node.parentNode;
+		var tempId = node.parentNode.data.parentId;
+		var nodeId = node.data.id.split('/');
+		var text = nodeId[nodeId.length-1];
+		var mapingNode = tempId+'/'+text;
+		var graph = mapingNode.split('/')[1];//graphArr[graphArr.length-1];
+		var mapPanel = content.items.map['GraphMap-' + graph];
 
         Ext.Ajax.request({
             url: 'mapping/makePossessor',
@@ -650,8 +646,7 @@ Ext.define('AM.controller.Mapping', {
     onDeleteGraphMap: function (item, e, eOpts) {
         var me = this;
         var tree = me.getDirTree(),
-      node = tree.getSelectedNode();
-
+        node = tree.getSelectedNode();
         Ext.Ajax.request({
             url: 'mapping/deletegraphmap',
             method: 'POST',
@@ -675,11 +670,11 @@ Ext.define('AM.controller.Mapping', {
     },
 
     onDeleteValueList: function (item, e, eOpts) {
-        var me = this;
-        var tree = me.getDirTree(),
-      node = tree.getSelectedNode(),
-      parentNode = node.parentNode,
-      valueList = getLastXString(node.id, 1);
+          var me = this;
+          var tree = me.getDirTree(),
+		  node = tree.getSelectedNode(),
+		  parentNode = node.parentNode,
+		  valueList = getLastXString(node.id, 1);
 
         Ext.Ajax.request({
             url: 'mapping/deletevaluelist',
@@ -701,17 +696,17 @@ Ext.define('AM.controller.Mapping', {
 
     onDeleteClassMap: function (item, e, eOpts) {
         var me = this;
-        var content = me.getMainContent();
-        var mapPanel = content.down('mappingpanel');
-        var tree = content.getActiveTab().items.items[0];
-        node = tree.getSelectedNode();
-        var mappingNode = node.parentNode.parentNode.parentNode.data.id;
-        var tempId = node.data.id.split('/');
-        tempId = tempId[tempId.length - 1];
-        mappingNode = mappingNode + '/' + tempId;
-        var index = node.parentNode.parentNode.parentNode.indexOf(node.parentNode.parentNode);
-        var graphArr = mapPanel.graph.split('/');
-        var graph = graphArr[graphArr.length - 1];
+		var content = me.getMainContent();
+		var tree = content.getActiveTab().items.items[0];
+		node = tree.getSelectedNode();
+		var mappingNode = node.parentNode.parentNode.parentNode.data.id;
+		var tempId = node.data.id.split('/');
+		tempId = tempId[tempId.length-1];
+		mappingNode = mappingNode+'/'+tempId;
+		var index = node.parentNode.parentNode.parentNode.indexOf(node.parentNode.parentNode);
+		var graph = mappingNode.split('/')[1];
+		var mapPanel = content.items.map['GraphMap-' + graph];
+		
         Ext.Ajax.request({
             url: 'mapping/deleteclassmap',
             method: 'POST',
@@ -740,20 +735,20 @@ Ext.define('AM.controller.Mapping', {
     onMapLiteral: function (item, e, eOpts) {
 
         var me = this;
-        var content = me.getMainContent();
-        var mapPanel = content.down('mappingpanel');
-        var tree = content.getActiveTab().items.items[0];
-        node = tree.getSelectedNode();
-        me.getParentClass(node);
-        var parentId = node.parentNode.parentNode.data.id;
-        var idArr = node.data.id.split('/');
-        var mappingNode = parentId + '/' + idArr[idArr.length - 2] + '/' + idArr[idArr.length - 1];
-        var win = Ext.widget('literalwindow');
-        var form = win.down('form');
-        var constantValue = form.getForm().findField('constantValue').getValue();
-        var index = node.parentNode.parentNode.indexOf(node.parentNode);
-        var graphArr = mapPanel.graph.split('/');
-        var graph = graphArr[graphArr.length - 1];
+		var content = me.getMainContent();
+		var tree = content.getActiveTab().items.items[0];
+		node = tree.getSelectedNode();
+		me.getParentClass(node);
+		var parentId = node.parentNode.parentNode.data.id;
+		var idArr = node.data.id.split('/');
+		var mappingNode = parentId+'/'+idArr[idArr.length-2]+'/'+idArr[idArr.length-1];
+		var win = Ext.widget('literalwindow');
+		var form = win.down('form');
+		var constantValue = form.getForm().findField('constantValue').getValue();
+		var index = node.parentNode.parentNode.indexOf(node.parentNode);
+		var graph = mappingNode.split('/')[1];
+		var mapPanel = content.items.map['GraphMap-' + graph];
+	
         var formRecord = {
             constantValue: constantValue,
             mappingNode: node.data.id,
@@ -764,8 +759,6 @@ Ext.define('AM.controller.Mapping', {
             graph: graph,
             classIndex: node.parentNode.parentNode.data.identifierIndex
         };
-
-
         form.getForm().setValues(formRecord);
 
         win.on('Save', function () {
