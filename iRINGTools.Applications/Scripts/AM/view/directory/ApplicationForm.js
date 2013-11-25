@@ -219,6 +219,7 @@ Ext.define('AM.view.directory.ApplicationForm', {
       me.getForm().submit({
         waitMsg: 'Saving Data...',
         success: function (response, request) {
+		  Ext.example.msg('Notification', 'Application saved successfully!');
           win.fireEvent('save', me);
           Ext.ComponentQuery.query('directorytree')[0].onReload();
         },

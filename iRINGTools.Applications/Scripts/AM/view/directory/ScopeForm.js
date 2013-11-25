@@ -179,6 +179,7 @@ Ext.define('AM.view.directory.ScopeForm', {
             form.submit({
                 waitMsg: 'Saving Data...',
                 success: function (response, request) {
+					Ext.example.msg('Notification', 'Scope saved successfully!');
                     win.fireEvent('save', me);
                     Ext.ComponentQuery.query('directorytree')[0].onReload();
                 },

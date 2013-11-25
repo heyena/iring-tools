@@ -327,7 +327,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
     me.getForm().submit({
       waitMsg: 'Saving Data...',
       success: function (f, a) {
-
+		Ext.example.msg('Notification', 'Graph saved successfully!');
         win.fireEvent('save', me);
       },
       failure: function (f, a) {

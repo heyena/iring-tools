@@ -288,6 +288,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                 baseUrl: mapPanel.baseUrl
             },
             success: function (result, request) {
+				Ext.example.msg('Notification', 'Configuration saved successfully!');
                 me.onReload();
             },
             failure: function (result, request) {

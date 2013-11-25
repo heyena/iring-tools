@@ -162,6 +162,7 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
     form.submit({
       waitMsg: 'Saving Data...',
       success: function (f, a) {
+		Ext.example.msg('Notification', 'ValueList Map saved successfully!');
         win.fireEvent('save', me);
       },
       failure: function (f, a) {
