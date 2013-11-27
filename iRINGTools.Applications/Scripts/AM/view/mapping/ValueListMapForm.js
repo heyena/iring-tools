@@ -72,6 +72,10 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
           name: 'classLabel'
         },
         {
+            xtype: 'hiddenfield',
+            name: 'parentNodeId'
+        },
+        {
           xtype: 'container',
           anchor: '100%',
           html: 'Drop a Class Node here.',

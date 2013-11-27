@@ -101,6 +101,7 @@ Ext.define('AM.view.mapping.MappingTree', {
         var tempArr = pan.graph.split('/'); //pan.graphName;
         var graphName = tempArr[tempArr.length - 1];
         var modelType = data.records[0].data.type;
+        var node = overModel;
 
         if (overModel.data.type == 'RoleMapNode') {
             reference = data.records[0].data.record.Uri;
@@ -113,8 +114,7 @@ Ext.define('AM.view.mapping.MappingTree', {
             f = false;
             var classIndex = me.parentClassIndex;
             var index = overModel.parentNode.parentNode.indexOf(overModel.parentNode);
-            //me.getEl().mask('Loading...');
-            //this.getEl().mask('Loading...');
+            me.setLoading();
             Ext.Ajax.request({
                 url: 'mapping/makereference', //'mapping/mapreference',
                 method: 'POST',
@@ -128,14 +128,24 @@ Ext.define('AM.view.mapping.MappingTree', {
                     app: pan.endpoint,
                     templateIndex: index,
                     graph: graphName,
-                    classIndex: classIndex
+                    classIndex: classIndex                    
                 },
                 success: function (result, request) {
-                    //me.getEl().unmask();
-                    me.onReload();
+                    var res = Ext.JSON.decode(result.responseText);
+                    if (res.success) {
+                        var parentNode = node.parentNode;
+                        var nodeIndex = parentNode.indexOf(node);
+                        parentNode.removeChild(node);
+                        parentNode.insertChild(nodeIndex, res.node);
+                    }
+                    else {
+                        Ext.widget('messagepanel', { title: 'Error', msg: res.message });
+                    }
+                    me.setLoading(false);
                 },
                 failure: function (result, request) {
-                    //don't drop it
+                    Ext.widget('messagepanel', { title: 'Error', msg: 'Error in make referance' });
+                    me.setLoading(false);
                 }
             });
         }
@@ -148,10 +158,11 @@ Ext.define('AM.view.mapping.MappingTree', {
             txt = data.records[0].data.record.Label;
             templateId = data.records[0].data.identifier;
             rec = data.records[0].data.record;
-            context = overModel.data.id + '/' + txt;
+            context = overModel.data.id;
+
             lf = false;
 
-            //me.setLoading();
+            me.setLoading();
             Ext.Ajax.request({
                 url: 'mapping/addtemplatemap',
                 timeout: 600000,
@@ -169,15 +180,23 @@ Ext.define('AM.view.mapping.MappingTree', {
                     graphName: graphName
                 },
                 success: function (result, request) {
-                    //me.setLoading(false);
-                    me.onReload();
+                    var res = Ext.JSON.decode(result.responseText);
+                    if (res.success) {
+                        overModel.set('leaf', false);
+                        overModel.appendChild(res.node)
+                    }
+                    else {
+                        Ext.widget('messagepanel', { title: 'Error', msg: res.message });
+                    }
+                    me.setLoading(false);
                 },
                 failure: function (result, request) {
-                    me.setLoading(false);
-                    //TODO: show error
+                    Ext.widget('messagepanel', { title: 'Error', msg: 'Error in add template.' });
+                    me.setLoading(false);                    
                 }
             });
         }
+        return false;
     },
 
     showContextMenu: function (dataview, record, item, index, e, eOpts) {
@@ -288,7 +307,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                 baseUrl: mapPanel.baseUrl
             },
             success: function (result, request) {
-				Ext.example.msg('Notification', 'Configuration saved successfully!');
+                Ext.example.msg('Notification', 'Configuration saved successfully!');
                 me.onReload();
             },
             failure: function (result, request) {
