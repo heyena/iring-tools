@@ -113,30 +113,60 @@ namespace org.iringtools.mapping
         graphMap.classTemplateMaps.Remove(classTemplateMap);
       }
 
-      RearrangeClassMapIndex(graphMap, classId);
+      //RearrangeClassMapIndex(graphMap, classId);
     }
 
-    public static void RearrangeClassMapIndex(this GraphMap graphMap, string classId)
+    public static void RearrangeClassMapIndex(this GraphMap graphMap, string classMapId=null)
     {
-      IList<ClassMap> classMaps = (from ctm in graphMap.classTemplateMaps
-                                   where ctm.classMap.id == classId
-                                   select ctm.classMap).ToList();
-      int startIndex = -1;
 
-      foreach (ClassMap cm in classMaps)
-      {
-        SetNewIndexOfClass(graphMap, classId, cm.index, startIndex);
-        startIndex--;
-      }
+      var distinctClassIds = graphMap.classTemplateMaps.Where(x => classMapId == null ? true : x.classMap.id == classMapId).Select(x => x.classMap.id).Distinct();
 
-      startIndex = 0;
-      foreach (ClassMap cm in classMaps)
+      foreach (var classId in distinctClassIds)
       {
-        SetNewIndexOfClass(graphMap, classId, cm.index, startIndex);
-        startIndex++;
+        IList<ClassMap> classMaps = (from ctm in graphMap.classTemplateMaps
+                                     where ctm.classMap.id == classId
+                                     select ctm.classMap).ToList();
+        int startIndex = -1;
+
+        foreach (ClassMap cm in classMaps)
+        {
+          SetNewIndexOfClass(graphMap, classId, cm.index, startIndex);
+          startIndex--;
+        }
+
+        startIndex = 0;
+        foreach (ClassMap cm in classMaps)
+        {
+          SetNewIndexOfClass(graphMap, classId, cm.index, startIndex);
+          startIndex++;
+        }
       }
     }
 
+    public static void RearrangeTemplateMapIndex(this GraphMap graphMap)
+    {
+      foreach (var tMaps in graphMap.classTemplateMaps.Select( x => x.templateMaps))
+      {
+        var distinctTemplateIds = tMaps.Select(x => x.id).Distinct();
+
+        foreach (var templateIds in distinctTemplateIds)
+        {
+            IList<TemplateMap> tMapList = tMaps.Where( x=> x.id ==templateIds).ToList();
+            for (int i = 0; i < tMapList.Count(); i++)
+            {
+              tMapList[i].index = i;
+            }
+
+        }
+      }
+    }
+
+    public static void RearrangeIndexAndPath(this GraphMap graphMap)
+    {
+      graphMap.RearrangeTemplateMapIndex();
+      graphMap.RearrangeClassMapIndex();
+      graphMap.SetClassPath();
+    }
 
     private static void SetNewIndexOfClass(GraphMap graphMap, string classId, int oldIndex, int newIndex)
     {
@@ -257,7 +287,8 @@ namespace org.iringtools.mapping
       graphMap.AddClassMap(null, classMap);
       ClassTemplateMap classTemplateMap = graphMap.classTemplateMaps.Where(c => (c.classMap.id == classMap.id && c.classMap.index == classMap.index)).FirstOrDefault();
 
-      templateMap.index = classTemplateMap.templateMaps.Where(x => x.id == templateMap.id).Count();
+      var tmpIndexes = classTemplateMap.templateMaps.Where(x => x.id == templateMap.id).Select( x => x.index).ToArray();
+      templateMap.index = tmpIndexes.Count() == 0 ? 0 : tmpIndexes.Max()+1;
 
       if (classTemplateMap.classMap != null)
         classTemplateMap.templateMaps.Add(templateMap);
@@ -275,11 +306,11 @@ namespace org.iringtools.mapping
 
       ctm.templateMaps.RemoveAt(templateMapIndex);
 
-      int newIndex = 0;
-      foreach (TemplateMap tMap in ctm.templateMaps.Where(x => x.id == tm.id))
-      {
-        tMap.index = newIndex++;
-      }
+      //int newIndex = 0;
+      //foreach (TemplateMap tMap in ctm.templateMaps.Where(x => x.id == tm.id))
+      //{
+      //  tMap.index = newIndex++;
+      //}
 
       graphMap.SetClassPath();
 

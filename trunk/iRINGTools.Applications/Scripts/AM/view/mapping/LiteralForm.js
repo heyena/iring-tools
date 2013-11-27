@@ -14,123 +14,128 @@
  */
 
 Ext.define('AM.view.mapping.LiteralForm', {
-  extend: 'Ext.form.Panel',
-  alias: 'widget.literalform',
+    extend: 'Ext.form.Panel',
+    alias: 'widget.literalform',
 
-  height: 85,
-  width: 481,
-  bodyPadding: 10,
-  method: 'post',
-  url: 'mapping/mapconstant',
+    height: 85,
+    width: 481,
+    bodyPadding: 10,
+    method: 'post',
+    url: 'mapping/mapconstant',
 
-  initComponent: function() {
-    var me = this;
+    initComponent: function () {
+        var me = this;
 
-    me.initialConfig = Ext.apply({
-      method: 'post',
-      url: 'mapping/mapconstant'
-    }, me.initialConfig);
+        me.initialConfig = Ext.apply({
+            method: 'post',
+            url: 'mapping/mapconstant'
+        }, me.initialConfig);
 
-    Ext.applyIf(me, {
-      items: [
+        Ext.applyIf(me, {
+            items: [
         {
-          xtype: 'textfield',
-          anchor: '100%',
-          fieldLabel: 'Value',
-          name: 'constantValue',
-          allowBlank: false
+            xtype: 'textfield',
+            anchor: '100%',
+            fieldLabel: 'Value',
+            name: 'constantValue',
+            allowBlank: false
         },
         {
-          xtype: 'hiddenfield',
-          name: 'contextName'
+            xtype: 'hiddenfield',
+            name: 'contextName'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'mappingNode'
+            xtype: 'hiddenfield',
+            name: 'mappingNode'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'endpoint'
+            xtype: 'hiddenfield',
+            name: 'endpoint'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'graph'
+            xtype: 'hiddenfield',
+            name: 'graph'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'classId'
+            xtype: 'hiddenfield',
+            name: 'classId'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'index'
+            xtype: 'hiddenfield',
+            name: 'index'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'classIndex'
+            xtype: 'hiddenfield',
+            name: 'classIndex'
+        },
+        {
+            xtype: 'hiddenfield',
+            name: 'parentNodeId'
         }
       ],
-      dockedItems: [
+            dockedItems: [
         {
-          xtype: 'toolbar',
-          dock: 'bottom',
-          items: [
+            xtype: 'toolbar',
+            dock: 'bottom',
+            items: [
             {
-              xtype: 'tbfill'
+                xtype: 'tbfill'
             },
             {
-              xtype: 'button',
-              handler: function(button, event) {
-                me.onSave();
-              },
-              text: 'Ok'
+                xtype: 'button',
+                handler: function (button, event) {
+                    me.onSave();
+                },
+                text: 'Ok'
             },
             {
-              xtype: 'button',
-              handler: function(button, event) {
-                me.onReset();
-              },
-              text: 'Cancel'
+                xtype: 'button',
+                handler: function (button, event) {
+                    me.onReset();
+                },
+                text: 'Cancel'
             }
           ]
         }
       ]
-    });
+        });
 
-    me.callParent(arguments);
-  },
+        me.callParent(arguments);
+    },
 
-  onReset: function() {
+    onReset: function () {
 
-    var me = this;
-    var win = me.up('window');
-    me.getForm().reset();
-    win.destroy();
-  },
+        var me = this;
+        var win = me.up('window');
+        me.getForm().reset();
+        win.destroy();
+    },
 
-  onSave: function() {
+    onSave: function () {
 
-    var me = this;
-    var win = me.up('window');
-    var form = me.getForm();
-    var message;
-    if(me.getForm().isValid()) {
-      me.submit({
-        waitMsg: 'Saving Data...',
-        success: function (result, request) {
-          win.fireEvent('save', me);
-        },
-        failure: function (result, request) {
-          //message = 'Failed to Map Constant to RoleMap';
-          //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-		  Ext.widget('messagepanel', { title: 'Warning', msg: 'Failed to Map Constant to RoleMap'});
+        var me = this;
+        var win = me.up('window');
+        var form = me.getForm();
+        var message;
+        if (me.getForm().isValid()) {
+            me.submit({
+                waitMsg: 'Saving Data...',
+                success: function (result, request) {
+                    me.result = request.result;
+                    win.fireEvent('save', me);
+                },
+                failure: function (result, request) {
+          		//message = 'Failed to Map Constant to RoleMap';
+          		//showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+		 	 Ext.widget('messagepanel', { title: 'Warning', msg: 'Failed to Map Constant to RoleMap'});
+                }
+            });
+        } else {
+      		//message = 'Form is not complete. Cannot save record.';
+      		//showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
+	 	 Ext.widget('messagepanel', { title: 'Warning', msg: 'Form is not complete. Cannot save record.'});
         }
-      });
-    } else {
-      //message = 'Form is not complete. Cannot save record.';
-      //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);   
-	  Ext.widget('messagepanel', { title: 'Warning', msg: 'Form is not complete. Cannot save record.'});
-    }
 
-  }
+    }
 
 });

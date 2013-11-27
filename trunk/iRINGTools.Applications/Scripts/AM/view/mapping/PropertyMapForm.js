@@ -101,6 +101,11 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
           name: 'baseUrl'
         },
         {
+            xtype: 'hiddenfield',
+            name: 'parentNodeId'
+        }
+        ,
+        {
           xtype: 'container',
           anchor: '100%',
           html: 'Drop a Property Node here.',
@@ -178,6 +183,7 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
       me.submit({
         waitMsg: 'Saving Data...',
         success: function (f, a) {
+            me.result = a.result;
           win.fireEvent('save', me);
         },
         failure: function (f, a) {

@@ -12,6 +12,8 @@ using Ninject;
 using org.iringtools.library;
 using org.iringtools.utility;
 using System.Xml;
+using System.ServiceModel.Web;
+using System.Collections;
 
 namespace org.iringtools.adapter
 {
@@ -1257,8 +1259,19 @@ namespace org.iringtools.adapter
       }
       catch (Exception e)
       {
+
         string error = "Error updating data objects for type [" + objectType.objectName + "]: " + e.Message;
         _logger.Error(error);
+
+        if (e is WebFaultException && e.Data != null)
+        {
+          error = string.Empty;
+
+          foreach (DictionaryEntry entry in e.Data)
+          {
+            error += e.Data[entry.Key].ToString();
+          }
+        }
 
         response.Level = StatusLevel.Error;
         response.Messages.Add(error);
