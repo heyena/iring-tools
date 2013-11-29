@@ -286,7 +286,7 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
                     grid: me.grid
                 }, filter));
                 me.filters.add(filter);
-                //Ext.util.Observable.capture(filter, this.onStateChange, this);
+                Ext.util.Observable.capture(filter, this.onStateChange, this);
             }
         }
     },
