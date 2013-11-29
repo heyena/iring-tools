@@ -4,7 +4,7 @@ Ext.define('AM.view.nhconfig.TableSelectionPanel', {
 
     bodyStyle: 'background:#fff;padding:10px',
     title: 'Select Tables',
-    autoScroll: true,
+    layout: 'fit',
 
     record: null,
 

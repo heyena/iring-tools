@@ -156,8 +156,8 @@ Ext.define('Ext.ux.grid.filter.DateFilter', {
         } else {
             delete values[itemId]
         }
-        me.setActive(me.isActivatable());
-        me.fireEvent('update', me);
+        //me.setActive(me.isActivatable());
+        //me.fireEvent('update', me);
     },
 
     /**

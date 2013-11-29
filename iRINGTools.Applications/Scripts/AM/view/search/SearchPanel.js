@@ -45,7 +45,8 @@ Ext.define('AM.view.search.SearchPanel', {
           split: true
         },
         {
-          xtype: 'contentpanel',
+            xtype: 'contentpanel',
+          tabPosition: 'bottom',
           itemId: 'searchcontent',
           region: 'center',
           dockedItems: [

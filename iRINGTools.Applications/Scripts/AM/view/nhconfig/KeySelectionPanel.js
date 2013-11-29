@@ -4,7 +4,7 @@ Ext.define('AM.view.nhconfig.KeySelectionPanel', {
 
     bodyStyle: 'background:#fff;padding:10px',
     title: 'Select Keys',
-    autoScroll: true,
+    layout: 'fit',
 
     record: null,
 
