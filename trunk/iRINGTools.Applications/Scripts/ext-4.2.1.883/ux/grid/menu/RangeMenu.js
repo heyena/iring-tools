@@ -124,7 +124,7 @@ menuItemCfgs : {
             'update'
         );
       
-        me.updateTask = Ext.create('Ext.util.DelayedTask', me.fireUpdate, me);
+        //me.updateTask = Ext.create('Ext.util.DelayedTask', me.fireUpdate, me);
     
         for (i = 0, len = me.menuItems.length; i < len; i++) {
             item = me.menuItems[i];
@@ -255,6 +255,6 @@ menuItemCfgs : {
         }
 
         // restart the timer
-        this.updateTask.delay(this.updateBuffer);
+        //this.updateTask.delay(this.updateBuffer);
     }
 });

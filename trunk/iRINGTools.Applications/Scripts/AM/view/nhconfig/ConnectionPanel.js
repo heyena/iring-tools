@@ -2,9 +2,9 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.connectionpanel',
 
-    autoScroll: true,
     bodyStyle: 'background:#fff;padding:10px',
     title: 'Configure Data Source',
+    autoScroll: true,
     url: 'NHibernate/TableNames',
     method: 'POST',
 

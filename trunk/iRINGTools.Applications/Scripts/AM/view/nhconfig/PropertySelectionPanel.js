@@ -4,7 +4,7 @@ Ext.define('AM.view.nhconfig.PropertySelectionPanel', {
 
     bodyStyle: 'background:#fff;padding:10px',
     title: 'Select Properties',
-    autoScroll: true,
+    layout: 'fit',
 
     record: null,
 

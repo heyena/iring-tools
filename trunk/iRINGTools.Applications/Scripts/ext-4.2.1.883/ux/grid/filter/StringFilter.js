@@ -46,7 +46,7 @@ Ext.define('Ext.ux.grid.filter.StringFilter', {
             labelWidth: 29,
             listeners: {
                 scope: this,
-                keyup: this.onInputKeyUp,
+                //keyup: this.onInputKeyUp,
                 el: {
                     click: function(e) {
                         e.stopPropagation();
@@ -58,7 +58,7 @@ Ext.define('Ext.ux.grid.filter.StringFilter', {
         this.inputItem = Ext.create('Ext.form.field.Text', config);
         this.menu.add(this.inputItem);
         this.menu.showSeparator = false;
-        this.updateTask = Ext.create('Ext.util.DelayedTask', this.fireUpdate, this);
+        //this.updateTask = Ext.create('Ext.util.DelayedTask', this.fireUpdate, this);
     },
 
     /**
@@ -129,6 +129,6 @@ Ext.define('Ext.ux.grid.filter.StringFilter', {
             return;
         }
         // restart the timer
-        this.updateTask.delay(this.updateBuffer);
+        //this.updateTask.delay(this.updateBuffer);
     }
 });
