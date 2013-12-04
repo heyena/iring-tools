@@ -45,15 +45,15 @@ Ext.define('AM.view.nhconfig.ObjectConfigPanel', {
             dockedItems: [
             {
                 xtype: 'toolbar',
+                height: 32,
                 dock: 'top',
                 layout: {
-                    padding: 4,
+                    padding: 2,
                     type: 'hbox'
                 },
                 items: [
                 {
-                    xtype: 'tbspacer',
-                    width: 4
+                    xtype: 'tbspacer'
                 },
                 {
                     xtype: 'button',
@@ -62,8 +62,7 @@ Ext.define('AM.view.nhconfig.ObjectConfigPanel', {
                     text: 'Apply'
                 },
                 {
-                    xtype: 'tbspacer',
-                    width: 4
+                    xtype: 'tbspacer'
                 },
                 {
                     xtype: 'button',

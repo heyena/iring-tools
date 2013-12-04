@@ -145,6 +145,7 @@ Ext.define('AM.view.nhconfig.RelationshipConfigPanel', {
             }],
             dockedItems: [{
                 xtype: 'toolbar',
+                height: 32,
                 dock: 'top',
                 layout: {
                     padding: 2,

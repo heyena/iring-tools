@@ -16,11 +16,11 @@ Ext.define('AM.view.nhconfig.MainConfigPanel', {
                 region: 'west',
                 split: true
             }, {
-                xtype: 'container',
+                xtype: 'panel',
                 itemId: 'configcontainer',
-                floatable: false,
+                frame: false,
+                border: false,
                 region: 'center',
-                autoScroll: true,
                 layout: 'card',
                 items: [{
                     xtype: 'connectionpanel'

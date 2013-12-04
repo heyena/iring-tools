@@ -76,6 +76,7 @@ Ext.define('AM.view.nhconfig.KeyConfigPanel', {
             dockedItems: [
             {
                 xtype: 'toolbar',
+                height: 32,
                 dock: 'top',
                 layout: {
                     padding: 2,
@@ -83,8 +84,7 @@ Ext.define('AM.view.nhconfig.KeyConfigPanel', {
                 },
                 items: [
                 {
-                    xtype: 'tbspacer',
-                    width: 4
+                    xtype: 'tbspacer'
                 },
                 {
                     xtype: 'button',
@@ -93,8 +93,7 @@ Ext.define('AM.view.nhconfig.KeyConfigPanel', {
                     text: 'Apply'
                 },
                 {
-                    xtype: 'tbspacer',
-                    width: 4
+                    xtype: 'tbspacer'
                 },
                 {
                     xtype: 'button',

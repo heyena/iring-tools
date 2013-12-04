@@ -99,6 +99,7 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
             dockedItems: [
             {
                 xtype: 'toolbar',
+                height: 32,
                 dock: 'top',
                 layout: {
                     padding: 2,

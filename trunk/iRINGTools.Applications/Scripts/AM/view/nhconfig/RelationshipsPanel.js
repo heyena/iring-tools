@@ -72,6 +72,7 @@ Ext.define('AM.view.nhconfig.RelationshipsPanel', {
             dockedItems: [
             {
                 xtype: 'toolbar',
+                height: 32,
                 dock: 'top',
                 layout: {
                     padding: 2,
@@ -79,8 +80,7 @@ Ext.define('AM.view.nhconfig.RelationshipsPanel', {
                 },
                 items: [
                 {
-                    xtype: 'tbspacer',
-                    width: 4
+                    xtype: 'tbspacer'
                 },
                 {
                     xtype: 'button',
@@ -89,8 +89,7 @@ Ext.define('AM.view.nhconfig.RelationshipsPanel', {
                     text: 'Apply'
                 },
                 {
-                    xtype: 'tbspacer',
-                    width: 4
+                    xtype: 'tbspacer'
                 },
                 {
                     xtype: 'button',
