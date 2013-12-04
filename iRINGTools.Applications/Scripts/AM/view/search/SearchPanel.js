@@ -20,7 +20,7 @@ Ext.define('AM.view.search.SearchPanel', {
             items: [
             {
                 xtype: 'propertypanel',
-                width: 400,
+                width: 360,
                 region: 'east',
                 collapseDirection: 'right',
                 title: 'Search Details',
