@@ -9,7 +9,7 @@ Ext.Loader.setConfig({
 Ext.application({
     requires: [
         'Ext.ux.form.ItemSelector',
-        'AM.view.Main',
+        'AM.view.Viewport',
         'AM.view.menus.ScopeMenu',
         'AM.view.menus.AppDataRefreshMenu',
         'AM.view.mapping.LiteralForm',
@@ -47,7 +47,7 @@ Ext.application({
   ],
 
   views: [
-        'Main',
+        'AM.view.Viewport',
         'menus.ScopeMenu',
         'menus.AppDataRefreshMenu',
         'mapping.LiteralForm',
