@@ -111,7 +111,7 @@ Ext.define('AM.controller.Search', {
         var me = this;
         var content = me.getSearchContent(),
         propPanel = me.getSearchProperty();
-        var node = model.store.getAt(idx);
+        var node = view.getSelectionModel().getLastSelected();
         try {
             node.on('expand', function () {
                 content.getEl().unmask();
