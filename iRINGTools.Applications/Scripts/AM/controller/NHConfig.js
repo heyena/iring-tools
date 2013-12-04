@@ -234,8 +234,10 @@ Ext.define('AM.controller.NHConfig', {
                 },
                 failure: function (form, action) {
                     configPanel.setLoading(false);
-                    var msg = action.result.message;
-                    Ext.widget('messagepanel', { title: 'Connection Error', msg: msg });
+                    Ext.widget('messagepanel', {
+                        title: 'Connection Error', 
+                        msg: 'Unable to connect to data source.'
+                    });
                 }
             });
         }

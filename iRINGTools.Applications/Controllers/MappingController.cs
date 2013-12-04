@@ -717,8 +717,8 @@ namespace org.iringtools.web.controllers
         {
             Dictionary<string, string> record = new Dictionary<string, string>();
 
-            record["name"] = classMap.name;
-            record["id"] = classMap.id;
+            record["class name"] = classMap.name;
+            record["class id"] = classMap.id;
             record["identifier"] = string.Join(",", classMap.identifiers);
 
             if (classMap.identifiers.Count > 1)
@@ -783,7 +783,18 @@ namespace org.iringtools.web.controllers
             record["name"] = role.name;
             record["id"] = role.id;
             record["type"] = role.type.ToString();
-            record["dataType"] = role.dataType;
+
+            string dataType = role.dataType;
+
+            if (!dataType.ToLower().StartsWith("xsd:"))
+            {
+                string label = GetClassLabel(role.dataType);
+
+                if (!string.IsNullOrEmpty(label))
+                    dataType = label;
+            }
+
+            record["dataType"] = dataType;
 
             if (role.dataType.ToLower().StartsWith("xsd:") || role.type == RoleType.ObjectProperty
                 || !string.IsNullOrEmpty(role.valueListName))
@@ -793,10 +804,6 @@ namespace org.iringtools.web.controllers
                 if (!string.IsNullOrEmpty(role.valueListName)) {
                     record["valueListName"] = role.valueListName;
                 }
-            }
-            else if (role.type != RoleType.Possessor)
-            {
-                record["value"] = role.value;
             }
 
             node.record = record;
