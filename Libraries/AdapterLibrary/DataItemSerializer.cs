@@ -112,7 +112,8 @@ namespace org.iringtools.adapter
     private string _hasContentFieldName = "_HAS_CONTENT_";
     private string _contentFieldName = "_CONTENT_";
     private string _contentTypeFieldName = "_CONTENT_TYPE_";
-    private bool _displayLinks = false;
+    private string _dataItemTypeFieldName = "_ITEM_TYPE_";
+    private bool _displayLinks = false; 
 
     public bool bJsonLd = false;
 
@@ -139,51 +140,53 @@ namespace org.iringtools.adapter
 
         if (dataItem != null)
         {
-            //FKM
-            if (bJsonLd)
+          //FKM
+          if (bJsonLd)
+          {
+            //FKM don't need it for now
+            result[_idFieldName] = dataItem.id;
+          }
+          else
+          {
+            result[_idFieldName] = dataItem.id;
+          }
+
+          if (result.Keys.Contains(_hasContentFieldName))
+            result[_hasContentFieldName] = dataItem.hasContent;
+
+          if (!String.IsNullOrWhiteSpace(dataItem.type))
+            result[_dataItemTypeFieldName] = dataItem.type;
+
+          //if (dataItem.hasContent)
+          //{
+          //    if (dataItem.content != null && dataItem.content.Length > 0)
+          //    {
+          //        result[_contentFieldName] = dataItem.content;
+          //    }
+          //}
+
+          foreach (var property in dataItem.properties)
+          {
+            object value = property.Value;
+
+            result[property.Key] = property.Value;
+          }
+
+          //To make sure not breaking existing code.
+          if (dataItem.valueList != null)
+          {
+            foreach (var item in dataItem.valueList)
             {
-               //FKM don't need it for now
-                result[_idFieldName] = dataItem.id;
+              result[item.Key] = item.Value.values[0];
             }
-            else
-            {
-                result[_idFieldName] = dataItem.id;
-            }
-
-            if (result.Keys.Contains(_hasContentFieldName))
-                result[_hasContentFieldName] = dataItem.hasContent;
-
-            //if (dataItem.hasContent)
-            //{
-            //    if (dataItem.content != null && dataItem.content.Length > 0)
-            //    {
-            //        result[_contentFieldName] = dataItem.content;
-            //    }
-            //}
-
-            foreach (var property in dataItem.properties)
-            {
-                object value = property.Value;
-
-                result[property.Key] = property.Value;
-            }
-
-            //To make sure not breaking existing code.
-            if (dataItem.valueList != null)
-            {
-                foreach (var item in dataItem.valueList)
-                {
-                    result[item.Key] = item.Value.values[0];
-                }
-            }
+          }
 
 
-            if (_displayLinks)
-            {
-                result[_linksFieldName] = dataItem.links;
-            }
+          if (_displayLinks)
+          {
+            result[_linksFieldName] = dataItem.links;
+          }
         }
-
         return result;
     }
 
@@ -222,10 +225,15 @@ namespace org.iringtools.adapter
         {
           dataItem.id = Convert.ToString(pair.Value);
         }
+        else if (pair.Key == _dataItemTypeFieldName)
+        {
+          dataItem.type = Convert.ToString(pair.Value);
+        }
         else if (pair.Key != _linksFieldName)
         {
           dataItem.properties[pair.Key] = Convert.ToString(pair.Value);
         }
+        
       }
 
       return dataItem;

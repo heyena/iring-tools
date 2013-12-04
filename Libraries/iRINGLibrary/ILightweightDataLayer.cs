@@ -12,6 +12,8 @@ namespace org.iringtools.library
 {
   public enum ObjectState { Create, Read, Update, Delete }
 
+  public enum LoadingType { Lazy,Eager}
+
   [Serializable]
   public class SerializableDataObject : IDataObject
   {
