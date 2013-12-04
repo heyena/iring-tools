@@ -42,6 +42,7 @@ namespace org.iringtools.adapter.projection
         string proj = _settings["ProjectName"].ToLower();
 
         string resource = graphName.ToLower();
+        string previousItemResourceName = graphName.ToLower();
 
         DataItems dataItems = new DataItems()
         {
@@ -82,6 +83,12 @@ namespace org.iringtools.adapter.projection
               if (dataObj is GenericDataObject)
               {
                   dataItem.hasContent = ((GenericDataObject)dataObj).HasContent;
+                  dataItem.type = ((GenericDataObject)dataObj).ObjectType;
+                  if (previousItemResourceName != dataItem.type.ToLower())
+                  {
+                    dataObject = FindGraphDataObject(dataItem.type);
+                    previousItemResourceName = dataItem.type.ToLower();
+                  }
               }
 
               bool isContentObject = false;

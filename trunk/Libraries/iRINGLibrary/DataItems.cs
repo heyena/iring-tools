@@ -54,7 +54,7 @@ namespace org.iringtools.library
     [DataMember(Name = "valueList", Order = 7, EmitDefaultValue = false)]
     public Dictionary<string, ValueList> valueList { get; set; }
 
-    [DataMember(Name = "type", Order = 8, EmitDefaultValue = false)]
+    [DataMember(Name = "type", Order = 8, EmitDefaultValue=false)]
     public string type { get; set; }
   }
 
