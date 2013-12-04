@@ -119,7 +119,7 @@ Ext.define('AM.view.nhconfig.RelationshipsPanel', {
         var form = button.up('form');
         var relName = form.getForm().findField('relationshipName').getValue();
 
-        if (relName.trim().length > 0) {
+        if (relName.length > 0) {
             var newRecord = { name: relName };
             var store = form.down('grid').getStore();
             store.add(newRecord);
