@@ -251,31 +251,7 @@ Ext.define('AM.controller.Mapping', {
                     }
                 }
 
-                var obj = record.data;
-
-                for (var propName in obj.record) {
-                    if (propName != 'dataLength') {
-                        var propValue = obj.record[propName];
-
-                        if (propName == 'type') {
-                            if (obj.type == 'TemplateMapNode') {
-                                propValue = templateTypes[propValue];
-                            }
-                            else if (obj.type == 'RoleMapNode') {
-                                propValue = roleTypes[propValue];
-                            }
-                        }
-                        else if (propName == 'identifiers') {
-                            propName = 'identifier';
-                            propValue = propValue.join();
-                        }
-
-                        if (propName != 'identifierDelimiter')
-                            source[propName] = propValue;
-                    }
-                }
-                mapProp.setSource(source);
-
+                mapProp.setSource(record.data.record);
             });
 
             mapTree.on('beforeload', function (that, records) {
