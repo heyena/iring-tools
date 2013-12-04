@@ -379,7 +379,8 @@ namespace org.iringtools.utility
                                 names = entry.DistinguishedName.Split(',');
 
                                 string groupName = names.First().Substring(names.First().IndexOf("=") + 1);
-                                lstgroups.Add(groupName);
+                                if (groupName.ToLower() != "administrator")
+                                    lstgroups.Add(groupName);
                             }
                         }
                     }
