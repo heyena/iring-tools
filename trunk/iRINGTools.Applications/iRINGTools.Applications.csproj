@@ -295,7 +295,6 @@
     <Content Include="Scripts\AM\ux\grid\PagingToolbar.js" />
     <Content Include="Scripts\AM\ux\grid\RowExpander.js" />
     <Content Include="Scripts\AM\ux\plugin\GridPageSizer.js" />
-    <Content Include="Scripts\AM\view\AMViewport.js" />
     <Content Include="Scripts\AM\view\common\CenterPanel.js" />
     <Content Include="Scripts\AM\view\common\ContentPanel.js" />
     <Content Include="Scripts\AM\view\common\MessagePanel.js" />
@@ -324,7 +323,6 @@
     <Content Include="Scripts\AM\view\directory\VirtualPropertyForm.js" />
     <Content Include="Scripts\AM\view\directory\VirtualPropertyGrid.js" />
     <Content Include="Scripts\AM\view\directory\VirtualPropertyWindow.js" />
-    <Content Include="Scripts\AM\view\Main.js" />
     <Content Include="Scripts\AM\view\mapping\ClassMapForm.js" />
     <Content Include="Scripts\AM\view\mapping\ClassMapWindow.js" />
     <Content Include="Scripts\AM\view\mapping\MappingPanel.js" />
