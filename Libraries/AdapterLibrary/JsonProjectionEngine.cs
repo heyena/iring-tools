@@ -254,6 +254,7 @@ namespace org.iringtools.adapter.projection
       {
         List<IDataObject> dataObjects = new List<IDataObject>();
         DataObject objectType = FindGraphDataObject(graphName);
+        string previousItemResourceName = graphName;
 
         if (objectType != null)
         {
@@ -261,6 +262,12 @@ namespace org.iringtools.adapter.projection
 
           foreach (DataItem dataItem in dataItems.items)
           {
+            if (dataItem.type != null && previousItemResourceName != dataItem.type) // handling differnet type of DataItems in same collection
+            {
+              objectType = FindGraphDataObject(dataItem.type);
+              previousItemResourceName = dataItem.type;
+            }
+
             if (dataItem.id != null)
             {
               dataItem.id = Utility.ConvertSpecialCharInbound(dataItem.id, arrSpecialcharlist, arrSpecialcharValue);  //Handling special Characters here.

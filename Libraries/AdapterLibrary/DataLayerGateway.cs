@@ -1194,14 +1194,17 @@ namespace org.iringtools.adapter
     public Response Update(DataObject objectType, List<IDataObject> dataObjects)
     {
       Dictionary<string, string> idSQLMap = new Dictionary<string, string>();
+      IDictionary<string, string> objectTableMap = new Dictionary<string, string>();
       Response response = new Response();
 
       try
       {
         _logger.Info("Update owner: " + _settings["DomainName"] + "\\" + _settings["UserName"]);
-
+        
         string cacheId = string.Empty;
         string tableName = string.Empty;
+        _dictionary = GetDictionary();
+
         bool enableCacheUpdate = _settings["EnableCacheUpdate"] == null ||
           _settings["EnableCacheUpdate"].ToString().ToLower() == "true";
 
@@ -1215,6 +1218,22 @@ namespace org.iringtools.adapter
           }
 
           tableName = GetCacheTableName(cacheId, objectType.objectName);
+          objectTableMap.Add(objectType.objectName, tableName);
+
+          if (_loadingType == LoadingType.Eager && objectType.dataRelationships != null)
+          {
+           
+            foreach (DataRelationship relationship in objectType.dataRelationships)
+            {
+              DataObject relatedObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == relationship.relatedObjectName.ToLower());
+              if (relatedObject != null)
+              {
+                tableName = GetCacheTableName(cacheId, relatedObject.objectName);
+                objectTableMap.Add(relatedObject.objectName, tableName);
+              }
+            }
+          }
+
         }
 
         //
@@ -1242,7 +1261,13 @@ namespace org.iringtools.adapter
             {
               foreach (SerializableDataObject sdo in dataObjects)
               {
-                idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
+                DataObject localObjectType = objectType;
+                if (_loadingType == LoadingType.Eager && objectType.dataRelationships != null)
+                {
+                  localObjectType = _dictionary.dataObjects.Where(x => x.objectName.ToUpper() == sdo.Type.ToUpper()).SingleOrDefault();
+                }
+                tableName = objectTableMap[localObjectType.objectName];
+                idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, localObjectType, sdo);
               }
 
               DBManager.Instance.ExecuteUpdate(_cacheConnStr, idSQLMap);
@@ -1266,7 +1291,14 @@ namespace org.iringtools.adapter
 
                   if (sdo != null)
                   {
-                    idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
+                    DataObject localObjectType = objectType;
+                    if (_loadingType == LoadingType.Eager && objectType.dataRelationships != null)
+                    {
+                      localObjectType = _dictionary.dataObjects.Where(x => x.objectName.ToUpper() == sdo.Type.ToUpper()).SingleOrDefault();
+                    }
+                    tableName = objectTableMap[localObjectType.objectName];
+                    
+                    idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, localObjectType, sdo);
                   }
                   else
                   {
@@ -1312,18 +1344,25 @@ namespace org.iringtools.adapter
             // convert serializable data objects to IDataObjects
             //
             IList<IDataObject> idataObjects = new List<IDataObject>();
+            
 
             foreach (SerializableDataObject sdo in updatedDataObjects)
             {
+              DataObject localObjectType = objectType;
               IDataObject idataObject = null;
+
+              if (_loadingType == LoadingType.Eager && objectType.dataRelationships != null)
+              {
+                localObjectType = _dictionary.dataObjects.Where(x => x.objectName.ToUpper() == sdo.Type.ToUpper()).SingleOrDefault();
+              }             
 
               if (string.IsNullOrEmpty(sdo.Id))
               {
-                idataObject = _dataLayer.Create(objectType.objectName, null).First();
+                idataObject = _dataLayer.Create(localObjectType.objectName, null).First();
               }
               else
               {
-                idataObject = _dataLayer.Create(objectType.objectName, new List<string>() { sdo.Id }).First();
+                idataObject = _dataLayer.Create(localObjectType.objectName, new List<string>() { sdo.Id }).First();
               }
 
               if (idataObject == null)
@@ -1338,9 +1377,9 @@ namespace org.iringtools.adapter
               if (string.IsNullOrEmpty(sdo.Id))
               {
                 StringBuilder builder = new StringBuilder();
-                string delimiter = objectType.keyDelimeter ?? string.Empty;
+                string delimiter = localObjectType.keyDelimeter ?? string.Empty;
 
-                foreach (KeyProperty keyProp in objectType.keyProperties)
+                foreach (KeyProperty keyProp in localObjectType.keyProperties)
                 {
                   string propName = keyProp.keyPropertyName;
                   string propValue = idataObject.GetPropertyValue(propName).ToString();
@@ -1358,7 +1397,7 @@ namespace org.iringtools.adapter
 
                 if (value != null)
                 {
-                  DataProperty prop = objectType.dataProperties.Find(x => x.propertyName.ToLower() == key.ToLower());
+                  DataProperty prop = localObjectType.dataProperties.Find(x => x.propertyName.ToLower() == key.ToLower());
 
                   if (prop == null)
                   {
@@ -1400,7 +1439,13 @@ namespace org.iringtools.adapter
             {
               foreach (SerializableDataObject sdo in dataObjects)
               {
-                idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
+                DataObject localObjectType = objectType;
+                if (_loadingType == LoadingType.Eager && objectType.dataRelationships != null)
+                {
+                  localObjectType = _dictionary.dataObjects.Where(x => x.objectName.ToUpper() == sdo.Type.ToUpper()).SingleOrDefault();
+                }
+                tableName = objectTableMap[localObjectType.objectName];
+                idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, localObjectType, sdo);
               }
 
               DBManager.Instance.ExecuteUpdate(_cacheConnStr, idSQLMap);
@@ -1424,7 +1469,13 @@ namespace org.iringtools.adapter
 
                   if (sdo != null)
                   {
-                    idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, objectType, sdo);
+                    DataObject localObjectType = objectType;
+                    if (_loadingType == LoadingType.Eager && objectType.dataRelationships != null)
+                    {
+                      localObjectType = _dictionary.dataObjects.Where(x => x.objectName.ToUpper() == sdo.Type.ToUpper()).SingleOrDefault();
+                    }
+                    tableName = objectTableMap[localObjectType.objectName];
+                    idSQLMap[sdo.Id] = BaseLightweightDataLayer.CreateUpdateSQL(tableName, localObjectType, sdo);
                   }
                   else
                   {
