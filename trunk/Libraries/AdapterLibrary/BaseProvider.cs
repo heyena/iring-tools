@@ -281,10 +281,8 @@ namespace org.iringtools.adapter
 
     public ScopeProjects GetAuthorizedScope(string userName)
     {
-        bool exist = false;
-        bool appsPermission = false;
         List<string> lstGroups = new List<string>();
-        int count = 0; int appcount = 0;
+        int count = 0; int appcount = 0; bool exist;
         ScopeProjects authorizedScopes = null;
 
         try
@@ -302,27 +300,22 @@ namespace org.iringtools.adapter
             {
                 foreach (ScopeProject scope in _scopes)
                 {
-                    appsPermission = false;
+                    exist = false;
                     if (scope.PermissionGroup != null && scope.PermissionGroup.Count != 0)
                         exist = lstGroups.Any(s => scope.PermissionGroup.Contains(s));
 
-                    if (!exist)    // If no access on scope, check on apps level.
+                    if (!exist)    // If no access on scope or access not given, check on apps level.
                     {
                         appcount = 0;
                         foreach (ScopeApplication app in scope.Applications)
                         {
                             if (app.PermissionGroup == null || app.PermissionGroup.Count == 0)
                             {
-                                if (scope.PermissionGroup != null && scope.PermissionGroup.Count != 0)  //If no access on scope and rights not defined on app, app will not be shown.
-                                    authorizedScopes[count].Applications.RemoveAt(appcount);
-                                else
-                                    appcount++;
+                                //If no access on scope and rights not defined on app, app will not be shown.
+                                authorizedScopes[count].Applications.RemoveAt(appcount);
                                 continue;
                             }
-                            else
-                            {
-                                appsPermission = true;
-                            }
+                            
                             exist = lstGroups.Any(s => app.PermissionGroup.Contains(s));
                             if (!exist)  // If no access on app, remove it
                             {
@@ -331,8 +324,8 @@ namespace org.iringtools.adapter
                             }
                             appcount++;
                         }
-                        if ((authorizedScopes[count].Applications.Count == 0 && scope.PermissionGroup != null && scope.PermissionGroup.Count != 0) 
-                                        || (scope.PermissionGroup != null && scope.PermissionGroup.Count != 0  && !appsPermission))
+                       
+                        if (authorizedScopes[count].Applications.Count == 0) // If no apps exist, remove scopes too.
                         {
                             authorizedScopes.RemoveAt(count);
                             count--;
