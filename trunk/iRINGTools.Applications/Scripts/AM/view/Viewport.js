@@ -23,14 +23,12 @@ Ext.define('AM.view.Viewport', {
                 {
                     xtype: 'image',
                     src: '../../../content/img/iringtools_logo.png',
-                    padding: 2,
-                    flex: 0
+                    padding: 2
                 },
                 {
-                    xtype: 'text',
+                    xtype: 'label',
                     text: 'Adapter Manager',
-                    cls: 'text-banner',
-                    flex: 0
+                    cls: 'text-banner'
                 },
                 {
                     xtype: 'container',
