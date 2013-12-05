@@ -99,7 +99,7 @@ namespace QMXFGenerator
                 {
                   if (!CheckUri(cls.identifier))
                   {
-                    Utility.WriteString("Cannot Post Example namespace " + cls.identifier + "\n", "error.log", true);
+                    Utility.WriteString("Cannot Post Example namespace " + cls.identifier + "\r\n", "error.log", true);
                     continue;
                   }
                   var q = new QMXF {targetRepository = _targetRepositoryForClass};
@@ -108,14 +108,14 @@ namespace QMXFGenerator
                   if (resp.Level == StatusLevel.Error)
                   {
                     Console.WriteLine("Error posting class: " + cls.name[0].value);
-                    Utility.WriteString("Error posting class: " + cls.name[0].value + "\n", "error.log", true);
+                    Utility.WriteString("Error posting class: " + cls.name[0].value + "\r\n" + resp.ToString() + "\r\n", "error.log", true);
                   }
                   else
                     Console.WriteLine("Success: posted class: " + cls.name[0].value);
                 }
                 catch (Exception ex)
                 {
-                  Utility.WriteString("Error posting class: " + cls.name[0].value + "\n", "error.log", true);
+                  Utility.WriteString("Error posting class: " + cls.name[0].value + "\r\n" + ex.Message + "\r\n", "error.log", true);
                 }
               }
               ///Post baseTemplates
@@ -126,19 +126,19 @@ namespace QMXFGenerator
                   if (!CheckUri(t.identifier))
                   {
                     error = true;
-                    Utility.WriteString("Cannot Post Example namespace " + t.identifier + "\n", "error.log", true);
+                    Utility.WriteString("Cannot Post Example namespace " + t.identifier + "\r\n", "error.log", true);
                   }
 
                   foreach (var r in t.roleDefinition)
                   {
                     if (string.IsNullOrEmpty(r.range))
                     {
-                      Utility.WriteString("\n" + r.identifier + " do not have range defined \n", "error.log", true);
+                      Utility.WriteString("\r\n" + r.identifier + " do not have range defined \r\n", "error.log", true);
                       Console.WriteLine("error in template " + t.identifier + " see : error.log");
                       error = true;
                     }
                     if (CheckUri(r.identifier)) continue;
-                    Utility.WriteString("Cannot Post Example namespace " + r.identifier + "\n", "error.log", true);
+                    Utility.WriteString("Cannot Post Example namespace " + r.identifier + "\r\n", "error.log", true);
                     error = true;
                   }
                   if (error)
@@ -152,14 +152,14 @@ namespace QMXFGenerator
                   if (resp.Level == StatusLevel.Error)
                   {
                     Console.WriteLine("Error posting baseTemplate: " + t.name[0].value);
-                    Utility.WriteString("Error posting baseTemplate: " + t.name[0].value + "\n", "error.log", true);
+                    Utility.WriteString("Error posting baseTemplate: " + t.name[0].value + "\r\n" + resp.ToString() + "\r\n", "error.log", true);
                   }
                   else
                     Console.WriteLine("Success: posted baseTemplate: " + t.name[0].value);
                 }
                 catch (Exception ex)
                 {
-                  Utility.WriteString("Error posting baseTemplate: " + t.name[0].value + "\n", "error.log", true);
+                  Utility.WriteString("Error posting baseTemplate: " + t.name[0].value + "\r\n" + ex.Message + "\r\n", "error.log", true);
                 }
               }
               ///Post Specialised templates
@@ -169,7 +169,7 @@ namespace QMXFGenerator
                 {
                   if (!CheckUri(t.identifier))
                   {
-                    Utility.WriteString("Cannot Post Example namespace " + t.identifier + "\n", "error.log", true);
+                    Utility.WriteString("Cannot Post Example namespace " + t.identifier + "\r\n", "error.log", true);
                     error = true;
                     continue;
                   }
@@ -179,7 +179,7 @@ namespace QMXFGenerator
                         r =>
                         string.IsNullOrEmpty(r.range) && (r.value == null && string.IsNullOrEmpty(r.value.reference))))
                   {
-                    Utility.WriteString("\n" + r.identifier + " do not have range defined \n", "error.log", true);
+                    Utility.WriteString("\r\n" + r.identifier + " do not have range defined \r\n", "error.log", true);
                     Console.WriteLine("error in template " + t.identifier + " see : error.log");
                     error = true;
                   }
@@ -194,7 +194,7 @@ namespace QMXFGenerator
                   if (resp.Level == StatusLevel.Error)
                   {
                     Console.WriteLine("Error posting specializedTemplate: " + t.name[0].value);
-                    Utility.WriteString("Error posting specializedTemplate: " + t.name[0].value + "\n", "error.log",
+                    Utility.WriteString("Error posting specializedTemplate: " + t.name[0].value + "\r\n" + resp.ToString() + "\r\n", "error.log",
                                         true);
                   }
                   else
@@ -202,7 +202,7 @@ namespace QMXFGenerator
                 }
                 catch (Exception ex)
                 {
-                  Utility.WriteString("Error posting specializedTemplate: " + t.name[0].value + "\n", "error.log", true);
+                  Utility.WriteString("Error posting specializedTemplate: " + t.name[0].value + "\r\n" + ex.Message + "\r\n", "error.log", true);
                 }
               }
             }
@@ -211,7 +211,7 @@ namespace QMXFGenerator
       }
       catch (Exception ex)
       {
-        Utility.WriteString("\n" + ex.ToString() + "\n", "error.log", true);
+        Utility.WriteString("\r\n" + ex.ToString() + "\r\n", "error.log", true);
         Console.WriteLine("Failure: See log file: error.log");
       }
 
@@ -291,7 +291,7 @@ namespace QMXFGenerator
 
         if (_excelFilePath == String.Empty)
         {
-          Console.WriteLine("Usage: \n");
+          Console.WriteLine("Usage: \r\n");
           Console.WriteLine("   qmxfgen.exe <excel file> <output file>");
           return false;
         }
@@ -318,7 +318,7 @@ namespace QMXFGenerator
       }
       catch (Exception ex)
       {
-        Utility.WriteString("\nError Initializing \n" + ex.ToString() + "\n", "error.log", true);
+        Utility.WriteString("\nError Initializing \r\n" + ex.ToString() + "\r\n", "error.log", true);
         throw ex;
       }
     }
@@ -425,8 +425,8 @@ namespace QMXFGenerator
       }
       catch (Exception ex)
       {
-        Utility.WriteString("\nError Processing Class \n Worksheet: " + classPart +
-                            "\t Row: " + idx + " \n" + ex.ToString() + "\n", "error.log");
+        Utility.WriteString("\nError Processing Class \r\n Worksheet: " + classPart +
+                            "\t Row: " + idx + " \r\n" + ex.ToString() + "\r\n", "error.log");
         throw ex;
       }
     }
@@ -446,7 +446,7 @@ namespace QMXFGenerator
       }
       catch (Exception ex)
       {
-        Utility.WriteString("Error Generating ID\n" + ex.ToString() + "\n", "error.log");
+        Utility.WriteString("Error Generating ID\r\n" + ex.ToString() + "\r\n", "error.log");
         throw ex;
       }
     }
@@ -488,12 +488,12 @@ namespace QMXFGenerator
           }
           else
           {
-            Utility.WriteString("\n " + subclass.ToString() + " Was Not Found in Class List", "error.log", true);
+            Utility.WriteString("\r\n" + subclass.ToString() + " Was Not Found in Class List", "error.log", true);
             }
           }
           else
           {
-            Utility.WriteString("\n " + supclass.ToString() + " Was Not Found in Class List", "error.log", true);
+            Utility.WriteString("\r\n" + supclass.ToString() + " Was Not Found in Class List", "error.log", true);
           }
         }
 
@@ -519,8 +519,8 @@ namespace QMXFGenerator
       }
       catch (Exception ex)
       {
-        Utility.WriteString("\nError Processing Class Specialization \n" +
-                            "Worksheet: " + _classSpecializationWorksheet + " \n" + ex.ToString() + "\n", "error.log",
+        Utility.WriteString("\nError Processing Class Specialization \r\n" +
+                            "Worksheet: " + _classSpecializationWorksheet + " \r\n" + ex.ToString() + "\r\n", "error.log",
                             true);
         throw ex;
       }
@@ -595,8 +595,8 @@ namespace QMXFGenerator
       }
       catch (Exception e)
       {
-        Utility.WriteString("\nError Processing Template \n Worksheet: " + part.Name + "\tRow: "
-                            + idx + " \n" + e.ToString() + "\n", "error.log", true);
+        Utility.WriteString("\nError Processing Template \r\n Worksheet: " + part.Name + "\tRow: "
+                            + idx + " \r\n" + e.ToString() + "\r\n", "error.log", true);
         throw e;
       }
     }
@@ -668,7 +668,7 @@ namespace QMXFGenerator
             else
             {
               Utility.WriteString(
-                "\n " + type.ToString() + " Was Not Found in Class List While Processing Role Definition", "error.log",
+                "\r\n" + type.ToString() + " Was Not Found in Class List While Processing Role Definition", "error.log",
                 true);
             }
           }
@@ -684,7 +684,7 @@ namespace QMXFGenerator
       }
       catch (Exception e)
       {
-        Utility.WriteString("\nError Processing Role \n Row: " + rowIndex + " \n" + e.ToString() + "\n", "error.log",
+        Utility.WriteString("\nError Processing Role \r\n Row: " + rowIndex + " \r\n" + e.ToString() + "\r\n", "error.log",
                             true);
         throw e;
       }
@@ -758,7 +758,7 @@ namespace QMXFGenerator
               if (templateQualifiesId == null)
               {
                 Utility.WriteString(
-                  "Template Qualification \"" + templateQualification.identifier + "\" qualifies ID not found.\n",
+                  "Template Qualification \"" + templateQualification.identifier + "\" qualifies ID not found.\r\n",
                   "error.log", true);
               }
               templateQualification.qualifies = (templateQualifiesId ?? "").ToString().Trim();
@@ -768,7 +768,7 @@ namespace QMXFGenerator
             else
             {
               Utility.WriteString(
-                parentTemplate.ToString() + " Was Not Found in Template List While Processing Specialized Templates.\n",
+                parentTemplate.ToString() + " Was Not Found in Template List While Processing Specialized Templates.\r\n",
                 "error.log", true);
             }
           }
@@ -780,7 +780,7 @@ namespace QMXFGenerator
           }
           else
             Utility.WriteString(
-              "Template Qualification \"" + templateQualification.identifier + "\" RoleQualifications failed.\n",
+              "Template Qualification \"" + templateQualification.identifier + "\" RoleQualifications failed.\r\n",
               "error.log", true);
         }
         Console.WriteLine("  processed " + idx + " Specialized templates.");
@@ -788,9 +788,9 @@ namespace QMXFGenerator
       }
       catch (Exception ex)
       {
-        Utility.WriteString("\nError Processing Individual Template \n" +
+        Utility.WriteString("\nError Processing Individual Template \r\n" +
                             "Worksheet: " + part.Name + "\tRow: " + idx +
-                            " \n" + ex.ToString() + "\n", "error.log", true);
+                            " \r\n" + ex.ToString() + "\r\n", "error.log", true);
         throw ex;
       }
     }
@@ -821,7 +821,7 @@ namespace QMXFGenerator
           {
             Utility.WriteString(
               "Error Processing Role Qualification: Role \"" + name + "\" at index " + roleIndex + " on template \"" +
-              templateName + "\" not found.\n", "error.log", true);
+              templateName + "\" not found.\r\n", "error.log", true);
             continue;
           }
           if (string.IsNullOrEmpty(identifier.ToString())) // == null || identifier.ToString() == String.Empty)
@@ -879,14 +879,14 @@ namespace QMXFGenerator
               else
               {
                 Utility.WriteString(
-                  "\n " + type.ToString() + " Does not have an id in Class List While Processing Role Qualification",
+                  "\r\n" + type.ToString() + " Does not have an id in Class List While Processing Role Qualification",
                   "error.log", true);
               }
             }
             else
             {
               Utility.WriteString(
-                "\n " + type.ToString() + " Was Not Found in Class List While Processing Role Qualification",
+                "\r\n" + type.ToString() + " Was Not Found in Class List While Processing Role Qualification",
                 "error.log", true);
             }
           }
@@ -913,8 +913,8 @@ namespace QMXFGenerator
       }
       catch (Exception ex)
       {
-        Utility.WriteString("\nError Processing Role Qualification \n" +
-                            "\nRow: " + roleIndex + " \n" + ex.ToString() + "\n", "error.log", true);
+        Utility.WriteString("\nError Processing Role Qualification \r\n" +
+                            "\nRow: " + roleIndex + " \r\n" + ex.ToString() + "\r\n", "error.log", true);
         throw ex;
       }
     }
@@ -944,7 +944,7 @@ namespace QMXFGenerator
       }
       catch (Exception ex)
       {
-        Utility.WriteString("\n" + ex.ToString() + "\n", "error.log", true);
+        Utility.WriteString("\r\n" + ex.ToString() + "\r\n", "error.log", true);
         throw ex;
       }
     }
@@ -958,14 +958,14 @@ namespace QMXFGenerator
         if (resp.Level == StatusLevel.Error)
         {
           Console.WriteLine("Error in clearing repository: " + repositoryName);
-          Utility.WriteString("Error in clearing repository: " + repositoryName + "\n", "error.log", true);
+          Utility.WriteString("Error in clearing repository: " + repositoryName + "\r\n" + resp.ToString() + "\r\n", "error.log", true);
         }
         else
           Console.WriteLine("Success: cleared repository: " + repositoryName);
       }
       catch (Exception ex)
       {
-        Utility.WriteString("Error in clearing repository: " + repositoryName + "\n", "error.log", true);
+        Utility.WriteString("Error in clearing repository: " + repositoryName + "\r\n", "error.log", true);
       }
  
     }
