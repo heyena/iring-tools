@@ -48,8 +48,7 @@ Ext.define('AM.view.nhconfig.ObjectsTreePanel', {
                 },
                 items: [
                 {
-                    xtype: 'tbspacer',
-                    width: 4
+                    xtype: 'tbspacer'
                 },
                 {
                     xtype: 'button',
@@ -60,8 +59,7 @@ Ext.define('AM.view.nhconfig.ObjectsTreePanel', {
                     tooltip: 'Edit Data Source Connection'
                 },
                 {
-                    xtype: 'tbspacer',
-                    width: 4
+                    xtype: 'tbspacer'
                 },
                 {
                     xtype: 'button',

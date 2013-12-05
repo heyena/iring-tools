@@ -2,41 +2,105 @@ Ext.define('AM.view.Viewport', {
     extend: 'Ext.container.Viewport',
 
     requires: [
-    'AM.view.directory.DirectoryPanel',
-    'AM.view.common.CenterPanel'
-  ],
+        'AM.view.directory.DirectoryPanel',
+        'AM.view.common.CenterPanel'
+    ],
 
-    layout: {
-        type: 'border'
-    },
+    layout: 'border',
 
     initComponent: function () {
         var me = this;
 
         Ext.applyIf(me, {
             items: [
-        {
-            xtype: 'container',
-            region: 'north',
-            height: 55,
-            html: '<div id="header" class="exchangeBanner"><span style="float: left"><img alt="q" src="Content/img/iRINGTools_logo.png" style="margin: 0 0 0 11px; vertical-align: -20%" /><span style="margin: 0 0 0 6px;"><font size="5px" style="font-family: Arial, Helvetica, Sans-Serif">Adapter Manager</font></span> </span><span style="float: right; margin: 18px 36px 1px 0"><a href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank" class="headerLnkBlack">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a id="about-link" href="#" class="headerLnkBlack">About</a></span></div>'
-        },
-        {
-            xtype: 'directorypanel',
-            id: 'directoryTreeID',
-            region: 'west',
-            listeners: {
-                afterrender: {
-                    fn: me.onPanelAfterRender,
-                    scope: me
+            {
+                xtype: 'panel',
+                region: 'north',
+                height: 55,
+                bodyCls: 'banner',
+                layout: 'hbox',
+                items: [
+                {
+                    xtype: 'image',
+                    src: '../../../content/img/iringtools_logo.png',
+                    padding: 2,
+                    flex: 0
+                },
+                {
+                    xtype: 'text',
+                    text: 'Adapter Manager',
+                    cls: 'text-banner',
+                    flex: 0
+                },
+                {
+                    xtype: 'container',
+                    layout: {
+                        type: 'hbox',
+                        pack: 'end'
+                    },
+                    flex: 1,
+                    items: [
+                    {
+                        xtype: 'label',
+                        cls: 'link-banner',
+                        html: 'Help',
+                        listeners: {
+                            element: 'el',
+                            click: function () {
+                                window.open('http://iringug.org/wiki/index.php?title=IRINGTools');
+                            },
+                            mouseover: function (e, el) {
+                                el.style.cursor = 'hand';
+                            },
+                            mouseout: function (e, el) {
+                                el.style.cursor = 'pointer';
+                            }
+                        }
+                    },
+                    {
+                        xtype: 'label',
+                        cls: 'link-banner',
+                        html: 'About',
+                        listeners: {
+                            element: 'el',
+                            click: function () {
+                                var win = new Ext.Window({
+                                    title: 'About Adapter Manager',
+                                    autoLoad: 'about.aspx',
+                                    bodyStyle: 'background:#fff;padding:5px',
+                                    width: 700,
+                                    height: 500,
+                                    closable: true,
+                                    autoScroll: true,
+                                    modal: true
+                                });
+                                win.show();
+                            },
+                            mouseover: function (e, el) {
+                                el.style.cursor = 'hand';
+                            },
+                            mouseout: function (e, el) {
+                                el.style.cursor = 'pointer';
+                            }
+                        }
+                    }]
+                }]
+            },
+            {
+                xtype: 'directorypanel',
+                id: 'directoryTreeID',
+                region: 'west',
+                listeners: {
+                    afterrender: {
+                        fn: me.onPanelAfterRender,
+                        scope: me
+                    }
                 }
-            }
-        },
-        {
-            xtype: 'centerpanel',
-            region: 'center'
-        }
-      ],
+            },
+            {
+                xtype: 'centerpanel',
+                region: 'center'
+            }],
             renderTo: Ext.getBody()
         });
 
@@ -48,5 +112,4 @@ Ext.define('AM.view.Viewport', {
             preventDefault: true
         });
     }
-
 });
