@@ -16,21 +16,24 @@ Ext.define('AM.view.Viewport', {
             {
                 xtype: 'panel',
                 region: 'north',
-                height: 55,
+                border: false,
+                frame: false,
+                height: 52,
                 bodyCls: 'banner',
                 layout: 'hbox',
                 items: [
                 {
                     xtype: 'image',
-                    src: './Content/img/iRINGTools_logo.png',
+                    src: './Content/img/iringtools-logo.png',
+                    width: 109,
                     padding: 2,
-		    flex: 0,
+                    flex: 0
                 },
                 {
                     xtype: 'label',
                     text: 'Adapter Manager',
                     cls: 'text-banner',
-		    flex: 0,
+                    flex: 0
                 },
                 {
                     xtype: 'container',
@@ -67,9 +70,9 @@ Ext.define('AM.view.Viewport', {
                                 var win = new Ext.Window({
                                     title: 'About Adapter Manager',
                                     autoLoad: 'about.aspx',
-                                    bodyStyle: 'background:#fff;padding:5px',
-                                    width: 700,
-                                    height: 500,
+                                    bodyStyle: 'background:#fff;padding:5px',                                    
+                                    width: 725,
+                                    height: 512,
                                     closable: true,
                                     autoScroll: true,
                                     modal: true
@@ -89,6 +92,8 @@ Ext.define('AM.view.Viewport', {
             {
                 xtype: 'directorypanel',
                 id: 'directoryTreeID',
+                padding: 2,
+                width: 260,
                 region: 'west',
                 listeners: {
                     afterrender: {
