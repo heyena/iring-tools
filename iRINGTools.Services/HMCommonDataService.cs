@@ -430,12 +430,12 @@ namespace org.iringtools.services
             }
         }
 
-        new public void GetItem(string project, string app, string resource, string id, string format)
+        public void GetItem(string project, string app, string resource, string id, string format, bool related)
         {
             try
             {
                 format = "jsonld";
-                object content = _abstractPrivder.GetItem(project, app, resource, String.Empty, id, ref format, false);
+                object content = _abstractPrivder.GetItem(project, app, resource, String.Empty, id, ref format, false, related);
                 _abstractPrivder.FormatOutgoingMessage(content, format);
             }
             catch (Exception ex)

@@ -88,14 +88,14 @@ namespace org.iringtools.services
             _hmCommonService.GetScopeWADL(app, project);
         }
 
-        [Description("Gets data dictionary. Valid formats are XML, JSON.")]
+        [Description("Gets data dictionary. Only JSONLD format.")]
         [WebGet(UriTemplate = "/{app}/{project}/dictionary?format={format}")]
         public void GetTipDictionary(string project, string app, string format)
         {
             _hmCommonService.GetTipDictionary(project, app, format);
         }
 
-        [Description("Gets a specific object definition from data dictionary. Valid formats are XML, JSON.")]
+        [Description("Gets a specific object definition from data dictionary. Only JSONLD format.")]
         [WebGet(UriTemplate = "/{app}/{project}/dictionary/{objectType}?format={format}")]
         public void GetObjectType(string project, string app, string objectType, string format)
         {
@@ -109,9 +109,9 @@ namespace org.iringtools.services
             }
         }
 
-        [Description("Gets resource items. Valid format are JSON. Valid formats are XML, JSON, DTO, RDF.")]
-        [WebGet(UriTemplate = "/{app}/{project}/{resource}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-        public void GetList(string project, string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+        [Description("Gets resource items. Only JSONLD format.")]
+        [WebGet(UriTemplate = "/{app}/{project}/{resource}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}&related={related}")]
+        public void GetList(string project, string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle, bool related)
         {
             try
             {
@@ -123,13 +123,13 @@ namespace org.iringtools.services
             }
         }
 
-        [Description("Gets a specific resource item. Valid formats are XML, JSON, DTO, RDF.")]
-        [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
-        public void GetItem(string project, string app, string resource, string id, string format)
+        [Description("Gets a specific resource item. Only JSONLD format..")]
+        [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}&related={related}")]
+        public void GetItem(string project, string app, string resource, string id, string format, bool related)
         {
             try
             {
-                _hmCommonService.GetItem(project, app, resource, id, format);
+                _hmCommonService.GetItem(project, app, resource, id, format, related);
             }
             catch (Exception ex)
             {
@@ -151,7 +151,7 @@ namespace org.iringtools.services
             }
         }
 
-        [Description("Gets an XML or JSON of Picklists in the specified project, application in the format specified. Valid formats include json, xml")]
+        [Description("Gets an XML or JSON of Picklists in the specified project, application in the format specified. Only JSONLD format.")]
         [WebGet(UriTemplate = "/{app}/{project}/picklists/{name}?format={format}&start={start}&limit={limit}")]
         public void GetPicklist(string project, string app, string name, string format, int start, int limit)
         {
@@ -165,7 +165,7 @@ namespace org.iringtools.services
             }
         }
 
-        [Description("Gets resource items with filter.  Valid formats are XML, JSON, DTO, RDF.")]
+        [Description("Gets resource items with filter. Only JSONLD format..")]
         [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
         public void GetWithFilter(string project, string app, string resource, string format, int start, int limit, string indexStyle, Stream stream)
         {
@@ -179,7 +179,7 @@ namespace org.iringtools.services
             }
         }
 
-        [Description("Gets an XML projection of the specified scope and resource in the format (json, dto, rdf) specified.")]
+        [Description("Gets an XML projection of the specified scope and resource. Only JSONLD format.")]
         [WebGet(UriTemplate = "/{app}/{project}/{resource}/search?q={query}&format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
         public void Search(string project, string app, string resource, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
         {
@@ -194,7 +194,7 @@ namespace org.iringtools.services
         }
 
         //NOTE: Due to uri conflict, this template serves both part 7 individual and non-part7 related items.
-        [Description("Gets related resource items. Valid formats are XML, JSON, DTO, RDF.")]
+        [Description("Gets related resource items. Only JSONLD format.")]
         [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}/{related}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
         public void GetRelatedList(string project, string app, string resource, string id, string related, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
         {
@@ -208,7 +208,7 @@ namespace org.iringtools.services
             }
         }
 
-        [Description("Gets a specific related resource item. Valid formats are XML, JSON, DTO, RDF.")]
+        [Description("Gets a specific related resource item. Only JSONLD format.")]
         [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}/{related}/{relatedId}?format={format}")]
         public void GetRelatedItem(string project, string app, string resource, string id, string related, string relatedId, string format)
         {
@@ -222,49 +222,49 @@ namespace org.iringtools.services
             }
         }
 
-        [Description("Updates resource item(s). Valid format is JSON.")]
+        [Description("Updates resource item(s). Only JSONLD format.")]
         [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}?format={format}")]
         public void UpdateList(string project, string app, string resource, string format, Stream stream)
         {
             _hmCommonService.UpdateList(project, app, resource, format, stream);
         }
 
-        [Description("Updates related resource item(s). Valid format is JSON.")]
+        [Description("Updates related resource item(s). Only JSONLD format.")]
         [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedResource}?format={format}")]
         public void UpdateRelatedList(string project, string app, string resource, string parentid, string relatedResource, string format, Stream stream)
         {
             _hmCommonService.UpdateRelatedList(project, app, resource, parentid, relatedResource, format, stream);
         }
 
-        [Description("Updates resource item(s). Valid format is JSON.")]
+        [Description("Updates resource item(s). Only JSONLD format.")]
         [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
         public void UpdateItem(string project, string app, string resource, string id, string format, Stream stream)
         {
             _hmCommonService.UpdateItem(project, app, resource, id, format, stream);
         }
 
-        [Description("Updates related resource item(s). Valid format is JSON.")]
+        [Description("Updates related resource item(s). Only JSONLD format.")]
         [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedresource}/{id}?format={format}")]
         public void UpdateRelatedItem(string project, string app, string resource, string parentid, string relatedresource, string id, string format, Stream stream)
         {
             _hmCommonService.UpdateRelatedItem(project, app, resource, parentid, relatedresource, id, format, stream);
         }
 
-        [Description("Creates new resource item(s). Valid format is JSON.")]
+        [Description("Creates new resource item(s). Only JSONLD format.")]
         [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}?format={format}")]
         public void CreateItem(string project, string app, string resource, string format, Stream stream)
         {
             _hmCommonService.CreateItem(project, app, resource, format, stream);
         }
 
-        [Description("Creates new related resource item(s). Valid format is JSON.")]
+        [Description("Creates new related resource item(s). Only JSONLD format.")]
         [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{resource}/{parentid}/{relatedResource}?format={format}")]
         public void CreateRelatedItem(string project, string app, string resource, string format, string parentid, string relatedResource, Stream stream)
         {
             _hmCommonService.CreateRelatedItem(project, app, resource, format, parentid, relatedResource, stream);
         }
 
-        [Description("Deletes a resource item. Valid format is JSON.")]
+        [Description("Deletes a resource item. Only JSONLD format.")]
         [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
         public void DeleteItem(string project, string app, string resource, string id, string format)
         {
