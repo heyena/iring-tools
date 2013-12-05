@@ -49,6 +49,9 @@ namespace org.iringtools.adapter
         //FKM
         private TipMap _tipMap = null;
 
+        StreamWriter sw = new StreamWriter(@".\TipGeneratorResult.txt");
+            
+
         private List<IDataObject> _dataObjects = new List<IDataObject>();  // dictionary of object names and list of data objects
         private Dictionary<string, List<string>> _classIdentifiers =
           new Dictionary<string, List<string>>();  // dictionary of class ids and list of identifiers
@@ -60,6 +63,8 @@ namespace org.iringtools.adapter
         public AbstractProvider(NameValueCollection settings)
             : base(settings)
         {
+            Console.SetOut(sw);
+            sw.AutoFlush = true;
             try
             {
                 if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
@@ -2615,6 +2620,7 @@ namespace org.iringtools.adapter
                           "_dc",
                           "page",
                           "callback",
+                          "related"
                         };
 
                             if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
@@ -2704,7 +2710,11 @@ namespace org.iringtools.adapter
                 //InitializeDataLayer(false);
                 _graphMap = _mapping.FindGraphMap(resource);
 
-                return BuildTipMapping("tip", "findparameters", project, application);
+                TipMapping tipMapping = new TipMapping();
+                tipMapping = BuildTipMapping("tip", "findparameters", project, application);
+                string path = string.Format("{0}TipMapping.{1}.{2}.xml", _settings["AppDataPath"], project, application);
+                Utility.Write<TipMapping>(tipMapping, path, true);
+                return tipMapping;
             }
             catch (Exception ex)
             {
@@ -2718,7 +2728,8 @@ namespace org.iringtools.adapter
             try
             {
                 _logger.DebugFormat("Initializing Scope: {0}.{1}", project, application);
-                Console.WriteLine("Initializing Scope: {0}.{1}", project, application);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Out.WriteLine("Initializing Scope: {0}.{1}", project, application);
                 //Force to re-initialize scope.
                 _isScopeInitialized = false;
                 InitializeScope(project, application);
@@ -2726,16 +2737,30 @@ namespace org.iringtools.adapter
                 if (_mapping.graphMaps.Count == 0)
                 {
                     _logger.DebugFormat("Mapping: {0}.{1}, doesn't exist", project, application);
-                    Console.WriteLine("Mapping: {0}.{1}, doesn't exist", project, application);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Out.WriteLine("Mapping: {0}.{1}, doesn't exist", project, application);
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Out.WriteLine("--------------------------------------------------------------"); 
                 }
                 else
                 {
+                    TipMapping tipMapping = new TipMapping();
                     foreach (GraphMap graph in _mapping.graphMaps)
                     {
                         string resource = graph.name;
                         _graphMap = _mapping.FindGraphMap(resource);
-                        BuildTipMapping("tip", "findparameters", project, application);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Out.WriteLine("Try to create mapping for: {0}.{1}.{2}.", resource, project, application);
+                        TipMapping tempTipMapping = new TipMapping();
+                        tempTipMapping = BuildTipMapping("tip", "findparameters", project, application);
+
+                        foreach (TipMap tmap in tempTipMapping.tipMaps)
+                        {
+                            tipMapping.tipMaps.Add(tmap);
+                        }
                     }
+                    string path = string.Format("{0}TipMapping.{1}.{2}.xml", _settings["AppDataPath"], project, application);
+                    Utility.Write<TipMapping>(tipMapping, path, true);
                 }
             }
             catch (Exception ex)
@@ -2768,6 +2793,13 @@ namespace org.iringtools.adapter
             IDictionary<String, IDictionary<String, ValueList>> mappedValueLists = null;
             TipRequest tipRequest = BuildTipRequest(ref mappedProperties, ref mappedValueLists);
 
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            
+            Console.Out.WriteLine("{0}", mappedProperties.First().Value.First().Key);
+            Console.Out.WriteLine("{0}", mappedProperties.First().Key);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Out.WriteLine("--------------------------------------------------------------"); 
+
             XElement trXml = XElement.Parse(Utility.SerializeDataContract<TipRequest>(tipRequest));
 
             try
@@ -2776,7 +2808,7 @@ namespace org.iringtools.adapter
                 string path = string.Format("{0}TipMapping.{1}.{2}.xml", _settings["AppDataPath"], project, application);
 
                 TipMapping tipMapping = Utility.DeserializeDataContract<TipMapping>(responseXml.ToString());
-
+                
                 ClassMap graphClassMap = null;
                 graphClassMap = _graphMap.classTemplateMaps.FirstOrDefault().classMap;
 
@@ -2809,7 +2841,7 @@ namespace org.iringtools.adapter
                     }
                 }
 
-                Utility.Write<TipMapping>(tipMapping, path, true);
+                //Utility.Write<TipMapping>(tipMapping, path, true);
 
                 return tipMapping;
             }
@@ -2917,7 +2949,7 @@ namespace org.iringtools.adapter
 
         public object GetItem(
           string project, string application, string resource, string className,
-           string classIdentifier, ref string format, bool fullIndex)
+           string classIdentifier, ref string format, bool fullIndex, bool related)
         {
             string dataObjectName = string.Empty;
 
