@@ -571,6 +571,11 @@ Ext.define('AM.controller.Directory', {
                 }
                 applicationMenu.showAt(e.getXY());
             }
+            else if (obj.type === "ScopesNode") {
+                var scopesMenu = Ext.widget('scopesmenu');
+                scopesMenu.items.items[0].hide();
+                scopesMenu.showAt(e.getXY());
+            }
             else if (obj.type === "DataObjectNode") {
                 var appDataMenu = Ext.widget('appdatamenu');
                 appDataMenu.showAt(e.getXY());
