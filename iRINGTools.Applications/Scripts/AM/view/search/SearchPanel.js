@@ -8,7 +8,6 @@ Ext.define('AM.view.search.SearchPanel', {
     'AM.view.common.ContentPanel'
   ],
 
-    height: 220,
     layout: 'border',
     collapsible: true,
     title: 'Reference Data Search',

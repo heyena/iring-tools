@@ -7,7 +7,7 @@ Ext.define('AM.view.common.CenterPanel', {
     'AM.view.search.SearchPanel'
   ],
 
-  border: true,
+  border: false,
   layout: {
     type: 'border'
   },
@@ -25,6 +25,7 @@ Ext.define('AM.view.common.CenterPanel', {
         {
           xtype: 'searchpanel',
           region: 'south',
+          height: 224,
           split: true
         }
       ]

@@ -52,6 +52,7 @@ Ext.define('AM.view.mapping.MappingTree', {
             },
             dockedItems: [{
                 xtype: 'toolbar',
+                border: false,
                 dock: 'top',
                 items: [
                 {

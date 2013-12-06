@@ -1,5 +1,4 @@
 ﻿<%@ Page Language="C#" %>
-
 <% 
     System.Reflection.Assembly assembly = System.Reflection.Assembly.GetAssembly(typeof(org.iringtools.library.VersionInfo));
     string major = assembly.GetName().Version.Major.ToString();
@@ -7,11 +6,8 @@
     string build = assembly.GetName().Version.Build.ToString();
     string revision = assembly.GetName().Version.Revision.ToString();
 %>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-</head>
-<body>
+<html>
+<body style="border:0;padding:0;margin:0">
     <div>
         <div>
             <a href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank">

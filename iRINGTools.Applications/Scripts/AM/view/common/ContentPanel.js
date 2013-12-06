@@ -3,7 +3,7 @@ Ext.define('AM.view.common.ContentPanel', {
   alias: 'widget.contentpanel',
 
   split: true,
-  border: true,
+  border: false,
 
   initComponent: function() {
     var me = this;
