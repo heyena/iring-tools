@@ -72,7 +72,7 @@ Ext.define('AM.view.Viewport', {
                                     autoLoad: 'about.aspx',
                                     bodyStyle: 'background:#fff;padding:5px',                                    
                                     width: 725,
-                                    height: 512,
+                                    height: 508,
                                     closable: true,
                                     autoScroll: true,
                                     modal: true

@@ -3,11 +3,11 @@ Ext.define('AM.view.common.PropertyPanel', {
     alias: 'widget.propertypanel',
 
     title: 'Details',
+    border: false,
 
     initComponent: function () {
         var me = this;
         Ext.applyIf(me, {
-            border: true,
             autoScroll: true,
             collapsed: false,
             collapsible: true,    

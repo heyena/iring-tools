@@ -1,3 +1,12 @@
+.x-layout-split-left { background-image:url(../images/blank.png) }
+.x-layout-split-right { background-image:url(../images/blank.png) }
+.x-layout-split-top { background-image:url(../images/blank.png) }
+.x-layout-split-bottom { background-image:url(../images/blank.png) }
+.x-splitter-collapsed .x-layout-split-left { background-image:url(../images/blank.png) }
+.x-splitter-collapsed .x-layout-split-right { background-image:url(../images/blank.png) }
+.x-splitter-collapsed .x-layout-split-top { background-image:url(../images/blank.png) }
+.x-splitter-collapsed .x-layout-split-bottom { background-image:url(../images/blank.png) }
+
 .banner
 {
     background-image: url("../img/blue-fade.png");
