@@ -83,7 +83,8 @@ namespace QMXFGenerator
               _classWorksheet = null;
             }
             ///Post Classes and Templates individually to refdataService
-            var error = false;
+            //var error = false;
+            var errorMessage = String.Empty;
             if (!string.IsNullOrEmpty(_updateRun))
             {
 
@@ -119,33 +120,37 @@ namespace QMXFGenerator
                 }
               }
               ///Post baseTemplates
+              ///
+              
               foreach (var t in qmxf.templateDefinitions)
               {
                 try
                 {
+                  errorMessage = String.Empty;
                   if (!CheckUri(t.identifier))
                   {
-                    error = true;
-                    Utility.WriteString("Cannot Post Example namespace " + t.identifier + "\r\n", "error.log", true);
+                    //error = true;
+                    //Utility.WriteString("Cannot Post Example namespace " + t.identifier + "\r\n", "error.log", true);
+                    errorMessage = "Cannot Post Example namespace " + t.identifier + "\r\n";
                   }
 
                   foreach (var r in t.roleDefinition)
                   {
                     if (string.IsNullOrEmpty(r.range))
                     {
-                      Utility.WriteString("\r\n" + r.identifier + " do not have range defined \r\n", "error.log", true);
-                      Console.WriteLine("error in template " + t.identifier + " see : error.log");
-                      error = true;
+                      //Utility.WriteString("\r\n" + r.identifier + " do not have range defined \r\n", "error.log", true);
+                      //Console.WriteLine("error in template " + t.identifier + " see : error.log");
+                      errorMessage = errorMessage + "\r\n" + r.identifier + " do not have range defined \r\n";
                     }
-                    if (CheckUri(r.identifier)) continue;
-                    Utility.WriteString("Cannot Post Example namespace " + r.identifier + "\r\n", "error.log", true);
-                    error = true;
+                    if (CheckUri(r.identifier))
+                      errorMessage = errorMessage + "Cannot Post Example namespace " + r.identifier + "\r\n";
+
                   }
-                  if (error)
+                  if (!String.IsNullOrWhiteSpace(errorMessage))
                   {
-                    error = false;
-                    break;
+                    throw new ApplicationException(errorMessage);
                   }
+
                   var q = new QMXF {targetRepository = _targetRepositoryForTemplate};
                   q.templateDefinitions.Add(t);
                   var resp = _refdataClient.Post<QMXF, Response>("/templates", q, true);
@@ -167,26 +172,27 @@ namespace QMXFGenerator
               {
                 try
                 {
+                  errorMessage = String.Empty;
                   if (!CheckUri(t.identifier))
                   {
-                    Utility.WriteString("Cannot Post Example namespace " + t.identifier + "\r\n", "error.log", true);
-                    error = true;
-                    continue;
+                    //Utility.WriteString("Cannot Post Example namespace " + t.identifier + "\r\n", "error.log", true);
+                    errorMessage = "Cannot Post Example namespace " + t.identifier + "\r\n";
+                    //error = true;
                   }
                   foreach (
                     var r in
                       t.roleQualification.Where(
                         r =>
-                        string.IsNullOrEmpty(r.range) && (r.value == null && string.IsNullOrEmpty(r.value.reference))))
+                        string.IsNullOrEmpty(r.range) && (r.value == null || string.IsNullOrEmpty(r.value.reference))))
                   {
-                    Utility.WriteString("\r\n" + r.identifier + " do not have range defined \r\n", "error.log", true);
-                    Console.WriteLine("error in template " + t.identifier + " see : error.log");
-                    error = true;
+                    //Utility.WriteString("\r\n" + r.identifier + " do not have range defined \r\n", "error.log", true);
+                    errorMessage = errorMessage + "\r\n" + r.identifier + " do not have range defined \r\n";
+                    //Console.WriteLine("error in template " + t.identifier + " see : error.log");
+                    //error = true;
                   }
-                  if (error)
+                  if (!String.IsNullOrWhiteSpace(errorMessage))
                   {
-                    error = false;
-                    break;
+                    throw new ApplicationException(errorMessage);
                   }
                   var q = new QMXF { targetRepository = _targetRepositoryForTemplate };
                   q.templateQualifications.Add(t);
@@ -338,11 +344,27 @@ namespace QMXFGenerator
         {
           var load = row[(int) ClassColumns.Load];
           rowIndex = Convert.ToInt32(row[row.Count - 1]);
-          if (load == null || load.ToString().Trim() == String.Empty || load.ToString() == "Load") continue;
+          if (load.ToString() == "Load") continue;
           var identifier = row[(int) ClassColumns.ID];
           var label = row[(int) ClassColumns.Label];
           var description = row[(int) ClassColumns.Description];
           var entityType = row[(int) ClassColumns.EntityType];
+
+          if (load == null || load.ToString().Trim() == String.Empty)
+          {
+            bool isIdentifierExist = !(identifier == null || identifier.ToString() == String.Empty);
+            bool isLabelExist = !(label == null || label.ToString() == String.Empty);
+
+            if (isIdentifierExist && !isLabelExist) 
+            {
+              Utility.WriteString(string.Format("\r\nIdentifier {0} does not have a label!!", identifier.ToString()), "error.log",true);
+            }
+            else if(!isIdentifierExist && isLabelExist)
+            {
+              Utility.WriteString(string.Format("\r\nLabel {0} does not have an identifier!!", label.ToString()), "error.log",true);
+            }
+            continue;
+          }
 
           var classDefinition = new ClassDefinition();
 
@@ -396,7 +418,7 @@ namespace QMXFGenerator
                 reference = ent
               };
           }
-
+         
           var sList = from specialization in _classSpecializations
                                    where
                                      Convert.ToString(specialization[(int)ClassSpecializationColumns.Superclass]) ==
@@ -413,7 +435,7 @@ namespace QMXFGenerator
           idx++;
           if (string.IsNullOrEmpty(ent))/// must have entity type
           {
-            Utility.WriteString(string.Format("Class {0} does not have a entity type!!", name), "error.log");
+            Utility.WriteString(string.Format("\r\nClass {0} does not have a entity type!!", name), "error.log",true);
           }
           else
           {
@@ -425,8 +447,8 @@ namespace QMXFGenerator
       }
       catch (Exception ex)
       {
-        Utility.WriteString("\nError Processing Class \r\n Worksheet: " + classPart +
-                            "\t Row: " + idx + " \r\n" + ex.ToString() + "\r\n", "error.log");
+        Utility.WriteString("\r\nError Processing Class \r\n Worksheet: " + classPart +
+                            "\t Row: " + idx + " \r\n" + ex.ToString() + "\r\n", "error.log",true);
         throw ex;
       }
     }
@@ -440,13 +462,13 @@ namespace QMXFGenerator
                                Guid.NewGuid().ToString().Replace("_", "").Replace("-", "").ToUpper());
         else
         {
-          Utility.WriteString("Failed to create id for " + name, "error.log");
+          Utility.WriteString("Failed to create id for " + name, "error.log",true);
           throw new Exception("GenerateID: Failed to create id ");
         }
       }
       catch (Exception ex)
       {
-        Utility.WriteString("Error Generating ID\r\n" + ex.ToString() + "\r\n", "error.log");
+        Utility.WriteString("Error Generating ID\r\n" + ex.ToString() + "\r\n", "error.log",true);
         throw ex;
       }
     }
@@ -898,9 +920,15 @@ namespace QMXFGenerator
 
             if (query.FirstOrDefault() != null)
             {
-              roleQualification.value = new QMXFValue
-                {reference = query.FirstOrDefault()[(int) ClassColumns.ID].ToString().Trim()};
+              roleQualification.value = new QMXFValue { reference = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim() };
             }
+            else
+            {
+              Utility.WriteString(
+               "\r\n" + value.ToString() + " Was Not Found in Class List While Processing Role Qualification",
+               "error.log", true);
+            }
+
           }
           else
           {
