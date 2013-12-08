@@ -16,8 +16,7 @@ Ext.define('AM.view.Viewport', {
             {
                 xtype: 'panel',
                 region: 'north',
-                border: false,
-                height: 50,
+                height: 52,
                 html: '<div id="header" class="banner">' +
                       '  <span style="float:left">' +
                       '    <img style="margin:0 5px 0 5px" src="./Content/img/iringtools-logo.png"/>' +
