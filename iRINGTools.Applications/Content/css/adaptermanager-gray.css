@@ -1,33 +1,27 @@
-.x-layout-split-left { background-image:url(../images/blank.png) }
-.x-layout-split-right { background-image:url(../images/blank.png) }
-.x-layout-split-top { background-image:url(../images/blank.png) }
-.x-layout-split-bottom { background-image:url(../images/blank.png) }
-.x-splitter-collapsed .x-layout-split-left { background-image:url(../images/blank.png) }
-.x-splitter-collapsed .x-layout-split-right { background-image:url(../images/blank.png) }
-.x-splitter-collapsed .x-layout-split-top { background-image:url(../images/blank.png) }
-.x-splitter-collapsed .x-layout-split-bottom { background-image:url(../images/blank.png) }
+.x-layout-split-left { background-image:url(../img/blank.png) }
+.x-layout-split-right { background-image:url(../img/blank.png) }
+.x-layout-split-top { background-image:url(../img/blank.png) }
+.x-layout-split-bottom { background-image:url(../img/blank.png) }
+.x-splitter-collapsed .x-layout-split-left { background-image:url(../img/blank.png) }
+.x-splitter-collapsed .x-layout-split-right { background-image:url(../img/blank.png) }
+.x-splitter-collapsed .x-layout-split-top { background-image:url(../img/blank.png) }
+.x-splitter-collapsed .x-layout-split-bottom { background-image:url(../img/blank.png) }
 
 .banner
 {
-    background-image: url("../img/blue-fade.png");
+    background-image: url('../img/blue-fade.png');
     background-repeat: repeat-x;
     background-position: left bottom;
+    height: 49px;
 }
 
-.text-banner 
+.header-link
 {
-    margin: 20px 0 0 5px;
-    font-size: 1.875em;
-    font-family: Tahoma;
-}
-
-.link-banner 
-{
-    margin: 20px 20px 0 0;
-    text-align: right;
-    font-size: 14px;
+    font-family: Calibri;
+    font-size: 16px;
     text-decoration: none;
-    font-family: Tahoma;
+    color: #000000;
+    padding-right: 10px;
 }
 
 .x-tree

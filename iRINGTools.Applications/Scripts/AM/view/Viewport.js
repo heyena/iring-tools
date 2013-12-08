@@ -17,77 +17,17 @@ Ext.define('AM.view.Viewport', {
                 xtype: 'panel',
                 region: 'north',
                 border: false,
-                frame: false,
-                height: 52,
-                bodyCls: 'banner',
-                layout: 'hbox',
-                items: [
-                {
-                    xtype: 'image',
-                    src: './Content/img/iringtools-logo.png',
-                    width: 109,
-                    padding: 2,
-                    flex: 0
-                },
-                {
-                    xtype: 'label',
-                    text: 'Adapter Manager',
-                    cls: 'text-banner',
-                    flex: 0
-                },
-                {
-                    xtype: 'container',
-                    layout: {
-                        type: 'hbox',
-                        pack: 'end'
-                    },
-                    flex: 1,
-                    items: [
-                    {
-                        xtype: 'label',
-                        cls: 'link-banner',
-                        html: 'Help',
-                        listeners: {
-                            element: 'el',
-                            click: function () {
-                                window.open('http://iringug.org/wiki/index.php?title=IRINGTools');
-                            },
-                            mouseover: function (e, el) {
-                                el.style.cursor = 'hand';
-                            },
-                            mouseout: function (e, el) {
-                                el.style.cursor = 'pointer';
-                            }
-                        }
-                    },
-                    {
-                        xtype: 'label',
-                        cls: 'link-banner',
-                        html: 'About',
-                        listeners: {
-                            element: 'el',
-                            click: function () {
-                                var win = new Ext.Window({
-                                    title: 'About Adapter Manager',
-                                    autoLoad: 'about.aspx',
-                                    bodyStyle: 'background:#fff;padding:5px',                                    
-                                    width: 725,
-                                    height: 508,
-                                    closable: true,
-                                    autoScroll: true,
-                                    modal: true
-                                });
-                                win.show();
-                            },
-                            mouseover: function (e, el) {
-                                el.style.cursor = 'hand';
-                            },
-                            mouseout: function (e, el) {
-                                el.style.cursor = 'pointer';
-                            }
-                        }
-                    }]
-                }]
+                height: 50,
+                html: '<div id="header" class="banner">' +
+                      '  <span style="float:left">' +
+                      '    <img style="margin:0 5px 0 5px" src="./Content/img/iringtools-logo.png"/>' +
+                      '       <font style="font-size:24px;font-family:Arial">Adapter Manager</font>' +
+                      '  </span>' +
+                      '  <span style="float:right;margin-top:16px">' +
+                      '      <a href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank" class="header-link">Help</a>' +
+                      '      <a id="about-link" href="#" class="header-link">About</a>' +
+                      '  </span>' +
+                      '</div>'
             },
             {
                 xtype: 'directorypanel',
@@ -110,6 +50,22 @@ Ext.define('AM.view.Viewport', {
         });
 
         me.callParent(arguments);
+
+        Ext.onReady(function () {
+            Ext.get('about-link').on('click', function () {
+                var win = new Ext.Window({
+                    title: 'About Adapter Manager',
+                    autoLoad: 'about.aspx',
+                    bodyStyle: 'background:#fff;padding:5px',
+                    width: 725,
+                    height: 508,
+                    closable: true,
+                    autoScroll: true,
+                    modal: true
+                });
+                win.show();
+            })
+        });
     },
 
     onPanelAfterRender: function (component, eOpts) {
