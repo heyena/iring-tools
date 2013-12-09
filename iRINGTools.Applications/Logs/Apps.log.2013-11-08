@@ -1,30 +1,88 @@
-2013-11-08 13:46:14,015 [635] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
-Parameter name: index
-   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
-   at System.Collections.Generic.List`1.get_Item(Int32 index)
-   at org.iringtools.web.controllers.MappingController.GraphMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 1102
-2013-11-08 13:46:23,163 [638] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
-Parameter name: index
-   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
-   at System.Collections.Generic.List`1.get_Item(Int32 index)
-   at org.iringtools.web.controllers.MappingController.GraphMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 1102
-2013-11-08 13:46:35,188 [635] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
-Parameter name: index
-   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
-   at System.Collections.Generic.List`1.get_Item(Int32 index)
-   at org.iringtools.web.controllers.MappingController.GraphMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 1102
-2013-11-08 18:04:14,081 [495] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
-Parameter name: index
-   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
-   at System.Collections.Generic.List`1.get_Item(Int32 index)
-   at org.iringtools.web.controllers.MappingController.GraphMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 1102
-2013-11-08 18:12:38,031 [499] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
-Parameter name: index
-   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
-   at System.Collections.Generic.List`1.get_Item(Int32 index)
-   at org.iringtools.web.controllers.MappingController.GraphMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 1102
-2013-11-08 18:46:49,345 [535] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
-Parameter name: index
-   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
-   at System.Collections.Generic.List`1.get_Item(Int32 index)
-   at org.iringtools.web.controllers.MappingController.GraphMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 1102
+2013-11-08 23:45:08,110 [93] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/12345.
+2013-11-08 23:45:08,158 [93] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:08,167 [93] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:08,167 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-08 23:45:08,167 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1617
+2013-11-08 23:45:08,167 [93] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/config.
+2013-11-08 23:45:08,167 [93] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:08,175 [93] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:08,175 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:08,175 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 192
+2013-11-08 23:45:08,175 [93] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/binding.
+2013-11-08 23:45:08,175 [93] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:08,191 [93] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:08,191 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:08,192 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-08 23:45:08,192 [93] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/def/config.
+2013-11-08 23:45:08,192 [93] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:08,199 [93] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:08,199 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:08,199 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 192
+2013-11-08 23:45:08,199 [93] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/def/binding.
+2013-11-08 23:45:08,199 [93] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:08,213 [93] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:08,213 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:08,213 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-08 23:45:08,213 [93] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/xyz/config.
+2013-11-08 23:45:08,213 [93] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:08,221 [93] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:08,221 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:08,221 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 152
+2013-11-08 23:45:08,221 [93] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/xyz/binding.
+2013-11-08 23:45:08,221 [93] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:08,228 [93] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:08,228 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:08,228 [93] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-08 23:45:10,988 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/hibernate/12345/abc/dictionary.
+2013-11-08 23:45:10,989 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:11,047 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:11,047 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-08 23:45:11,047 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 11204
+2013-11-08 23:45:44,487 [91] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-11-08 23:45:44,487 [91] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-11-08 23:45:44,487 [91] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:44,496 [91] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:44,496 [91] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-08 23:45:44,496 [91] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1874
+2013-11-08 23:45:46,463 [13] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopeNode
+2013-11-08 23:45:46,463 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/12345.
+2013-11-08 23:45:46,463 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:46,472 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:46,472 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-08 23:45:46,472 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1617
+2013-11-08 23:45:46,472 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/config.
+2013-11-08 23:45:46,472 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:46,479 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:46,479 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:46,479 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 192
+2013-11-08 23:45:46,479 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/binding.
+2013-11-08 23:45:46,479 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:46,486 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:46,486 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:46,486 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-08 23:45:46,486 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/def/config.
+2013-11-08 23:45:46,486 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:46,492 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:46,492 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:46,492 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 192
+2013-11-08 23:45:46,492 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/def/binding.
+2013-11-08 23:45:46,492 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:46,499 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:46,499 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:46,499 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-08 23:45:46,500 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/xyz/config.
+2013-11-08 23:45:46,500 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:46,508 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:46,508 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:46,508 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 152
+2013-11-08 23:45:46,508 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/xyz/binding.
+2013-11-08 23:45:46,508 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:46,532 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:46,532 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-08 23:45:46,532 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-08 23:45:49,517 [94] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/hibernate/12345/abc/dictionary.
+2013-11-08 23:45:49,517 [94] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-08 23:45:49,584 [94] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-08 23:45:49,584 [94] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-08 23:45:49,584 [94] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 11204
+2013-11-08 23:47:01,642 [19] DEBUG org.iringtools.library.SessionState - Session oyt3vl2oayh4o3vm3wdqqdoo ended.

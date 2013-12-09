@@ -1,2 +1,382 @@
-2013-10-30 20:02:49,918 [111] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
-   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 980
+2013-10-30 16:25:11,461 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:25:11,478 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:25:11,478 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 16:25:11,478 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 310
+2013-10-30 16:25:11,498 [14] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:25:11,498 [14] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:25:11,498 [14] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:25:11,505 [14] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:25:11,505 [14] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:25:11,506 [14] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1563
+2013-10-30 16:25:13,424 [16] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/afefe/delete.
+2013-10-30 16:25:13,424 [16] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:25:13,438 [16] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:25:13,438 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 16:25:13,438 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 305
+2013-10-30 16:25:13,461 [22] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:25:13,461 [22] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:25:13,461 [22] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:25:13,467 [22] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:25:13,467 [22] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:25:13,467 [22] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1140
+2013-10-30 16:25:15,274 [9] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/adfadfafda/delete.
+2013-10-30 16:25:15,274 [9] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:25:15,285 [9] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:25:15,285 [9] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 16:25:15,285 [9] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 310
+2013-10-30 16:25:15,310 [17] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:25:15,310 [17] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:25:15,310 [17] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:25:15,315 [17] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:25:15,315 [17] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:25:15,315 [17] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 707
+2013-10-30 16:25:21,155 [8] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes]...
+2013-10-30 16:25:21,155 [8] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:25:21,239 [7] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:25:21,239 [7] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:25:21,239 [7] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:25:21,247 [7] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:25:21,247 [7] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:25:21,247 [7] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1126
+2013-10-30 16:25:30,655 [16] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes]...
+2013-10-30 16:25:30,656 [16] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:25:30,729 [7] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:25:30,729 [7] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:25:30,729 [7] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:25:30,737 [7] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:25:30,737 [7] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:25:30,737 [7] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1547
+2013-10-30 16:25:38,224 [14] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopeNode
+2013-10-30 16:25:38,228 [14] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/0123.
+2013-10-30 16:25:38,228 [14] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:25:38,239 [14] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:25:38,239 [14] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:25:38,239 [14] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 515
+2013-10-30 16:26:16,930 [14] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes/0123/apps]...
+2013-10-30 16:26:16,949 [14] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:26:17,497 [8] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:26:17,497 [8] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:26:17,497 [8] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:26:17,505 [8] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:26:17,505 [8] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:26:17,505 [8] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2218
+2013-10-30 16:26:20,602 [22] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopeNode
+2013-10-30 16:26:20,602 [22] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/def.
+2013-10-30 16:26:20,602 [22] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:26:20,614 [22] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:26:20,614 [22] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:26:20,614 [22] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 513
+2013-10-30 16:26:22,855 [12] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopeNode
+2013-10-30 16:26:22,855 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/0123.
+2013-10-30 16:26:22,855 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:26:23,067 [12] ERROR org.iringtools.web.controllers.DirectoryController - System.NullReferenceException: Object reference not set to an instance of an object.
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\iring-tools\adapter\iRINGTools.Applications\Controllers\DirectoryController.cs:line 93
+2013-10-30 16:26:57,226 [16] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:26:57,227 [16] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:26:57,227 [16] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:26:57,239 [16] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:26:57,239 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:26:57,239 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2218
+2013-10-30 16:28:01,529 [12] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm ended.
+2013-10-30 16:28:26,186 [12] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm started.
+2013-10-30 16:28:26,186 [12] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:28:26,186 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:28:26,186 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:28:26,198 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:28:26,199 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:28:26,199 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2218
+2013-10-30 16:29:41,592 [14] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm ended.
+2013-10-30 16:49:05,824 [8] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm started.
+2013-10-30 16:49:05,824 [8] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/def/delete.
+2013-10-30 16:49:05,824 [8] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:49:05,844 [8] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:49:05,844 [8] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 16:49:05,844 [8] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 303
+2013-10-30 16:49:05,872 [16] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:49:05,872 [16] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:49:05,872 [16] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:49:05,881 [16] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:49:05,881 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:49:05,881 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1799
+2013-10-30 16:50:22,370 [24] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm ended.
+2013-10-30 16:53:05,250 [16] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm started.
+2013-10-30 16:53:15,151 [16] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:53:15,152 [16] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:53:15,152 [16] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:53:15,167 [16] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:53:15,168 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:53:15,168 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1799
+2013-10-30 16:53:27,379 [7] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/0123/delete.
+2013-10-30 16:53:27,379 [7] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:53:27,476 [7] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:53:27,476 [7] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 16:53:27,476 [7] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 304
+2013-10-30 16:53:35,060 [16] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes]...
+2013-10-30 16:53:35,060 [16] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:54:01,223 [15] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:54:01,223 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:54:01,223 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:54:01,236 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:54:01,236 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:54:01,236 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1128
+2013-10-30 16:54:41,576 [16] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:54:41,576 [16] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:54:41,576 [16] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:54:41,591 [16] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:54:41,591 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:54:41,591 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1128
+2013-10-30 16:54:48,491 [12] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes]...
+2013-10-30 16:54:48,491 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:54:48,565 [24] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:54:48,565 [24] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:54:48,565 [24] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:54:48,575 [24] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:54:48,575 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:54:48,575 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1551
+2013-10-30 16:54:58,119 [9] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopeNode
+2013-10-30 16:54:58,119 [9] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/12345.
+2013-10-30 16:54:58,119 [9] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:54:58,129 [9] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:54:58,130 [9] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:54:58,130 [9] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 690
+2013-10-30 16:54:58,155 [9] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/config.
+2013-10-30 16:54:58,156 [9] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:54:58,164 [9] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:54:58,164 [9] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 16:54:58,164 [9] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 152
+2013-10-30 16:54:58,168 [9] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/binding.
+2013-10-30 16:54:58,168 [9] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:54:58,236 [9] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:54:58,236 [9] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 16:54:58,236 [9] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-10-30 16:55:10,308 [9] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes]...
+2013-10-30 16:55:10,308 [9] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:55:10,385 [15] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:55:10,385 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:55:10,385 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:55:10,394 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:55:10,394 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:55:10,394 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1974
+2013-10-30 16:55:31,633 [9] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes]...
+2013-10-30 16:55:31,633 [9] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:55:31,705 [24] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:55:31,705 [24] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:55:31,705 [24] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:55:31,713 [24] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:55:31,713 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:55:31,713 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2401
+2013-10-30 16:56:42,622 [7] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm ended.
+2013-10-30 16:58:53,323 [9] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm started.
+2013-10-30 16:59:02,104 [12] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 16:59:02,104 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 16:59:02,104 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 16:59:02,125 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 16:59:02,125 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 16:59:02,125 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2401
+2013-10-30 17:00:02,744 [9] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm ended.
+2013-10-30 17:05:27,005 [17] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm started.
+2013-10-30 17:05:27,006 [17] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes/ttttt]...
+2013-10-30 17:05:27,007 [17] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:05:27,103 [8] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:05:27,103 [8] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:05:27,103 [8] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:05:27,114 [8] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:05:27,114 [8] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:05:27,114 [8] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2402
+2013-10-30 17:06:42,987 [9] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm ended.
+2013-10-30 17:25:22,881 [18] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm started.
+2013-10-30 17:25:32,113 [12] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:25:32,113 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:25:32,113 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:25:32,133 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:25:32,133 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:25:32,133 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2402
+2013-10-30 17:25:53,326 [8] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes]...
+2013-10-30 17:25:53,326 [8] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:25:53,411 [12] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:25:53,411 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:25:53,411 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:25:53,420 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:25:53,420 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:25:53,420 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2640
+2013-10-30 17:26:32,923 [17] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes/xyz]...
+2013-10-30 17:26:32,923 [17] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:26:33,037 [24] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:26:33,037 [24] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:26:33,037 [24] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:26:33,048 [24] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:26:33,048 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:26:33,048 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2822
+2013-10-30 17:27:03,274 [15] DEBUG org.iringtools.library.SessionState - Session aejqdtqrlskiu5s4pqbo0ji2 started.
+2013-10-30 17:27:10,587 [17] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:27:10,587 [17] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:27:10,587 [17] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:27:10,601 [17] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:27:10,601 [17] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:27:10,601 [17] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2822
+2013-10-30 17:27:18,648 [13] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes/xyz]...
+2013-10-30 17:27:18,648 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:27:18,736 [12] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:27:18,736 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:27:18,736 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:27:18,747 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:27:18,747 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:27:18,747 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2822
+2013-10-30 17:27:43,795 [24] DEBUG org.iringtools.library.SessionState - Session snka5n20ol0w0gxjn4vcm2mm ended.
+2013-10-30 17:28:23,827 [17] DEBUG org.iringtools.library.SessionState - Session aejqdtqrlskiu5s4pqbo0ji2 ended.
+2013-10-30 17:29:12,712 [12] DEBUG org.iringtools.library.SessionState - Session aejqdtqrlskiu5s4pqbo0ji2 started.
+2013-10-30 17:29:22,798 [18] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:29:22,799 [18] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:29:22,799 [18] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:29:22,817 [18] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:29:22,817 [18] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:29:22,817 [18] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2822
+2013-10-30 17:29:51,725 [15] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:29:51,725 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:29:51,725 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:29:51,737 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:29:51,738 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:29:51,738 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2822
+2013-10-30 17:31:03,921 [24] DEBUG org.iringtools.library.SessionState - Session aejqdtqrlskiu5s4pqbo0ji2 ended.
+2013-10-30 17:31:05,266 [13] DEBUG org.iringtools.library.SessionState - Session aejqdtqrlskiu5s4pqbo0ji2 started.
+2013-10-30 17:31:14,226 [21] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:31:14,226 [21] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:31:14,226 [21] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:14,239 [21] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:31:14,239 [21] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:31:14,239 [21] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2822
+2013-10-30 17:31:25,207 [18] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes/xyz]...
+2013-10-30 17:31:25,207 [18] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:25,291 [8] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:31:25,291 [8] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:31:25,291 [8] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:25,301 [8] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:31:25,301 [8] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:31:25,301 [8] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2822
+2013-10-30 17:31:32,694 [24] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/xeee/delete.
+2013-10-30 17:31:32,694 [24] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:32,704 [24] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:31:32,704 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 17:31:32,704 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 304
+2013-10-30 17:31:32,744 [12] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:31:32,744 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:31:32,744 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:32,752 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:31:32,752 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:31:32,752 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2401
+2013-10-30 17:31:34,148 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/ttttt/delete.
+2013-10-30 17:31:34,148 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:34,161 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:31:34,161 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 17:31:34,161 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 305
+2013-10-30 17:31:34,188 [13] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:31:34,188 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:31:34,188 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:34,196 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:31:34,196 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:31:34,197 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1977
+2013-10-30 17:31:35,335 [16] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/eefef/delete.
+2013-10-30 17:31:35,335 [16] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:35,348 [16] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:31:35,348 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 17:31:35,348 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 305
+2013-10-30 17:31:35,376 [24] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:31:35,376 [24] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:31:35,377 [24] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:35,385 [24] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:31:35,385 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:31:35,385 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1554
+2013-10-30 17:31:36,559 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/adfafaf/delete.
+2013-10-30 17:31:36,559 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:36,568 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:31:36,568 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 17:31:36,568 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 307
+2013-10-30 17:31:36,593 [9] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:31:36,593 [9] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:31:36,593 [9] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:36,600 [9] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:31:36,600 [9] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:31:36,600 [9] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1127
+2013-10-30 17:31:42,807 [24] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes]...
+2013-10-30 17:31:42,807 [24] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:42,885 [12] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:31:42,885 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:31:42,885 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:31:42,893 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:31:42,893 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:31:42,893 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1367
+2013-10-30 17:32:43,959 [21] DEBUG org.iringtools.library.SessionState - Session aejqdtqrlskiu5s4pqbo0ji2 started.
+2013-10-30 17:32:43,960 [21] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/gggg/delete.
+2013-10-30 17:32:43,960 [21] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:32:43,960 [17] DEBUG org.iringtools.library.SessionState - Session aejqdtqrlskiu5s4pqbo0ji2 ended.
+2013-10-30 17:32:43,977 [21] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:32:43,977 [21] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 17:32:43,977 [21] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 304
+2013-10-30 17:32:44,039 [8] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:32:44,039 [8] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:32:44,039 [8] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:32:44,052 [8] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:32:44,052 [8] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:32:44,052 [8] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1127
+2013-10-30 17:32:45,344 [15] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopeNode
+2013-10-30 17:32:45,344 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/12345.
+2013-10-30 17:32:45,344 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:32:45,354 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:32:45,354 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:32:45,354 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 690
+2013-10-30 17:32:45,355 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/config.
+2013-10-30 17:32:45,355 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:32:45,363 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:32:45,363 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 17:32:45,363 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 152
+2013-10-30 17:32:45,363 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/binding.
+2013-10-30 17:32:45,363 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:32:45,376 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:32:45,376 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 17:32:45,376 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-10-30 17:32:46,054 [16] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ApplicationNode
+2013-10-30 17:32:46,054 [16] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/12345.
+2013-10-30 17:32:46,054 [16] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:32:46,065 [16] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:32:46,065 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:32:46,065 [16] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 690
+2013-10-30 17:32:46,871 [18] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: DataObjectsNode
+2013-10-30 17:32:46,873 [18] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-10-30 17:32:46,874 [18] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:32:47,191 [18] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:32:47,191 [18] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 17:32:47,191 [18] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 15583
+2013-10-30 17:32:48,663 [8] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: DataObjectNode
+2013-10-30 17:32:49,019 [17] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-10-30 17:32:49,019 [17] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:32:49,061 [17] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:32:49,061 [17] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 17:32:49,061 [17] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 15583
+2013-10-30 17:32:49,147 [17] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/EQUIPMENT/filter?format=json&start=0&limit=25]...
+2013-10-30 17:32:49,191 [17] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:32:58,636 [18] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-10-30 17:32:58,636 [18] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:32:58,652 [18] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:32:58,652 [18] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 17:32:58,652 [18] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 15583
+2013-10-30 17:32:58,653 [18] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/EQUIPMENT/filter?format=json&start=0&limit=25]...
+2013-10-30 17:32:58,653 [18] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:33:02,717 [13] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: DataObjectNode
+2013-10-30 17:33:02,732 [17] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-10-30 17:33:02,732 [17] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:33:02,744 [17] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:33:02,744 [17] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-10-30 17:33:02,744 [17] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 15583
+2013-10-30 17:33:02,745 [17] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-10-30 17:33:02,745 [17] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:34:04,043 [12] DEBUG org.iringtools.library.SessionState - Session aejqdtqrlskiu5s4pqbo0ji2 ended.
+2013-10-30 17:34:35,806 [21] DEBUG org.iringtools.library.SessionState - Session aejqdtqrlskiu5s4pqbo0ji2 started.
+2013-10-30 17:34:35,806 [21] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adapter/scopes]...
+2013-10-30 17:34:35,806 [21] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:34:35,909 [15] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-10-30 17:34:35,909 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-10-30 17:34:35,909 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-10-30 17:34:35,919 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-10-30 17:34:35,919 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-10-30 17:34:35,919 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1365
+2013-10-30 23:35:40,553 [29] DEBUG org.iringtools.library.SessionState - Session aejqdtqrlskiu5s4pqbo0ji2 ended.

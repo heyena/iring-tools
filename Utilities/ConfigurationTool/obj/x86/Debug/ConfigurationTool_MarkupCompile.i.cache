@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Adapter-2.5-Merged\Utilities\ConfigurationTool\obj\x86\Debug\
+C:\iring-tools\adapter\Utilities\ConfigurationTool\obj\x86\Debug\
 ConfigurationTool
 none
 false
 DEBUG;TRACE
-C:\Adapter-2.5-Merged\Utilities\ConfigurationTool\App.xaml
+C:\iring-tools\adapter\Utilities\ConfigurationTool\App.xaml
 21959126923
 
-15540133249
-142098489633
+15193725457
+141725491691
 MainWindow.xaml;View\ProxyParamsView.xaml;
 
 True

@@ -1,5 +1,5 @@
-C:\Adapter-2.5-Merged\Libraries\WADLLibrary\bin\Debug\APITools.dll
-C:\Adapter-2.5-Merged\Libraries\WADLLibrary\bin\Debug\APITools.pdb
-C:\Adapter-2.5-Merged\Libraries\WADLLibrary\obj\Debug\ResolveAssemblyReference.cache
-C:\Adapter-2.5-Merged\Libraries\WADLLibrary\obj\Debug\APITools.dll
-C:\Adapter-2.5-Merged\Libraries\WADLLibrary\obj\Debug\APITools.pdb
+C:\iring-tools\adapter\Libraries\WADLLibrary\bin\Debug\APITools.dll
+C:\iring-tools\adapter\Libraries\WADLLibrary\bin\Debug\APITools.pdb
+C:\iring-tools\adapter\Libraries\WADLLibrary\obj\Debug\ResolveAssemblyReference.cache
+C:\iring-tools\adapter\Libraries\WADLLibrary\obj\Debug\APITools.dll
+C:\iring-tools\adapter\Libraries\WADLLibrary\obj\Debug\APITools.pdb

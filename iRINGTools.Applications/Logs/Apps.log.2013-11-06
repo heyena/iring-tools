@@ -1,2 +1,59 @@
-2013-11-06 12:38:11,629 [632] ERROR org.iringtools.web.controllers.MappingController - System.NullReferenceException: Object reference not set to an instance of an object.
-   at org.iringtools.web.controllers.MappingController.DeleteClassMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 826
+2013-11-06 23:12:58,575 [61] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:12:58,618 [61] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-06 23:12:58,619 [61] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-06 23:12:58,619 [61] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1229
+2013-11-06 23:12:58,619 [61] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/config.
+2013-11-06 23:12:58,619 [61] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:12:58,630 [61] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-06 23:12:58,630 [61] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-06 23:12:58,630 [61] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 192
+2013-11-06 23:12:58,631 [61] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/binding.
+2013-11-06 23:12:58,631 [61] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:12:58,642 [61] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-06 23:12:58,642 [61] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-06 23:12:58,642 [61] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-06 23:12:58,642 [61] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/def/config.
+2013-11-06 23:12:58,642 [61] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:12:58,654 [61] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-06 23:12:58,654 [61] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-06 23:12:58,654 [61] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 192
+2013-11-06 23:12:58,655 [61] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/def/binding.
+2013-11-06 23:12:58,655 [61] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:12:58,665 [61] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-06 23:12:58,665 [61] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-06 23:12:58,665 [61] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-06 23:13:00,128 [74] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ApplicationNode
+2013-11-06 23:13:00,128 [74] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/12345.
+2013-11-06 23:13:00,128 [74] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:13:00,134 [74] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-06 23:13:00,135 [74] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-06 23:13:00,135 [74] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1229
+2013-11-06 23:13:01,749 [58] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: DataObjectsNode
+2013-11-06 23:13:01,749 [58] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-06 23:13:01,749 [58] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:13:01,772 [58] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-06 23:13:01,772 [58] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-06 23:13:01,772 [58] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 7349
+2013-11-06 23:13:03,757 [70] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: DataObjectNode
+2013-11-06 23:13:04,342 [73] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-06 23:13:04,342 [73] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:13:04,355 [73] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-06 23:13:04,355 [73] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-06 23:13:04,355 [73] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 7349
+2013-11-06 23:13:04,356 [73] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-11-06 23:13:04,356 [73] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:13:09,599 [76] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-06 23:13:09,599 [76] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:13:09,615 [76] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-06 23:13:09,615 [76] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-06 23:13:09,615 [76] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 7349
+2013-11-06 23:13:09,616 [76] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-11-06 23:13:09,616 [76] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:13:20,251 [58] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-06 23:13:20,251 [58] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:13:20,267 [58] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-06 23:13:20,267 [58] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-06 23:13:20,267 [58] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 7349
+2013-11-06 23:13:20,268 [58] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-11-06 23:13:20,268 [58] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-06 23:14:35,035 [56] DEBUG org.iringtools.library.SessionState - Session 0twcun2bs4p0p0kkmslwst2w ended.
