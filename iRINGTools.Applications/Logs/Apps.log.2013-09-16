@@ -1,6 +1,0 @@
-2013-09-16 14:45:26,031 [23] ERROR org.iringtools.web.controllers.AdapterManagerController - System.Exception: Error with HTTP POST from URI [http://localhost:56799/hibernate///tables]. System.Net.ProtocolViolationException: You must write ContentLength bytes to the request stream before calling [Begin]GetResponse.
-   at System.Net.HttpWebRequest.GetResponse()
-   at org.iringtools.utility.WebHttpClient.Post[T,R](String relativeUri, T requestEntity, Boolean useDataContractSerializer) in C:\Adapter-2.5-Merged\Libraries\UtilityLibrary\WebClient.cs:line 548
-   at org.iringtools.utility.WebHttpClient.Post[T,R](String relativeUri, T requestEntity, Boolean useDataContractSerializer) in C:\Adapter-2.5-Merged\Libraries\UtilityLibrary\WebClient.cs:line 580
-   at iRINGTools.Web.Models.AdapterRepository.GetTableNames(String scope, String application, String dbProvider, String dbServer, String dbInstance, String dbName, String dbSchema, String dbUserName, String dbPassword, String portNumber, String serName) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Models\AdapterRepository.cs:line 883
-   at org.iringtools.web.controllers.AdapterManagerController.TableNames(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\AdapterManagerController.cs:line 78
