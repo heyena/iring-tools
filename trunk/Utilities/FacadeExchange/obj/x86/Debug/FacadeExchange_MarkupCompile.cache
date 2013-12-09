@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Adapter-2.5-Merged\Utilities\FacadeExchange\obj\x86\Debug\
+C:\iring-tools\adapter\Utilities\FacadeExchange\obj\x86\Debug\
 org.iringtools.utils.exchange
 none
 false
 DEBUG;TRACE
-C:\Adapter-2.5-Merged\Utilities\FacadeExchange\App.xaml
+C:\iring-tools\adapter\Utilities\FacadeExchange\App.xaml
 2-1089042185
 
 71355519660
-21-1573966028
+211448187535
 FacadeExchange.xaml;Login.xaml;
 
 False

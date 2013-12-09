@@ -1,0 +1,504 @@
+2013-11-19 10:57:09,997 [9] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph started.
+2013-11-19 10:57:23,874 [13] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-11-19 10:57:24,086 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-11-19 10:57:24,201 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:57:24,202 [13] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:57:37,945 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:57:37,945 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 10:57:37,945 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2966
+2013-11-19 10:58:09,228 [12] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopeNode
+2013-11-19 10:58:09,229 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/12345.
+2013-11-19 10:58:09,229 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:09,229 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:09,243 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:58:09,243 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 10:58:09,243 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1343
+2013-11-19 10:58:09,246 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/config.
+2013-11-19 10:58:09,246 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:09,246 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:09,283 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:58:09,283 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 10:58:09,283 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 192
+2013-11-19 10:58:09,293 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/binding.
+2013-11-19 10:58:09,293 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:09,293 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:09,369 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:58:09,369 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 10:58:09,369 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-19 10:58:09,371 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/def/config.
+2013-11-19 10:58:09,371 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:09,371 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:09,419 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:58:09,419 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 10:58:09,419 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 192
+2013-11-19 10:58:09,420 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/def/binding.
+2013-11-19 10:58:09,420 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:09,420 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:09,432 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:58:09,432 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 10:58:09,432 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-19 10:58:11,360 [12] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ApplicationNode
+2013-11-19 10:58:11,360 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/12345.
+2013-11-19 10:58:11,361 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:11,361 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:11,368 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:58:11,368 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 10:58:11,368 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1343
+2013-11-19 10:58:12,538 [13] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: DataObjectsNode
+2013-11-19 10:58:12,540 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-19 10:58:12,540 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:12,540 [13] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:12,710 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:58:12,710 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 10:58:12,710 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3832
+2013-11-19 10:58:14,105 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-19 10:58:14,105 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:14,105 [13] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:14,123 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:58:14,123 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 10:58:14,123 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3832
+2013-11-19 10:58:14,173 [13] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-11-19 10:58:14,323 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:14,323 [13] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:28,050 [21] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-19 10:58:28,050 [21] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:28,050 [21] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:28,063 [21] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:58:28,063 [21] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 10:58:28,063 [21] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3832
+2013-11-19 10:58:28,067 [21] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-11-19 10:58:28,074 [21] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:28,074 [21] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:49,491 [18] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-19 10:58:49,491 [18] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:49,491 [18] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:49,506 [18] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:58:49,506 [18] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 10:58:49,506 [18] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3832
+2013-11-19 10:58:49,507 [18] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-11-19 10:58:49,507 [18] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:49,507 [18] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:56,083 [19] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-19 10:58:56,083 [19] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:56,083 [19] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:58:56,093 [19] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:58:56,093 [19] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 10:58:56,093 [19] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3832
+2013-11-19 10:58:56,094 [19] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-11-19 10:58:56,094 [19] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:58:56,094 [19] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:59:11,253 [21] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-19 10:59:11,253 [21] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:59:11,253 [21] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:59:11,263 [21] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:59:11,263 [21] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 10:59:11,263 [21] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3832
+2013-11-19 10:59:11,265 [21] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-11-19 10:59:11,265 [21] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:59:11,265 [21] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:59:11,801 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-19 10:59:11,801 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:59:11,801 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 10:59:11,812 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 10:59:11,812 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 10:59:11,812 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3832
+2013-11-19 10:59:11,813 [12] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-11-19 10:59:11,813 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 10:59:11,813 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:00:20,155 [6] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph ended.
+2013-11-19 11:01:34,674 [24] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph started.
+2013-11-19 11:01:34,677 [24] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-19 11:01:34,677 [24] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:01:34,678 [24] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:01:34,695 [24] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:01:34,695 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 11:01:34,696 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3832
+2013-11-19 11:01:34,697 [24] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-11-19 11:01:34,697 [24] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:01:34,697 [24] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:01:38,050 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adata/abc/12345/dictionary?format=xml.
+2013-11-19 11:01:38,050 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:01:38,050 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:01:38,061 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:01:38,061 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 11:01:38,061 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3832
+2013-11-19 11:01:38,061 [12] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/adata/abc/12345/LINES/filter?format=json&start=0&limit=25]...
+2013-11-19 11:01:38,062 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:01:38,062 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:01:51,149 [24] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: GraphsNode
+2013-11-19 11:01:51,151 [24] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/mapping.
+2013-11-19 11:01:51,151 [24] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:01:51,151 [24] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:01:51,179 [24] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:01:51,179 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:01:51,179 [24] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3393
+2013-11-19 11:03:00,248 [23] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph ended.
+2013-11-19 11:04:04,443 [23] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph started.
+2013-11-19 11:04:04,446 [23] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 11:04:04,446 [23] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:04:04,447 [23] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:04:04,590 [23] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:04:04,590 [23] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:04:04,590 [23] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3999
+2013-11-19 11:04:04,610 [23] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/search/b/0/50.
+2013-11-19 11:04:04,611 [23] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:04:04,611 [23] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:04:24,913 [23] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:04:24,913 [23] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:04:24,913 [23] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 12792
+2013-11-19 11:05:40,343 [28] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph ended.
+2013-11-19 11:25:35,833 [32] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph started.
+2013-11-19 11:25:41,058 [50] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-11-19 11:25:41,059 [50] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-11-19 11:25:41,059 [50] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:25:41,061 [50] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:25:41,113 [50] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:25:41,113 [50] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:25:41,113 [50] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2966
+2013-11-19 11:25:54,599 [41] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 11:25:54,599 [41] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:25:54,599 [41] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:25:54,792 [41] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:25:54,792 [41] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:25:54,792 [41] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3999
+2013-11-19 11:25:54,793 [41] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/search/ACTUATED GATE VALVE/0/50.
+2013-11-19 11:25:54,793 [41] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:25:54,794 [41] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:26:05,339 [41] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:26:05,339 [41] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:26:05,340 [41] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 955
+2013-11-19 11:26:08,681 [56] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 11:26:08,682 [56] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:26:08,682 [56] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:26:08,716 [56] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:26:08,716 [56] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:26:08,716 [56] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3999
+2013-11-19 11:26:08,732 [56] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R10114814738]...
+2013-11-19 11:26:08,735 [56] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:26:08,735 [56] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:26:10,334 [56] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R10114814738/members]...
+2013-11-19 11:26:10,334 [56] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:26:10,334 [56] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:26:11,263 [56] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R10114814738/subclasses/count.
+2013-11-19 11:26:11,263 [56] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:26:11,263 [56] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:26:12,336 [56] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:26:12,336 [56] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:26:12,336 [56] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 11:26:12,338 [56] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R10114814738/templates/count.
+2013-11-19 11:26:12,338 [56] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:26:12,338 [56] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:26:13,212 [56] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:26:13,212 [56] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:26:13,212 [56] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 11:26:28,150 [57] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 11:26:28,150 [57] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:26:28,150 [57] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:26:28,181 [57] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:26:28,181 [57] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:26:28,181 [57] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3999
+2013-11-19 11:26:28,183 [57] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R10114814738/subclasses]...
+2013-11-19 11:26:28,183 [57] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:26:28,183 [57] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:27:38,642 [50] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 11:27:38,642 [50] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:27:38,642 [50] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:27:38,682 [50] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:27:38,682 [50] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:27:38,682 [50] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3999
+2013-11-19 11:27:38,683 [50] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R10114814738]...
+2013-11-19 11:27:38,683 [50] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:27:38,683 [50] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:27:40,109 [50] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R10114814738/members]...
+2013-11-19 11:27:40,110 [50] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:27:40,110 [50] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:27:41,035 [50] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R10114814738/subclasses/count.
+2013-11-19 11:27:41,035 [50] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:27:41,035 [50] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:27:42,018 [50] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:27:42,018 [50] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:27:42,018 [50] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 11:27:42,019 [50] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R10114814738/templates/count.
+2013-11-19 11:27:42,019 [50] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:27:42,019 [50] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:27:43,000 [50] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:27:43,000 [50] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:27:43,000 [50] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 11:29:01,261 [63] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph ended.
+2013-11-19 11:57:44,728 [85] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph started.
+2013-11-19 11:57:44,732 [85] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 11:57:44,732 [85] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:57:44,732 [85] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:57:44,853 [85] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:57:44,853 [85] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:57:44,853 [85] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3999
+2013-11-19 11:57:44,854 [85] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R10114814738]...
+2013-11-19 11:57:44,854 [85] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:57:44,854 [85] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:58:51,027 [85] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R10114814738/members]...
+2013-11-19 11:58:51,027 [85] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:58:51,027 [85] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:59:06,156 [84] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph ended.
+2013-11-19 11:59:06,934 [85] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R10114814738/subclasses/count.
+2013-11-19 11:59:06,935 [85] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:59:06,935 [85] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:59:11,462 [85] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:59:11,462 [85] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:59:11,462 [85] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 11:59:11,462 [85] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R10114814738/templates/count.
+2013-11-19 11:59:11,462 [85] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:59:11,462 [85] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:59:18,406 [85] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:59:18,406 [85] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:59:18,406 [85] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 11:59:42,398 [99] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph started.
+2013-11-19 11:59:42,402 [99] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 11:59:42,402 [99] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:59:42,402 [99] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 11:59:42,471 [99] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 11:59:42,471 [99] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 11:59:42,471 [99] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 3999
+2013-11-19 11:59:42,472 [99] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R52703203455]...
+2013-11-19 11:59:42,472 [99] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 11:59:42,472 [99] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:00:15,825 [99] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R52703203455/members]...
+2013-11-19 12:00:15,825 [99] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 12:00:15,825 [99] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:00:49,986 [100] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph ended.
+2013-11-19 12:01:18,573 [99] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R52703203455/subclasses/count.
+2013-11-19 12:01:18,574 [99] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 12:01:18,574 [99] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:02:05,908 [99] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 12:02:05,908 [99] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 12:02:05,908 [99] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 219
+2013-11-19 12:02:05,908 [99] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R52703203455/templates/count.
+2013-11-19 12:02:05,908 [99] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 12:02:05,908 [99] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:02:10,540 [99] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 12:02:10,541 [99] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 12:02:10,541 [99] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 12:50:51,033 [158] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph started.
+2013-11-19 12:50:51,034 [158] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 12:50:51,034 [158] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 12:50:51,037 [158] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:50:51,108 [158] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 12:50:51,108 [158] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 12:50:51,108 [158] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2564
+2013-11-19 12:50:51,109 [158] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/search/piping/0/50.
+2013-11-19 12:50:51,109 [158] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 12:50:51,109 [158] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:51:04,410 [158] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 12:51:04,410 [158] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 12:51:04,410 [158] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 15057
+2013-11-19 12:52:24,402 [157] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph ended.
+2013-11-19 12:54:40,460 [161] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph started.
+2013-11-19 12:54:40,462 [161] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 12:54:40,462 [161] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 12:54:40,470 [161] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:56:04,543 [158] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph ended.
+2013-11-19 12:56:28,236 [168] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph started.
+2013-11-19 12:56:28,237 [168] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 12:56:28,237 [168] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 12:56:28,237 [168] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:56:33,925 [168] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 12:56:33,925 [168] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 12:56:33,925 [168] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2564
+2013-11-19 12:56:33,926 [168] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R11242370041]...
+2013-11-19 12:56:33,926 [168] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 12:56:33,926 [168] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:57:28,252 [168] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R11242370041/members]...
+2013-11-19 12:57:28,252 [168] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 12:57:28,252 [168] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:57:44,607 [158] DEBUG org.iringtools.library.SessionState - Session 40yrizowpveyc54rcuqdxkph ended.
+2013-11-19 12:57:53,237 [168] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R11242370041/subclasses/count.
+2013-11-19 12:57:53,237 [168] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 12:57:53,237 [168] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:58:09,090 [168] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 12:58:09,090 [168] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 12:58:09,090 [168] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 12:58:09,090 [168] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R11242370041/templates/count.
+2013-11-19 12:58:09,090 [168] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 12:58:09,090 [168] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 12:58:23,187 [168] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 12:58:23,187 [168] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 12:58:23,187 [168] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 17:12:23,658 [8] DEBUG org.iringtools.library.SessionState - Session 131nmjyfkwyuqyon4ad5yfym started.
+2013-11-19 17:12:36,159 [6] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopesNode
+2013-11-19 17:12:36,539 [6] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes.
+2013-11-19 17:12:36,918 [6] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:12:36,923 [6] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:04,663 [6] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:04,663 [6] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:13:04,663 [6] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2966
+2013-11-19 17:13:10,435 [10] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ScopeNode
+2013-11-19 17:13:10,436 [10] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/12345.
+2013-11-19 17:13:10,436 [10] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:10,436 [10] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:10,480 [10] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:10,480 [10] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:13:10,480 [10] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1343
+2013-11-19 17:13:10,726 [10] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/config.
+2013-11-19 17:13:10,726 [10] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:10,726 [10] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:10,764 [10] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:10,764 [10] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 17:13:10,764 [10] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 192
+2013-11-19 17:13:10,771 [10] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/abc/binding.
+2013-11-19 17:13:10,771 [10] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:10,771 [10] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:10,851 [10] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:10,851 [10] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 17:13:10,851 [10] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-19 17:13:10,853 [10] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/def/config.
+2013-11-19 17:13:10,853 [10] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:10,853 [10] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:10,880 [10] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:10,880 [10] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 17:13:10,880 [10] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 192
+2013-11-19 17:13:10,881 [10] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/12345/def/binding.
+2013-11-19 17:13:10,881 [10] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:10,881 [10] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:10,907 [10] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:10,907 [10] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml; charset=utf-8
+2013-11-19 17:13:10,907 [10] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 210
+2013-11-19 17:13:12,083 [12] DEBUG org.iringtools.web.controllers.DirectoryController - GetNode type: ApplicationNode
+2013-11-19 17:13:12,084 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/adapter/scopes/12345.
+2013-11-19 17:13:12,084 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:12,084 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:12,115 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:12,115 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:13:12,115 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 1343
+2013-11-19 17:13:19,371 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 17:13:19,371 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:19,371 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:19,723 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:19,723 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:13:19,723 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2564
+2013-11-19 17:13:19,745 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/search/valve/0/50.
+2013-11-19 17:13:19,745 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:19,745 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:20,995 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:20,995 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:13:20,995 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 151
+2013-11-19 17:13:34,451 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 17:13:34,452 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:34,452 [15] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:34,533 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:34,533 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:13:34,533 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2564
+2013-11-19 17:13:34,533 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/search/valve/reset.
+2013-11-19 17:13:34,533 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:34,533 [15] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:34,859 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:34,859 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:13:34,859 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 151
+2013-11-19 17:13:47,367 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 17:13:47,367 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:47,367 [13] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:47,420 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:47,420 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:13:47,420 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2564
+2013-11-19 17:13:47,421 [13] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/search/beer/reset.
+2013-11-19 17:13:47,421 [13] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:47,421 [13] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:47,605 [13] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:47,605 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:13:47,605 [13] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 151
+2013-11-19 17:13:58,651 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 17:13:58,651 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:58,651 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:13:58,707 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:13:58,707 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:13:58,707 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2564
+2013-11-19 17:13:58,708 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/search/beer/reset.
+2013-11-19 17:13:58,708 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:13:58,708 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:14:13,611 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:14:13,611 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:14:13,611 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 151
+2013-11-19 17:15:17,058 [12] DEBUG org.iringtools.library.SessionState - Session 131nmjyfkwyuqyon4ad5yfym started.
+2013-11-19 17:15:17,059 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 17:15:17,059 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:15:17,059 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:15:17,075 [14] DEBUG org.iringtools.library.SessionState - Session 131nmjyfkwyuqyon4ad5yfym ended.
+2013-11-19 17:15:17,163 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:15:17,163 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:15:17,163 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2564
+2013-11-19 17:15:17,164 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/search/beer/reset.
+2013-11-19 17:15:17,164 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:15:17,164 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:15:35,202 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:15:35,203 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:15:35,203 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 388
+2013-11-19 17:15:42,231 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 17:15:42,231 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:15:42,231 [15] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:15:42,283 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:15:42,283 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:15:42,283 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2564
+2013-11-19 17:15:42,284 [15] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/search/valve/reset.
+2013-11-19 17:15:42,284 [15] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:15:42,284 [15] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:15:46,539 [15] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:15:46,539 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:15:46,539 [15] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 413807
+2013-11-19 17:15:52,153 [14] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 17:15:52,153 [14] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:15:52,153 [14] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:15:52,223 [14] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:15:52,223 [14] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:15:52,223 [14] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2564
+2013-11-19 17:15:52,231 [14] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R67229127762]...
+2013-11-19 17:15:52,234 [14] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:15:52,234 [14] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:15:52,679 [14] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R67229127762/members]...
+2013-11-19 17:15:52,679 [14] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:15:52,679 [14] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:15:52,823 [14] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R67229127762/subclasses/count.
+2013-11-19 17:15:52,823 [14] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:15:52,823 [14] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:15:53,080 [14] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:15:53,081 [14] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:15:53,081 [14] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 17:15:53,082 [14] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R67229127762/templates/count.
+2013-11-19 17:15:53,082 [14] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:15:53,082 [14] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:15:53,257 [14] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:15:53,257 [14] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:15:53,257 [14] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 17:16:02,649 [19] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 17:16:02,649 [19] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:16:02,649 [19] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:16:02,710 [19] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:16:02,710 [19] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:16:02,710 [19] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2564
+2013-11-19 17:16:02,711 [19] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R10114814738]...
+2013-11-19 17:16:02,711 [19] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:16:02,711 [19] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:16:49,610 [19] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R10114814738/members]...
+2013-11-19 17:16:49,610 [19] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:16:49,610 [19] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:17:01,699 [19] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R10114814738/subclasses/count.
+2013-11-19 17:17:01,699 [19] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:17:01,699 [19] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:17:13,208 [19] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:17:13,208 [19] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:17:13,208 [19] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 17:17:13,208 [19] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/classes/R10114814738/templates/count.
+2013-11-19 17:17:13,208 [19] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:17:13,208 [19] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:17:20,171 [8] DEBUG org.iringtools.library.SessionState - Session 131nmjyfkwyuqyon4ad5yfym ended.
+2013-11-19 17:17:22,467 [19] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:17:22,467 [19] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:17:22,467 [19] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 218
+2013-11-19 17:17:43,909 [12] DEBUG org.iringtools.library.SessionState - Session 131nmjyfkwyuqyon4ad5yfym started.
+2013-11-19 17:17:43,910 [12] DEBUG org.iringtools.utility.WebHttpClient - Connecting to URL: http://localhost:54321/refdata/federation.
+2013-11-19 17:17:43,910 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:17:43,910 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:17:43,981 [12] DEBUG org.iringtools.utility.WebHttpClient - Response status code: OK
+2013-11-19 17:17:43,981 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content type: application/xml
+2013-11-19 17:17:43,981 [12] DEBUG org.iringtools.utility.WebHttpClient - Response content length: 2564
+2013-11-19 17:17:43,982 [12] DEBUG org.iringtools.utility.WebHttpClient - Posting data to URL [http://localhost:54321/refdata/classes/R10114814738/subclasses]...
+2013-11-19 17:17:43,983 [12] DEBUG org.iringtools.utility.WebHttpClient - Use default credentials.
+2013-11-19 17:17:43,983 [12] DEBUG org.iringtools.utility.WebHttpClient - Use proxy.
+2013-11-19 17:19:20,238 [16] DEBUG org.iringtools.library.SessionState - Session 131nmjyfkwyuqyon4ad5yfym ended.
