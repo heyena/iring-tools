@@ -1,5 +1,0 @@
-C:\Adapter-2.5-Merged\Libraries\WADLLibrary\bin\Debug\APITools.dll
-C:\Adapter-2.5-Merged\Libraries\WADLLibrary\bin\Debug\APITools.pdb
-C:\Adapter-2.5-Merged\Libraries\WADLLibrary\obj\Debug\ResolveAssemblyReference.cache
-C:\Adapter-2.5-Merged\Libraries\WADLLibrary\obj\Debug\APITools.dll
-C:\Adapter-2.5-Merged\Libraries\WADLLibrary\obj\Debug\APITools.pdb
