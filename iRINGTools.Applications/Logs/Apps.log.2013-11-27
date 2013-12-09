@@ -1,0 +1,24 @@
+2013-11-27 14:05:10,976 [33] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adata/App2/AScope/dictionary?format=xml]. ---> System.Net.WebException: The remote server returned an error: (500) Internal Server Error.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\Adapter-2.5-Merged\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetDictionary(String scopeName, String applicationName) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Models\AdapterRepository.cs:line 299
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\DirectoryController.cs:line 305
+2013-11-27 14:05:21,519 [33] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adata/App2/AScope/dictionary?format=xml]. ---> System.Net.WebException: The remote server returned an error: (500) Internal Server Error.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\Adapter-2.5-Merged\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetDictionary(String scopeName, String applicationName) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Models\AdapterRepository.cs:line 299
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\DirectoryController.cs:line 305
+2013-11-27 14:05:28,120 [39] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adata/App2/AScope/dictionary?format=xml]. ---> System.Net.WebException: The remote server returned an error: (500) Internal Server Error.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\Adapter-2.5-Merged\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetDictionary(String scopeName, String applicationName) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Models\AdapterRepository.cs:line 299
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\DirectoryController.cs:line 305
+2013-11-27 14:21:08,170 [9] ERROR org.iringtools.web.controllers.DirectoryController - System.Exception: Error while executing HTTP GET request [http://localhost:54321/adata/App14/AScope/dictionary?format=xml]. ---> System.Net.WebException: The remote server returned an error: (500) Internal Server Error.
+   at System.Net.HttpWebRequest.GetResponse()
+   at org.iringtools.utility.WebHttpClient.Get[T](String relativeUri, Boolean useDataContractSerializer) in C:\Adapter-2.5-Merged\Libraries\UtilityLibrary\WebClient.cs:line 372
+   --- End of inner exception stack trace ---
+   at iRINGTools.Web.Models.AdapterRepository.GetDictionary(String scopeName, String applicationName) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Models\AdapterRepository.cs:line 299
+   at org.iringtools.web.controllers.DirectoryController.GetNode(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\DirectoryController.cs:line 305

@@ -171,7 +171,7 @@ Ext.define('AM.controller.Directory', {
             var state = 'edit';
 
             if (node.data.record.Configuration != null && node.data.record.Configuration.AppSettings != null &&
-      node.data.record.Configuration.AppSettings.Settings != null) {
+				node.data.record.Configuration.AppSettings.Settings != null) {
                 Ext.each(node.data.record.Configuration.AppSettings.Settings, function (settings, index) {
                     if (settings.Key == "iRINGCacheConnStr") {
                         form.getForm().findField('cacheDBConnStr').setValue(settings.Value);
@@ -187,6 +187,9 @@ Ext.define('AM.controller.Directory', {
 
         win.on('save', function () {
             win.destroy();
+			tree.view.refresh();
+			tree.expandPath(tree.getRootNode().getPath());
+			
         }, me);
 
         win.on('cancel', function () {
@@ -223,7 +226,8 @@ Ext.define('AM.controller.Directory', {
                 var parentNode = node.parentNode;
                 parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
-                tree.onReload();
+				tree.view.refresh();
+                //tree.onReload();
             },
             failure: function (response, request) {
                 //var message = 'Error deleting scope!';
@@ -278,6 +282,7 @@ Ext.define('AM.controller.Directory', {
 
         win.on('save', function () {
             win.close();
+			tree.view.refresh();
         }, me);
 
         win.on('Cancel', function () {
@@ -301,7 +306,7 @@ Ext.define('AM.controller.Directory', {
         if (utilsObj.isSecEnable == "False") {
             form.getForm().findField('permissions').hide();
         }
-
+		form.node = node1;
         form.getForm().findField('path').setValue(path);
         form.getForm().findField('state').setValue(state);
         form.getForm().findField('scope').setValue(context);
@@ -334,7 +339,8 @@ Ext.define('AM.controller.Directory', {
                 var parentNode = node.parentNode;
                 parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
-                tree.onReload();
+                tree.view.refresh();
+				//tree.onReload();
             },
             failure: function (response, request) {
                 //var message = 'Error deleting application!';
@@ -654,6 +660,7 @@ Ext.define('AM.controller.Directory', {
             node: node,
             callback: function (records, options, success) {
                 tree.body.unmask();
+				tree.view.refresh();
             }
         });
     },
@@ -719,6 +726,7 @@ Ext.define('AM.controller.Directory', {
 
         win.on('Save', function () {
             win.destroy();
+			Ext.example.msg('Notification', 'File Uploaded successfully!');
         }, me);
 
         win.on('reset', function () {
@@ -1414,16 +1422,23 @@ Ext.define('AM.controller.Directory', {
             },
             success: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
-                if (responseObj.Level != 0) {
+                if (responseObj.response.Level == 0) {
+					var parentNode = node.parentNode;
+					var nodeIndex = parentNode.indexOf(node); 
+					parentNode.removeChild(node); 
+					parentNode.insertChild(nodeIndex, Ext.JSON.decode(response.responseText).nodes[0]); 
+					//me.setLoading(false);
+					tree.view.refresh();
                     //showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
-                    Ext.widget('messagepanel', { title: 'Result', msg: responseObj.Messages.join('\n') });
+                    //Ext.widget('messagepanel', { title: 'Result', msg: responseObj.response.Messages.join('\n') });
+					Ext.example.msg('Notification', 'Data Mode switched successfully!');
                 }
                 content.getEl().unmask();
-                tree.onReload();
+                //tree.onReload();
             },
             failure: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
-                Ext.widget('messagepanel', { title: 'Error', msg: responseObj.Messages.join('\n') });
+                Ext.widget('messagepanel', { title: 'Error', msg: responseObj.response.Messages.join('\n') });
                 //showDialog(500, 160, 'Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
             }
         });

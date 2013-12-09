@@ -18,6 +18,7 @@ Ext.define('AM.view.mapping.ValueListForm', {
   alias: 'widget.valuelistform',
   bodyStyle: 'padding:10px 5px 0',
   method: 'POST',
+  node:'',
   url: 'mapping/valueList',
   initComponent: function() {
     var me = this;
@@ -97,6 +98,7 @@ Ext.define('AM.view.mapping.ValueListForm', {
     var me = this;
     var win = me.up('window');
     var form = me.getForm();
+	var node = me.node;
     if (form.findField('valueList').getValue() === '') {
       //showDialog(400, 100, 'Warning', 'Please type in a value list name before saving.', Ext.Msg.OK, null);
        Ext.widget('messagepanel', { title: 'Warning', msg: 'Please type in a value list name before saving.'});
@@ -104,11 +106,34 @@ Ext.define('AM.view.mapping.ValueListForm', {
     }
     form.submit({
       waitMsg: 'Saving Data...',
-      success: function (f, a) {
+      success: function (response, request) {
 		Ext.example.msg('Notification', 'ValueList saved successfully!');
         win.fireEvent('Save', me);
+		var res = Ext.JSON.decode(request.response.responseText);
+		var newNode = Ext.JSON.decode(request.response.responseText).node[0];
+		if(res.success){
+			var parentNode = node.parentNode;
+			if(node.data.type == 'ValueListsNode'){
+				var nodeIndex;
+				if(node.childNodes.length>0)
+					nodeIndex = node.lastChild.data.index+1;
+				else
+					nodeIndex = 0;
+				//newNode.leaf = true;
+				node.insertChild(nodeIndex,newNode); 
+			}else if(node.data.type == 'ValueListNode'){
+				var nodeIndex = parentNode.indexOf(node); 
+				parentNode.removeChild(node); 
+				//if(newNode.children == null)
+					//newNode.leaf = true;
+				parentNode.insertChild(nodeIndex, newNode); 
+			}
+			me.setLoading(false);
+		}else{
+			Ext.widget('messagepanel', { title: 'Error', msg: res.message });
+		}
       },
-      failure: function (f, a) {
+      failure: function (response, request) {
         //var message = 'Error saving changes!';
         //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 		Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});

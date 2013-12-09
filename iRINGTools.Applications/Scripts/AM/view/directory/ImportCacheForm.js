@@ -171,6 +171,8 @@ Ext.define('AM.view.directory.ImportCacheForm', {
                      Ext.widget('messagepanel', { title: 'Refresh Cache Error', msg: responseObj.Messages.join('\n')});
 					//showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
                 }
+				me.setDisabled(false);
+				me.getEl().unmask();
             },
             failure: function (response, request) {
                 me.setDisabled(false);
@@ -183,13 +185,11 @@ Ext.define('AM.view.directory.ImportCacheForm', {
 
     onImport: function () {
         var me = this;
-
         var form = me.getForm();
         var timeout = form.findField('timeout').getValue();
         var importURI = form.findField('importURI').getValue();
         var scope = me.node.data.id.split('/')[0];
         var app = me.node.data.id.split('/')[1];
-
         me.setDisabled(true);
         me.getEl().mask('Processing cache import request...', 'x-mask-loading');
 
@@ -205,7 +205,6 @@ Ext.define('AM.view.directory.ImportCacheForm', {
             },
             success: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
-
                 if (responseObj.Level == 0) {
                     Ext.ComponentQuery.query('directorytree')[0].onReload();
                     me.up('window').close();
@@ -215,6 +214,8 @@ Ext.define('AM.view.directory.ImportCacheForm', {
                     Ext.widget('messagepanel', { title: 'Import Cache Error', msg: responseObj.Messages.join('\n')});
 					//showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
                 }
+				me.setDisabled(false);
+				me.getEl().unmask();
             },
             failure: function (response, request) {
                 me.setDisabled(false);

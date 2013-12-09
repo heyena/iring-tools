@@ -18,6 +18,7 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
   alias: 'widget.valuelistmapform',
   bodyStyle: 'padding:10px 5px 0',
   method: 'POST',
+  node:'',
   url: 'mapping/valuelistmap',
   initComponent: function() {
     var me = this;
@@ -157,6 +158,7 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
     var me = this;   
     var win = me.up('window');
     var form = me.getForm();
+	var node = me.node;
     if (form.findField('internalName').getValue() === '' || 
     form.findField('classUrl').getValue() === '') {
       Ext.widget('messagepanel', { title: 'Warning', msg: 'Please fill in both fields in this form.'});
@@ -165,11 +167,31 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
     }
     form.submit({
       waitMsg: 'Saving Data...',
-      success: function (f, a) {
+      success: function (response, request) {
 		Ext.example.msg('Notification', 'ValueList Map saved successfully!');
-        win.fireEvent('save', me);
+		var res = Ext.JSON.decode(request.response.responseText);
+		win.fireEvent('save', me);
+		if(res.success){
+			var parentNode = node.parentNode;
+			if(node.data.type == 'ValueListNode'){
+				var nodeIndex;
+				if(node.childNodes.length>0)
+					nodeIndex = node.lastChild.data.index+1;
+				else
+					nodeIndex = 0;
+				node.insertChild(nodeIndex,Ext.JSON.decode(request.response.responseText).node); 
+			}else if(node.data.type == 'ListMapNode'){
+				var nodeIndex = parentNode.indexOf(node); 
+				parentNode.removeChild(node); 
+				parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).node); 
+			}
+			me.setLoading(false);
+		}else{
+			Ext.widget('messagepanel', { title: 'Error', msg: res.message });
+		}
+		
       },
-      failure: function (f, a) {
+      failure: function (response, request) {
         //var message = 'Error saving changes!';
         //(400, 100, 'Warning', message, Ext.Msg.OK, null);
 		Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});

@@ -18,6 +18,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
   alias: 'widget.graphmapform',
   height: 300,
   width: 490,
+  node:'',
   //bodyBorder: false,
   bodyStyle: 'padding:10px 5px 0',
   method: 'POST',
@@ -282,7 +283,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
     var ccon = me.down('#gmfccontainer');
     var identifier = 'Drop property node(s) here.';
     var classlabel = 'Drop a class node here.';
-    if (record != null) {
+    if (record != null && record.classTemplateMaps[0]) {
       identifier =  record.classTemplateMaps[0].classMap.identifiers[0];
       if(record.classTemplateMaps[0].classMap.identifiers.length>1){
         for(var i=1;i<record.classTemplateMaps[0].classMap.identifiers.length;i++){
@@ -317,6 +318,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
   onSave: function() {
     var me = this;
     var win = me.up('window');
+	var node = me.node;
     if (me.getForm().findField('objectName').getValue() === '' ||
     me.getForm().findField('graphName').getValue() === '' ||
     me.getForm().findField('className').getValue() === '') {
@@ -326,11 +328,31 @@ Ext.define('AM.view.directory.GraphMapForm', {
     }
     me.getForm().submit({
       waitMsg: 'Saving Data...',
-      success: function (f, a) {
+      success: function (response, request) {
 		Ext.example.msg('Notification', 'Graph saved successfully!');
         win.fireEvent('save', me);
+		var res = Ext.JSON.decode(request.response.responseText);
+		if(res.success){
+			var parentNode = node.parentNode;
+			if(node.data.type == 'GraphsNode'){
+				var nodeIndex;
+				if(node.childNodes.length>0)
+					nodeIndex = node.lastChild.data.index+1;
+				else
+					nodeIndex = 0;
+				node.insertChild(nodeIndex,Ext.JSON.decode(request.response.responseText).node); 
+			}else if(node.data.type == 'GraphNode'){
+				var nodeIndex = parentNode.indexOf(node); 
+				parentNode.removeChild(node); 
+				parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).node); 
+			}
+			me.setLoading(false);
+		}else{
+			Ext.widget('messagepanel', { title: 'Error', msg: res.message });
+		}
+		 
       },
-      failure: function (f, a) {
+      failure: function (response, request) {
         //var message = 'Error saving changes!';
         //showDialog(400, 50, 'Warning', message, Ext.Msg.OK, null);
 		 Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});

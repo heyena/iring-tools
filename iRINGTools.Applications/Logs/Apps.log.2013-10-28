@@ -1,0 +1,8 @@
+2013-10-28 16:16:03,764 [34] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 980
+2013-10-28 16:20:56,996 [32] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.mapping.MappingExtensions.DeleteTemplateMap(GraphMap graphMap, String parentClassId, Int32 parentClassIndex, Int32 templateMapIndex) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\MappingExtensions.cs:line 268
+   at org.iringtools.web.controllers.MappingController.DeleteTemplateMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 1114

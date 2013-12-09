@@ -1,0 +1,345 @@
+2013-11-18 19:36:15,724 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ WHERE (this_."NOMDIAMETER" < @p0 and this_."NOMDIAMETER" > @p1) ORDER BY this_."SPEC" asc;@p0 = 100, @p1 = 1
+2013-11-18 19:36:15,811 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_ where lines0_."NOMDIAMETER"<100 and lines0_."NOMDIAMETER">1
+2013-11-18 19:36:15,813 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 15
+2013-11-18 19:36:16,967 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:16,967 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:16,967 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:16,969 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:17,008 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:17,008 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:17,008 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:17,009 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:17,014 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:17,014 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:17,014 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:17,014 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:17,014 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:17,015 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ WHERE (this_."NOMDIAMETER" < @p0 and this_."NOMDIAMETER" > @p1) ORDER BY this_."SPEC" asc;@p0 = 100, @p1 = 180
+2013-11-18 19:36:17,018 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_ where lines0_."NOMDIAMETER"<100 and lines0_."NOMDIAMETER">180
+2013-11-18 19:36:17,021 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 0
+2013-11-18 19:36:19,324 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:19,324 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:19,324 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:19,325 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:19,349 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:19,349 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:19,349 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:19,350 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:19,355 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:19,355 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:19,355 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:19,355 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:19,355 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:19,355 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ WHERE this_."NOMDIAMETER" < @p0 ORDER BY this_."SPEC" asc;@p0 = 100
+2013-11-18 19:36:19,361 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_ where lines0_."NOMDIAMETER"<100
+2013-11-18 19:36:19,363 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 15
+2013-11-18 19:36:23,675 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:23,675 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:23,675 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:23,676 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:23,700 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:23,700 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:23,700 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:23,701 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:23,706 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:23,706 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:23,706 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:23,706 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:23,707 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:23,707 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ ORDER BY this_."SPEC" asc
+2013-11-18 19:36:23,714 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_
+2013-11-18 19:36:23,716 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 22
+2013-11-18 19:36:24,809 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:24,809 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:24,809 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:24,811 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:24,828 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:24,828 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:24,828 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:24,829 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:24,838 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:24,838 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:24,838 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:24,838 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:24,839 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:24,839 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ WHERE this_."NOMDIAMETER" < @p0 ORDER BY this_."SPEC" asc;@p0 = 80
+2013-11-18 19:36:24,844 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_ where lines0_."NOMDIAMETER"<80
+2013-11-18 19:36:24,846 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 8
+2013-11-18 19:36:26,958 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:26,958 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:26,958 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:26,960 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:26,976 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:26,976 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:26,976 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:26,977 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:26,991 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:26,991 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:26,991 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:26,991 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:26,991 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:26,991 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ WHERE (this_."NOMDIAMETER" < @p0 and this_."NOMDIAMETER" > @p1) ORDER BY this_."SPEC" asc;@p0 = 80, @p1 = 100
+2013-11-18 19:36:27,006 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_ where lines0_."NOMDIAMETER"<80 and lines0_."NOMDIAMETER">100
+2013-11-18 19:36:27,008 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 0
+2013-11-18 19:36:29,593 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:29,593 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:29,593 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:29,595 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:29,632 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:29,632 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:29,632 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:29,634 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:29,639 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:29,639 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:29,639 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:29,639 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:29,640 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:29,640 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ WHERE this_."NOMDIAMETER" < @p0 ORDER BY this_."SPEC" asc;@p0 = 80
+2013-11-18 19:36:29,645 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_ where lines0_."NOMDIAMETER"<80
+2013-11-18 19:36:29,647 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 8
+2013-11-18 19:36:30,691 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:30,691 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:30,691 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:30,692 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:30,728 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:30,728 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:30,728 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:30,729 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:30,733 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:30,733 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:30,733 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:30,733 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:30,733 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:30,734 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ ORDER BY this_."SPEC" asc
+2013-11-18 19:36:30,740 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_
+2013-11-18 19:36:30,742 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 22
+2013-11-18 19:36:38,469 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:38,469 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:38,469 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:38,471 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:38,505 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:38,505 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:38,505 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:38,506 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:38,511 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:38,511 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:38,511 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:38,511 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:38,512 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:38,512 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ WHERE this_."NOMDIAMETER" < @p0 ORDER BY this_."SPEC" asc;@p0 = 300
+2013-11-18 19:36:38,523 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_ where lines0_."NOMDIAMETER"<300
+2013-11-18 19:36:38,526 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 20
+2013-11-18 19:36:42,792 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:42,792 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:42,792 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:42,794 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:42,823 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:42,823 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:42,823 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:42,824 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:42,841 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:42,841 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:42,841 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:42,842 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:42,842 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:42,843 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ ORDER BY this_."SPEC" asc
+2013-11-18 19:36:42,859 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_
+2013-11-18 19:36:42,861 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 22
+2013-11-18 19:36:44,834 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:44,834 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:44,834 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:44,835 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:44,878 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:44,879 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:44,879 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:44,880 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:44,893 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:44,893 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:44,893 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:44,893 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:44,893 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:44,910 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ WHERE this_."NOMDIAMETER" > @p0 ORDER BY this_."SPEC" asc;@p0 = 300
+2013-11-18 19:36:44,921 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_ where lines0_."NOMDIAMETER">300
+2013-11-18 19:36:44,924 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 1
+2013-11-18 19:36:47,393 [179] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:47,394 [179] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:47,394 [179] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:47,396 [179] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:47,434 [179] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:47,434 [179] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:47,434 [179] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:47,435 [179] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:47,440 [179] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:47,440 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:47,441 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:47,441 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:47,441 [179] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:47,441 [179] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ ORDER BY this_."SPEC" asc
+2013-11-18 19:36:47,448 [179] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_
+2013-11-18 19:36:47,450 [179] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 22
+2013-11-18 19:36:54,475 [179] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:54,475 [179] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:54,475 [179] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:54,476 [179] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:54,494 [179] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:54,494 [179] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:54,494 [179] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:54,495 [179] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:54,509 [179] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:54,509 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:54,509 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:54,509 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:54,509 [179] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:54,525 [179] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ WHERE this_."CONSTTYPE" = @p0 ORDER BY this_."SPEC" asc;@p0 = 'NEw'
+2013-11-18 19:36:54,551 [179] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_ where upper(lines0_."CONSTTYPE")='NEW'
+2013-11-18 19:36:54,553 [179] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 3
+2013-11-18 19:36:56,988 [179] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:56,988 [179] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:56,988 [179] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:56,990 [179] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:57,018 [179] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:57,018 [179] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:57,018 [179] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:57,020 [179] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:57,118 [179] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:57,118 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:57,118 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:57,118 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:57,119 [179] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:57,119 [179] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ WHERE this_."CONSTTYPE" = @p0 ORDER BY this_."SPEC" asc;@p0 = 'NE'
+2013-11-18 19:36:57,126 [179] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_ where upper(lines0_."CONSTTYPE")='NE'
+2013-11-18 19:36:57,128 [179] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 0
+2013-11-18 19:36:59,233 [179] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:59,233 [179] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:59,233 [179] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:59,234 [179] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:59,255 [179] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:36:59,255 [179] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:36:59,255 [179] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:36:59,256 [179] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:36:59,260 [179] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:36:59,260 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:36:59,260 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:36:59,260 [179] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:36:59,261 [179] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:36:59,261 [179] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ ORDER BY this_."SPEC" asc
+2013-11-18 19:36:59,267 [179] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_
+2013-11-18 19:36:59,269 [179] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 22
+2013-11-18 19:37:03,222 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:37:03,222 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:37:03,222 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:37:03,223 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:37:03,239 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:37:03,239 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:37:03,239 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:37:03,240 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:37:03,245 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:37:03,245 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:37:03,245 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:37:03,245 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:37:03,245 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:37:03,246 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ ORDER BY this_."SPEC" asc
+2013-11-18 19:37:03,252 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_
+2013-11-18 19:37:03,254 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 22
+2013-11-18 19:38:48,994 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:38:48,994 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:38:48,994 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:38:48,995 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:38:49,024 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:38:49,024 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:38:49,024 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:38:49,025 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:38:49,031 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:38:49,031 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:38:49,031 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:38:49,031 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:38:49,032 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:38:49,032 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ ORDER BY this_."SPEC" asc
+2013-11-18 19:38:49,039 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_
+2013-11-18 19:38:49,041 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 22
+2013-11-18 19:39:15,239 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:39:15,239 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:39:15,239 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:39:15,240 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:39:15,269 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:39:15,269 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:39:15,269 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:39:15,270 [62] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-18 19:39:15,275 [62] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-18 19:39:15,275 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RealScope.RealApp
+2013-11-18 19:39:15,275 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-18 19:39:15,275 [62] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: LINES as json
+2013-11-18 19:39:15,276 [62] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-18 19:39:15,276 [62] DEBUG NHibernate.SQL - SELECT top 25 this_."SPEC" as column1_2_0_, this_."SYSTEM" as column2_2_0_, this_."LINENO" as column3_2_0_, this_."NOMDIAMETER" as column4_2_0_, this_."TAG" as column5_2_0_, this_."ID" as column6_2_0_, this_."AREA" as column7_2_0_, this_."TRAINNUMBER" as column8_2_0_, this_."INSULATIONTYPE" as column9_2_0_, this_."HTRACED" as column10_2_0_, this_."CONSTTYPE" as column11_2_0_, this_."DESPRESSURE" as column12_2_0_, this_."TESTPRESSURE" as column13_2_0_, this_."PWHT" as column14_2_0_, this_."TESTMEDIA" as column15_2_0_, this_."MATLTYPE" as column16_2_0_, this_."NDT" as column17_2_0_, this_."NDE" as column18_2_0_, this_."PIPECLASS" as column19_2_0_, this_."PIDNUMBER" as column20_2_0_, this_."DESTEMPERATURE" as column21_2_0_, this_."PAINTSYSTEM" as column22_2_0_, this_."DESIGNCODE" as column23_2_0_, this_."COLOURCODE" as column24_2_0_, this_."EWP" as column25_2_0_, this_."USER1" as column26_2_0_, this_."TAGSTATUS" as column27_2_0_, this_."FULLLINE" as column28_2_0_, this_."UOM_NOMDIAMETER" as column29_2_0_, this_."UOM_DESPRESSURE" as column30_2_0_, this_."UOM_DESTEMPERATURE" as column31_2_0_ FROM dbo."LINES" this_ ORDER BY this_."SPEC" asc
+2013-11-18 19:39:15,284 [62] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."LINES" lines0_
+2013-11-18 19:39:15,286 [62] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 22
+2013-11-18 19:40:37,478 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:40:37,478 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:40:37,478 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:40:53,180 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-11-18 19:40:53,181 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-11-18 19:40:53,181 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-11-18 19:40:53,182 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-11-18 19:40:53,183 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-11-18 19:40:53,183 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-11-18 19:40:53,183 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-11-18 19:40:53,183 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-11-18 19:40:53,183 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-11-18 19:40:53,183 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-11-18 19:40:53,185 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-11-18 19:41:07,203 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-11-18 19:41:07,204 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-11-18 19:41:07,545 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-11-18 19:41:07,545 [62] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-11-18 19:41:12,192 [62] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 50 records
+2013-11-18 19:41:17,613 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:41:17,613 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:41:17,613 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-18 19:41:17,794 [62] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-18 19:41:17,794 [62] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-18 19:41:17,794 [62] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous

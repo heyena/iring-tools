@@ -1,0 +1,856 @@
+2013-12-05 17:13:48,115 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:13:48,158 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:13:48,158 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:13:48,158 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:13:48,165 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:13:48,166 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:13:48,166 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:13:48,173 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:13:48,173 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:13:48,173 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:13:48,209 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:13:48,209 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:13:48,209 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:14:05,999 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:14:05,999 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:14:05,999 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:14:06,010 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:14:06,010 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:14:06,010 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:14:16,215 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:14:16,215 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:14:16,215 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:14:16,228 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:14:16,228 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:14:16,228 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:14:20,549 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:14:20,549 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:14:20,549 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:14:20,592 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:14:20,592 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:14:20,592 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:14:20,598 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:14:20,598 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:14:20,598 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:14:20,605 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:14:20,605 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:14:20,605 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:14:20,639 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:14:20,639 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:14:20,639 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:15:53,722 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:15:53,722 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:15:53,722 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:16:42,850 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:16:42,850 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:16:42,850 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:18,378 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:18,378 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:18,378 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:41,312 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:41,312 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:41,312 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:41,357 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:41,357 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:41,357 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:41,363 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:41,363 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:41,363 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:41,369 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:41,369 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:41,369 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:41,404 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:41,404 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:41,404 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:41,442 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:41,442 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:41,442 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:48,623 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:48,623 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:48,623 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:48,656 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:48,656 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:48,656 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:48,661 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:48,661 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:48,661 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:48,667 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:48,667 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:48,667 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 17:17:48,698 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 17:17:48,698 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 17:17:48,698 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:19:19,917 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:19:19,917 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:19:19,917 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:19:20,276 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:19:20,276 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:19:20,276 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:19:20,501 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:19:20,501 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:19:20,501 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:26:59,454 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:26:59,454 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:26:59,454 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:27:01,586 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:27:01,586 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:27:01,586 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:27:14,917 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:27:14,917 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:27:14,917 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:27:14,942 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:27:14,942 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:27:14,942 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:27:20,771 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:27:20,771 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:27:20,771 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:27:20,779 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:27:20,779 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:27:20,779 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:27:22,695 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:27:22,695 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:27:22,695 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:27:29,907 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:27:29,907 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:27:29,907 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:27:38,297 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:27:38,297 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:27:38,297 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:27:38,332 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:27:38,332 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:27:38,332 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:27:38,352 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:27:38,352 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:27:38,352 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:27:38,371 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:27:38,371 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:27:38,371 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:04,434 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:28:04,434 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:28:04,434 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:04,976 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:28:04,976 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:28:04,976 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:04,998 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:28:04,998 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:28:04,998 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:05,003 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:28:05,003 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:28:05,003 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:13,209 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:28:13,209 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:28:13,209 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:13,219 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:28:13,219 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:28:13,219 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:13,226 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:28:13,226 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:28:13,226 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:13,234 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:28:13,234 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:28:13,234 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:19,367 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:28:19,367 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:28:19,367 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:19,395 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:28:19,395 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:28:19,395 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:19,420 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:28:19,420 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:28:19,420 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:28:30,433 [69] DEBUG NHibernate.SQL - 
+          select name from sys.objects where (upper(type) = 'U' or upper(type) = 'V') 
+          and upper(schema_name(schema_id)) = 'DBO' order by name
+2013-12-05 18:28:30,906 [69] DEBUG NHibernate.SQL - 
+          select t2.name as column_name, type_name(t2.user_type_id) as data_type, 
+          t2.max_length as data_length, t2.is_identity as is_identity, 
+          t2.is_nullable as is_nullable, t4.column_id as is_primary_key from sys.objects t1
+          inner join sys.columns t2 on t2.object_id = t1.object_id  
+          left join sys.index_columns t4 on t4.object_id = t1.object_id and t4.column_id = t2.column_id
+          left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
+          and t3.index_id = t4.index_id
+          where (upper(t1.type) = 'U' or upper(t1.type) = 'V') 
+          and upper(schema_name(t1.schema_id)) = 'DBO' and upper(t1.name) = 'SPECIALTY2'
+2013-12-05 18:28:52,257 [69] DEBUG NHibernate.SQL - 
+          select name from sys.objects where (upper(type) = 'U' or upper(type) = 'V') 
+          and upper(schema_name(schema_id)) = 'DBO' order by name
+2013-12-05 18:28:55,231 [69] DEBUG NHibernate.SQL - 
+          select name from sys.objects where (upper(type) = 'U' or upper(type) = 'V') 
+          and upper(schema_name(schema_id)) = 'DBO' order by name
+2013-12-05 18:28:55,284 [69] DEBUG NHibernate.SQL - 
+          select t2.name as column_name, type_name(t2.user_type_id) as data_type, 
+          t2.max_length as data_length, t2.is_identity as is_identity, 
+          t2.is_nullable as is_nullable, t4.column_id as is_primary_key from sys.objects t1
+          inner join sys.columns t2 on t2.object_id = t1.object_id  
+          left join sys.index_columns t4 on t4.object_id = t1.object_id and t4.column_id = t2.column_id
+          left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
+          and t3.index_id = t4.index_id
+          where (upper(t1.type) = 'U' or upper(t1.type) = 'V') 
+          and upper(schema_name(t1.schema_id)) = 'DBO' and upper(t1.name) = 'EQUIPMENT2'
+2013-12-05 18:29:05,823 [31] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:29:05,823 [31] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:29:05,823 [31] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:29:40,960 [82] DEBUG org.iringtools.adapter.Global - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-12-05 18:29:40,970 [82] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-12-05 18:29:40,970 [82] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-12-05 18:29:40,970 [82] DEBUG org.iringtools.adapter.Global - assembly:NHibernateLibrary, Version=2.5.1.0, Culture=neutral, PublicKeyToken=null
+2013-12-05 18:29:40,970 [82] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-12-05 18:29:41,073 [82] DEBUG org.iringtools.adapter.Global - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-12-05 18:29:41,073 [82] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-12-05 18:29:43,808 [501] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:29:43,808 [501] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:29:43,808 [501] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:29:43,875 [501] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:29:43,875 [501] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:29:43,875 [501] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:29:50,122 [501] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:29:50,122 [501] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:29:50,122 [501] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:29:50,131 [501] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:29:50,131 [501] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:29:50,131 [501] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:29:54,402 [501] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:29:54,402 [501] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:29:54,402 [501] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:29:54,425 [501] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:29:54,425 [501] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:29:54,425 [501] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:30:00,115 [501] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:30:00,115 [501] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:30:00,115 [501] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:30:05,737 [501] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:30:05,737 [501] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:30:05,737 [501] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:30:05,742 [501] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-12-05 18:30:05,936 [501] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'finaly' AND Application = 'finlayapp'
+2013-12-05 18:30:06,418 [501] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:06,454 [501] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'finaly' AND Application = 'finlayapp']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:06,487 [501] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:06,540 [501] DEBUG org.iringtools.adapter.DBManager - INSERT INTO Caches (CacheId, Context, Application, Timestamp, State)
+          VALUES ('cbaa94679a19449a957348a22b720e42', 'finaly', 'finlayapp', '12/5/2013 1:00:06 PM', 'Busy')
+2013-12-05 18:30:06,593 [501] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:06,609 [501] ERROR org.iringtools.adapter.DBManager - Error executing command [INSERT INTO Caches (CacheId, Context, Application, Timestamp, State)
+          VALUES ('cbaa94679a19449a957348a22b720e42', 'finaly', 'finlayapp', '12/5/2013 1:00:06 PM', 'Busy')]: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:06,623 [501] ERROR org.iringtools.adapter.DataLayerGateway - Error importing cache from ss/: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:09,133 [501] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:30:09,133 [501] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:30:09,133 [501] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:30:09,135 [501] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-12-05 18:30:09,141 [501] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'finaly' AND Application = 'finlayapp'
+2013-12-05 18:30:09,191 [501] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:09,210 [501] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'finaly' AND Application = 'finlayapp']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:09,224 [501] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:09,224 [501] DEBUG org.iringtools.adapter.DBManager - INSERT INTO Caches (CacheId, Context, Application, Timestamp, State)
+          VALUES ('c5abbfd65d9d4ff7ba37f406d6ff7a04', 'finaly', 'finlayapp', '12/5/2013 1:00:09 PM', 'Busy')
+2013-12-05 18:30:09,245 [501] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:09,256 [501] ERROR org.iringtools.adapter.DBManager - Error executing command [INSERT INTO Caches (CacheId, Context, Application, Timestamp, State)
+          VALUES ('c5abbfd65d9d4ff7ba37f406d6ff7a04', 'finaly', 'finlayapp', '12/5/2013 1:00:09 PM', 'Busy')]: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:09,266 [501] ERROR org.iringtools.adapter.DataLayerGateway - Error refreshing cache: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:16,936 [495] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:30:16,936 [495] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:30:16,936 [495] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:30:16,940 [495] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-12-05 18:30:17,137 [495] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:30:17,137 [495] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:30:17,137 [495] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:30:17,221 [495] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-12-05 18:30:17,229 [495] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-12-05 18:30:17,232 [495] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: finaly.finlayApp
+2013-12-05 18:30:17,235 [495] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-12-05 18:30:17,235 [495] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT2 as json
+2013-12-05 18:30:17,241 [495] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-12-05 18:30:17,242 [495] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'finaly' AND Application = 'finlayapp'
+2013-12-05 18:30:17,288 [495] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:17,300 [495] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'finaly' AND Application = 'finlayapp']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:17,312 [495] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-12-05 18:30:17,323 [495] ERROR org.iringtools.adapter.DataLayerGateway - Error getting a page of data objects for type [EQUIPMENT2]: Cache entry has not been created. You need to refresh or import cache files.
+2013-12-05 18:30:17,399 [495] ERROR org.iringtools.adapter.AdapterProvider - Error in GetProjection: System.Exception: Cache entry has not been created. You need to refresh or import cache files.
+   at org.iringtools.adapter.DataLayerGateway.Get(DataObject objectType, DataFilter filter, Int32 start, Int32 limit) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\DataLayerGateway.cs:line 1019
+   at org.iringtools.adapter.AdapterProvider.GetWithFilter(String project, String application, String resource, DataFilter filter, String& format, Int32 start, Int32 limit, Boolean fullIndex) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 2414
+2013-12-05 18:30:35,781 [495] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:30:35,781 [495] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:30:35,781 [495] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:30:35,788 [495] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:30:35,788 [495] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:30:35,788 [495] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:30:39,732 [495] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:30:39,732 [495] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:30:39,733 [495] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:30:39,734 [495] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-12-05 18:30:39,757 [495] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:30:39,757 [495] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:30:39,757 [495] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:30:39,759 [495] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-12-05 18:30:39,763 [495] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-12-05 18:30:39,763 [495] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: finaly.finlayApp
+2013-12-05 18:30:39,763 [495] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-12-05 18:30:39,763 [495] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT2 as json
+2013-12-05 18:30:39,764 [495] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-12-05 18:30:42,086 [495] DEBUG NHibernate.SQL - SELECT top 25 this_."TAG" as column1_0_0_, this_."UNIT" as column2_0_0_, this_."ENG_SYS" as column3_0_0_, this_."ENG_SYS_CLIENT" as column4_0_0_, this_."CODE_COM_GRP" as column5_0_0_, this_."CODE_COM_GRP_CLIENT" as column6_0_0_ FROM dbo."EQUIPMENT2" this_ ORDER BY this_."TAG" asc
+2013-12-05 18:30:43,100 [495] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT2" equipment2x0_
+2013-12-05 18:30:43,702 [495] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 352
+2013-12-05 18:34:40,548 [1] DEBUG org.iringtools.adapter.Global - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-12-05 18:34:40,557 [1] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-12-05 18:34:40,557 [1] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-12-05 18:34:40,558 [1] DEBUG org.iringtools.adapter.Global - assembly:NHibernateLibrary, Version=2.5.1.0, Culture=neutral, PublicKeyToken=null
+2013-12-05 18:34:40,558 [1] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-12-05 18:34:40,582 [1] DEBUG org.iringtools.adapter.Global - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-12-05 18:34:40,582 [1] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-12-05 18:34:42,677 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:34:42,678 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:34:42,678 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:34:43,505 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:34:43,505 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:34:43,505 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:34:44,519 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:34:44,519 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:34:44,519 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:37:17,467 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:37:17,467 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:37:17,467 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:37:17,749 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:37:17,750 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:37:17,750 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:37:18,300 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:37:18,300 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:37:18,300 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:44:51,455 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:44:51,455 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:44:51,455 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:44:51,474 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:44:51,474 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:44:51,474 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:44:51,497 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:44:51,497 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:44:51,497 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:44:51,535 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:44:51,535 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:44:51,535 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:44:51,540 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:44:51,541 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:44:51,541 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:44:51,547 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:44:51,547 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:44:51,547 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:44:51,552 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:44:51,552 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:44:51,552 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:44:53,911 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:44:53,911 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:44:53,911 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:44:54,990 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:44:54,990 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:44:54,990 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:44:56,300 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:44:56,300 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:44:56,300 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:44:56,941 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:44:56,941 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:44:56,941 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:45:01,287 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:45:01,287 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:45:01,287 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:45:01,294 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:45:01,295 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:45:01,295 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:45:01,301 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:45:01,301 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:45:01,301 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:45:03,448 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:45:03,448 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:45:03,448 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:45:03,455 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:45:03,455 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:45:03,455 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:45:03,462 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:45:03,462 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:45:03,462 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:45:04,710 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:45:04,710 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:45:04,710 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:45:05,927 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:45:05,927 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:45:05,927 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:45:22,043 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-12-05 18:45:22,043 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-12-05 18:45:22,044 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-12-05 18:45:22,044 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-12-05 18:45:22,044 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-12-05 18:45:22,045 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-12-05 18:45:22,046 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-12-05 18:45:22,047 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-12-05 18:45:23,362 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-12-05 18:45:23,362 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-12-05 18:45:23,683 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-12-05 18:45:23,684 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-12-05 18:45:30,528 [5] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 1 records
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-12-05 18:48:30,234 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-12-05 18:48:30,575 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-12-05 18:48:30,576 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-12-05 18:48:30,930 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-12-05 18:48:30,931 [5] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-12-05 18:48:34,866 [5] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 50 records
+2013-12-05 18:48:46,140 [17] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:48:46,140 [17] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:48:46,140 [17] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:48:46,143 [17] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-12-05 18:50:02,877 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:50:02,877 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:50:02,877 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:50:02,879 [5] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-12-05 18:50:09,052 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:50:09,052 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:50:09,052 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:50:17,235 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:50:17,235 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:50:17,235 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:50:17,249 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:50:17,249 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:50:17,249 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:16,636 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:16,636 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:16,636 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:16,948 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:16,948 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:16,948 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:17,017 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:17,017 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:17,018 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:24,724 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:24,724 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:24,724 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:24,735 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:24,735 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:24,735 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:24,743 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:24,743 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:24,743 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:24,749 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:24,749 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:24,749 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:24,755 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:24,755 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:24,755 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:24,761 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:24,761 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:24,761 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:24,766 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:24,766 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:24,766 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:25,635 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:25,635 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:25,635 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:26,842 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:26,842 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:26,842 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:26,844 [5] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-12-05 18:53:29,351 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:29,351 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:29,351 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:30,271 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:30,271 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:30,271 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:32,723 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:32,723 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:32,723 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:34,590 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:34,590 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:34,590 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:34,625 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:34,625 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:34,625 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:34,632 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:34,632 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:34,632 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:34,638 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:34,638 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:34,638 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:34,646 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:34,646 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:34,646 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:34,652 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:34,652 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:34,652 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:37,528 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:37,528 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:37,528 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:37,539 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:37,539 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:37,539 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:37,549 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:37,549 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:37,549 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:38,607 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:38,607 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:38,607 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:39,944 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:39,944 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:39,944 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:42,595 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:42,595 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:42,596 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:42,628 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:42,628 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:42,628 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:42,659 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:42,659 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:42,659 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:42,665 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:42,665 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:42,665 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:42,672 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:42,672 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:42,672 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:42,677 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:42,677 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:42,677 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:42,683 [5] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:42,683 [5] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:42,683 [5] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:43,168 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:43,168 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:43,168 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:43,173 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:43,173 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:43,173 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:43,178 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:43,178 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:43,178 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:43,213 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:43,213 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:43,213 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:43,239 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:43,239 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:43,239 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,055 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,056 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,056 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,092 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,092 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,092 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,124 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,124 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,124 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,129 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,129 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,129 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,134 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,134 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,134 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,140 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,140 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,140 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,144 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,144 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,144 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,630 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,631 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,631 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,636 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,636 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,636 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,641 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,641 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,641 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,676 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,676 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,676 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:46,709 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:46,709 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:46,709 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:48,487 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:48,487 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:48,487 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:48,519 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:48,519 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:48,519 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:48,555 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:48,555 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:48,555 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:48,561 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:48,561 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:48,562 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:48,570 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:48,570 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:48,570 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:48,575 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:48,575 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:48,575 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:48,580 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:48,580 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:48,580 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:49,080 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:49,080 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:49,080 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:49,085 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:49,085 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:49,085 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:49,090 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:49,090 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:49,090 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:49,122 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:49,122 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:49,122 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:49,158 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:49,158 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:49,158 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:50,952 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:50,952 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:50,952 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:50,984 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:50,985 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:50,985 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:51,030 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:51,030 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:51,030 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:51,035 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:51,035 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:51,035 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:51,041 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:51,041 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:51,041 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:51,047 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:51,047 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:51,047 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:51,052 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:51,052 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:51,052 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:51,542 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:51,542 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:51,542 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:51,549 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:51,549 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:51,550 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:51,555 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:51,555 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:51,555 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:51,586 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:51,586 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:51,586 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:51,612 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:51,612 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:51,612 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:53,568 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:53,568 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:53,568 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:53,603 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:53,603 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:53,603 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:53,633 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:53,633 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:53,633 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:53,639 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:53,639 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:53,639 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:53,644 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:53,644 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:53,644 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:53,650 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:53,650 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:53,650 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:53,655 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:53,656 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:53,656 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:54,149 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:54,150 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:54,150 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:54,155 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:54,155 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:54,155 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:54,161 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:54,161 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:54,161 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:54,191 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:54,191 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:54,191 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:53:54,222 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:53:54,222 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:53:54,222 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:20,657 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:20,657 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:20,657 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:20,695 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:20,695 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:20,695 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:20,730 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:20,730 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:20,730 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:20,735 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:20,735 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:20,735 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:20,740 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:20,740 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:20,740 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:20,746 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:20,746 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:20,746 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:20,752 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:20,752 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:20,752 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:21,248 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:21,248 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:21,248 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:21,252 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:21,252 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:21,253 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:21,257 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:21,257 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:21,257 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:21,288 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:21,288 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:21,288 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:21,328 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:21,328 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:21,328 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:32,225 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:32,225 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:32,225 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:33,179 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:33,179 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:33,179 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:35,083 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:35,083 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:35,083 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:35,108 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:35,108 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:35,108 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:35,139 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:35,139 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:35,139 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:35,144 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:35,144 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:35,144 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:35,149 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:35,149 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:35,149 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:35,155 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:35,155 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:35,155 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:35,162 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:35,162 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:35,162 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:35,187 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:35,187 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:35,187 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:54:35,215 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:54:35,215 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:54:35,215 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:55:34,550 [9] DEBUG org.iringtools.adapter.Global - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-12-05 18:55:34,556 [9] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-12-05 18:55:34,556 [9] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-12-05 18:55:34,557 [9] DEBUG org.iringtools.adapter.Global - assembly:NHibernateLibrary, Version=2.5.1.0, Culture=neutral, PublicKeyToken=null
+2013-12-05 18:55:34,557 [9] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-12-05 18:55:34,571 [9] DEBUG org.iringtools.adapter.Global - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-12-05 18:55:34,571 [9] DEBUG org.iringtools.adapter.Global - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-12-05 18:55:34,895 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:55:34,895 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:55:34,895 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:55:35,076 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:55:35,076 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:55:35,076 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-12-05 18:55:36,136 [12] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-12-05 18:55:36,136 [12] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-12-05 18:55:36,136 [12] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
