@@ -1,3 +1,0 @@
-2013-09-19 18:20:55,043 [532] DEBUG NHibernate.SQL - 
-          select name from sys.objects where (upper(type) = 'U' or upper(type) = 'V') 
-          and upper(schema_name(schema_id)) = 'DBO' order by name
