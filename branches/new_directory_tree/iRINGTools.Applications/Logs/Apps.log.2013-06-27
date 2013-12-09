@@ -1,0 +1,100 @@
+2013-06-27 12:37:08,270 [13] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.web.controllers.MappingController.MakePossessor(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 630
+2013-06-27 12:37:17,286 [15] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.web.controllers.MappingController.MakePossessor(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 630
+2013-06-27 12:37:44,589 [26] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.web.controllers.MappingController.MakePossessor(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 630
+2013-06-27 13:03:20,930 [49] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.web.controllers.MappingController.AddClassMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 101
+2013-06-27 13:07:14,186 [43] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.web.controllers.MappingController.AddClassMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 101
+2013-06-27 13:07:30,092 [55] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.web.controllers.MappingController.AddClassMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 101
+2013-06-27 13:08:24,612 [52] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.web.controllers.MappingController.AddClassMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 101
+2013-06-27 13:08:49,406 [47] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.web.controllers.MappingController.AddClassMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 101
+2013-06-27 13:31:41,037 [22] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.mapping.MappingExtensions.DeleteTemplateMap(GraphMap graphMap, String parentClassId, Int32 parentClassIndex, Int32 templateMapIndex) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\MappingExtensions.cs:line 284
+   at org.iringtools.web.controllers.MappingController.DeleteTemplateMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 1104
+2013-06-27 15:59:45,103 [57] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 16:04:57,869 [46] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 16:05:15,869 [46] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 16:06:15,315 [83] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 16:06:54,622 [52] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.mapping.MappingExtensions.DeleteTemplateMap(GraphMap graphMap, String parentClassId, Int32 parentClassIndex, Int32 templateMapIndex) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\MappingExtensions.cs:line 284
+   at org.iringtools.web.controllers.MappingController.DeleteTemplateMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 1104
+2013-06-27 16:09:19,015 [57] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 16:09:48,530 [20] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 16:10:05,743 [57] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 16:43:43,418 [18] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 16:44:00,068 [14] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 17:15:04,066 [45] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 17:15:14,051 [19] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 17:15:22,723 [19] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 17:15:29,304 [22] ERROR org.iringtools.web.controllers.MappingController - System.Exception: Invalid constant map.
+   at org.iringtools.web.controllers.MappingController.MapConstant(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 969
+2013-06-27 17:17:09,095 [85] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.mapping.MappingExtensions.DeleteTemplateMap(GraphMap graphMap, String parentClassId, Int32 parentClassIndex, Int32 templateMapIndex) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\MappingExtensions.cs:line 284
+   at org.iringtools.web.controllers.MappingController.DeleteTemplateMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 1104
+2013-06-27 17:17:20,081 [45] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.mapping.MappingExtensions.DeleteTemplateMap(GraphMap graphMap, String parentClassId, Int32 parentClassIndex, Int32 templateMapIndex) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\MappingExtensions.cs:line 284
+   at org.iringtools.web.controllers.MappingController.DeleteTemplateMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 1104
+2013-06-27 17:22:39,763 [28] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.web.controllers.MappingController.AddClassMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 101
+2013-06-27 17:22:48,196 [21] ERROR org.iringtools.web.controllers.MappingController - System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.ThrowHelper.ThrowArgumentOutOfRangeException()
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at org.iringtools.web.controllers.MappingController.AddClassMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 101

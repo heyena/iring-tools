@@ -1,0 +1,2 @@
+2013-11-06 12:38:11,629 [632] ERROR org.iringtools.web.controllers.MappingController - System.NullReferenceException: Object reference not set to an instance of an object.
+   at org.iringtools.web.controllers.MappingController.DeleteClassMap(FormCollection form) in C:\Adapter-2.5-Merged\iRINGTools.Applications\Controllers\MappingController.cs:line 826

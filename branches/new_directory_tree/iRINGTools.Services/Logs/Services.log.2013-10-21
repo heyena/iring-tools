@@ -1,0 +1,330 @@
+2013-10-21 15:49:09,399 [36] DEBUG NHibernate.SQL - 
+          select name from sys.objects where (upper(type) = 'U' or upper(type) = 'V') 
+          and upper(schema_name(schema_id)) = 'DBO' order by name
+2013-10-21 15:49:58,251 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:49:58,259 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:49:58,259 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:49:58,403 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:49:58,403 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:49:58,403 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:49:58,411 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:49:58,411 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:49:58,411 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:49:58,420 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:49:58,420 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:49:58,420 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:49:58,485 [36] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-21 15:49:58,504 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:49:58,504 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:49:58,504 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:49:58,920 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:49:58,920 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:49:58,920 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:49:58,931 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:49:58,931 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:49:58,931 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:49:58,939 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:49:58,939 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:49:58,939 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:49:58,974 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:49:58,974 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:49:58,974 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:49:58,980 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:49:58,980 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:49:58,980 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:49:58,993 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:49:58,993 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:49:58,993 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:50:02,599 [36] DEBUG NHibernate.SQL - 
+          select t2.name as column_name, type_name(t2.user_type_id) as data_type, 
+          t2.max_length as data_length, t2.is_identity as is_identity, 
+          t2.is_nullable as is_nullable, t4.column_id as is_primary_key from sys.objects t1
+          inner join sys.columns t2 on t2.object_id = t1.object_id  
+          left join sys.index_columns t4 on t4.object_id = t1.object_id and t4.column_id = t2.column_id
+          left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
+          and t3.index_id = t4.index_id
+          where (upper(t1.type) = 'U' or upper(t1.type) = 'V') 
+          and upper(schema_name(t1.schema_id)) = 'DBO' and upper(t1.name) = 'EQUIPMENT'
+2013-10-21 15:50:02,623 [36] DEBUG NHibernate.SQL - 
+          select t2.name as column_name, type_name(t2.user_type_id) as data_type, 
+          t2.max_length as data_length, t2.is_identity as is_identity, 
+          t2.is_nullable as is_nullable, t4.column_id as is_primary_key from sys.objects t1
+          inner join sys.columns t2 on t2.object_id = t1.object_id  
+          left join sys.index_columns t4 on t4.object_id = t1.object_id and t4.column_id = t2.column_id
+          left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
+          and t3.index_id = t4.index_id
+          where (upper(t1.type) = 'U' or upper(t1.type) = 'V') 
+          and upper(schema_name(t1.schema_id)) = 'DBO' and upper(t1.name) = 'INSTRUMENTS'
+2013-10-21 15:50:02,936 [36] DEBUG NHibernate.SQL - 
+          select name from sys.objects where (upper(type) = 'U' or upper(type) = 'V') 
+          and upper(schema_name(schema_id)) = 'DBO' order by name
+2013-10-21 15:56:31,258 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:56:31,258 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:56:31,258 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:56:32,849 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:56:32,849 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:56:32,849 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:56:33,291 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:56:33,291 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:56:33,291 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 15:56:34,722 [36] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4376
+2013-10-21 15:56:35,916 [36] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-10-21 15:56:35,916 [36] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-10-21 15:56:35,916 [36] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-10-21 15:56:35,916 [36] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-10-21 15:56:35,916 [36] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-10-21 15:56:36,052 [36] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-10-21 15:56:36,052 [36] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-10-21 15:56:36,303 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 15:56:36,303 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 15:56:36,303 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:05,082 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:05,082 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:05,082 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:05,536 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:05,536 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:05,536 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:06,064 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:06,064 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:06,064 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:06,564 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:06,564 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:06,564 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:06,665 [36] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4376
+2013-10-21 16:28:06,667 [36] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-10-21 16:28:06,667 [36] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-10-21 16:28:06,667 [36] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-10-21 16:28:06,667 [36] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-10-21 16:28:06,667 [36] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-10-21 16:28:06,667 [36] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-10-21 16:28:06,667 [36] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-10-21 16:28:13,796 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:13,796 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:13,796 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:13,802 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:13,802 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:13,802 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:13,808 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:13,808 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:13,808 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:13,867 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:13,867 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:13,867 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:13,873 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:13,873 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:13,873 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:17,277 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:17,278 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:17,278 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:17,289 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:17,289 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:17,289 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:17,303 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:17,303 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:17,303 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:17,346 [36] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-21 16:28:18,009 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:18,009 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:18,009 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:20,131 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:20,131 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:20,131 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:20,209 [36] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-21 16:28:20,211 [36] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-21 16:28:25,527 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:25,527 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:25,527 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:25,593 [36] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-21 16:28:31,263 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:31,263 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:31,263 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:32,447 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:32,447 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:32,447 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:28:32,448 [36] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-21 16:28:36,004 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:28:36,004 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:28:36,004 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:41:48,267 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:41:48,267 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:41:48,267 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:41:48,586 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:41:48,586 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:41:48,586 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:41:48,619 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:41:48,619 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:41:48,619 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:41:50,067 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:41:50,067 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:41:50,067 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:41:51,036 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:41:51,036 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:41:51,036 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:41:52,055 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:41:52,055 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:41:52,055 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:41:52,071 [36] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-21 16:42:10,757 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:42:10,757 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:42:10,757 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:42:10,832 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:42:10,832 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:42:10,832 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:42:10,932 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:42:10,932 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:42:10,932 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:42:11,772 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:42:11,772 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:42:11,772 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:42:12,741 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:42:12,741 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:42:12,741 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:42:12,753 [36] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-21 16:42:14,191 [36] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:42:14,191 [36] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:42:14,192 [36] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:42:31,311 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-10-21 16:42:31,312 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-10-21 16:42:31,312 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-10-21 16:42:31,312 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-10-21 16:42:31,312 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-10-21 16:42:31,315 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-10-21 16:42:31,329 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-10-21 16:42:31,329 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-10-21 16:42:31,329 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-10-21 16:42:31,329 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-10-21 16:42:31,329 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-10-21 16:42:31,329 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-10-21 16:42:31,329 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-10-21 16:42:31,329 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-10-21 16:42:31,329 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-10-21 16:42:31,329 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-10-21 16:42:31,329 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-10-21 16:42:31,343 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-21 16:42:36,954 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-10-21 16:42:36,954 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-21 16:42:37,273 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-10-21 16:42:37,274 [36] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-21 16:42:40,996 [36] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 1 records
+2013-10-21 16:43:36,035 [36] DEBUG NHibernate.SQL - 
+          select name from sys.objects where (upper(type) = 'U' or upper(type) = 'V') 
+          and upper(schema_name(schema_id)) = 'DBO' order by name
+2013-10-21 16:43:36,240 [36] DEBUG NHibernate.SQL - 
+          select t2.name as column_name, type_name(t2.user_type_id) as data_type, 
+          t2.max_length as data_length, t2.is_identity as is_identity, 
+          t2.is_nullable as is_nullable, t4.column_id as is_primary_key from sys.objects t1
+          inner join sys.columns t2 on t2.object_id = t1.object_id  
+          left join sys.index_columns t4 on t4.object_id = t1.object_id and t4.column_id = t2.column_id
+          left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
+          and t3.index_id = t4.index_id
+          where (upper(t1.type) = 'U' or upper(t1.type) = 'V') 
+          and upper(schema_name(t1.schema_id)) = 'DBO' and upper(t1.name) = 'EQUIPMENT'
+2013-10-21 16:43:36,254 [36] DEBUG NHibernate.SQL - 
+          select t2.name as column_name, type_name(t2.user_type_id) as data_type, 
+          t2.max_length as data_length, t2.is_identity as is_identity, 
+          t2.is_nullable as is_nullable, t4.column_id as is_primary_key from sys.objects t1
+          inner join sys.columns t2 on t2.object_id = t1.object_id  
+          left join sys.index_columns t4 on t4.object_id = t1.object_id and t4.column_id = t2.column_id
+          left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
+          and t3.index_id = t4.index_id
+          where (upper(t1.type) = 'U' or upper(t1.type) = 'V') 
+          and upper(schema_name(t1.schema_id)) = 'DBO' and upper(t1.name) = 'INSTRUMENTS'
+2013-10-21 16:44:40,085 [48] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:44:40,091 [48] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:44:40,091 [48] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:44:40,261 [48] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:44:40,261 [48] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:44:40,261 [48] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:44:40,324 [48] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:44:40,324 [48] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:44:40,324 [48] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:44:40,387 [48] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:44:40,387 [48] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:44:40,387 [48] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:44:40,506 [48] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:44:40,506 [48] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:44:40,506 [48] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:44:40,828 [48] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:44:40,828 [48] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:44:40,828 [48] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:44:40,830 [48] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-21 16:44:41,169 [48] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-21 16:44:41,169 [48] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-21 16:44:41,169 [48] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-21 16:44:42,471 [36] DEBUG NHibernate.SQL - 
+          select t2.name as column_name, type_name(t2.user_type_id) as data_type, 
+          t2.max_length as data_length, t2.is_identity as is_identity, 
+          t2.is_nullable as is_nullable, t4.column_id as is_primary_key from sys.objects t1
+          inner join sys.columns t2 on t2.object_id = t1.object_id  
+          left join sys.index_columns t4 on t4.object_id = t1.object_id and t4.column_id = t2.column_id
+          left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
+          and t3.index_id = t4.index_id
+          where (upper(t1.type) = 'U' or upper(t1.type) = 'V') 
+          and upper(schema_name(t1.schema_id)) = 'DBO' and upper(t1.name) = 'EQUIPMENT'
+2013-10-21 16:44:42,637 [36] DEBUG NHibernate.SQL - 
+          select t2.name as column_name, type_name(t2.user_type_id) as data_type, 
+          t2.max_length as data_length, t2.is_identity as is_identity, 
+          t2.is_nullable as is_nullable, t4.column_id as is_primary_key from sys.objects t1
+          inner join sys.columns t2 on t2.object_id = t1.object_id  
+          left join sys.index_columns t4 on t4.object_id = t1.object_id and t4.column_id = t2.column_id
+          left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
+          and t3.index_id = t4.index_id
+          where (upper(t1.type) = 'U' or upper(t1.type) = 'V') 
+          and upper(schema_name(t1.schema_id)) = 'DBO' and upper(t1.name) = 'INSTRUMENTS'
+2013-10-21 16:44:43,159 [36] DEBUG NHibernate.SQL - 
+          select name from sys.objects where (upper(type) = 'U' or upper(type) = 'V') 
+          and upper(schema_name(schema_id)) = 'DBO' order by name

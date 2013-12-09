@@ -1,0 +1,177 @@
+2013-10-31 18:36:14,782 [3657] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:36:15,172 [3657] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 18:46:02,281 [3657] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:46:02,281 [3657] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:46:02,281 [3657] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:46:03,381 [3657] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:46:03,381 [3657] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:46:03,381 [3657] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:46:03,578 [3657] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 18:46:03,578 [3657] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-31 18:46:06,766 [3657] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:46:06,766 [3657] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:46:06,766 [3657] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:46:06,815 [3657] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 18:46:06,816 [3657] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-31 18:46:10,693 [3657] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:46:10,693 [3657] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:46:10,693 [3657] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:46:10,718 [3657] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 18:46:10,719 [3657] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-31 18:46:11,210 [3657] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:46:11,210 [3657] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:46:11,210 [3657] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:46:16,780 [3657] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 18:46:16,806 [3657] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-31 18:46:17,261 [3657] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-10-31 18:46:17,423 [3657] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: SeptemberTest.MyApp
+2013-10-31 18:46:17,423 [3657] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-10-31 18:46:17,423 [3657] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-10-31 18:46:17,941 [3657] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-10-31 18:46:21,708 [3657] DEBUG org.iringtools.nhibernate.ext.NHibernateAuthorization - Authorizing user [anonymous]
+2013-10-31 18:46:39,399 [3657] DEBUG NHibernate.SQL - SELECT top 25 this_."TAG" as column1_0_0_, this_."AREA" as column2_0_0_, this_."INTERNAL_TAG" as column3_0_0_, this_."ID" as column4_0_0_, this_."TRAINNUMBER" as column5_0_0_, this_."EQTYPE" as column6_0_0_, this_."EQPPREFIX" as column7_0_0_, this_."EQSEQNO" as column8_0_0_, this_."EQPSUFF" as column9_0_0_, this_."EQUIPDESC1" as column10_0_0_, this_."EQUIPDESC2" as column11_0_0_, this_."CONSTTYPE" as column12_0_0_, this_."EWP" as column13_0_0_, this_."USER1" as column14_0_0_, this_."USER2" as column15_0_0_, this_."USER3" as column16_0_0_, this_."TAGSTATUS" as column17_0_0_, this_."COMMODITY" as column18_0_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."TAG" asc
+2013-10-31 18:46:39,773 [3657] DEBUG org.iringtools.nhibernate.ext.NHibernateAuthorization - Authorizing user [anonymous]
+2013-10-31 18:46:42,333 [3657] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-10-31 18:46:42,354 [3657] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 54
+2013-10-31 18:46:51,790 [3657] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:46:51,790 [3657] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:46:51,790 [3657] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:46:51,815 [3657] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 18:46:51,816 [3657] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-31 18:46:51,829 [3657] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:46:51,829 [3657] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:46:51,829 [3657] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:46:51,852 [3657] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 18:46:51,853 [3657] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-31 18:46:51,947 [3657] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-10-31 18:46:51,947 [3657] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: SeptemberTest.MyApp
+2013-10-31 18:46:51,947 [3657] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-10-31 18:46:51,947 [3657] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: INSTRUMENTS as json
+2013-10-31 18:46:51,948 [3657] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-10-31 18:46:51,951 [3657] DEBUG org.iringtools.nhibernate.ext.NHibernateAuthorization - Authorizing user [anonymous]
+2013-10-31 18:46:51,952 [3657] DEBUG NHibernate.SQL - SELECT top 25 this_."TAG" as column1_1_0_, this_."KEYTAG" as column2_1_0_, this_."TAG_NO" as column3_1_0_, this_."TAG_CODE" as column4_1_0_, this_."ASSOC_EQ" as column5_1_0_, this_."IAREA" as column6_1_0_, this_."ITRAIN" as column7_1_0_, this_."ITYP" as column8_1_0_, this_."INUM" as column9_1_0_, this_."ISUFFIX" as column10_1_0_, this_."MODIFIER1" as column11_1_0_, this_."MODIFIER2" as column12_1_0_, this_."MODIFIER3" as column13_1_0_, this_."MODIFIER4" as column14_1_0_, this_."STD_DETAIL" as column15_1_0_, this_."DESCRIPT" as column16_1_0_, this_."TAG_TYPE" as column17_1_0_, this_."CONST_TYPE" as column18_1_0_, this_."COMP_ID" as column19_1_0_, this_."PROJ_STAT" as column20_1_0_, this_."PID_NO" as column21_1_0_, this_."LINE_NO" as column22_1_0_ FROM dbo."INSTRUMENTS" this_ ORDER BY this_."TAG" asc
+2013-10-31 18:46:51,966 [3657] DEBUG org.iringtools.nhibernate.ext.NHibernateAuthorization - Authorizing user [anonymous]
+2013-10-31 18:46:51,968 [3657] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."INSTRUMENTS" instrument0_
+2013-10-31 18:46:51,970 [3657] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 43
+2013-10-31 18:54:13,638 [3657] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:54:13,638 [3657] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:54:13,638 [3657] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:54:14,094 [3657] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:54:14,094 [3657] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:54:14,094 [3657] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:57:53,864 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:57:53,905 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:57:53,905 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:57:54,261 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:57:54,261 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:57:54,261 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:57:54,765 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:57:54,765 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:57:54,765 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:39,727 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:59:39,727 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:59:39,727 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:40,125 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:59:40,125 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:59:40,125 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:46,815 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:59:46,815 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:59:46,815 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:46,859 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:59:46,859 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:59:46,859 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:46,875 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:59:46,875 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:59:46,875 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:47,125 [3690] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 18:59:47,148 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:59:47,148 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:59:47,148 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:47,158 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:59:47,159 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:59:47,159 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:47,188 [3690] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 18:59:47,276 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:59:47,276 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:59:47,276 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:47,288 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:59:47,289 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:59:47,289 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:47,325 [3690] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 18:59:48,540 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:59:48,540 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:59:48,540 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:49,557 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 18:59:49,557 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 18:59:49,557 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 18:59:49,590 [3690] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 19:09:27,700 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:27,700 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:27,700 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:28,085 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:28,085 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:28,085 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:28,670 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:28,670 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:28,670 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:34,537 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:34,538 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:34,538 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:34,545 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:34,545 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:34,545 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:34,561 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:34,561 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:34,561 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:34,584 [3690] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 19:09:34,591 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:34,591 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:34,591 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:34,597 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:34,597 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:34,597 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:34,619 [3690] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 19:09:34,627 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:34,627 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:34,627 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:34,633 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:34,633 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:34,633 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:34,655 [3690] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-10-31 19:09:35,505 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:35,505 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:35,505 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:36,405 [3690] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-10-31 19:09:36,405 [3690] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-10-31 19:09:36,405 [3690] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-10-31 19:09:36,430 [3690] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58

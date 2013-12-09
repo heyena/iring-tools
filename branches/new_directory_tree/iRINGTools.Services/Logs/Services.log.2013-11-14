@@ -1,0 +1,247 @@
+2013-11-14 14:26:02,089 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:02,361 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:02,361 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:02,495 [53] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-11-14 14:26:02,496 [53] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-14 14:26:02,515 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:02,515 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:02,515 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:02,545 [53] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-11-14 14:26:02,545 [53] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-14 14:26:02,548 [53] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-14 14:26:02,548 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RelationTest.RelationTestApp
+2013-11-14 14:26:02,548 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-14 14:26:02,548 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-11-14 14:26:02,549 [53] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-14 14:26:02,549 [53] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'relationtest' AND Application = 'relationtestapp'
+2013-11-14 14:26:02,569 [53] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:02,580 [53] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'relationtest' AND Application = 'relationtestapp']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:02,592 [53] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:02,604 [53] ERROR org.iringtools.adapter.DataLayerGateway - Error getting a page of data objects for type [EQUIPMENT]: Cache entry has not been created. You need to refresh or import cache files.
+2013-11-14 14:26:02,615 [53] ERROR org.iringtools.adapter.AdapterProvider - Error in GetProjection: System.Exception: Cache entry has not been created. You need to refresh or import cache files.
+   at org.iringtools.adapter.DataLayerGateway.Get(DataObject objectType, DataFilter filter, Int32 start, Int32 limit) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\DataLayerGateway.cs:line 873
+   at org.iringtools.adapter.AdapterProvider.GetWithFilter(String project, String application, String resource, DataFilter filter, String& format, Int32 start, Int32 limit, Boolean fullIndex) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 2411
+2013-11-14 14:26:05,352 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:05,352 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:05,352 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:05,375 [53] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-11-14 14:26:05,376 [53] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-14 14:26:05,386 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:05,386 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:05,386 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:05,408 [53] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-11-14 14:26:05,409 [53] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-14 14:26:05,412 [53] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-14 14:26:05,412 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RelationTest.RelationTestApp
+2013-11-14 14:26:05,412 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-14 14:26:05,412 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-11-14 14:26:05,413 [53] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-14 14:26:05,413 [53] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'relationtest' AND Application = 'relationtestapp'
+2013-11-14 14:26:05,435 [53] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:05,448 [53] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'relationtest' AND Application = 'relationtestapp']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:05,463 [53] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:05,476 [53] ERROR org.iringtools.adapter.DataLayerGateway - Error getting a page of data objects for type [EQUIPMENT]: Cache entry has not been created. You need to refresh or import cache files.
+2013-11-14 14:26:05,488 [53] ERROR org.iringtools.adapter.AdapterProvider - Error in GetProjection: System.Exception: Cache entry has not been created. You need to refresh or import cache files.
+   at org.iringtools.adapter.DataLayerGateway.Get(DataObject objectType, DataFilter filter, Int32 start, Int32 limit) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\DataLayerGateway.cs:line 873
+   at org.iringtools.adapter.AdapterProvider.GetWithFilter(String project, String application, String resource, DataFilter filter, String& format, Int32 start, Int32 limit, Boolean fullIndex) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 2411
+2013-11-14 14:26:08,188 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:08,188 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:08,188 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:08,211 [53] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-11-14 14:26:08,211 [53] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-14 14:26:08,221 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:08,221 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:08,221 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:08,244 [53] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-11-14 14:26:08,244 [53] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-14 14:26:08,248 [53] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-14 14:26:08,248 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RelationTest.RelationTestApp
+2013-11-14 14:26:08,248 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-14 14:26:08,248 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-11-14 14:26:08,248 [53] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-14 14:26:08,248 [53] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'relationtest' AND Application = 'relationtestapp'
+2013-11-14 14:26:08,274 [53] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:08,288 [53] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'relationtest' AND Application = 'relationtestapp']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:08,299 [53] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:08,310 [53] ERROR org.iringtools.adapter.DataLayerGateway - Error getting a page of data objects for type [EQUIPMENT]: Cache entry has not been created. You need to refresh or import cache files.
+2013-11-14 14:26:08,321 [53] ERROR org.iringtools.adapter.AdapterProvider - Error in GetProjection: System.Exception: Cache entry has not been created. You need to refresh or import cache files.
+   at org.iringtools.adapter.DataLayerGateway.Get(DataObject objectType, DataFilter filter, Int32 start, Int32 limit) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\DataLayerGateway.cs:line 873
+   at org.iringtools.adapter.AdapterProvider.GetWithFilter(String project, String application, String resource, DataFilter filter, String& format, Int32 start, Int32 limit, Boolean fullIndex) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 2411
+2013-11-14 14:26:11,456 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:11,456 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:11,456 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:11,483 [53] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-11-14 14:26:11,484 [53] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-14 14:26:11,494 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:11,494 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:11,494 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:11,518 [53] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\AdapterSettings.cs:line 58
+2013-11-14 14:26:11,519 [53] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-14 14:26:11,522 [53] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-14 14:26:11,522 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: RelationTest.RelationTestApp
+2013-11-14 14:26:11,522 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-14 14:26:11,522 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-11-14 14:26:11,522 [53] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-14 14:26:11,522 [53] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'relationtest' AND Application = 'relationtestapp'
+2013-11-14 14:26:11,549 [53] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:11,563 [53] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'relationtest' AND Application = 'relationtestapp']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:11,574 [53] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:26:11,585 [53] ERROR org.iringtools.adapter.DataLayerGateway - Error getting a page of data objects for type [EQUIPMENT]: Cache entry has not been created. You need to refresh or import cache files.
+2013-11-14 14:26:11,595 [53] ERROR org.iringtools.adapter.AdapterProvider - Error in GetProjection: System.Exception: Cache entry has not been created. You need to refresh or import cache files.
+   at org.iringtools.adapter.DataLayerGateway.Get(DataObject objectType, DataFilter filter, Int32 start, Int32 limit) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\DataLayerGateway.cs:line 873
+   at org.iringtools.adapter.AdapterProvider.GetWithFilter(String project, String application, String resource, DataFilter filter, String& format, Int32 start, Int32 limit, Boolean fullIndex) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 2411
+2013-11-14 14:26:40,958 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:40,958 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:40,958 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:43,947 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:43,947 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:43,947 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:43,957 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:43,957 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:43,957 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:43,967 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:43,967 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:43,967 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:45,277 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:45,277 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:45,277 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:53,455 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:53,455 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:53,455 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:55,117 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:55,117 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:55,117 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:55,167 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:55,167 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:55,167 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:55,173 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:55,173 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:55,173 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:55,179 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:55,179 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:55,179 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:55,213 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:55,213 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:55,213 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:59,236 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:59,236 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:59,236 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:59,282 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:59,282 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:59,282 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:59,287 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:59,287 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:59,287 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:59,292 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:59,292 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:59,292 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:26:59,326 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:26:59,326 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:26:59,326 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:27:01,450 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:27:01,450 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:27:01,450 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:27:01,487 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:27:01,487 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:27:01,487 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:27:01,495 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:27:01,495 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:27:01,495 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:27:01,501 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:27:01,501 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:27:01,501 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:27:01,531 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:27:01,531 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:27:01,531 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:54:15,781 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:54:15,781 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:54:15,781 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:54:15,783 [53] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-14 14:54:17,610 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:54:17,610 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:54:17,610 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:54:17,611 [53] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-14 14:54:17,623 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 14:54:17,623 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 14:54:17,623 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 14:54:17,624 [53] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-11-14 14:54:17,628 [53] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-11-14 14:54:17,628 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: SeptemberTest.MyApp
+2013-11-14 14:54:17,628 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-11-14 14:54:17,628 [53] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-11-14 14:54:17,629 [53] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-11-14 14:54:17,629 [53] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'septembertest' AND Application = 'myapp'
+2013-11-14 14:54:17,652 [53] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:54:17,670 [53] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'septembertest' AND Application = 'myapp']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:54:17,681 [53] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-11-14 14:54:17,692 [53] ERROR org.iringtools.adapter.DataLayerGateway - Error getting a page of data objects for type [EQUIPMENT]: Cache entry has not been created. You need to refresh or import cache files.
+2013-11-14 14:54:17,704 [53] ERROR org.iringtools.adapter.AdapterProvider - Error in GetProjection: System.Exception: Cache entry has not been created. You need to refresh or import cache files.
+   at org.iringtools.adapter.DataLayerGateway.Get(DataObject objectType, DataFilter filter, Int32 start, Int32 limit) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\DataLayerGateway.cs:line 873
+   at org.iringtools.adapter.AdapterProvider.GetWithFilter(String project, String application, String resource, DataFilter filter, String& format, Int32 start, Int32 limit, Boolean fullIndex) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 2411
+2013-11-14 15:05:21,870 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:05:21,871 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:05:21,871 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:06:24,344 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:06:24,344 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:06:24,344 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:06:24,440 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:06:24,440 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:06:24,440 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:07:06,420 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:07:06,420 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:07:06,420 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:07:21,485 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:07:21,485 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:07:21,485 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:07:21,537 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:07:21,537 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:07:21,537 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:07:31,966 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:07:31,966 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:07:31,966 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:07:38,339 [53] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4379
+2013-11-14 15:07:39,838 [53] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-11-14 15:07:39,838 [53] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-11-14 15:07:39,838 [53] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-11-14 15:07:39,839 [53] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-11-14 15:07:39,839 [53] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-11-14 15:07:40,149 [53] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-11-14 15:07:40,149 [53] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-11-14 15:07:52,011 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:07:52,011 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:07:52,011 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:07:52,171 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:07:52,171 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:07:52,171 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:07:54,951 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:07:54,951 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:07:54,951 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:07:54,963 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:07:54,963 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:07:54,963 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:07:54,971 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:07:54,971 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:07:54,971 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
+2013-11-14 15:07:57,104 [53] DEBUG org.iringtools.adapter.BaseProvider - Identity attributes:
+2013-11-14 15:07:57,104 [53] DEBUG org.iringtools.adapter.BaseProvider - Provider: AnonymousIdentityProvider
+2013-11-14 15:07:57,104 [53] DEBUG org.iringtools.adapter.BaseProvider - UserName: anonymous
