@@ -566,6 +566,7 @@ Ext.define('AM.controller.NHConfig', {
                         if (success) {
                             Ext.example.msg('Notification', 'Configuration saved successfully!');
                             me.dirNode.expand();
+							dirTree.view.refresh();
                         }
                         else {
                             var msg = operation.request.scope.reader.jsonData.message;

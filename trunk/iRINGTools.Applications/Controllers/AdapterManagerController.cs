@@ -116,12 +116,40 @@ namespace org.iringtools.web.controllers
             string context = form["nodeid"];
             string mode = form["mode"];
             string[] names = context.Split('/');
-            string scope = names[0];
-            string application = names[1];
+            string scopeName = names[0];
+            string applicationName = names[1];
 
-            Response response = _repository.SwitchDataMode(scope, application, mode);
+            Response response = _repository.SwitchDataMode(scopeName, applicationName, mode);
 
-            return Json(response, JsonRequestBehavior.AllowGet);
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+            JsonTreeNode dataObjectsNode = new JsonTreeNode
+            {
+                nodeType = "async",
+                type = "DataObjectsNode",
+                iconCls = "folder",
+                id = context + "/DataObjects",
+                text = "Data Objects",
+                expanded = false,
+                leaf = false,
+                children = null,
+                property = new Dictionary<string, string>()
+            };
+
+            ScopeProject scope = _repository.GetScope(scopeName);
+
+            if (scope != null)
+            {
+                ScopeApplication application = scope.Applications.Find(x => x.Name.ToLower() == applicationName.ToLower());
+
+                if (application != null)
+                {
+                    dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
+                }
+            }
+            nodes.Add(dataObjectsNode);
+
+            return Json(new { response, nodes }, JsonRequestBehavior.AllowGet);
+            //return Json(response, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult RefreshCache(FormCollection form)

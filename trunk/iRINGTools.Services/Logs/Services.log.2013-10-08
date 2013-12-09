@@ -1,0 +1,184 @@
+2013-10-08 16:03:04,474 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-10-08 16:03:04,716 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-10-08 16:03:04,717 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-08 16:03:05,184 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-10-08 16:03:05,185 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-08 16:03:05,495 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-10-08 16:03:05,496 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-08 16:03:09,508 [1414] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 50 records
+2013-10-08 16:05:21,858 [1414] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-10-08 16:05:21,859 [1414] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-10-08 16:05:21,859 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-10-08 16:05:21,859 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-10-08 16:05:21,859 [1414] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-10-08 16:05:21,859 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-10-08 16:05:21,860 [1414] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-10-08 16:05:21,860 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-10-08 16:05:32,238 [1395] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-08 16:21:59,706 [1414] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-10-08 16:21:59,722 [1414] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-10-08 16:21:59,722 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-10-08 16:21:59,722 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-10-08 16:21:59,722 [1414] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-10-08 16:21:59,722 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-10-08 16:21:59,722 [1414] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-10-08 16:21:59,722 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-10-08 16:22:23,321 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-10-08 16:22:23,322 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-10-08 16:22:23,329 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-10-08 16:22:23,329 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-10-08 16:22:23,329 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-10-08 16:22:23,329 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-10-08 16:22:23,331 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-08 16:22:24,507 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-10-08 16:22:24,507 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-08 16:22:24,813 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-10-08 16:22:24,820 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-08 16:22:27,950 [1414] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 1 records
+2013-10-08 16:43:10,150 [1414] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-10-08 16:43:10,161 [1414] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-10-08 16:43:10,161 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-10-08 16:43:10,161 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-10-08 16:43:10,161 [1414] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-10-08 16:43:10,161 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-10-08 16:43:10,161 [1414] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-10-08 16:43:10,161 [1414] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-10-08 16:43:17,250 [1414] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-10-08 16:43:55,195 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-10-08 16:43:55,196 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-10-08 16:43:55,197 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-08 16:43:56,510 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-10-08 16:43:56,510 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-08 16:43:57,399 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-10-08 16:43:57,400 [1414] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-10-08 16:44:00,043 [1414] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 0 records

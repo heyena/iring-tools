@@ -1,0 +1,766 @@
+2013-06-27 16:13:13,169 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-06-27 16:13:13,308 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-06-27 16:13:13,308 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-06-27 16:13:13,308 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-06-27 16:13:13,308 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-06-27 16:13:13,309 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-06-27 16:13:13,309 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-06-27 16:13:13,309 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-06-27 16:13:13,309 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-06-27 16:13:13,309 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 16:13:13,309 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 16:13:15,457 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 16:13:15,457 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 16:13:15,458 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 16:13:15,922 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 16:13:15,923 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 16:13:16,347 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-06-27 16:13:16,347 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 16:13:19,035 [342] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 16 records
+2013-06-27 16:13:41,546 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 16:13:45,426 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 16:43:43,400 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 16:44:43,598 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 16:44:43,668 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 16:44:43,669 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 16:44:43,727 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 16:44:43,728 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 16:44:44,190 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 16:45:03,030 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 16:45:03,088 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 16:45:03,089 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 16:45:03,193 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 16:45:03,194 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 16:45:03,616 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 16:46:08,472 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 16:46:13,062 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:03:54,940 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:03:55,417 [342] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayers() in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4922
+2013-06-27 17:03:55,418 [342] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-06-27 17:03:55,418 [342] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-06-27 17:03:55,418 [342] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-06-27 17:03:55,418 [342] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.4.0.5785, Culture=neutral, PublicKeyToken=null
+2013-06-27 17:03:55,418 [342] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-06-27 17:03:55,418 [342] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-06-27 17:03:55,418 [342] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-06-27 17:03:56,420 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:04:02,772 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:04:02,774 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 17:04:03,622 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:04:03,623 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 17:04:08,337 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-06-27 17:04:08,337 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-06-27 17:04:08,337 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:04:08,338 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:04:10,455 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:04:10,455 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:04:10,456 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:04:11,735 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:04:11,735 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:04:12,051 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-06-27 17:04:12,052 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:04:16,156 [342] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 50 records
+2013-06-27 17:04:47,719 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-06-27 17:04:47,719 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Using History
+2013-06-27 17:04:47,719 [342] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 16 records
+2013-06-27 17:04:54,320 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:04:58,170 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-06-27 17:11:26,754 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:11:26,755 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:11:28,884 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:11:28,885 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:11:28,885 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:11:30,052 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:11:30,053 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:11:33,873 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-06-27 17:11:33,873 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:11:40,427 [342] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 1 records
+2013-06-27 17:11:48,005 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:11:51,836 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:12:45,418 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:17:03,705 [342] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayers() in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4922
+2013-06-27 17:17:03,706 [342] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-06-27 17:17:03,706 [342] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-06-27 17:17:03,706 [342] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-06-27 17:17:03,706 [342] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.4.0.5785, Culture=neutral, PublicKeyToken=null
+2013-06-27 17:17:03,706 [342] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-06-27 17:17:03,706 [342] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-06-27 17:17:03,706 [342] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-06-27 17:17:03,751 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:17:05,068 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:17:28,791 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:17:28,861 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:17:46,362 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:17:46,432 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:18:01,556 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:18:02,349 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:18:17,474 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:18:17,540 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-06-27 17:18:33,825 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:18:33,826 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:18:35,957 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:18:35,958 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:18:35,958 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:18:36,983 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:18:36,983 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:18:37,309 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-06-27 17:18:37,309 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:18:39,875 [342] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 0 records
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-06-27 17:18:46,429 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:18:46,430 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:18:48,555 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:18:48,555 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:18:48,555 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:18:48,905 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:18:48,905 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:18:49,230 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-06-27 17:18:49,231 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:18:51,653 [342] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 0 records
+2013-06-27 17:19:00,635 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:19:00,636 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:19:02,756 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:19:02,757 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:19:02,757 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:19:03,101 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-06-27 17:19:03,101 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:19:03,431 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-06-27 17:19:03,431 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-06-27 17:19:05,782 [342] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 1 records
+2013-06-27 17:19:11,084 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:19:14,756 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:19:21,412 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:19:21,414 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 17:19:22,769 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:19:22,770 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 17:19:32,653 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-06-27 17:19:32,653 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Using History
+2013-06-27 17:19:32,653 [342] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 50 records
+2013-06-27 17:20:43,410 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:20:43,470 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:20:43,471 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 17:20:43,518 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:20:43,519 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 17:20:43,986 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:20:55,650 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:20:59,329 [342] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://localhost:8080/openrdf-sesame/repositories/HatchSandbox']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it [::1]:8080
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Int32 timeout, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-06-27 17:22:01,763 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:22:01,824 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:22:01,825 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 17:22:01,869 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:22:01,870 [342] DEBUG org.iringtools.adapter.AdapterProvider - Initializing data layer...
+2013-06-27 17:22:02,362 [342] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-06-27 17:22:15,718 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-06-27 17:22:15,719 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-06-27 17:22:15,719 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-06-27 17:22:15,719 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-06-27 17:22:15,719 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-06-27 17:22:15,719 [342] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf

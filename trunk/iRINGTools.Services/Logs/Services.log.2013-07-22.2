@@ -1,0 +1,636 @@
+2013-07-22 16:30:00,602 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 1
+2013-07-22 16:30:03,417 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:30:03,418 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:30:03,452 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:30:03,453 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:30:03,457 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:30:03,457 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:30:03,457 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:30:03,457 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:30:03,457 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:30:03,457 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:30:03,480 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:30:03,491 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:30:03,503 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:30:03,504 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ WHERE this_."AREA" = @p0 ORDER BY this_."INTERNAL_TAG" asc;@p0 = '92'
+2013-07-22 16:30:03,507 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:30:03,528 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:30:03,540 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:30:03,551 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:30:03,551 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_ where upper(equipment0_."AREA")='92'
+2013-07-22 16:30:03,553 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 1
+2013-07-22 16:30:58,858 [31] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies, Type dlType) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4131
+2013-07-22 16:30:58,859 [31] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-07-22 16:30:58,859 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-07-22 16:30:58,859 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-07-22 16:30:58,859 [31] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-07-22 16:30:58,859 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-07-22 16:30:58,859 [31] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-07-22 16:30:58,859 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-07-22 16:30:58,881 [31] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies, Type dlType) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4131
+2013-07-22 16:30:59,189 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:30:59,230 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:00,832 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:00,833 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:01,866 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:01,866 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:02,406 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:02,407 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:02,443 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:02,444 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:02,452 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:31:02,452 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:31:02,452 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:31:02,452 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:31:02,452 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:31:02,452 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:02,476 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:02,487 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:02,500 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:02,500 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:31:02,505 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:02,528 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:02,540 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:02,552 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:02,552 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:31:02,554 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:31:04,311 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:04,312 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:04,348 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:04,348 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:04,353 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:31:04,353 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:31:04,353 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:31:04,353 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:31:04,353 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:31:04,353 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:04,375 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:04,386 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:04,397 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:04,398 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:31:04,402 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:04,424 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:04,436 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:04,447 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:04,447 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:31:04,449 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:31:05,270 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:05,271 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:05,324 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:05,325 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:05,329 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:31:05,329 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:31:05,329 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:31:05,329 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:31:05,330 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:31:05,330 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:05,352 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:05,364 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:05,375 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:05,375 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:31:05,380 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:05,402 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:05,414 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:05,426 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:05,426 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:31:05,428 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:31:06,326 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:06,327 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:06,363 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:06,364 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:06,368 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:31:06,368 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:31:06,368 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:31:06,368 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:31:06,368 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:31:06,368 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:06,390 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:06,401 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:06,413 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:06,413 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:31:06,418 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:06,440 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:06,452 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:06,463 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:06,463 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:31:06,465 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:31:11,412 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:11,413 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:11,507 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:11,508 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:11,515 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:31:11,515 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:31:11,515 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:31:11,515 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:31:11,515 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:31:11,515 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:11,548 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:11,563 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:11,574 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:11,575 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ WHERE this_."AREA" = @p0 ORDER BY this_."INTERNAL_TAG" asc;@p0 = '92'
+2013-07-22 16:31:11,578 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:11,599 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:11,611 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:11,623 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:11,623 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_ where upper(equipment0_."AREA")='92'
+2013-07-22 16:31:11,625 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 1
+2013-07-22 16:31:16,038 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:16,039 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:16,077 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:31:16,078 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:31:16,083 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:31:16,083 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:31:16,083 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:31:16,083 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:31:16,083 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:31:16,083 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:16,108 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:16,121 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:16,134 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:16,134 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ WHERE this_."AREA" = @p0 ORDER BY this_."INTERNAL_TAG" asc;@p0 = '92'
+2013-07-22 16:31:16,137 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:31:16,161 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:16,173 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:16,185 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:31:16,185 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_ where upper(equipment0_."AREA")='92'
+2013-07-22 16:31:16,187 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 1
+2013-07-22 16:39:30,109 [31] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies, Type dlType) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4131
+2013-07-22 16:39:30,111 [31] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-07-22 16:39:30,111 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-07-22 16:39:30,111 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-07-22 16:39:30,111 [31] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-07-22 16:39:30,111 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-07-22 16:39:30,111 [31] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-07-22 16:39:30,111 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-07-22 16:39:30,147 [31] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies, Type dlType) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4131
+2013-07-22 16:39:30,451 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:30,479 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:32,053 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:32,054 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:32,823 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:32,824 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:33,967 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:33,967 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:34,004 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:34,005 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:34,009 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:39:34,009 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:39:34,009 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:39:34,009 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:39:34,010 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:39:34,010 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:34,033 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:34,045 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:34,058 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:34,058 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:39:34,073 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:34,098 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:34,110 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:34,122 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:34,122 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:39:34,124 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:39:40,815 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:40,816 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:40,856 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:40,857 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:40,861 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:39:40,861 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:39:40,861 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:39:40,861 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:39:40,862 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:39:40,862 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:40,886 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:40,898 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:40,909 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:40,910 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ WHERE this_."AREA" = @p0 ORDER BY this_."INTERNAL_TAG" asc;@p0 = '92'
+2013-07-22 16:39:40,913 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:40,935 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:40,947 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:40,958 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:40,959 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_ where upper(equipment0_."AREA")='92'
+2013-07-22 16:39:40,960 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 1
+2013-07-22 16:39:44,831 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:44,832 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:44,871 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:44,872 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:44,877 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:39:44,877 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:39:44,877 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:39:44,877 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:39:44,877 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:39:44,877 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:44,902 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:44,914 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:44,925 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:44,926 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:39:44,930 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:44,952 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:44,963 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:44,975 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:44,975 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:39:44,977 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:39:47,313 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:47,314 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:47,352 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:47,353 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:47,357 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:39:47,357 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:39:47,357 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:39:47,357 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:39:47,358 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:39:47,358 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:47,380 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:47,393 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:47,404 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:47,405 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:39:47,409 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:47,431 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:47,443 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:47,455 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:47,455 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:39:47,457 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:39:49,200 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:49,200 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:49,236 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:49,237 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:49,241 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:39:49,241 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:39:49,241 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:39:49,241 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:39:49,242 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:39:49,242 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:49,264 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:49,276 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:49,288 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:49,289 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:39:49,293 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:49,316 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:49,327 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:49,339 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:49,340 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:39:49,344 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:39:50,423 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:50,424 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:50,461 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:50,462 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:50,466 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:39:50,466 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:39:50,466 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:39:50,466 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:39:50,467 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:39:50,467 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:50,490 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:50,501 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:50,512 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:50,512 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:39:50,517 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:50,538 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:50,549 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:50,561 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:50,561 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:39:50,563 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:39:51,262 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:51,263 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:51,299 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:39:51,300 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:39:51,304 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:39:51,304 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:39:51,304 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:39:51,304 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:39:51,305 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:39:51,305 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:51,328 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:51,340 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:51,352 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:51,353 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:39:51,357 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:39:51,380 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:51,394 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:51,407 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:39:51,407 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:39:51,409 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:41:20,760 [31] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies, Type dlType) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4131
+2013-07-22 16:41:20,761 [31] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-07-22 16:41:20,761 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-07-22 16:41:20,761 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-07-22 16:41:20,761 [31] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-07-22 16:41:20,761 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-07-22 16:41:20,761 [31] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-07-22 16:41:20,761 [31] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-07-22 16:41:20,782 [31] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies, Type dlType) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4131
+2013-07-22 16:41:21,806 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:21,834 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:23,705 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:23,706 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:24,868 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:24,869 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:24,921 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:24,922 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:24,958 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:24,958 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:24,963 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:41:24,963 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:41:24,963 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:41:24,963 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:41:24,963 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:41:24,963 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:24,986 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:24,998 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:25,012 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:25,013 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:41:25,017 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:25,047 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:25,061 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:25,074 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:25,074 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:41:25,076 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:41:26,613 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:26,615 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:26,742 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:26,743 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:26,750 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:41:26,750 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:41:26,750 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:41:26,750 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:41:26,751 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:41:26,751 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:26,793 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:26,809 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:26,822 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:26,822 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:41:26,826 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:26,848 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:26,860 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:26,871 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:26,871 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:41:26,873 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:41:27,704 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:27,704 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:27,742 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:27,743 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:27,747 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:41:27,747 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:41:27,747 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:41:27,747 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:41:27,747 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:41:27,747 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:27,770 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:27,782 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:27,794 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:27,795 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:41:27,799 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:27,821 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:27,833 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:27,844 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:27,845 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:41:27,846 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:41:28,590 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:28,591 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:28,627 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:28,627 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:28,632 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:41:28,632 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:41:28,632 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:41:28,632 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:41:28,632 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:41:28,632 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:28,655 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:28,667 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:28,680 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:28,681 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:41:28,685 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:28,707 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:28,718 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:28,730 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:28,730 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:41:28,732 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:41:29,406 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:29,407 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:29,446 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:29,447 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:29,451 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:41:29,451 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:41:29,451 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:41:29,451 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:41:29,451 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:41:29,451 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:29,473 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:29,485 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:29,497 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:29,497 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:41:29,501 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:29,523 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:29,534 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:29,546 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:29,546 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:41:29,548 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:41:50,637 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:50,638 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:50,673 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:50,674 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:50,679 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:41:50,679 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:41:50,679 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:41:50,679 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:41:50,679 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:41:50,679 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:50,703 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:50,715 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:50,727 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:50,727 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:41:50,731 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:50,755 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:50,767 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:50,779 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:50,779 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:41:50,781 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:41:55,957 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:55,958 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:55,995 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:55,996 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:56,000 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:41:56,000 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:41:56,000 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:41:56,000 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:41:56,000 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:41:56,000 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:56,023 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:56,035 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:56,047 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:56,047 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:41:56,051 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:56,074 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:56,087 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:56,099 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:56,099 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:41:56,101 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:41:58,139 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:58,140 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:58,176 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:41:58,177 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:41:58,184 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:41:58,184 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:41:58,184 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:41:58,184 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:41:58,184 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:41:58,184 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:58,206 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:58,218 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:58,230 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:58,230 [31] DEBUG NHibernate.SQL - SELECT top 25 this_."INTERNAL_TAG" as column1_2_0_, this_."TAG" as column2_2_0_, this_."ID" as column3_2_0_, this_."AREA" as column4_2_0_, this_."TRAINNUMBER" as column5_2_0_, this_."EQTYPE" as column6_2_0_, this_."EQPPREFIX" as column7_2_0_, this_."EQSEQNO" as column8_2_0_, this_."EQPSUFF" as column9_2_0_, this_."EQUIPDESC1" as column10_2_0_, this_."EQUIPDESC2" as column11_2_0_, this_."CONSTTYPE" as column12_2_0_, this_."EWP" as column13_2_0_, this_."USER1" as column14_2_0_, this_."USER2" as column15_2_0_, this_."USER3" as column16_2_0_, this_."TAGSTATUS" as column17_2_0_, this_."COMMODITY" as column18_2_0_ FROM dbo."EQUIPMENT" this_ ORDER BY this_."INTERNAL_TAG" asc
+2013-07-22 16:41:58,234 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'
+2013-07-22 16:41:58,256 [31] ERROR org.iringtools.adapter.DBManager - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:58,268 [31] ERROR org.iringtools.adapter.DBManager - Error executing query [SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc']: Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:58,280 [31] ERROR org.iringtools.adapter.DataLayerGateway - Error creating DB connection: The ConnectionString property has not been initialized.
+2013-07-22 16:41:58,280 [31] DEBUG NHibernate.SQL - select count(*) as col_0_0_ from dbo."EQUIPMENT" equipment0_
+2013-07-22 16:41:58,282 [31] DEBUG org.iringtools.adapter.AdapterProvider - DataObjects Total Count: 58
+2013-07-22 16:42:24,436 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:42:24,437 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:42:24,472 [31] ERROR org.iringtools.adapter.AdapterSettings - Error appending settings: System.NullReferenceException: Object reference not set to an instance of an object.
+   at StaticDust.Configuration.AppSettingsReader.get_Keys()
+   at org.iringtools.adapter.AdapterSettings.AppendSettings(AppSettingsReader settings) in C:\Adapter-2.5-Merged\Libraries\iRINGLibrary\Desktop\AdapterSettings.cs:line 58
+2013-07-22 16:42:24,473 [31] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-07-22 16:42:24,477 [31] DEBUG org.iringtools.adapter.AdapterProvider - Adding URI in setting Collection.
+2013-07-22 16:42:24,477 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Scope: test.ABC
+2013-07-22 16:42:24,477 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing DataLayer.
+2013-07-22 16:42:24,477 [31] DEBUG org.iringtools.adapter.AdapterProvider - Initializing Projection: EQUIPMENT as json
+2013-07-22 16:42:24,478 [31] DEBUG org.iringtools.adapter.AdapterProvider - Getting DataObjects Page: 0 25
+2013-07-22 16:42:24,478 [31] DEBUG org.iringtools.adapter.DBManager - SELECT * FROM Caches WHERE Context = 'test' AND Application = 'abc'

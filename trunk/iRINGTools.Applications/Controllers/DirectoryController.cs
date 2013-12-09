@@ -568,18 +568,43 @@ namespace org.iringtools.web.controllers
 
     public JsonResult Scope(FormCollection form)
     {
-      string success = String.Empty;
+        string success = String.Empty;
+        string scopeName = string.Empty;
 
-      if (form["state"]=="new")//if (String.IsNullOrEmpty(form["scope"]))
-      {
-          success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
-      }
-      else
-      {
-          success = _repository.UpdateScope(form["contextName"], form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
-      }
+        if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
+        {
+            scopeName = form["displayName"];
+            success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
+        }
+        else
+        {
+            scopeName = form["contextName"];
+            success = _repository.UpdateScope(form["contextName"], form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
+        }
 
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+        ScopeProject scope = _repository.GetScope(scopeName);
+        JsonTreeNode node = new JsonTreeNode
+        {
+            nodeType = "async",
+            type = "ScopeNode",
+            iconCls = "scope",
+            id = scope.Name,
+            text = scope.DisplayName,
+            expanded = false,
+            leaf = false,
+            children = null,
+            record = scope
+        };
+
+        node.property = new Dictionary<string, string>();
+        node.property.Add("Internal Name", scope.Name);
+        node.property.Add("Display Name", scope.DisplayName);
+        node.property.Add("Description", scope.Description);
+        nodes.Add(node);
+
+        return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
+        // return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult Application(FormCollection form)
@@ -657,8 +682,112 @@ namespace org.iringtools.web.controllers
             success = _repository.UpdateApplication(scopeName, form["Application"], application);
         }
 
-        JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        return result;
+        //string applicationName = form["Application"];
+        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+        ScopeProject scope = _repository.GetScope(scopeName);
+        ScopeApplication app = (from apps in scope.Applications
+                                where apps.Name == application.Name
+                                select apps).FirstOrDefault();
+
+        Configuration config = _repository.GetConfig(scope.Name, app.Name);
+        app.Configuration = config;
+
+        DataLayer dataLayer = _repository.GetDataLayer(scope.Name, app.Name);
+
+        if (dataLayer != null)
+        {
+            JsonTreeNode node = new JsonTreeNode
+            {
+                nodeType = "async",
+                type = "ApplicationNode",//"appNode",
+                iconCls = "application",
+                id = scope.Name + "/" + app.Name,
+                text = app.DisplayName,
+                expanded = false,
+                leaf = false,
+                children = null,
+                record = new
+                {
+                    Name = app.Name,
+                    DisplayName = app.DisplayName,
+                    Description = app.Description,
+                    DataLayer = dataLayer.Name,
+                    Assembly = dataLayer.Assembly,
+                    Configuration = app.Configuration,
+                    CacheImportURI = app.CacheInfo == null ? "" : app.CacheInfo.ImportURI,
+                    CacheTimeout = app.CacheInfo == null ? "" : Convert.ToString(app.CacheInfo.Timeout),
+                    PermissionGroups = app.PermissionGroup
+                }
+            };
+
+            node.property = new Dictionary<string, string>();
+            node.property.Add("Internal Name", app.Name);
+            node.property.Add("Display Name", app.DisplayName);
+            node.property.Add("Description", app.Description);
+            node.property.Add("Data Layer", dataLayer.Name);
+            node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
+
+
+            JsonTreeNode dataObjectsNode = new JsonTreeNode
+            {
+                nodeType = "async",
+                type = "DataObjectsNode",
+                iconCls = "folder",
+                id = scopeName + "/" + app.Name + "/DataObjects",
+                text = "Data Objects",
+                expanded = false,
+                leaf = false,
+                children = null,
+                property = new Dictionary<string, string>()
+            };
+
+            if (scope != null)
+            {
+                ScopeApplication scopeapplication = scope.Applications.Find(x => x.Name.ToLower() == app.Name.ToLower());
+
+                if (scopeapplication != null)
+                {
+                    dataObjectsNode.property.Add("Data Mode", scopeapplication.DataMode.ToString());
+                }
+            }
+
+            JsonTreeNode graphsNode = new JsonTreeNode
+            {
+                nodeType = "async",
+                type = "GraphsNode",
+                iconCls = "folder",
+                id = scopeName + "/" + app.Name + "/Graphs",
+                text = "Graphs",
+                expanded = false,
+                leaf = false,
+                children = null
+            };
+
+            JsonTreeNode ValueListsNode = new JsonTreeNode
+            {
+                nodeType = "async",
+                type = "ValueListsNode",
+                iconCls = "folder",
+                id = scopeName + "/" + app.Name + "/ValueLists",
+                text = "ValueLists",
+                expanded = false,
+                leaf = false,
+                children = null
+            };
+
+            if (node.children == null)
+                node.children = new List<JsonTreeNode>();
+            node.children.Add(dataObjectsNode);
+            node.children.Add(graphsNode);
+            node.children.Add(ValueListsNode);
+
+            nodes.Add(node);
+        }
+
+        return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
+        //JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        //return result;
     }
 
     public JsonResult DeleteScope(FormCollection form)

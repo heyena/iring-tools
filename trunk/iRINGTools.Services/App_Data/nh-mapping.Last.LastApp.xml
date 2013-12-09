@@ -1,0 +1,15 @@
+﻿<hibernate-mapping default-lazy="true" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="org.iringtools.adapter.datalayer.proj_Last.LastApp.SPECIALTY2, App_Code" table="&quot;SPECIALTY2&quot;">
+    <id name="Id" column="&quot;UNIT&quot;">
+      <generator class="assigned" />
+    </id>
+    <property name="UNIT" column="&quot;UNIT&quot;" update="false" insert="false" />
+    <property name="TAG" column="&quot;TAG&quot;" />
+    <property name="ENG_SYS" column="&quot;ENG_SYS&quot;" />
+    <property name="ENG_SYS_CLIENT" column="&quot;ENG_SYS_CLIENT&quot;" />
+    <property name="CODE_COM_GRP" column="&quot;CODE_COM_GRP&quot;" />
+    <property name="CODE_COM_GRP_CLIENT" column="&quot;CODE_COM_GRP_CLIENT&quot;" />
+    <property name="SEQUENCE_NUMBER" column="&quot;SEQUENCE_NUMBER&quot;" />
+    <property name="SUFFIX" column="&quot;SUFFIX&quot;" />
+  </class>
+</hibernate-mapping>

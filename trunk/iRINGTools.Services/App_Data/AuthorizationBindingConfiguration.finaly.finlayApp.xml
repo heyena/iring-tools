@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<module name="AuthorizationBinding.finaly.finlayApp">
+  <bind name="AuthorizationBinding" service="org.iringtools.nhibernate.IAuthorization, NHibernateLibrary" to="org.iringtools.nhibernate.ext.EveryoneAuthorization, NHibernateExtension" />
+</module>

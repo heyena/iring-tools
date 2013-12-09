@@ -181,7 +181,20 @@ Ext.define('AM.view.directory.ScopeForm', {
                 success: function (response, request) {
 					Ext.example.msg('Notification', 'Scope saved successfully!');
                     win.fireEvent('save', me);
-                    Ext.ComponentQuery.query('directorytree')[0].onReload();
+					var parentNode = node.parentNode;
+					if(parentNode == undefined && node.data.text == 'Scopes'){
+						var nodeIndex = node.lastChild.data.index+1;
+						node.insertChild(nodeIndex,Ext.JSON.decode(request.response.responseText).nodes[0]); 
+					}else{
+						var nodeIndex = parentNode.indexOf(node); 
+						parentNode.removeChild(node); 
+						parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]); 
+					}
+					me.setLoading(false); 
+					win.fireEvent('save', me);
+					//node.firstChild.expand();
+                    //node.expandChildren();
+					//Ext.ComponentQuery.query('directorytree')[0].onReload();
                 },
                 failure: function (response, request) {
                     if (response.items != undefined && response.items[3].value !== undefined) {

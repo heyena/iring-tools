@@ -1,0 +1,272 @@
+2013-09-18 12:03:58,855 [5] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-09-18 12:03:59,350 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:03:59,350 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-09-18 12:03:59,351 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-09-18 12:03:59,351 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:03:59,351 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-09-18 12:03:59,351 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:03:59,351 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-09-18 12:04:00,952 [5] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 12:08:28,715 [5] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-09-18 12:08:28,717 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:08:28,717 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-09-18 12:08:28,717 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-09-18 12:08:28,717 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:08:28,717 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-09-18 12:08:28,717 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:08:28,717 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-09-18 12:08:36,392 [5] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 12:11:03,503 [5] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-09-18 12:11:03,504 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:11:03,504 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-09-18 12:11:03,504 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-09-18 12:11:03,504 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:11:03,504 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-09-18 12:11:03,505 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:11:03,505 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-09-18 12:11:06,882 [5] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 12:20:51,268 [5] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-09-18 12:20:51,270 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:20:51,270 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-09-18 12:20:51,270 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-09-18 12:20:51,270 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:20:51,270 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-09-18 12:20:51,270 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:20:51,270 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-09-18 12:20:59,648 [5] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 12:21:24,739 [5] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 12:21:39,281 [5] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 12:23:07,424 [5] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-09-18 12:23:07,426 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:23:07,449 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-09-18 12:23:07,450 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-09-18 12:23:07,450 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:23:07,450 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-09-18 12:23:07,450 [5] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 12:23:07,450 [5] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-09-18 12:24:00,521 [5] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 13:11:05,959 [5] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 13:11:17,000 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 13:27:44,298 [827] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-09-18 13:27:44,299 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 13:27:44,299 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-09-18 13:27:44,299 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-09-18 13:27:44,299 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-09-18 13:27:44,299 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-09-18 13:27:44,299 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 13:27:44,299 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-09-18 13:27:47,512 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 13:29:49,491 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-09-18 13:29:49,491 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Using History
+2013-09-18 13:29:49,587 [827] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 50 records
+2013-09-18 13:29:58,382 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage
+2013-09-18 13:29:58,382 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Preparing Queries
+2013-09-18 13:29:58,382 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search
+2013-09-18 13:29:58,382 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Bindings
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearch
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ContainsSearchJORD
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ExactSearch
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabel
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetLabelRdlEquivalent
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembers
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersJORD
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetMembersPart8
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClasses
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesJORD
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCountJORD
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassesCount
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassification
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassificationJORD
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Classification
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclass
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClass
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassJORD
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplate
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetBaseTemplatePart8
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualification
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateQualificationPart8
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRoles
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRangeRestriction
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetReferenceRestriction
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetValueRestriction
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassRelationships
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplates
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetClassTemplatesCount
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: ClassProperties
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateClassification
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetTemplateSpecialization
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Template
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Roles
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8RoleRestrictions
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperClassOf
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSuperclassJORD
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetPart8Class
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: Part8ContainsSearch
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOf
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetSubClassOfCount
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplates
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetRelatedTemplatesCount
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: TemplateContainsSearch
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Looging for ContainsSearchJORD: GetEntityTypes
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got QueryItem
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got Contains Search JORD
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Got JORD Bindings
+2013-09-18 13:29:58,403 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-09-18 13:29:58,465 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-09-18 13:30:09,723 [827] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://www.iringsandbox.org/repositories/SandboxPt8/query']
+System.Xml.XmlException: ' ' is an unexpected token. The expected token is ';'. Line 19021, position 57.
+   at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+   at System.Xml.XmlTextReaderImpl.Throw(String res, String[] args)
+   at System.Xml.XmlTextReaderImpl.ThrowUnexpectedToken(String expectedToken1, String expectedToken2)
+   at System.Xml.XmlTextReaderImpl.ThrowUnexpectedToken(Int32 pos, String expectedToken1, String expectedToken2)
+   at System.Xml.XmlTextReaderImpl.HandleEntityReference(Boolean isInAttributeValue, EntityExpandType expandType, Int32& charRefEndPos)
+   at System.Xml.XmlTextReaderImpl.ParseText(Int32& startPos, Int32& endPos, Int32& outOrChars)
+   at System.Xml.XmlTextReaderImpl.FinishPartialValue()
+   at System.Xml.XmlTextReaderImpl.get_Value()
+   at System.Xml.XmlReader.WriteNode(XmlWriter xtw, Boolean defattr)
+   at System.Xml.XmlReader.ReadInnerXml()
+   at VDS.RDF.Parsing.SparqlXmlParser.ParseValue(SparqlXmlParserContext context)
+   at VDS.RDF.Parsing.SparqlXmlParser.Parse(SparqlXmlParserContext context)
+   at VDS.RDF.Parsing.SparqlXmlParser.Load(ISparqlResultsHandler handler, TextReader input)
+   at VDS.RDF.Parsing.SparqlXmlParser.Load(ISparqlResultsHandler handler, StreamReader input)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-09-18 13:30:10,014 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-09-18 13:30:10,014 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-09-18 13:30:40,442 [827] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://rdl.rdlfacade.org/data']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: The operation has timed out
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-09-18 13:30:40,457 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-09-18 13:30:40,458 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-09-18 13:31:10,546 [827] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://dm.rdlfacade.org/data']
+VDS.RDF.Query.RdfQueryException: A HTTP Error occurred while trying to make the SPARQL Query, see inner exception for details ---> System.Net.WebException: The operation has timed out
+   at System.Net.HttpWebRequest.GetResponse()
+   at VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(Uri target, String postData, String accept)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(String sparqlQuery, String acceptHeader)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   --- End of inner exception stack trace ---
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-09-18 13:31:10,546 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Other!
+2013-09-18 13:31:10,547 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-09-18 13:31:13,162 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: JORD!
+2013-09-18 13:31:13,175 [827] DEBUG org.iringtools.refdata.ReferenceDataProvider - SearchPage: Query Repo
+2013-09-18 13:31:53,325 [1253] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-09-18 13:31:53,326 [1253] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 13:31:53,326 [1253] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-09-18 13:31:53,326 [1253] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-09-18 13:31:53,326 [1253] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-09-18 13:31:53,326 [1253] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-09-18 13:31:53,326 [1253] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 13:31:53,326 [1253] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-09-18 13:32:30,486 [827] ERROR org.iringtools.refdata.ReferenceDataProvider - Failed to read repository['http://posccaesar.org/endpoint/sparql']
+System.Xml.XmlException: Unexpected end of file has occurred. The following elements are not closed: binding, result, results, sparql. Line 428390, position 10.
+   at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+   at System.Xml.XmlTextReaderImpl.Throw(String res, String arg)
+   at System.Xml.XmlTextReaderImpl.ThrowUnclosedElements()
+   at System.Xml.XmlTextReaderImpl.ParseElementContent()
+   at System.Xml.XmlTextReaderImpl.Read()
+   at VDS.RDF.Parsing.SparqlXmlParser.Parse(SparqlXmlParserContext context)
+   at VDS.RDF.Parsing.SparqlXmlParser.Load(ISparqlResultsHandler handler, TextReader input)
+   at VDS.RDF.Parsing.SparqlXmlParser.Load(ISparqlResultsHandler handler, StreamReader input)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(ISparqlResultsHandler handler, String sparqlQuery)
+   at VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(String sparqlQuery)
+   at org.iringtools.refdata.ReferenceDataProvider.QueryFromRepository(Repository repository, String sparql) in C:\Adapter-2.5-Merged\Libraries\ReferenceDataLibrary\ReferenceDataProvider.cs:line 1923
+2013-09-18 13:32:30,486 [827] INFO  org.iringtools.refdata.ReferenceDataProvider - SearchPage is returning 50 records
+2013-09-18 13:32:33,805 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 14:06:09,347 [827] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-09-18 14:06:09,348 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:06:09,348 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-09-18 14:06:09,348 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-09-18 14:06:09,348 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:06:09,348 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-09-18 14:06:09,348 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:06:09,348 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-09-18 14:06:12,754 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 14:46:27,180 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 14:54:34,677 [827] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-09-18 14:54:34,678 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:54:34,678 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-09-18 14:54:34,678 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-09-18 14:54:34,678 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:54:34,678 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-09-18 14:54:34,679 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:54:34,679 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-09-18 14:54:36,321 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 14:55:43,599 [827] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-09-18 14:55:43,600 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:55:43,600 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-09-18 14:55:43,600 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-09-18 14:55:43,600 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:55:43,600 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-09-18 14:55:43,600 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:55:43,600 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-09-18 14:55:47,070 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 14:56:01,241 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 14:56:47,478 [827] WARN  org.iringtools.adapter.AdapterProvider - GetTypes() for dotNetRDF, Version=0.5.0.13616, Culture=neutral, PublicKeyToken=null cannot access all types, but datalayer loading is continuing: System.Reflection.ReflectionTypeLoadException: Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.
+   at System.Reflection.RuntimeModule.GetTypes(RuntimeModule module)
+   at System.Reflection.RuntimeModule.GetTypes()
+   at System.Reflection.Assembly.GetTypes()
+   at org.iringtools.adapter.AdapterProvider.GetDataLayerTypes(DataLayers& dataLayers, Assembly[] domainAssemblies) in C:\Adapter-2.5-Merged\Libraries\AdapterLibrary\AdapterProvider.cs:line 4237
+2013-09-18 14:56:47,479 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateExtension, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:56:47,479 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateSummary
+2013-09-18 14:56:47,479 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.nhibernate.ext.NHibernateAuthorization
+2013-09-18 14:56:47,479 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:NHibernateLibrary, Version=2.5.0.5785, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:56:47,479 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.NHibernateDataLayer
+2013-09-18 14:56:47,479 [827] DEBUG org.iringtools.adapter.AdapterProvider - assembly:SpreadsheetDatalayer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+2013-09-18 14:56:47,479 [827] DEBUG org.iringtools.adapter.AdapterProvider - asmType:org.iringtools.adapter.datalayer.SpreadsheetDatalayer
+2013-09-18 14:56:49,802 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 14:57:13,199 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 14:57:24,208 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...
+2013-09-18 14:57:25,375 [827] DEBUG org.iringtools.adapter.BaseProvider - Initializing data layer...

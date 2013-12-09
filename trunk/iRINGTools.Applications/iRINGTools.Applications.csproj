@@ -376,6 +376,7 @@
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetTree.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetWindow.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />
+    <Content Include="Scripts\extjs-4.1.1\ext-all-debug.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />

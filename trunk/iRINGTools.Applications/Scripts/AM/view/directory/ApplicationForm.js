@@ -23,6 +23,7 @@ Ext.define('AM.view.directory.ApplicationForm', {
   ],
 
   record: '',
+  node:'',
   border: true,
   bodyStyle: 'padding:10px 5px 0',
   method: 'POST',
@@ -203,7 +204,7 @@ Ext.define('AM.view.directory.ApplicationForm', {
     var win = me.up('window');
     var endpointName = me.getForm().findField('displayName').getValue();
     var scope = me.getForm().findField('scope').getValue();
-
+	var node = me.node;
     var dlCombo = me.down('combo');
     var state = me.getForm().findField('state').getValue();
 
@@ -221,7 +222,17 @@ Ext.define('AM.view.directory.ApplicationForm', {
         success: function (response, request) {
 		  Ext.example.msg('Notification', 'Application saved successfully!');
           win.fireEvent('save', me);
-          Ext.ComponentQuery.query('directorytree')[0].onReload();
+					var parentNode = node.parentNode;
+					if(node.data.type == 'ScopeNode'){
+						var nodeIndex = node.childNodes.length;
+						node.insertChild(nodeIndex,Ext.JSON.decode(request.response.responseText).nodes[0]); 
+					}else if(node.data.type == 'ApplicationNode'){
+						var nodeIndex = parentNode.indexOf(node); 
+						parentNode.removeChild(node); 
+						parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]); 
+					}
+					me.setLoading(false); 	
+		  //Ext.ComponentQuery.query('directorytree')[0].onReload();
         },
         failure: function (response, request) {
           //var message = 'Error saving changes!';
