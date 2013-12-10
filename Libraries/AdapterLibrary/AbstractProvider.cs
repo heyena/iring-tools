@@ -49,7 +49,7 @@ namespace org.iringtools.adapter
         //FKM
         private TipMap _tipMap = null;
 
-        StreamWriter sw = new StreamWriter(@".\TipGeneratorResult.txt");
+       // StreamWriter sw = new StreamWriter(@".\TipGeneratorResult.txt");
             
 
         private List<IDataObject> _dataObjects = new List<IDataObject>();  // dictionary of object names and list of data objects
@@ -63,8 +63,8 @@ namespace org.iringtools.adapter
         public AbstractProvider(NameValueCollection settings)
             : base(settings)
         {
-            Console.SetOut(sw);
-            sw.AutoFlush = true;
+           // Console.SetOut(sw);
+          //  sw.AutoFlush = true;
             try
             {
                 if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
@@ -2728,8 +2728,8 @@ namespace org.iringtools.adapter
             try
             {
                 _logger.DebugFormat("Initializing Scope: {0}.{1}", project, application);
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Out.WriteLine("Initializing Scope: {0}.{1}", project, application);
+               // Console.ForegroundColor = ConsoleColor.Yellow;
+               // Console.Out.WriteLine("Initializing Scope: {0}.{1}", project, application);
                 //Force to re-initialize scope.
                 _isScopeInitialized = false;
                 InitializeScope(project, application);
@@ -2737,10 +2737,10 @@ namespace org.iringtools.adapter
                 if (_mapping.graphMaps.Count == 0)
                 {
                     _logger.DebugFormat("Mapping: {0}.{1}, doesn't exist", project, application);
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Out.WriteLine("Mapping: {0}.{1}, doesn't exist", project, application);
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.Out.WriteLine("--------------------------------------------------------------"); 
+                  //  Console.ForegroundColor = ConsoleColor.Red;
+                  //  Console.Out.WriteLine("Mapping: {0}.{1}, doesn't exist", project, application);
+                  //  Console.ForegroundColor = ConsoleColor.White;
+                  //  Console.Out.WriteLine("--------------------------------------------------------------"); 
                 }
                 else
                 {
@@ -2749,8 +2749,8 @@ namespace org.iringtools.adapter
                     {
                         string resource = graph.name;
                         _graphMap = _mapping.FindGraphMap(resource);
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Out.WriteLine("Try to create mapping for: {0}.{1}.{2}.", resource, project, application);
+                    //    Console.ForegroundColor = ConsoleColor.Green;
+                    //    Console.Out.WriteLine("Try to create mapping for: {0}.{1}.{2}.", resource, project, application);
                         TipMapping tempTipMapping = new TipMapping();
                         tempTipMapping = BuildTipMapping("tip", "findparameters", project, application);
 
@@ -2793,12 +2793,12 @@ namespace org.iringtools.adapter
             IDictionary<String, IDictionary<String, ValueList>> mappedValueLists = null;
             TipRequest tipRequest = BuildTipRequest(ref mappedProperties, ref mappedValueLists);
 
-            Console.ForegroundColor = ConsoleColor.Magenta;
+          //  Console.ForegroundColor = ConsoleColor.Magenta;
             
-            Console.Out.WriteLine("{0}", mappedProperties.First().Value.First().Key);
-            Console.Out.WriteLine("{0}", mappedProperties.First().Key);
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Out.WriteLine("--------------------------------------------------------------"); 
+          //  Console.Out.WriteLine("{0}", mappedProperties.First().Value.First().Key);
+          //  Console.Out.WriteLine("{0}", mappedProperties.First().Key);
+          //  Console.ForegroundColor = ConsoleColor.White;
+          //  Console.Out.WriteLine("--------------------------------------------------------------"); 
 
             XElement trXml = XElement.Parse(Utility.SerializeDataContract<TipRequest>(tipRequest));
 
