@@ -354,7 +354,7 @@ namespace org.iringtools.utility
         if (relativeUri.Contains(" ")) HttpUtility.HtmlEncode(relativeUri);
 
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Connecting to URL: {0}.", uri));
+        _logger.Debug(string.Format("Performing GET request to URL: {0}.", uri));
 
         WebRequest request = HttpWebRequest.Create(uri);
 
@@ -525,7 +525,7 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Posting data to URL [{0}]...", uri));
+        _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
 
         MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
@@ -586,7 +586,7 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Posting data to URL [{0}]...", uri));
+        _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
 
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
@@ -672,7 +672,7 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Posting message to URL [{0}]...", uri));
+        _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
 
         MemoryStream stream = new MemoryStream();
         StreamWriter writer = new StreamWriter(stream);
@@ -720,7 +720,7 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Putting stream to URL [{0}]...", uri));
+        _logger.Debug(string.Format("Performing PUT to URL [{0}]...", uri));
 
         byte[] bytes = ((MemoryStream)stream).ToArray();
 
@@ -769,7 +769,7 @@ namespace org.iringtools.utility
         try
         {
             string uri = _baseUri + relativeUri;
-            _logger.Debug(string.Format("Posting message to URL [{0}]...", uri));
+            _logger.Debug(string.Format("Performing PUT to URL [{0}]...", uri));
 
             MemoryStream stream = new MemoryStream();
             StreamWriter writer = new StreamWriter(stream);
@@ -817,7 +817,7 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Posting stream to URL [{0}]...", uri));
+        _logger.Debug(string.Format("Performing POST stream to URL [{0}]...", uri));
 
         byte[] bytes = ((MemoryStream)stream).ToArray();
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
@@ -876,7 +876,7 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Posting stream to URL [{0}]...", uri));
+        _logger.Debug(string.Format("Performing POST stream to URL [{0}]...", uri));
 
         System.Net.ServicePointManager.Expect100Continue = false;
 
@@ -937,7 +937,7 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Posting message to URL [{0}]...", uri));
+        _logger.Debug(string.Format("Performing POST message to URL [{0}]...", uri));
 
         MemoryStream stream = new MemoryStream();
         StreamWriter writer = new StreamWriter(stream);
@@ -985,7 +985,7 @@ namespace org.iringtools.utility
         try
         {
             string uri = _baseUri + relativeUri;
-            _logger.Debug(string.Format("Posting message to URL [{0}]...", uri));
+            _logger.Debug(string.Format("Performing POST json to URL [{0}]...", uri));
 
             MemoryStream stream = new MemoryStream();
             StreamWriter writer = new StreamWriter(stream);
@@ -1033,7 +1033,7 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Putting message to URL [{0}]...", uri));
+        _logger.Debug(string.Format("Performing PUT message to URL [{0}]...", uri));
 
         MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
@@ -1072,7 +1072,7 @@ namespace org.iringtools.utility
       {
         // Encoding encoding = Encoding.UTF8;
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Posting multipart message to URL [{0}]...", uri));
+        _logger.Debug(string.Format("Performing POST multipart message to URL [{0}]...", uri));
 
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
         request.ContentType = "multipart/form-data; boundary=" + _boundary;
@@ -1135,7 +1135,7 @@ namespace org.iringtools.utility
       {
         // Encoding encoding = Encoding.UTF8;
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Posting multipart message to URL [{0}]...", uri));
+        _logger.Debug(string.Format("Performing POST multipart message to URL [{0}]...", uri));
 
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
         request.ContentType = "multipart/form-data; boundary=" + _boundary;
@@ -1192,10 +1192,10 @@ namespace org.iringtools.utility
 
     public string ForwardPost(string relativeUri, HttpRequestBase requestBase)
     {
-
       string uri = _baseUri + relativeUri;
-      HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+      _logger.Debug(string.Format("Performing forward POST to URL [{0}]...", uri));
 
+      HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
       Stream webStream = null;
 
       try
@@ -1242,7 +1242,7 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Posting data to URL [{0}]...", uri));
+        _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
 
         MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
