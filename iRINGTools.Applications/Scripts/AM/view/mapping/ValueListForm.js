@@ -14,137 +14,140 @@
  */
 
 Ext.define('AM.view.mapping.ValueListForm', {
-  extend: 'Ext.form.Panel',
-  alias: 'widget.valuelistform',
-  bodyStyle: 'padding:10px 5px 0',
-  method: 'POST',
-  node:'',
-  url: 'mapping/valueList',
-  initComponent: function() {
-    var me = this;
-    me.initialConfig = Ext.apply({
-      method: 'POST',
-      url: 'mapping/valueList'
-    }, me.initialConfig);
+    extend: 'Ext.form.Panel',
+    alias: 'widget.valuelistform',
+    bodyStyle: 'padding:10px 5px 0',
+    method: 'POST',
+    node: '',
+    url: 'mapping/valueList',
+    initComponent: function () {
+        var me = this;
+        me.initialConfig = Ext.apply({
+            method: 'POST',
+            url: 'mapping/valueList'
+        }, me.initialConfig);
 
-    Ext.applyIf(me, {
-      defaults: {
-        anchor: '100%',
-        msgTarget: 'side'
-      },
-      dockedItems: [
+        Ext.applyIf(me, {
+            defaults: {
+                anchor: '100%',
+                msgTarget: 'side'
+            },
+            dockedItems: [
         {
-          xtype: 'toolbar',
-          dock: 'bottom',
-          items: [
+            xtype: 'toolbar',
+            dock: 'bottom',
+            items: [
             {
-              xtype: 'tbfill'
+                xtype: 'tbfill'
             },
             {
-              xtype: 'button',
-              handler: function(button, event) {
-                me.onSave();
-              },
-              text: 'Ok'
+                xtype: 'button',
+                handler: function (button, event) {
+                    me.onSave();
+                },
+                text: 'Ok'
             },
             {
-              xtype: 'button',
-              handler: function(button, event) {
-                me.onReset();
-              },
-              text: 'Cancel'
+                xtype: 'button',
+                handler: function (button, event) {
+                    me.onReset();
+                },
+                text: 'Cancel'
             }
           ]
         }
       ],
-      items: [
+            items: [
         {
-          xtype: 'hiddenfield',
-          name: 'state'
+            xtype: 'hiddenfield',
+            name: 'state'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'mappingNode'
+            xtype: 'hiddenfield',
+            name: 'mappingNode'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'oldValueList'
+            xtype: 'hiddenfield',
+            name: 'oldValueList'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'contextName'
+            xtype: 'hiddenfield',
+            name: 'contextName'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'endpoint'
+            xtype: 'hiddenfield',
+            name: 'endpoint'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'baseUrl'
+            xtype: 'hiddenfield',
+            name: 'baseUrl'
         },
         {
-          xtype: 'textfield',
-          fieldLabel: 'Value List Name',
-          name: 'valueList',
-          allowBlank: false
+            xtype: 'textfield',
+            fieldLabel: 'Value List Name',
+            name: 'valueList',
+            allowBlank: false
         }
       ]
-    });
+        });
 
-    me.callParent(arguments);
-  },
+        me.callParent(arguments);
+    },
 
-  onSave: function() {
-    var me = this;
-    var win = me.up('window');
-    var form = me.getForm();
-	var node = me.node;
-    if (form.findField('valueList').getValue() === '') {
-      //showDialog(400, 100, 'Warning', 'Please type in a value list name before saving.', Ext.Msg.OK, null);
-       Ext.widget('messagepanel', { title: 'Warning', msg: 'Please type in a value list name before saving.'});
-	  return;
+    onSave: function () {
+        var me = this;
+        var win = me.up('window');
+        var form = me.getForm();
+        var node = me.node;
+        if (form.findField('valueList').getValue() === '') {
+            //showDialog(400, 100, 'Warning', 'Please type in a value list name before saving.', Ext.Msg.OK, null);
+            Ext.widget('messagepanel', { title: 'Warning', msg: 'Please type in a value list name before saving.' });
+            return;
+        }
+        form.submit({
+            waitMsg: 'Saving Data...',
+            success: function (response, request) {
+                Ext.example.msg('Notification', 'ValueList saved successfully!');
+                win.fireEvent('Save', me);
+                var res = Ext.JSON.decode(request.response.responseText);
+                var newNode = Ext.JSON.decode(request.response.responseText).node[0];
+                if (res.success) {
+                    /*
+                    var parentNode = node.parentNode;
+
+                    if (node.data.type == 'ValueListsNode') {
+                        var nodeIndex;
+                        if (node.childNodes.length > 0)
+                            nodeIndex = node.lastChild.data.index + 1;
+                        else
+                            nodeIndex = 0;
+                        //newNode.leaf = true;
+                        node.insertChild(nodeIndex, newNode);
+                    } else if (node.data.type == 'ValueListNode') {
+                        var nodeIndex = parentNode.indexOf(node);
+                        parentNode.removeChild(node);
+                        //if(newNode.children == null)
+                        //newNode.leaf = true;
+                        parentNode.insertChild(nodeIndex, newNode);
+                    }
+                    */
+                    me.setLoading(false);
+                } else {
+                    Ext.widget('messagepanel', { title: 'Error', msg: res.message });
+                }
+            },
+            failure: function (response, request) {
+                //var message = 'Error saving changes!';
+                //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+                Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!' });
+            }
+        });
+    },
+
+    onReset: function () {
+        var me = this;
+        var win = me.up('window');
+        win.fireEvent('reset', me);
     }
-    form.submit({
-      waitMsg: 'Saving Data...',
-      success: function (response, request) {
-		Ext.example.msg('Notification', 'ValueList saved successfully!');
-        win.fireEvent('Save', me);
-		var res = Ext.JSON.decode(request.response.responseText);
-		var newNode = Ext.JSON.decode(request.response.responseText).node[0];
-		if(res.success){
-			var parentNode = node.parentNode;
-			if(node.data.type == 'ValueListsNode'){
-				var nodeIndex;
-				if(node.childNodes.length>0)
-					nodeIndex = node.lastChild.data.index+1;
-				else
-					nodeIndex = 0;
-				//newNode.leaf = true;
-				node.insertChild(nodeIndex,newNode); 
-			}else if(node.data.type == 'ValueListNode'){
-				var nodeIndex = parentNode.indexOf(node); 
-				parentNode.removeChild(node); 
-				//if(newNode.children == null)
-					//newNode.leaf = true;
-				parentNode.insertChild(nodeIndex, newNode); 
-			}
-			me.setLoading(false);
-		}else{
-			Ext.widget('messagepanel', { title: 'Error', msg: res.message });
-		}
-      },
-      failure: function (response, request) {
-        //var message = 'Error saving changes!';
-        //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-		Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});
-      }
-    });
-  },
-
-  onReset: function() {
-    var me = this;
-    var win = me.up('window');
-    win.fireEvent('reset', me);
-  }
 
 });
