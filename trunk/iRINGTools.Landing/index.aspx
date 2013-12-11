@@ -8,7 +8,7 @@
   <body>
     <div class="banner">
       <h1>
-        <img src="img/iring-tools-logo.png" />&nbsp; Version 2.05.01
+        <img src="img/iring-tools-logo.png" />&nbsp; Version 2.06.00
       </h1>
     </div>
     <div class="main">
