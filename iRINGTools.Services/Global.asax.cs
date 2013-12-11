@@ -17,7 +17,7 @@ namespace org.iringtools.adapter
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(Global));
 
-        void Application_Start(object sender, EventArgs e)
+        protected void Application_Start(object sender, EventArgs e)
         {
             RegisterRoutes();
             log4net.Config.XmlConfigurator.Configure();
@@ -27,6 +27,22 @@ namespace org.iringtools.adapter
             DataLayers dataLayers = GetDataLayers();
             string path = AppDomain.CurrentDomain.BaseDirectory + "\\App_Data\\DataLayers.xml";
             Utility.Write<DataLayers>(dataLayers, path);
+        }
+
+        protected void Application_BeginRequest(object sender, EventArgs e)
+        {
+            HttpApplication app = (HttpApplication)sender;
+            string path = app.Context.Request.Url.PathAndQuery;
+
+            _logger.Info("--------------------------------------------------------");
+            _logger.Info("Request URL: " + path);
+
+            foreach (string header in app.Request.Headers.AllKeys)
+            {
+                _logger.Info(header + ": " + app.Request.Headers[header]);
+            }
+
+            _logger.Info("--------------------------------------------------------");
         }
 
         private void RegisterRoutes()
