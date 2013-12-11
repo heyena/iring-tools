@@ -172,7 +172,7 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
 		var res = Ext.JSON.decode(request.response.responseText);
 		win.fireEvent('save', me);
 		if(res.success){
-			var parentNode = node.parentNode;
+			/*var parentNode = node.parentNode;
 			if(node.data.type == 'ValueListNode'){
 				var nodeIndex;
 				if(node.childNodes.length>0)
@@ -184,7 +184,7 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
 				var nodeIndex = parentNode.indexOf(node); 
 				parentNode.removeChild(node); 
 				parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).node); 
-			}
+			}*/
 			me.setLoading(false);
 		}else{
 			Ext.widget('messagepanel', { title: 'Error', msg: res.message });
