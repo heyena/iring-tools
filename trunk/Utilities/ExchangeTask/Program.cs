@@ -76,6 +76,9 @@ namespace ExchangeTask
           WebCredentials credential = new WebCredentials(_proxyCredentialToken);
           _httpClient = new WebHttpClient(_baseUrl, credential.userName, credential.password, credential.domain, _proxyHost, _proxyPort);
         }
+
+        if (_httpClient.Headers == null)
+            _httpClient.Headers = new Dictionary<string, string>();
         _httpClient.Headers.Add("ClientToken", _bearerToken);
 
         _logger.Debug("Send exchange request...");
