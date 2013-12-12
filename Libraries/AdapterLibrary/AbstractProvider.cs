@@ -2841,6 +2841,45 @@ namespace org.iringtools.adapter
                     }
                 }
 
+                //
+                if (tipMapping.tipMaps.Count.Equals(0))
+                {
+                    TipMap tmap = new TipMap();
+
+                    tmap.dataObjectName = _graphMap.dataObjectName;
+                    tmap.graphName = _graphMap.name;
+                    tmap.identifierDelimiter = graphClassMap.identifierDelimiter;
+                    tmap.identifiers = new library.tip.Identifiers();
+                    tmap.identifiers.AddRange(graphClassMap.identifiers.ToList());
+
+                    foreach (var parameters in tipRequest.parameterMaps)
+                    {
+                        foreach (var item in mappedProperties[parameters.path])
+                        {
+                            parameters.dataPropertyName = item.Key;
+                            parameters.identifiers = new library.tip.Identifiers();
+                            parameters.identifiers.AddRange(item.Value.ToList());
+
+                            if (mappedValueLists.ContainsKey(parameters.path))
+                            {
+                                foreach (var valITem in mappedValueLists[parameters.path])
+                                {
+                                    parameters.valueList = new ValueList();
+                                    parameters.valueList.name = valITem.Value.name;
+                                    parameters.valueList.values.AddRange(valITem.Value.values);
+                                }
+                            }
+
+                        }
+
+                        parameters.name = "_DEFAULT_" + parameters.dataPropertyName;
+                        tmap.parameterMaps.Add(parameters);
+                    }
+
+                    tipMapping.tipMaps.Add(tmap);
+
+                }
+
                 //Utility.Write<TipMapping>(tipMapping, path, true);
 
                 return tipMapping;
