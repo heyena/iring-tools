@@ -20,7 +20,7 @@
     <RDFImportExportDir>$(UtilitiesDir)\RDFImportExport\RDFImportExport</RDFImportExportDir>
     <QMXFGeneratorDir>$(UtilitiesDir)\QMXFGenerator</QMXFGeneratorDir>
     <FacadeExchangeDir>$(UtilitiesDir)\FacadeExchange</FacadeExchangeDir>
-    <UnitTestsDir>$(MSBuildProjectDirectory)\UnitTests</UnitTestsDir>
+      <UnitTestsDir>$(MSBuildProjectDirectory)\Tests\NUnit.Tests</UnitTestsDir>  
     <AdapterServiceTestsDir>$(UnitTestsDir)\AdapterService.Tests</AdapterServiceTestsDir>
     <RefDataServiceTestsDir>$(UnitTestsDir)\ReferenceDataService.Tests</RefDataServiceTestsDir>    
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
@@ -140,6 +140,7 @@
   <Target Name="CleanBuild">
     <Message Text="Performing MSBuild clean-up ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
+  
   </Target>
    
   <Target Name="PrepareBuild">
