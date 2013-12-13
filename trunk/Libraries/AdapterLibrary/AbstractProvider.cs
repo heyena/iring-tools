@@ -2988,7 +2988,7 @@ namespace org.iringtools.adapter
 
         public object GetItem(
           string project, string application, string resource, string className,
-           string classIdentifier, ref string format, bool fullIndex, bool related)
+           string classIdentifier, ref string format, bool fullIndex)
         {
             string dataObjectName = string.Empty;
 
