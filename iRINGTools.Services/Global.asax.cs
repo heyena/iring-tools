@@ -10,6 +10,7 @@ using org.iringtools.adapter.datalayer;
 using org.iringtools.library;
 using System.IO;
 using org.iringtools.utility;
+using System.Configuration;
 
 namespace org.iringtools.adapter
 {

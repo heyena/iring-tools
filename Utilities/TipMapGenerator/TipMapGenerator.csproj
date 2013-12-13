@@ -120,18 +120,6 @@
       <Project>{47F8BAD7-332C-4463-8AA1-5BC7F9B3A663}</Project>
       <Name>EncryptCredentials</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FacadeExchange\FacadeExchange.csproj">
-      <Project>{66E98657-D742-4775-82A3-9B02BB17B035}</Project>
-      <Name>FacadeExchange</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\QMXFGenerator\QMXFGenerator.csproj">
-      <Project>{91086100-C634-450F-A560-4B5EFCBBF8E6}</Project>
-      <Name>QMXFGenerator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RdfImportExport\RdfImportExport\RdfImportExport.csproj">
-      <Project>{FFBAFDB9-201D-42BB-8BA4-A5F6180F0333}</Project>
-      <Name>RdfImportExport</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
