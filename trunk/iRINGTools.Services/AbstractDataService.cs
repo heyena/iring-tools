@@ -110,8 +110,8 @@ namespace org.iringtools.services
         }
 
         [Description("Gets resource items. Only JSONLD format.")]
-        [WebGet(UriTemplate = "/{app}/{project}/{resource}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}&related={related}")]
-        public void GetList(string project, string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle, bool related)
+        [WebGet(UriTemplate = "/{app}/{project}/{resource}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+        public void GetList(string project, string app, string resource, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
         {
             try
             {
@@ -124,12 +124,12 @@ namespace org.iringtools.services
         }
 
         [Description("Gets a specific resource item. Only JSONLD format..")]
-        [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}&related={related}")]
-        public void GetItem(string project, string app, string resource, string id, string format, bool related)
+        [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}?format={format}")]
+        public void GetItem(string project, string app, string resource, string id, string format)
         {
             try
             {
-                _hmCommonService.GetItem(project, app, resource, id, format, related);
+                _hmCommonService.GetItem(project, app, resource, id, format);
             }
             catch (Exception ex)
             {
