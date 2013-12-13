@@ -72,7 +72,7 @@ function getLastXString(str, num) {
 
 ///overrides required to display correct text on dragstart
 
-Ext.override(Ext.view.DragZone, {
+/*Ext.override(Ext.view.DragZone, {
   getDragText: function () {
     if (this.dragField) {
       var fieldValue = this.dragData.records[0].get(this.dragField);
@@ -111,3 +111,4 @@ Ext.override(Ext.tree.plugin.TreeViewDragDrop, {
     }
   }
 });
+*/
