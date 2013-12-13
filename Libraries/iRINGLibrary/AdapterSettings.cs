@@ -30,7 +30,7 @@ namespace org.iringtools.adapter
       this.Add("ValidateLinks", "False");
       this.Add("DisplayLinks", "False");
       this.Add("ShowJsonNullValues", "False");
-      this.Add("MaxThreads", "50");
+      this.Add("MaxThreads", "32");
       this.Add("SpCharList", System.Configuration.ConfigurationManager.AppSettings["SpCharList"]);
       this.Add("SpCharValue", System.Configuration.ConfigurationManager.AppSettings["SpCharValue"]);
 
