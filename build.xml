@@ -139,8 +139,7 @@
 
   <Target Name="CleanBuild">
     <Message Text="Performing MSBuild clean-up ..." />
-    <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
-  
+    <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>  
   </Target>
    
   <Target Name="PrepareBuild">
@@ -167,8 +166,8 @@
   </Target>
 
   <Target Name="Test">
-    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test-results.xml" />
-	</Target>
+    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test-reports\test-results.xml" />
+  </Target>
 
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
