@@ -76,18 +76,21 @@ Ext.application({
 				    var name = text.items[i].Name;
 					var val = text.items[i].Value;
 					if(name == 'isUISecurityEnabled'){
-					   //utilsObj.isSecEnable = "False";
 					   utilsObj.isSecEnable = val;
 					}
 					if(name == 'isAdmin'){
-					   //utilsObj.isAdmin = "False";
 					   utilsObj.isAdmin = val;
 					}
 				}
-				// process server response here
 			},
 			failure: function(response){
 			}
 		});
    }
+});
+
+Ext.Ajax.on('requestexception', function (conn, response, options) {
+  if (response.status == 0 || response.status == 408) {
+      location.reload(true);
+  }
 });

@@ -41,28 +41,27 @@ namespace org.iringtools.utility
 
         public static void GetAppSettings(string basePath)
         {
-            Properties _uriMaps = new Properties();
+            Properties props = new Properties();
+            string ldapConfig = basePath + "ldap.conf";
 
-            string uriMapsFilePath = basePath + "ldap.conf";
-
-            if (File.Exists(uriMapsFilePath))
+            if (File.Exists(ldapConfig))
             {
                 try
                 {
-                    _uriMaps.Load(uriMapsFilePath);
+                    props.Load(ldapConfig);
+
+                    server = props["server"];
+                    portNumber = int.Parse(props["portNumber"]);
+                    userName = props["userName"];
+                    string tmpPassword = props["password"];
+                    string keyFile = ConfigurationManager.AppSettings["keyfile"];
+                    password = EncryptionUtility.Decrypt(tmpPassword, keyFile);
                 }
                 catch (Exception e)
                 {
                     _logger.Info("Error loading [ldap.config]: " + e);
                 }
             }
-
-            server = _uriMaps["server"];
-            portNumber = int.Parse(_uriMaps["portNumber"]);
-            userName = _uriMaps["userName"];
-            string tmpPassword = _uriMaps["password"];
-            string keyFile = ConfigurationManager.AppSettings["keyfile"];
-            password = EncryptionUtility.Decrypt(tmpPassword, keyFile);
         }
 
         /// <summary>
@@ -385,13 +384,13 @@ namespace org.iringtools.utility
                         }
                     }
                 }
-                return lstgroups;
             }
             catch (Exception ex)
             {
                 _logger.Error("Error in getting security groups from LDAP server: " + ex);
-                throw ex;
             }
+            
+            return lstgroups;
         }
     }
 }
