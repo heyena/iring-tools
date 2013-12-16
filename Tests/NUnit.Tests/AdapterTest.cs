@@ -40,13 +40,13 @@ namespace NUnit.Tests
       _adapterProvider = new AdapterProvider(_settings);
     }
 
-    [Test]
-    public void GetDataLayers()
-    {
-      DataLayers dataLayers = _adapterProvider.GetDataLayers();
+    //[Test]
+    //public void GetDataLayers()
+    //{
+    //  DataLayers dataLayers = _adapterProvider.GetDataLayers();
 
-      Assert.AreNotEqual(0, dataLayers.Count);
-    }
+    //  Assert.AreNotEqual(0, dataLayers.Count);
+    //}
 
     [Test]
     public void GetScopes()
