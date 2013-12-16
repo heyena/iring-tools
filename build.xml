@@ -107,7 +107,9 @@
                Utilities\QMXFGenerator\InformationModel.xlsx;
                Utilities\QMXFTransforms\*.dtd;
                Utilities\QMXFTransforms\*.xsd;
-               Utilities\QMXFTransforms\*.xsl;
+               Utilities\QMXFTransforms\*.xsl;               
+               Utilities\ExchangeTask\bin\Debug\ExchangeTask.exe;
+               Utilities\ExchangeTask\bin\Debug\ExchangeTask.exe.config;               
                Utilities\FacadeExchange\bin\Debug\*.exe;
                Utilities\FacadeExchange\bin\Debug\*.dll;
                Utilities\FacadeExchange\bin\Debug\*.xml;
