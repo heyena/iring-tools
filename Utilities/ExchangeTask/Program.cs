@@ -7,6 +7,10 @@ using log4net;
 using Newtonsoft.Json.Linq;
 using System.Configuration;
 using log4net.Config;
+using org.iringtools.library;
+using System.IO;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace ExchangeTask
 {
@@ -14,105 +18,82 @@ namespace ExchangeTask
     {
         private static ILog _logger = LogManager.GetLogger(typeof(Program));
 
-        private static string _proxyHost = String.Empty;
+        private static string _proxyCredentialToken = string.Empty;
+        private static string _proxyHost = string.Empty;
         private static int _proxyPort = 0;
-        private static string _proxyCredentialToken = String.Empty;
 
-        private static string _ssoUrl = String.Empty;
-        private static string _clientId = String.Empty;
-        private static string _clientSecret = String.Empty;
-        private static string _grantType = String.Empty;
-        private static string _clientToken = String.Empty;
+        private static string _ssoURL = string.Empty;
+        private static string _clientId = string.Empty;
+        private static string _clientSecret = string.Empty;
+        private static string _authType = string.Empty;
+        private static string _clientToken = string.Empty;
 
-        private static string _configurationFiles = String.Empty;
-        private static List<Properties> _exchangeConfigurationList = new List<Properties>();
-        private static WebHttpClient _httpClient = null;
-        private static int _httpRequestTimeout;
+        private static int _requestTimeout = 28800000;  // 8 hours
+        private static Sequence _sequence = null;
 
         static void Main(string[] args)
         {
-            XmlConfigurator.Configure();
-            RunExchange(args);
-        }
-
-        private static void RunExchange(string[] args)
-        {
-            if (Initialize(args))
+            try
             {
+                XmlConfigurator.Configure();
 
-                _logger.Debug("Requesting client token ...");
-
-                if (String.IsNullOrWhiteSpace(_ssoUrl))
+                string sequenceName = args[0];
+                if (Initialize(sequenceName))
                 {
-                    _httpClient = new WebHttpClient(_ssoUrl);
-                }
-                else
-                {
-                    WebCredentials credential = new WebCredentials(_proxyCredentialToken);
-                    _httpClient = new WebHttpClient(_ssoUrl, credential.userName, credential.password, credential.domain, _proxyHost, _proxyPort);
+                    RunTask();
                 }
 
-                string requestBody = String.Format("client_id={0}&client_secret={1}&grant_type={2}", _clientId, _clientSecret, _grantType);
-                string responseBody = _httpClient.PostMessage("", requestBody, true);
-
-                dynamic responseObject = JObject.Parse(responseBody);
-                _clientToken = responseObject.access_token;
-
-                foreach (var exchangeConfiguration in _exchangeConfigurationList)
-                {
-                    string baseUrl = exchangeConfiguration["BaseUrl"];
-                    string scope = exchangeConfiguration["Scope"]; ;
-                    string exchangeId = exchangeConfiguration["ExchangeId"];
-
-                    try
-                    {
-                        string relativeUrl = String.Format("?scope={0}&xid={1}", scope, exchangeId);
-
-                        if (String.IsNullOrWhiteSpace(_proxyCredentialToken))
-                        {
-                            _httpClient = new WebHttpClient(baseUrl);
-                        }
-                        else
-                        {
-                            WebCredentials credential = new WebCredentials(_proxyCredentialToken);
-                            _httpClient = new WebHttpClient(baseUrl, credential.userName, credential.password, credential.domain, _proxyHost, _proxyPort);
-                        }
-
-                        if (_httpRequestTimeout != 0)
-                            _httpClient.Timeout = _httpRequestTimeout;
-
-                        if (_httpClient.Headers == null)
-                            _httpClient.Headers = new Dictionary<string, string>();
-
-                        _httpClient.Headers.Add("AuthType", _grantType);
-                        _httpClient.Headers.Add("ClientToken", _clientToken);
-
-                        _logger.Debug(String.Format("Sending exchange request  for scope: {0} and exchange Id: {1}", scope, exchangeId));
-                        
-                        string responseMessage = _httpClient.GetMessage(relativeUrl);
-                        _logger.Info("Response message: " + responseMessage);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error(String.Format("Error in exchange aginst for scope : {0} and exchange Id: {1}", scope, exchangeId), ex);
-                    }
-                }
+                _logger.Info("Exchange task completed.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Exchange task failed: " + ex.Message, ex);                
             }
         }
 
-        private static bool Initialize(string[] args)
+        static void RunTask()
+        {
+            _logger.Debug("RunTask ...");
+            string clientToken = GetClientToken();
+
+            foreach (Exchange x in _sequence.Exchanges)
+            {
+                string url = string.Format("{0}?scope={1}&xid={2}", x.BaseURL, x.Scope, x.ExchangeId);
+                WebRequest request = CreateWebRequest(url);
+                
+                if (!string.IsNullOrEmpty(clientToken))
+                {
+                    _logger.Info("Use client token.");
+                    request.Headers.Add("AuthType", _authType);
+                    request.Headers.Add("ClientToken", clientToken);
+                }
+            
+                request.Timeout = _requestTimeout;
+                string responseText = GetResponseText(request);
+
+                _logger.Info("Exchange finished: " + responseText);
+            }
+        }
+
+        static bool Initialize(string sequenceName)
         {
             _logger.Debug("Initialize ...");
 
             try
             {
-                _proxyHost = ConfigurationManager.AppSettings["ProxyHost"];
+                #region init proxy info
                 _proxyCredentialToken = ConfigurationManager.AppSettings["ProxyCredentialToken"];
-                _ssoUrl = ConfigurationManager.AppSettings["SSO_URL"];
+                _proxyHost = ConfigurationManager.AppSettings["ProxyHost"];
+
+                string proxyPort = ConfigurationManager.AppSettings["ProxyPort"];
+                int.TryParse(proxyPort, out _proxyPort);
+                #endregion
+
+                #region init client credentials
+                _ssoURL = ConfigurationManager.AppSettings["SSO_URL"];
                 _clientId = ConfigurationManager.AppSettings["client_id"];
-                _clientSecret = ConfigurationManager.AppSettings["client_secret"];                
-                _grantType = ConfigurationManager.AppSettings["grant_type"];
-                _configurationFiles = ConfigurationManager.AppSettings["ConfigurationFiles"];
+                _clientSecret = ConfigurationManager.AppSettings["client_secret"];
+                _authType = ConfigurationManager.AppSettings["grant_type"];
 
                 string clientKey = ConfigurationManager.AppSettings["client_key"];
                 if (!string.IsNullOrEmpty(clientKey))
@@ -123,41 +104,102 @@ namespace ExchangeTask
                 {
                     _clientSecret = EncryptionUtility.Decrypt(_clientSecret);
                 }
+                #endregion
 
-                string httpRequestTimeout = ConfigurationManager.AppSettings["HttpRequestTimeout"];
-                if (!String.IsNullOrWhiteSpace(httpRequestTimeout))
-                    _httpRequestTimeout = Convert.ToInt32(httpRequestTimeout);
+                #region init exchange sequence and timeout
+                string configPath = ConfigurationManager.AppSettings["ExchangeConfig"];
+                
+                if (!File.Exists(configPath)) {
+                    _logger.Error("Exchange Configuration not found.");
+                    return false;
+                }
 
-                string proxyPortString = ConfigurationManager.AppSettings["ProxyPort"];
-                int.TryParse(proxyPortString, out _proxyPort);
-
-                string[] confArray = _configurationFiles.Split(',');
-                foreach (var path in confArray)
+                ExchangeConfig config = Utility.Read<ExchangeConfig>(configPath, true);
+                foreach (Sequence sequence in config)
                 {
-                    _logger.Debug("Reading configuration files...");
-
-                    try
+                    if (sequence.Name.ToLower() == sequenceName)
                     {
-                        if (!String.IsNullOrWhiteSpace(path))
-                        {
-                            Properties props = new Properties();
-                            props.Load(path);
-                            _exchangeConfigurationList.Add(props);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error(String.Format("Error in reading file: {0}", path), ex);
+                        _sequence = sequence;
+                        break;
                     }
                 }
 
-                return true;
+                if (_sequence == null)
+                {
+                    _logger.Error("Sequence [" + sequenceName + "] does not exist in exchange configuration.");
+                    return false;
+                }
+
+                string httpRequestTimeout = ConfigurationManager.AppSettings["RequestTimeout"];
+                if (!string.IsNullOrWhiteSpace(httpRequestTimeout))
+                {
+                    _requestTimeout = Convert.ToInt32(httpRequestTimeout);
+                }
+                #endregion
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message, ex);
+                _logger.Error("Initialization failed: " + ex.Message, ex);
                 return false;
             }
+
+            return true;
+        }
+
+        static WebRequest CreateWebRequest(string url)
+        {
+            WebRequest request = WebRequest.Create(url);
+
+            if (!string.IsNullOrEmpty(_proxyHost))
+            {
+                WebCredentials proxyCreds = new WebCredentials(_proxyCredentialToken);
+                if (proxyCreds.isEncrypted) proxyCreds.Decrypt();
+
+                WebProxy proxy = new WebProxy(_proxyHost, _proxyPort);
+                proxy.Credentials = proxyCreds.GetNetworkCredential();
+                request.Proxy = proxy;
+            }
+
+            return request;
+        }
+
+        static string GetResponseText(WebRequest request)
+        {
+            WebResponse response = request.GetResponse();
+            Stream responseStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(responseStream);
+            string responseText = reader.ReadToEnd();
+            return responseText;
+        }
+
+        static string GetClientToken()
+        {
+            string clientToken = string.Empty;
+
+            try
+            {
+                WebRequest request = CreateWebRequest(_ssoURL);
+                request.Method = "POST";
+                string postData = string.Format("client_id={0}&client_secret={1}&grant_type={2}", _clientId, _clientSecret, _authType);
+                byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = byteArray.Length;
+
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(byteArray, 0, byteArray.Length);
+                requestStream.Close();
+
+                string responseText = GetResponseText(request);
+                Dictionary<string, string> responseObj = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseText);
+
+                clientToken = responseObj["access_token"];
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting access token: ", ex);
+            }
+
+            return clientToken;
         }
     }
 }

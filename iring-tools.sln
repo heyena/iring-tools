@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TipMapGenerator", "Utilitie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExchangeTask", "Utilities\ExchangeTask\ExchangeTask.csproj", "{8641B552-54AE-4531-A9C2-ECB2500EA03D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AESEncryptor", "Utilities\AESEncryptor\AESEncryptor.csproj", "{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -462,6 +464,31 @@ Global
 		{8641B552-54AE-4531-A9C2-ECB2500EA03D}.Release|Mixed Platforms.Build.0 = Release|x86
 		{8641B552-54AE-4531-A9C2-ECB2500EA03D}.Release|x86.ActiveCfg = Release|x86
 		{8641B552-54AE-4531-A9C2-ECB2500EA03D}.Release|x86.Build.0 = Release|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Debug|x86.ActiveCfg = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Debug|x86.Build.0 = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Default|Any CPU.ActiveCfg = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Default|Mixed Platforms.ActiveCfg = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Default|Mixed Platforms.Build.0 = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Default|x86.ActiveCfg = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Default|x86.Build.0 = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Demo|Any CPU.ActiveCfg = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Demo|Mixed Platforms.ActiveCfg = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Demo|Mixed Platforms.Build.0 = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Demo|x86.ActiveCfg = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Demo|x86.Build.0 = Debug|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.MobileDev|Any CPU.ActiveCfg = Release|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.MobileDev|Mixed Platforms.ActiveCfg = Release|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.MobileDev|Mixed Platforms.Build.0 = Release|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.MobileDev|x86.ActiveCfg = Release|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.MobileDev|x86.Build.0 = Release|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Release|Any CPU.ActiveCfg = Release|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Release|Mixed Platforms.Build.0 = Release|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Release|x86.ActiveCfg = Release|x86
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -481,6 +508,7 @@ Global
 		{DAFE844A-E5C9-4D6D-82B9-3D977D0FA40A} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{098F8975-31CC-420F-81C5-14DB5FC4AEB3} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{8641B552-54AE-4531-A9C2-ECB2500EA03D} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
+		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = C:\Enterprise Library
