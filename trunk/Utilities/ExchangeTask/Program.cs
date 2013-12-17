@@ -89,6 +89,8 @@ namespace ExchangeTask
 
                 if (_httpClient.Headers == null)
                     _httpClient.Headers = new Dictionary<string, string>();
+
+                _httpClient.Headers.Add("AuthType", "client_credentials");
                 _httpClient.Headers.Add("ClientToken", _bearerToken);
 
                 _logger.Debug(String.Format("Sending exchange request  for scope: {0} and exchange Id: {1}", scope,exchangeId));
