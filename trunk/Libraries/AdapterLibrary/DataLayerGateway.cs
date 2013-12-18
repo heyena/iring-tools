@@ -37,7 +37,6 @@ namespace org.iringtools.adapter
     private IDataLayer _dataLayer;
     private ILightweightDataLayer _lwDataLayer;
     private LoadingType  _loadingType = LoadingType.Lazy;
-    private List<string> _relatedObjectNameList;
 
     public DataLayerGateway(IKernel kernel)
     {
@@ -212,14 +211,10 @@ namespace org.iringtools.adapter
           cacheId = CreateCacheEntry();
         }
 
-        _relatedObjectNameList = GetAllRelatedObjects();
         foreach (DataObject objectType in _dictionary.dataObjects)
         {
-          if (_loadingType != LoadingType.Eager || _relatedObjectNameList.Where(x => x == objectType.objectName).Count() == 0)
-          {
-            Response objectTypeRefresh = RefreshCache(cacheId, objectType, false);
-            response.Append(objectTypeRefresh);
-          }
+          Response objectTypeRefresh = RefreshCache(cacheId, objectType, false);
+          response.Append(objectTypeRefresh);
         }
       }
       catch (Exception e)
@@ -289,7 +284,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        if (includeRelated && objectType.dataRelationships != null && _loadingType != LoadingType.Eager)
+        if (includeRelated && objectType.dataRelationships != null)
         {
           foreach (DataRelationship relationship in objectType.dataRelationships)
           {
@@ -318,18 +313,6 @@ namespace org.iringtools.adapter
       Response response = new Response();
       response.Level = StatusLevel.Success;
 
-      _relatedObjectNameList = GetAllRelatedObjects();
-      if (_loadingType == LoadingType.Eager && _relatedObjectNameList.Where(x => x == objectType.objectName).Count() > 0)
-      {
-        response.Level = StatusLevel.Error;
-        string error = "Error refreshing cache [" + objectType.objectName + "]: In case of eager loading, this object can't be cached individually";
-        _logger.Error(error);
-        response.Messages.Add(error);
-        return response;
-      }
-
-      IDictionary<string, KeyValuePair<string, DataTable>> objectsTableInfo = new Dictionary<string, KeyValuePair<string, DataTable>>();
-
       try
       {
         //
@@ -344,6 +327,7 @@ namespace org.iringtools.adapter
           Level = StatusLevel.Success,
           Messages = new Messages() { "Cache table " + objectType.tableName + " created successfully." }
         };
+
         response.Append(status);
 
         //
@@ -352,74 +336,40 @@ namespace org.iringtools.adapter
         string tableName = GetCacheTableName(cacheId, objectType.objectName);
         string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
         DataTable table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
-        objectsTableInfo.Add(objectType.objectName, new KeyValuePair<string, DataTable>(tableName, table));
-
-        //
-        //create related tables in case of eager loading
-        //
-        if (objectType.dataRelationships != null && _loadingType == LoadingType.Eager)
-        {
-          foreach (DataRelationship relationship in objectType.dataRelationships)
-          {
-            DataObject relatedObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == relationship.relatedObjectName.ToLower());
-            if (relatedObject != null)
-            {
-              DeleteCacheTable(cacheId, relatedObject);
-              CreateCacheTable(cacheId, relatedObject);
-
-              string msg = "Cache table " + relatedObject.objectName + " created successfully.";
-              status.Messages.Add(msg);
-
-              tableName = GetCacheTableName(cacheId, relatedObject.objectName);
-              tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
-              table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
-              objectsTableInfo.Add(relatedObject.objectName, new KeyValuePair<string, DataTable>(tableName, table));
-            }
-          }
-        }
 
         if (_lwDataLayer != null)
         {
-          IList<SerializableDataObject> dataObjectsAll = _lwDataLayer.Get(objectType);
+          IList<SerializableDataObject> dataObjects = _lwDataLayer.Get(objectType);
 
-          foreach (var objectTableInfo in objectsTableInfo)
+          if (dataObjects != null && dataObjects.Count > 0)
           {
-            string objectName = objectTableInfo.Key;
-            tableName = objectTableInfo.Value.Key;
-            table = objectTableInfo.Value.Value;
-
-            IList<SerializableDataObject> dataObjects = GetFilteredDataObjects(objectName, dataObjectsAll);
-
-            if (dataObjects != null && dataObjects.Count > 0)
+            foreach (SerializableDataObject dataObj in dataObjects)
             {
-              foreach (SerializableDataObject dataObj in dataObjects)
+              DataRow newRow = table.NewRow();
+
+              foreach (var pair in dataObj.Dictionary)
               {
-                DataRow newRow = table.NewRow();
-
-                foreach (var pair in dataObj.Dictionary)
-                {
-                  if (pair.Value == null)
-                    newRow[pair.Key] = DBNull.Value;
-                  else
-                    newRow[pair.Key] = pair.Value;
-                }
-
-                if (dataObj.HasContent)
-                {
-                  newRow[BaseLightweightDataLayer.HAS_CONTENT] = true;
-                }
-
-                table.Rows.Add(newRow);
+                if (pair.Value == null)
+                  newRow[pair.Key] = DBNull.Value;
+                else
+                  newRow[pair.Key] = pair.Value;
               }
 
-              SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
-              bulkCopy.DestinationTableName = tableName;
-              bulkCopy.WriteToServer(table);
+              if (dataObj.HasContent)
+              {
+                newRow[BaseLightweightDataLayer.HAS_CONTENT] = true;
+              }
 
-              string msg = "Cache data for [" + objectName + "] populated successfully.";
-              status.Messages.Add(msg);
-              response.Messages.Add(msg);
+              table.Rows.Add(newRow);
             }
+
+            SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
+            bulkCopy.DestinationTableName = tableName;
+            bulkCopy.WriteToServer(table);
+
+            string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
+            status.Messages.Add(msg);
+            response.Messages.Add(msg);
           }
         }
         else if (_dataLayer != null)
@@ -439,106 +389,57 @@ namespace org.iringtools.adapter
           while (start < objCount)
           {
             limit = (start + page < objCount) ? page : start + page - objCount;
-            IList<IDataObject> dataObjectsAll = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
+            IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
 
-            foreach (var objectTableInfo in objectsTableInfo)
+            if (dataObjects != null && dataObjects.Count > 0)
             {
-              string objectName = objectTableInfo.Key;
-              tableName = objectTableInfo.Value.Key;
-              table = objectTableInfo.Value.Value;
-              
-              IList<IDataObject> dataObjects = GetFilteredDataObjects(objectName, dataObjectsAll);
-
-              if (dataObjects != null && dataObjects.Count > 0)
+              foreach (IDataObject dataObj in dataObjects)
               {
-                foreach (IDataObject dataObj in dataObjects)
+                DataRow newRow = table.NewRow();
+
+                foreach (DataProperty prop in objectType.dataProperties)
                 {
-                  DataRow newRow = table.NewRow();
+                  object value = dataObj.GetPropertyValue(prop.propertyName);
 
-                  foreach (DataProperty prop in objectType.dataProperties)
+                  if (value == null)
                   {
-                    object value = dataObj.GetPropertyValue(prop.propertyName);
-
-                    if (value == null)
-                    {
-                      value = DBNull.Value;
-                    }
-
-                    newRow[prop.propertyName] = value;
+                    value = DBNull.Value;
                   }
 
-                  if (typeof(GenericDataObject).IsAssignableFrom(dataObj.GetType()))
-                  {
-                    newRow[BaseLightweightDataLayer.HAS_CONTENT] = ((GenericDataObject)dataObj).HasContent;
-                  }
-
-                  table.Rows.Add(newRow);
+                  newRow[prop.propertyName] = value;
                 }
+
+                if (typeof(GenericDataObject).IsAssignableFrom(dataObj.GetType()))
+                {
+                  newRow[BaseLightweightDataLayer.HAS_CONTENT] = ((GenericDataObject)dataObj).HasContent;
+                }
+
+                table.Rows.Add(newRow);
               }
-
-              start += page;
             }
+
+            start += page;
           }
 
-          foreach (var objectTableInfo in objectsTableInfo)
-          {
-            string objectName = objectTableInfo.Key;
-            tableName = objectTableInfo.Value.Key;
-            table = objectTableInfo.Value.Value;
+          SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
+          bulkCopy.DestinationTableName = tableName;
+          bulkCopy.WriteToServer(table);
 
-            SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
-            bulkCopy.DestinationTableName = tableName;
-            bulkCopy.WriteToServer(table);
-
-            string msg = "Cache data for [" + objectName  + "] populated successfully.";
-            status.Messages.Add(msg);
-            response.Messages.Add(msg);
-          }
+          string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
+          status.Messages.Add(msg);
+          response.Messages.Add(msg);
         }
       }
       catch (Exception e)
       {
         response.Level = StatusLevel.Error;
-        
+
         string error = "Error refreshing cache [" + objectType.objectName + "]: " + e.Message;
         _logger.Error(error);
         response.Messages.Add(error);
       }
 
       return response;
-    }
-
-    private IList<IDataObject> GetFilteredDataObjects(string objectName, IList<IDataObject> dataObjects)
-    {
-      List<IDataObject> filteredDataObject = new List<IDataObject>();
-      foreach (IDataObject dataObject in dataObjects)
-      {
-        if (dataObject is GenericDataObject)
-        {
-          if (((GenericDataObject)dataObject).ObjectType.ToUpper() == objectName.ToUpper())
-          {
-            filteredDataObject.Add(dataObject);
-          }
-        }
-        else
-        {
-          filteredDataObject.Add(dataObject);
-        }
-      }
-      return filteredDataObject;      
-    }
-
-    private IList<SerializableDataObject> GetFilteredDataObjects(string objectName, IList<SerializableDataObject> dataObjects)
-    {
-      List<SerializableDataObject> filteredDataObject = new List<SerializableDataObject>();
-      foreach (SerializableDataObject dataObject in dataObjects)
-      {
-          if (dataObject.Type.ToUpper() == objectName.ToUpper())
-          {
-            filteredDataObject.Add(dataObject);
-          }
-      }
-      return filteredDataObject;     
     }
 
     public Response ImportCache(string baseUri, bool updateDictionary)
@@ -664,7 +565,6 @@ namespace org.iringtools.adapter
     {
       Response response = new Response();
       response.Level = StatusLevel.Success;
-      IDictionary<string, KeyValuePair<string, DataTable>> objectsTableInfo = new Dictionary<string, KeyValuePair<string, DataTable>>();
 
       try
       {
@@ -686,7 +586,7 @@ namespace org.iringtools.adapter
 
         WebHttpClient client = new WebHttpClient(importURI);
         Stream stream = client.GetStream(string.Empty);
-        List<SerializableDataObject> dataObjectsAll = BaseLightweightDataLayer.ReadDataObjects(stream);
+        List<SerializableDataObject> dataObjects = BaseLightweightDataLayer.ReadDataObjects(stream);
 
         DeleteCacheTable(cacheId, objectType);
         CreateCacheTable(cacheId, objectType);
@@ -698,31 +598,7 @@ namespace org.iringtools.adapter
         string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
         DataTable table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
 
-        //
-        //create related tables in case of eager loading
-        //
-        if (objectType.dataRelationships != null && _loadingType == LoadingType.Eager)
-        {
-          foreach (DataRelationship relationship in objectType.dataRelationships)
-          {
-            DataObject relatedObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == relationship.relatedObjectName.ToLower());
-            if (relatedObject != null)
-            {
-              DeleteCacheTable(cacheId, relatedObject);
-              CreateCacheTable(cacheId, relatedObject);
-
-              string msg = "Cache table " + relatedObject.objectName + " created successfully.";
-              status.Messages.Add(msg);
-
-              tableName = GetCacheTableName(cacheId, relatedObject.objectName);
-              tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
-              table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
-              objectsTableInfo.Add(relatedObject.objectName, new KeyValuePair<string, DataTable>(tableName, table));
-            }
-          }
-        }
-
-        if (dataObjectsAll == null || dataObjectsAll.Count == 0)
+        if (dataObjects == null || dataObjects.Count == 0)
         {
           status.Level = StatusLevel.Warning;
 
@@ -732,54 +608,45 @@ namespace org.iringtools.adapter
         }
         else
         {
-          foreach (var objectTableInfo in objectsTableInfo)
+          foreach (SerializableDataObject dataObj in dataObjects)
           {
-            string objectName = objectTableInfo.Key;
-            tableName = objectTableInfo.Value.Key;
-            table = objectTableInfo.Value.Value;
-
-            IList<SerializableDataObject> dataObjects = GetFilteredDataObjects(objectName, dataObjectsAll);
-
-            foreach (SerializableDataObject dataObj in dataObjects)
+            if (dataObj.Type != null && dataObj.Type.ToLower() == objectType.objectName.ToLower())
             {
-              if (dataObj.Type != null && dataObj.Type.ToLower() == objectType.objectName.ToLower())
-              {
-                DataRow newRow = table.NewRow();
+              DataRow newRow = table.NewRow();
 
-                foreach (var pair in dataObj.Dictionary)
+              foreach (var pair in dataObj.Dictionary)
+              {
+                object value = pair.Value;
+                if (value == null)
                 {
-                  object value = pair.Value;
-                  if (value == null)
-                  {
-                    value = DBNull.Value;
-                  }
-                  newRow[pair.Key] = value;
+                  value = DBNull.Value;
                 }
-
-                table.Rows.Add(newRow);
+                newRow[pair.Key] = value;
               }
-              else
-              {
-                status.Level = StatusLevel.Error;
 
-                string error = "Cached data for [" + objectType.objectName + "] is invalid.";
-                status.Messages.Add(error);
-                response.Messages.Add(error);
-                break;
-              }
+              table.Rows.Add(newRow);
+            }
+            else
+            {
+              status.Level = StatusLevel.Error;
+
+              string error = "Cached data for [" + objectType.objectName + "] is invalid.";
+              status.Messages.Add(error);
+              response.Messages.Add(error);
+              break;
             }
           }
+        }
 
-          if (status.Level == StatusLevel.Success)
-          {
-            SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
-            bulkCopy.DestinationTableName = tableName;
-            bulkCopy.WriteToServer(table);
+        if (status.Level == StatusLevel.Success)
+        {
+          SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
+          bulkCopy.DestinationTableName = tableName;
+          bulkCopy.WriteToServer(table);
 
-            string msg = "Cached data for [" + objectType.objectName + "] imported successfully.";
-            status.Messages.Add(msg);
-            response.Messages.Add(msg);
-          }
+          string msg = "Cached data for [" + objectType.objectName + "] imported successfully.";
+          status.Messages.Add(msg);
+          response.Messages.Add(msg);
         }
 
         response.Append(status);
@@ -975,6 +842,11 @@ namespace org.iringtools.adapter
             dataObjects = iDataObjects.ToList();
           }
 
+          if (_loadingType == LoadingType.Eager) // include related object in collection
+          {
+              List<IDataObject> relatedObjects = GetRelatedObjects(objectType, dataObjects);
+              dataObjects.AddRange(relatedObjects);
+          }
           return dataObjects;
         }
         
@@ -1009,7 +881,7 @@ namespace org.iringtools.adapter
 
         if (_loadingType == LoadingType.Eager) // include related object in collection
         {
-          List<IDataObject> relatedObjects = GetCachedRelatedObjects(objectType, dataObjects);
+          List<IDataObject> relatedObjects = GetRelatedObjects(objectType, dataObjects);
           dataObjects.AddRange(relatedObjects);
         }
       }
@@ -1048,6 +920,12 @@ namespace org.iringtools.adapter
             dataObjects = iDataObjects.ToList();
           }
 
+          if (_loadingType == LoadingType.Eager) // include related object in collection
+          {
+              List<IDataObject> relatedObjects = GetRelatedObjects(objectType, dataObjects);
+              dataObjects.AddRange(relatedObjects);
+          }
+
           return dataObjects;
         }
         
@@ -1061,7 +939,7 @@ namespace org.iringtools.adapter
 
         if (_loadingType == LoadingType.Eager) // include related object in collection
         {
-          List<IDataObject> relatedObjects = GetCachedRelatedObjects(objectType,dataObjects);
+          List<IDataObject> relatedObjects = GetRelatedObjects(objectType,dataObjects);
           dataObjects.AddRange(relatedObjects);
         }
 
@@ -1075,7 +953,7 @@ namespace org.iringtools.adapter
       return dataObjects;
     }
 
-    private List<IDataObject> GetCachedRelatedObjects(DataObject parentObjectType, List<IDataObject> parentDataObjects)
+    private List<IDataObject> GetRelatedObjects(DataObject parentObjectType, List<IDataObject> parentDataObjects)
     {
       List<IDataObject> relatedObjects = new List<IDataObject>();
       _dictionary = GetDictionary();
@@ -1779,19 +1657,7 @@ namespace org.iringtools.adapter
           return "nvarchar(MAX)";
       }
     }
-
-    private List<string> GetAllRelatedObjects()
-    {
-      List<string> relatedObjectNameList = new List<string>();
-      _dictionary = GetDictionary();
-
-      foreach (DataRelationship dataRelationship in _dictionary.dataObjects.SelectMany(x => x.dataRelationships))
-      {
-        if (relatedObjectNameList.Where(x => x == dataRelationship.relatedObjectName).Count() == 0)
-          relatedObjectNameList.Add(dataRelationship.relatedObjectName);
-      }
-      return relatedObjectNameList;
-    }
+ 
   }
 
   public enum CacheState { Dirty, Busy, Ready }
