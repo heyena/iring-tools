@@ -94,7 +94,13 @@
     </AppsDeployment>
 
     <UtilitiesDeployment
-      Include="Utilities\EncryptCredentials\bin\Debug\*.exe;
+      Include="Utilities\AESEncryptor\bin\Debug\*.exe;     
+               Utilities\AESEncryptor\bin\Debug\*.dll;         
+               Utilities\ExchangeTask\bin\Debug\*.exe;     
+               Utilities\ExchangeTask\bin\Debug\*.dll;
+               Utilities\ExchangeTask\bin\Debug\*.config; 
+               Utilities\ExchangeTask\bin\Debug\*.xml;
+               Utilities\EncryptCredentials\bin\Debug\*.exe;
                Utilities\EncryptCredentials\bin\Debug\*.dll;
                Utilities\ConfigurationTool\bin\Debug\*.exe;
                Utilities\ConfigurationTool\bin\Debug\*.dll;
@@ -108,8 +114,6 @@
                Utilities\QMXFTransforms\*.dtd;
                Utilities\QMXFTransforms\*.xsd;
                Utilities\QMXFTransforms\*.xsl;               
-               Utilities\ExchangeTask\bin\Debug\ExchangeTask.exe;
-               Utilities\ExchangeTask\bin\Debug\ExchangeTask.exe.config;               
                Utilities\FacadeExchange\bin\Debug\*.exe;
                Utilities\FacadeExchange\bin\Debug\*.dll;
                Utilities\FacadeExchange\bin\Debug\*.xml;
