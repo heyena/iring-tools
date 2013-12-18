@@ -82,13 +82,22 @@ namespace org.iringtools.adapter.projection
 
               if (dataObj is GenericDataObject)
               {
-                  dataItem.hasContent = ((GenericDataObject)dataObj).HasContent;
-                  dataItem.type = ((GenericDataObject)dataObj).ObjectType;
-                  if (previousItemResourceName != dataItem.type.ToLower())
-                  {
-                    dataObject = FindGraphDataObject(dataItem.type);
-                    previousItemResourceName = dataItem.type.ToLower();
-                  }
+                dataItem.hasContent = ((GenericDataObject)dataObj).HasContent;
+                dataItem.type = ((GenericDataObject)dataObj).ObjectType;
+                if (previousItemResourceName != dataItem.type.ToLower())
+                {
+                  dataObject = FindGraphDataObject(dataItem.type);
+                  previousItemResourceName = dataItem.type.ToLower();
+                }
+              }
+              else {
+                 string objectName = dataObj.GetType().Name;
+                 dataItem.type = objectName;
+                 if (previousItemResourceName != dataItem.type.ToLower())
+                 {
+                   dataObject = FindGraphDataObject(dataItem.type);
+                   previousItemResourceName = dataItem.type.ToLower();
+                 }
               }
 
               bool isContentObject = false;
