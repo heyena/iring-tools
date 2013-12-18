@@ -88,11 +88,18 @@ namespace org.iringtools.services
             _hmCommonService.GetScopeWADL(app, project);
         }
 
-        [Description("Gets data dictionary. Only JSONLD format.")]
-        [WebGet(UriTemplate = "/{app}/{project}/dictionary?format={format}")]
-        public void GetTipDictionary(string project, string app, string format)
+        [Description("Gets tip mapping. Only JSONLD format.")]
+        [WebGet(UriTemplate = "/{app}/{project}/tipmapping?format={format}")]
+        public void GetTipMapping(string project, string app, string format)
         {
-            _hmCommonService.GetTipDictionary(project, app, format);
+            _hmCommonService.GetTipMapping(project, app, format);
+        }
+
+        [Description("Gets tip dictionary. Only JSONLD format.")]
+        [WebGet(UriTemplate = "/{app}/{project}/dictionary?format={format}")]
+        public void GetDictionary(string project, string app, string format)
+        {
+            _hmCommonService.GetDictionary(project, app, format);
         }
 
         [Description("Gets a specific object definition from data dictionary. Only JSONLD format.")]
