@@ -117,7 +117,7 @@ namespace ExchangeTask
                 ExchangeConfig config = Utility.Read<ExchangeConfig>(configPath, true);
                 foreach (Sequence sequence in config)
                 {
-                    if (sequence.Name.ToLower() == sequenceName)
+                    if (sequence.Name.ToLower() == sequenceName.ToLower())
                     {
                         _sequence = sequence;
                         break;
