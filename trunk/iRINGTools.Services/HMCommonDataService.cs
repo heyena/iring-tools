@@ -39,7 +39,7 @@ namespace org.iringtools.services
             _abstractPrivder.FormatOutgoingMessage<VersionInfo>(version, "json", true);
         }
 
-        public void GetTipDictionary(string project, string app, string format)
+        public void GetTipMapping(string project, string app, string format)
         {
             try
             {
@@ -47,14 +47,40 @@ namespace org.iringtools.services
 
                 if (IsAsync())
                 {
-                    string statusUrl = _abstractPrivder.AsyncGetTipDictionary(project, app);
+                    string statusUrl = _abstractPrivder.AsyncGetTipMapping(project, app);
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
                     WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
                 }
                 else
                 {
-                    TipMapping tipDictionary = _abstractPrivder.GetTipDictionary(project, app, format);
+                    TipMapping tipDictionary = _abstractPrivder.GetTipMapping(project, app, format);
                     _abstractPrivder.FormatOutgoingMessage<TipMapping>(tipDictionary, format, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+                HttpContext.Current.Response.ContentType = "text/plain";
+                HttpContext.Current.Response.Write(ex.Message);
+            }
+        }
+
+        new public void GetDictionary(string project, string app, string format)
+        {
+            try
+            {
+                format = "jsonld";
+
+                if (IsAsync())
+                {
+                    string statusUrl = _abstractPrivder.AsyncGetDictionary(project, app);
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Accepted;
+                    WebOperationContext.Current.OutgoingResponse.Headers["location"] = statusUrl;
+                }
+                else
+                {
+                    DataDictionary dataDictionary = _abstractPrivder.GetDictionary(project, app);
+                    _abstractPrivder.FormatOutgoingMessage<DataDictionary>(dataDictionary, format, true);
                 }
             }
             catch (Exception ex)
