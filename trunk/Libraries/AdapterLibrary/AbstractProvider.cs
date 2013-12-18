@@ -855,11 +855,11 @@ namespace org.iringtools.adapter
             }
         }
 
-        private void DoGetTipDictionary(string project, string application, string id, string format)
+        private void DoGetTipMapping(string project, string application, string id, string format)
         {
             try
             {
-                TipMapping tipDictionary = GetTipDictionary(project, application, format);
+                TipMapping tipDictionary = GetTipMapping(project, application, format);
 
                 _requests[id].ResponseText = Utility.Serialize<TipMapping>(tipDictionary, true);
                 _requests[id].State = State.Completed;
@@ -886,7 +886,7 @@ namespace org.iringtools.adapter
             }
         }
 
-        public string AsyncGetTipDictionary(string project, string application)
+        public string AsyncGetTipMapping(string project, string application)
         {
             try
             {
@@ -1064,7 +1064,71 @@ namespace org.iringtools.adapter
                 InitializeScope(project, application);
                 InitializeDataLayer();
 
-                return _kernel.TryGet<DataDictionary>();
+                DataDictionary dataDictionary = _kernel.TryGet<DataDictionary>();
+
+                DataDictionary dDictionary = new DataDictionary();
+                List<string> dRelationship = new List<string>();
+
+                for (int i = 0; i < dataDictionary.dataObjects.Count(); ++i)
+                {
+                    DataObject dataObject = dataDictionary.dataObjects[i];
+
+                    foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+                    {
+                        dRelationship.Add(dataRelationship.relationshipName);
+                    }
+                }
+
+
+                for (int i = 0; i < dataDictionary.dataObjects.Count(); ++i)
+                {
+                    DataObject dataObject = dataDictionary.dataObjects[i];
+                    DataObject dDataObject = new DataObject();
+
+                    
+                    
+
+                    foreach (DataProperty dataProperty in dataObject.dataProperties)
+                    {
+                        foreach (TipMap tipMap in _tipMapping.tipMaps)
+                        {
+                            foreach (ParameterMap parameter in tipMap.parameterMaps)
+                            {
+                                if(parameter.dataPropertyName.Equals(dataObject.objectName + "." + dataProperty.propertyName))
+                                {
+                                    dataProperty.columnName = parameter.name;
+                                    dDataObject.objectName = parameter.dataPropertyName;
+                                    dDataObject.tableName = dataObject.objectName;
+                                    dDataObject.keyProperties = dataObject.keyProperties;
+                                    dDataObject.dataProperties.Add(dataProperty);
+                                }
+
+                                foreach (string item in dRelationship)
+                                {
+                                    if (parameter.dataPropertyName.Equals(item + "." + dataProperty.propertyName))
+                                    {
+                                        dataProperty.columnName = parameter.name;
+                                        dDataObject.objectName = parameter.dataPropertyName;
+                                        dDataObject.tableName = dataObject.objectName;
+                                        dDataObject.keyProperties = dataObject.keyProperties;
+                                        dDataObject.dataProperties.Add(dataProperty);
+                                    } 
+                                }
+                            }
+                        }
+                    }
+
+                    foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+                    {
+                        dDataObject.dataRelationships.Add(dataRelationship);
+                    }
+
+                    dDictionary.dataObjects.Add(dDataObject);
+                }
+
+
+
+                return dDictionary;
             }
             catch (Exception ex)
             {
@@ -1073,7 +1137,7 @@ namespace org.iringtools.adapter
             }
         }
 
-        public TipMapping GetTipDictionary(string project, string application, string format)
+        public TipMapping GetTipMapping(string project, string application, string format)
         {
             try
             {
