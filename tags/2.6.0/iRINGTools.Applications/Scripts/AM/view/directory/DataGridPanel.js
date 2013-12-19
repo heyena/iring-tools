@@ -1,0 +1,30 @@
+Ext.define('AM.view.directory.DataGridPanel', {
+    extend: 'Ext.grid.Panel',
+    alias: 'widget.dynamicgrid',
+
+    requires: [
+        'AM.view.override.directory.DataGridPanel',
+        'AM.store.DataGridStore'
+    ],
+
+    closable: true,
+    store: 'DataGridStore',
+    style: 'background-color: #fff;',
+
+    initComponent: function () {
+        var me = this;
+
+        Ext.applyIf(me, {
+            columns: [
+            {
+                xtype: 'gridcolumn',
+                dataIndex: 'string'
+            }],
+            viewConfig: {
+                enableTextSelection: true
+            }
+        });
+
+        me.callParent(arguments);
+    }
+});
