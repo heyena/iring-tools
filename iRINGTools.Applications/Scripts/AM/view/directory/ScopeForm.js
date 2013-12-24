@@ -183,7 +183,7 @@ Ext.define('AM.view.directory.ScopeForm', {
                     win.fireEvent('save', me);
 					var parentNode = node.parentNode;
 					if(parentNode == undefined && node.data.text == 'Scopes'){
-						var nodeIndex = node.lastChild.data.index+1;
+						var nodeIndex = 0;//node.lastChild.data.index+1;
 						node.insertChild(nodeIndex,Ext.JSON.decode(request.response.responseText).nodes[0]); 
 					}else{
 						var nodeIndex = parentNode.indexOf(node); 
@@ -191,7 +191,7 @@ Ext.define('AM.view.directory.ScopeForm', {
 						parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]); 
 					}
 					me.setLoading(false); 
-					win.fireEvent('save', me);
+					//win.fireEvent('save', me);
 					//node.firstChild.expand();
                     //node.expandChildren();
 					//Ext.ComponentQuery.query('directorytree')[0].onReload();
