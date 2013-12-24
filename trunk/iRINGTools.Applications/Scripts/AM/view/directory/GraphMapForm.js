@@ -330,7 +330,6 @@ Ext.define('AM.view.directory.GraphMapForm', {
       waitMsg: 'Saving Data...',
       success: function (response, request) {
 		Ext.example.msg('Notification', 'Graph saved successfully!');
-        win.fireEvent('save', me);
 		var res = Ext.JSON.decode(request.response.responseText);
 		if(res.success){
 			var parentNode = node.parentNode;
@@ -350,7 +349,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
 		}else{
 			Ext.widget('messagepanel', { title: 'Error', msg: res.message });
 		}
-		 
+        win.fireEvent('save', me);
       },
       failure: function (response, request) {
         //var message = 'Error saving changes!';
