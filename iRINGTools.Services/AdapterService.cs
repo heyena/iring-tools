@@ -525,15 +525,21 @@ namespace org.iringtools.services
 
     [Description("Get all groups for the specified user from LDAP.")]
     [WebGet(UriTemplate = "/{username}/groups")]
-    public List<string> GetLDAPUserGroups(string username)
+    public PermissionGroups GetLDAPUserGroups(string username)
     {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        context.ContentType = "application/xml";
+
         return _adapterProvider.GetUserGroups(username);
     }
 
     [Description("Get all the security groups from LDAP.")]
     [WebGet(UriTemplate = "/groups")]
-    public List<string> GetAllLDAPSecurityGroups()
+    public PermissionGroups GetAllLDAPSecurityGroups()
     {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        context.ContentType = "application/xml";
+
         return _adapterProvider.GetAllSecurityGroups();
     }
 
