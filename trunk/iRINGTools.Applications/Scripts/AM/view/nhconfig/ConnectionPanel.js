@@ -36,7 +36,6 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
                 name: 'dbProvider',
                 displayField: 'Name',
                 valueField: 'Name',
-                value: 'MsSql2008',
                 store: 'DBProviderStore',
                 queryMode: 'local',
                 listeners: {
@@ -56,7 +55,6 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
             {
                 xtype: 'fieldcontainer',
                 itemId: 'oracleopts',
-                disabled: true,
                 fieldLabel: 'Instance Type',
                 defaultType: 'radiofield',
                 layout: 'hbox',
@@ -73,12 +71,17 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
                 }]
             },
             {
+                fieldLabel: 'DB Name',
+                name: 'dbName',
+                allowBlank: true
+            },
+            {
                 fieldLabel: 'Port',
                 name: 'portNumber',
                 value: 1433
             },
             {
-                fieldLabel: 'User Name',
+                fieldLabel: 'UserName',
                 name: 'dbUserName',
                 listeners: {
                     change: me.onUserNameChange,
@@ -89,11 +92,6 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
                 fieldLabel: 'Password',
                 name: 'dbPassword',
                 inputType: 'password'
-            },
-            {
-                fieldLabel: 'DB Name',
-                name: 'dbName',
-                allowBlank: true
             },
             {
                 fieldLabel: 'Schema Name',
@@ -150,6 +148,9 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
         if (me.record != null) {
             me.getForm().setValues(me.record);
         }
+        else {
+            me.getForm().findField('dbProvider').setValue('MsSql2008');
+        }
     },
 
     onDBProviderChange: function (cbx, newValue, oldValue, eOpts) {
@@ -161,7 +162,7 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
         var dbUserName = form.findField('dbUserName').getValue();
 
         if (newValue.toLowerCase().indexOf('oracle') != -1) {
-            me.down('#oracleopts').setDisabled(false);
+            me.down('#oracleopts').setVisible(true);
             form.findField('dbName').setVisible(false);
             form.findField('dbSchema').setValue(dbUserName);
             form.findField('portNumber').setValue(1521);
@@ -171,7 +172,7 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
                 form.findField('portNumber').setValue(1433);
             }
 
-            me.down('#oracleopts').setDisabled(true);
+            me.down('#oracleopts').setVisible(false);
             form.findField('dbName').setVisible(true);
             form.findField('dbSchema').setValue('dbo');
         }
