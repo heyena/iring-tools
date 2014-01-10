@@ -342,27 +342,23 @@ namespace org.iringtools.adapter
         return authorizedScopes;
     }
 
-    public PermissionGroups GetUserGroups(string userName)
+    public List<string> GetUserGroups(string userName)
     {
         List<string> lstGroups = new List<string>();
 
         if (_enableUISecurity == true)
             lstGroups = ConfigurationRepository.GetUserGroups(userName, _settings["AppDataPath"]);
 
-        PermissionGroups groups = new PermissionGroups();
-        groups.AddRange(lstGroups);
-        return groups;
+        return lstGroups;
     }
 
-    public PermissionGroups GetAllSecurityGroups()
+    public List<string> GetAllSecurityGroups()
     {
         List<string> lstGroups = new List<string>();
         if (_enableUISecurity == true)
             lstGroups = ConfigurationRepository.GetAllGroups(_settings["AppDataPath"]);
 
-        PermissionGroups groups = new PermissionGroups();
-        groups.AddRange(lstGroups);
-        return groups;
+        return lstGroups;
     }
 
     public NameValueList GetGlobalUISettings()

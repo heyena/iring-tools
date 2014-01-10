@@ -354,7 +354,7 @@ namespace org.iringtools.web.controllers
         private string GetOracleConnectionElement(string conStr, string element)
         {
             string token = element + "=";
-            int startIndex = conStr.IndexOf(token) + token.Length;
+            int startIndex = conStr.IndexOf(token) + token.Length + 1;
             int endIndex = conStr.IndexOf(')', startIndex);
             string value = conStr.Substring(startIndex, endIndex - startIndex);
             return value;
@@ -398,25 +398,25 @@ namespace org.iringtools.web.controllers
                             }
                             else if (provider.IndexOf("ORACLE") > -1)
                             {
-                                string server = GetOracleConnectionElement(constr, "HOST");
+                                string server = GetOracleConnectionElement(value, "HOST");
                                 connStrElts["dbServer"] = server;
 
-                                string port = GetOracleConnectionElement(constr, "PORT");
+                                string port = GetOracleConnectionElement(value, "PORT");
                                 connStrElts["portNumber"] = port;
 
-                                int serviceType = constr.IndexOf("SERVICE_NAME");
+                                int serviceType = value.IndexOf("SERVICE_NAME");
                                 if (serviceType != -1)
                                 {
                                     connStrElts["serName"] = "SERVICE_NAME";
 
-                                    string serviceName = GetOracleConnectionElement(constr, "SERVICE_NAME");
+                                    string serviceName = GetOracleConnectionElement(value, "SERVICE_NAME");
                                     connStrElts["dbInstance"] = serviceName;
                                 }
                                 else
                                 {
                                     connStrElts["serName"] = "SID";
 
-                                    string serviceName = GetOracleConnectionElement(constr, "SID");
+                                    string serviceName = GetOracleConnectionElement(value, "SID");
                                     connStrElts["dbInstance"] = serviceName;
                                 }
                             }
@@ -426,11 +426,6 @@ namespace org.iringtools.web.controllers
                             break;
                         case "user id":
                             connStrElts["dbUserName"] = value;
-
-                            if (provider.IndexOf("ORACLE") > -1)
-                            {
-                                connStrElts["dbSchema"] = value;
-                            }
                             break;
                         case "password":
                             connStrElts["dbPassword"] = value;

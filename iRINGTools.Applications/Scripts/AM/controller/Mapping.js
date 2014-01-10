@@ -93,7 +93,7 @@ Ext.define('AM.controller.Mapping', {
     onEditOrNewGraph: function (item, e, eOpts) {
         var me = this;
         var nodeId, contextName, endpoint, baseUrl, graphName,
-		objectName, classLabel, classUrl, identifier, wintitle;
+    objectName, classLabel, classUrl, identifier, wintitle;
         var tree = me.getDirTree();
         var node = tree.getSelectedNode();
         var record = node.data.record;
@@ -153,15 +153,13 @@ Ext.define('AM.controller.Mapping', {
         };
 
         var form = win.down('form').getForm();
-		win.down('form').node = node;
         form.setValues(formRecord);
 
         win.down('form').updateDDContainers(record);
 
         win.on('save', function () {
             win.close();
-            tree.view.refresh();
-			//tree.store.load({ node: node });
+            tree.store.load({ node: node });
         }, me);
 
         win.on('reset', function () {
@@ -478,14 +476,12 @@ Ext.define('AM.controller.Mapping', {
             'oldClassUrl': classUrl
         };
         var form = win.down('form');
-		form.node = node;
         form.getForm().setValues(formRecord);
         win.on('save', function () {
             win.close();
-            tree.view.refresh();
-			//tree.onReload();
-            //if (node.get('expanded') === false)
-                //node.expand();
+            tree.onReload();
+            if (node.get('expanded') === false)
+                node.expand();
         }, me);
         win.on('reset', function () {
             win.close();
@@ -497,7 +493,7 @@ Ext.define('AM.controller.Mapping', {
     onDeleteValueMap: function (item, e, eOpts) {
         var me = this;
         var tree = me.getDirTree(),
-		node = tree.getSelectedNode();
+      node = tree.getSelectedNode();
         Ext.Ajax.request({
             url: 'mapping/deleteValueMap',
             method: 'POST',
@@ -510,11 +506,9 @@ Ext.define('AM.controller.Mapping', {
                 mappingNode: node.data.id
             },
             success: function (response, request) {
-				var parentNode = node.parentNode;
-				parentNode.removeChild(node);
+                var parentNode = node.parentNode;
                 tree.getSelectionModel().select(parentNode);
-                //tree.onReload();
-				tree.view.refresh();
+                tree.onReload();
             },
             failure: function (response, request) {
                 Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Value Map.' });
@@ -662,13 +656,11 @@ Ext.define('AM.controller.Mapping', {
         };
 
         var form = win.down('form').getForm();
-		win.down('form').node = node;
         form.setValues(formRecord);
 
         win.on('save', function () {
             win.close();
-            //tree.onReload();
-			tree.view.refresh();
+            tree.onReload();
         }, me);
 
         win.on('reset', function () {
@@ -734,7 +726,8 @@ Ext.define('AM.controller.Mapping', {
     onDeleteGraphMap: function (item, e, eOpts) {
         var me = this;
         var tree = me.getDirTree(),
-		node = tree.getSelectedNode();
+      node = tree.getSelectedNode();
+
         Ext.Ajax.request({
             url: 'mapping/deletegraphmap',
             method: 'POST',
@@ -746,11 +739,9 @@ Ext.define('AM.controller.Mapping', {
                 graphName: getLastXString(node.id, 1)
             },
             success: function (response, request) {
-				var parentNode = node.parentNode;
-				parentNode.removeChild(node);
+                var parentNode = node.parentNode;
                 tree.getSelectionModel().select(parentNode);
-                //tree.onReload();
-				tree.view.refresh();
+                tree.onReload();
             },
             failure: function (response, request) {
                 Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Graph Map.' });
@@ -774,12 +765,8 @@ Ext.define('AM.controller.Mapping', {
                 mappingNode: node.data.id
             },
             success: function (response, request) {
-                //tree.getSelectionModel().select(parentNode);
-                //tree.onReload();
-				var parentNode = node.parentNode;
-				parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
-				tree.view.refresh();
+                tree.onReload();
             },
             failure: function (response, request) {
                 Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Value List.' });

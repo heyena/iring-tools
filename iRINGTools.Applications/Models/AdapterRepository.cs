@@ -195,7 +195,7 @@ namespace iRINGTools.Web.Models
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                PermissionGroups lstgroup = client.Get<PermissionGroups>("/groups");
+                List<string> lstgroup = client.Get<List<string>>("/groups");
 
                dicSecuritygroups = new List<Dictionary<string, string>>();
                Dictionary<string, string> dicobj = null;
