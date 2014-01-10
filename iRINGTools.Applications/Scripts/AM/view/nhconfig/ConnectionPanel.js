@@ -36,7 +36,6 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
                 name: 'dbProvider',
                 displayField: 'Name',
                 valueField: 'Name',
-                value: 'MsSql2008',
                 store: 'DBProviderStore',
                 queryMode: 'local',
                 listeners: {
@@ -56,7 +55,6 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
             {
                 xtype: 'fieldcontainer',
                 itemId: 'oracleopts',
-                disabled: true,
                 fieldLabel: 'Instance Type',
                 defaultType: 'radiofield',
                 layout: 'hbox',
@@ -73,17 +71,22 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
                 }]
             },
             {
+                fieldLabel: 'DB Name',
+                name: 'dbName',
+                allowBlank: true
+            },
+            {
                 fieldLabel: 'Port',
                 name: 'portNumber',
                 value: 1433
             },
             {
-                fieldLabel: 'DB Name',
-                name: 'dbName'
-            },
-            {
-                fieldLabel: 'User Name',
-                name: 'dbUserName'
+                fieldLabel: 'UserName',
+                name: 'dbUserName',
+                listeners: {
+                    change: me.onUserNameChange,
+                    scope: me
+                }
             },
             {
                 fieldLabel: 'Password',
@@ -91,10 +94,10 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
                 inputType: 'password'
             },
             {
-                fieldLabel: 'Schema',
+                fieldLabel: 'Schema Name',
                 name: 'dbSchema',
-                hidden: true,
-                value: 'dbo'
+                value: 'dbo',
+                allowBlank: true
             }],
             dockedItems: [
             {
@@ -145,6 +148,9 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
         if (me.record != null) {
             me.getForm().setValues(me.record);
         }
+        else {
+            me.getForm().findField('dbProvider').setValue('MsSql2008');
+        }
     },
 
     onDBProviderChange: function (cbx, newValue, oldValue, eOpts) {
@@ -152,17 +158,34 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
 
         if (newValue == null) return;
 
+        var form = me.getForm();
+        var dbUserName = form.findField('dbUserName').getValue();
+
         if (newValue.toLowerCase().indexOf('oracle') != -1) {
-            me.down('#oracleopts').setDisabled(false);
-            me.getForm().findField('portNumber').setValue(1521);
-            me.getForm().findField('serName').setValue('SERVICE_NAME');
+            me.down('#oracleopts').setVisible(true);
+            form.findField('dbName').setVisible(false);
+            form.findField('dbSchema').setValue(dbUserName);
+            form.findField('portNumber').setValue(1521);
         }
         else {
             if (newValue.toLowerCase().indexOf('mssql') != -1) {
-                me.getForm().findField('portNumber').setValue(1433);
+                form.findField('portNumber').setValue(1433);
             }
 
-            me.down('#oracleopts').setDisabled(true);
+            me.down('#oracleopts').setVisible(false);
+            form.findField('dbName').setVisible(true);
+            form.findField('dbSchema').setValue('dbo');
+        }
+    },
+
+    onUserNameChange: function (field, newValue, oldValue, eOpts) {
+        var me = this;
+        var form = me.getForm();
+        var dbProvider = form.findField('dbProvider').getValue();
+
+        if (dbProvider.toLowerCase().indexOf('oracle') != -1) {
+            var dbUserName = form.findField('dbUserName').getValue();
+            form.findField('dbSchema').setValue(dbUserName);
         }
     }
 });
