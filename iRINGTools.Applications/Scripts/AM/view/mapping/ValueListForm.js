@@ -108,16 +108,16 @@ Ext.define('AM.view.mapping.ValueListForm', {
             waitMsg: 'Saving Data...',
             success: function (response, request) {
                 Ext.example.msg('Notification', 'ValueList saved successfully!');
-                win.fireEvent('Save', me);
+                //win.fireEvent('Save', me);
                 var res = Ext.JSON.decode(request.response.responseText);
                 var newNode = Ext.JSON.decode(request.response.responseText).node[0];
                 if (res.success) {
-                    /*
+                    
                     var parentNode = node.parentNode;
 
                     if (node.data.type == 'ValueListsNode') {
                         var nodeIndex;
-                        if (node.childNodes.length > 0)
+                        if (node.childNodes && node.childNodes.length > 0)
                             nodeIndex = node.lastChild.data.index + 1;
                         else
                             nodeIndex = 0;
@@ -130,11 +130,12 @@ Ext.define('AM.view.mapping.ValueListForm', {
                         //newNode.leaf = true;
                         parentNode.insertChild(nodeIndex, newNode);
                     }
-                    */
+                    
                     me.setLoading(false);
                 } else {
                     Ext.widget('messagepanel', { title: 'Error', msg: res.message });
                 }
+				win.fireEvent('Save', me);
             },
             failure: function (response, request) {
                 //var message = 'Error saving changes!';
