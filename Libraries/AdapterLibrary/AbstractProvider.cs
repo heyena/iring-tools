@@ -2869,6 +2869,7 @@ namespace org.iringtools.adapter
             try
             {
                 XElement responseXml = _tipServiceClient.Post<XElement, XElement>(String.Format("/{0}/{1}", tip, method), trXml, true);
+
                 string path = string.Format("{0}TipMapping.{1}.{2}.xml", _settings["AppDataPath"], project, application);
 
                 TipMapping tipMapping = Utility.DeserializeDataContract<TipMapping>(responseXml.ToString());
@@ -3076,6 +3077,12 @@ namespace org.iringtools.adapter
                         classIdentifier = Utility.ConvertSpecialCharInbound(classIdentifier, arrSpecialcharlist, arrSpecialcharValue);    //Handling special Characters here.
                         List<string> identifiers = new List<string> { classIdentifier };
                         _dataObjects = _dataLayerGateway.Get(_dataObjDef, identifiers);
+                    }
+
+                    if (_dataObjects == null)
+                    {
+                        _logger.Warn("Data object with identifier [" + classIdentifier + "] not found.");
+                        throw new WebFaultException(HttpStatusCode.NotFound);
                     }
 
                     _projectionEngine.Count = _dataObjects.Count;
@@ -3297,8 +3304,14 @@ namespace org.iringtools.adapter
                 }
                 _dataObjects = _dataLayerGateway.Get(relatedType, new List<string> { relatedId });
 
+
                 if (_dataObjects != null)
                 {
+                    if (_dataObjects.Count == 0)
+                    {
+                        _logger.Warn("Data object with identifier [" + relatedId + "] not found.");
+                        throw new WebFaultException(HttpStatusCode.NotFound);
+                    }
                     _projectionEngine.Count = _dataObjects.Count;
                 }
 

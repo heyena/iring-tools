@@ -187,16 +187,16 @@ namespace org.iringtools.adapter
                                         if (valueListMapping.ContainsKey(key))
                                         {
 
-                                            ValueList vl = new ValueList();
-                                            ValueCollection vc = new ValueCollection();
+                                            ValueList valueList = new ValueList();
+                                            ValueCollection valueCollection = new ValueCollection();
                                             foreach (var item in valueListMapping[key].valueList.values)
                                             {
                                                 if (item.value.Equals(value))
                                                 {
-                                                    vc.Add(new ValueItem() { value = item.label, uri = item.uri, label = valueListMapping[key].valueList.name});
-                                                    vl.values = vc;
-                                                    
-                                                    dataItem.valueList.Add(valueListMapping[key].parameterName, vl);
+                                                    valueCollection.Add(new ValueItem() { value = item.label, uri = item.uri, label = valueListMapping[key].valueList.name });
+                                                    valueList.values = valueCollection;
+
+                                                    dataItem.valueList.Add(valueListMapping[key].parameterName, valueList);
                                                 }
                                             }
                                         }
@@ -410,16 +410,17 @@ namespace org.iringtools.adapter
                                         if (valueListMapping.ContainsKey(key))
                                         {
 
-                                            ValueList vl = new ValueList();
-                                            ValueCollection vc = new ValueCollection();
+                                            ValueList valueList = new ValueList();
+                                            ValueCollection valueCollection = new ValueCollection();
                                             foreach (var item in valueListMapping[key].valueList.values)
                                             {
                                                 if (item.value.Equals(value))
                                                 {
-                                                    vc.Add(new ValueItem() { value = item.label, uri = item.uri, label = valueListMapping[key].valueList.name });
-                                                    vl.values = vc;
+                                                    valueCollection.Add(new ValueItem() { value = item.label, uri = item.uri, label = valueListMapping[key].valueList.name });
+                                                    valueList.values = valueCollection;
 
-                                                    dataItem.valueList.Add(valueListMapping[key].parameterName, vl);
+                                                    dataItem.valueList.Add(valueListMapping[key].parameterName, valueList);
+                                                   // dataItems.valueLists.Add(vl);
                                                 }
                                             }
                                         }
