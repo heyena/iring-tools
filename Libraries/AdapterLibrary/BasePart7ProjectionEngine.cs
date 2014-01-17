@@ -811,7 +811,7 @@ namespace org.iringtools.adapter.projection
       }
 
       ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.Find(
-        cm => cm.classMap.name.Replace(" ", "").ToLower() == className.Replace(" ", "").ToLower() && (String.IsNullOrWhiteSpace(cm.classMap.path) ? String.IsNullOrWhiteSpace(classPath) : cm.classMap.path == classPath));
+        cm => cm.classMap.name.Replace(" ", "").ToLower() == className.Replace(" ", "").ToLower());
 
       if (classTemplateMap == null)
         throw new Exception("Classmap [" + className + "] not found.");
