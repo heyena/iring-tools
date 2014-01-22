@@ -49,6 +49,7 @@ using Newtonsoft.Json.Converters;
 using Ionic.Zip;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Globalization;
 
 
 namespace org.iringtools.utility
@@ -1419,7 +1420,7 @@ namespace org.iringtools.utility
         case "text": return "String";
         case "ntext": return "String";
         case "xml": return "String";
-        case "date": return "DateTime";
+        case "date": return "Date";
         case "datetime": return "DateTime";
         case "smalldatetime": return "DateTime";
         case "time": return "DateTime";
@@ -1608,11 +1609,11 @@ namespace org.iringtools.utility
     }
 
     public static string ToXsdDateTime(string dateTime)
-    { 
-      if (String.IsNullOrEmpty(dateTime))
-        return dateTime; 
+    {
+        if (String.IsNullOrEmpty(dateTime))
+            return dateTime;
       
-      DateTime dt = DateTime.Parse(dateTime);      
+      DateTime dt = DateTime.Parse(dateTime);
       return ToXsdDateTime(dt); 
     }
 
@@ -1627,7 +1628,18 @@ namespace org.iringtools.utility
 
     public static DateTime FromXsdDateTime(string dateTime)
     {
-      return DateTime.Parse(dateTime);
+        DateTime dt;
+        
+        try
+        {
+            dt = DateTime.ParseExact(dateTime, "yyyy-MM-ddTHH:mm:ss.fff-00:00", CultureInfo.InvariantCulture);
+        }
+        catch (Exception)
+        {
+            dt = DateTime.ParseExact(dateTime, "yyyy-MM-ddTHH:mm:ss-00:00", CultureInfo.InvariantCulture);
+        }
+
+        return dt;
     }
 
     public static string GetMimeType(string fileName)
