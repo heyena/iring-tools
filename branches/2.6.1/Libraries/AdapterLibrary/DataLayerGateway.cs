@@ -1286,7 +1286,7 @@ namespace org.iringtools.adapter
                   {
                     if (value.ToString() != string.Empty)
                     {
-                      value = XmlConvert.ToDateTime(value.ToString(), XmlDateTimeSerializationMode.Utc);
+                      value = Utility.ToXsdDateTime(value.ToString());
                     }
                     else
                     {
