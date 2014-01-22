@@ -29,10 +29,14 @@ Ext.define('AM.view.override.directory.DataGridPanel', {
             remoteSort: true,
             encode: true
         };
-
+		
+		var quickFilter = {
+			ftype : 'quickfilter'
+		}; 
+		
         Ext.apply(me, {
             bbar: ptb,
-            features: [filters]
+            features: [filters, quickFilter]
         });
 
         me.callOverridden(arguments);

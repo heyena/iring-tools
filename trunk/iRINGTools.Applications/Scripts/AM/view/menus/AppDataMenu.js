@@ -41,7 +41,13 @@ Ext.define('AM.view.menus.AppDataMenu', {
           hidden: true,
           icon: 'Content/img/16x16/edit-delete.png',
           text: 'Add Virtual Property'
-        }
+        },
+		{
+		  xtype: 'menuitem',
+		  action: 'appDataFiltersMenuItem',
+		  icon: 'Content/img/16x16/file-table.png',
+		  text: 'Configure Filter'
+		}
       ]
     });
 

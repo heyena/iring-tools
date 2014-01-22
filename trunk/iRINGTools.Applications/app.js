@@ -2,7 +2,8 @@ Ext.Loader.setConfig({
   enabled: true,
   garbageCollect: true,
   paths: {
-    'Ext.ux': 'Scripts/ext-4.2.1.883/ux'
+    'Ext.ux': 'Scripts/ext-4.2.1.883/ux',
+	'df': 'Scripts/datafilter'
   }
 });
 
@@ -31,7 +32,8 @@ Ext.application({
         'Directory',
         'Search',
         'Spreadsheet',
-        'NHConfig'
+        'NHConfig',
+		'df.controller.DataFilter'
   ],
 
   models: [
