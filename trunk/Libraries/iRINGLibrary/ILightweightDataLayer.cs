@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
-using log4net;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
+using log4net;
 using org.iringtools.adapter;
+using org.iringtools.utility;
 
 namespace org.iringtools.library
 {
@@ -126,11 +126,16 @@ namespace org.iringtools.library
 
               if (BaseLightweightDataLayer.IsNumeric(dataProp.dataType))
               {
-                valsBuilder.Append("," + prop.Value);
+                  valsBuilder.Append("," + prop.Value);
+              }
+              else if (dataProp.dataType == DataType.Date || dataProp.dataType == DataType.DateTime)
+              {
+                  DateTime dateTime = Utility.FromXsdDateTime(prop.Value.ToString());
+                  valsBuilder.Append("," + "'" + dateTime.ToString() + "'");
               }
               else
               {
-                valsBuilder.Append("," + "'" + prop.Value + "'");
+                    valsBuilder.Append("," + "'" + prop.Value + "'");
               }
             }
 
@@ -151,14 +156,19 @@ namespace org.iringtools.library
             foreach (var prop in dataObject.Dictionary)
             {
               DataProperty dataProp = objectType.dataProperties.Find(x => x.propertyName == prop.Key);
-
+                  
               if (BaseLightweightDataLayer.IsNumeric(dataProp.dataType))
               {
-                builder.Append("," + prop.Key + "=" + prop.Value);
+                   builder.Append("," + prop.Key + "=" + prop.Value);
+              }
+              else if (dataProp.dataType == DataType.Date || dataProp.dataType == DataType.DateTime)
+              {
+                  DateTime dateTime = Utility.FromXsdDateTime(prop.Value.ToString());
+                  builder.Append("," + prop.Key + "='" + dateTime.ToString() + "'");
               }
               else
               {
-                builder.Append("," + prop.Key + "='" + prop.Value + "'");
+                  builder.Append("," + prop.Key + "='" + prop.Value + "'");
               }
             }
 
