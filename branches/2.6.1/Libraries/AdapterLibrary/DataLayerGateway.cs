@@ -1,19 +1,19 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.ServiceModel.Web;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
 using log4net;
 using Ninject;
 using org.iringtools.library;
 using org.iringtools.utility;
-using System.Xml;
-using System.ServiceModel.Web;
-using System.Collections;
 
 namespace org.iringtools.adapter
 {
