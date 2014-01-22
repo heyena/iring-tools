@@ -412,6 +412,7 @@ namespace iRINGTools.Web.Models
 
           case org.iringtools.library.DataType.Char:
           case org.iringtools.library.DataType.String:
+          case org.iringtools.library.DataType.Date:
           case org.iringtools.library.DataType.DateTime:
             return "string";
 
@@ -425,8 +426,6 @@ namespace iRINGTools.Web.Models
           case org.iringtools.library.DataType.Double:
           case org.iringtools.library.DataType.Decimal:
             return "float";
-          case org.iringtools.library.DataType.Date:
-            return "date";
 
           default:
             return "auto";
