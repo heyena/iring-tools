@@ -1325,9 +1325,37 @@ Ext.define('AM.controller.Directory', {
             },
             "menuitem[action=refreshscopes]": {
                 click: this.refreshScopes
+            },
+            "menuitem[action=appDataFiltersMenuItem]": {
+                click: this.onAppDataFiltersMenuItem
             }
         });
     },
+	
+	onAppDataFiltersMenuItem: function(item, e, eOpts) {
+    	var me = this;
+        var centerPanel = me.getMainContent();
+        centerPanel.getEl().mask("Loading...", "x-mask-loading");
+		
+        var directoryTree = me.getDirTree();
+        var node = directoryTree.getSelectedNode();
+        var properties = node.data.properties;
+        var graphNode = node.parentNode;
+        var scope = graphNode.data.properties.Context;
+        var propapp = graphNode.data.properties["Internal Name"];
+        var app = propapp;
+        var graph = node.data.text;
+        var baseUri = properties['Base URI'];
+        var label = scope + '.' + app + '.' + graph;
+        var xid = node.data.properties.Id;
+        var relURI = "getAppDataFilter";
+        var reqParam = { baseUri : baseUri, scope : scope, app : app, graph : graph };
+        var getColsUrl = 'getColumnNames?' + '&scope ='  +scope+ '&app='+app+ '&graph='+graph ; 
+        
+        var dfcontroller = me.application.getController("df.controller.DataFilter");
+        dfcontroller.dataFiltersMenuItem(centerPanel,node, relURI, reqParam, getColsUrl, "appdata");
+    },
+	
     onSpecialKey: function (f, e) {
         if (f.labelCls.split(' ')[0] == 'ux-rangemenu-icon') {
             if (e.getKey() == e.ENTER) {
