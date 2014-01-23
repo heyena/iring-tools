@@ -115,6 +115,7 @@ namespace org.iringtools.adapter.projection
                   dataItem.content = base64Content;
               }
 
+              int keyPropertyCount = 0;
               foreach (KeyProperty keyProperty in dataObject.keyProperties)
               {
                 DataProperty dataProperty = dataObject.dataProperties.Find(x => keyProperty.keyPropertyName.ToLower() == x.propertyName.ToLower());
@@ -146,10 +147,16 @@ namespace org.iringtools.adapter.projection
                     value = string.Empty;
                   }
 
-                  if (!string.IsNullOrEmpty(dataItem.id))
+                  //if (!string.IsNullOrEmpty(dataItem.id))
+                  //{
+                  //  dataItem.id += dataObject.keyDelimeter;
+                  //}
+
+                  if (keyPropertyCount != 0)
                   {
-                    dataItem.id += dataObject.keyDelimeter;
+                      dataItem.id += dataObject.keyDelimeter;
                   }
+                  keyPropertyCount++;
 
                   dataItem.id += value;
                 }
