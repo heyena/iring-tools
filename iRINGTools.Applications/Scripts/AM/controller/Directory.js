@@ -187,9 +187,9 @@ Ext.define('AM.controller.Directory', {
 
         win.on('save', function () {
             win.destroy();
-			tree.view.refresh();
-			tree.expandPath(tree.getRootNode().getPath());
-			
+            tree.view.refresh();
+            tree.expandPath(tree.getRootNode().getPath());
+
         }, me);
 
         win.on('cancel', function () {
@@ -226,7 +226,7 @@ Ext.define('AM.controller.Directory', {
                 var parentNode = node.parentNode;
                 parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
-				tree.view.refresh();
+                tree.view.refresh();
                 //tree.onReload();
             },
             failure: function (response, request) {
@@ -282,7 +282,7 @@ Ext.define('AM.controller.Directory', {
 
         win.on('save', function () {
             win.close();
-			tree.view.refresh();
+            tree.view.refresh();
         }, me);
 
         win.on('Cancel', function () {
@@ -306,7 +306,7 @@ Ext.define('AM.controller.Directory', {
         if (utilsObj.isSecEnable == "False") {
             form.getForm().findField('permissions').hide();
         }
-		form.node = node1;
+        form.node = node1;
         form.getForm().findField('path').setValue(path);
         form.getForm().findField('state').setValue(state);
         form.getForm().findField('scope').setValue(context);
@@ -340,7 +340,7 @@ Ext.define('AM.controller.Directory', {
                 parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
                 tree.view.refresh();
-				//tree.onReload();
+                //tree.onReload();
             },
             failure: function (response, request) {
                 //var message = 'Error deleting application!';
@@ -660,7 +660,7 @@ Ext.define('AM.controller.Directory', {
             node: node,
             callback: function (records, options, success) {
                 tree.body.unmask();
-				tree.view.refresh();
+                tree.view.refresh();
             }
         });
     },
@@ -726,7 +726,7 @@ Ext.define('AM.controller.Directory', {
 
         win.on('Save', function () {
             win.destroy();
-			Ext.example.msg('Notification', 'File Uploaded successfully!');
+            Ext.example.msg('Notification', 'File Uploaded successfully!');
         }, me);
 
         win.on('reset', function () {
@@ -1328,34 +1328,53 @@ Ext.define('AM.controller.Directory', {
             },
             "menuitem[action=appDataFiltersMenuItem]": {
                 click: this.onAppDataFiltersMenuItem
+            },
+            "button[action=saveDataFilter]": {
+                click: this.saveDataFilter
             }
         });
     },
-	
-	onAppDataFiltersMenuItem: function(item, e, eOpts) {
-    	var me = this;
+
+    onAppDataFiltersMenuItem: function (item, e, eOpts) {
+        var me = this;
         var centerPanel = me.getMainContent();
         centerPanel.getEl().mask("Loading...", "x-mask-loading");
-		
+
+        var tree = this.getDirTree();
+        var node = tree.getSelectedNode();
+
+        var contextName = node.parentNode.parentNode.parentNode.data.property['Internal Name'];
+        var endpointName = node.parentNode.parentNode.data.property['Internal Name'];
+        var graph = node.data.text;
+
+        var relURI = "Directory/getDataObjFilter";
+        var reqParam = { scope: contextName, app: endpointName, graph: graph };
+        var getColsUrl = 'Directory/getColumnNames?' + 'scope =' + contextName + '&app=' + endpointName + '&graph=' + graph;
+        var oeUrl = 'Directory/getDataFilterOE';
+        panelDisable();
+        var dfcontroller = me.application.getController("df.controller.DataFilter");
+        dfcontroller.dataFiltersMenuItem(centerPanel, node, relURI, reqParam, getColsUrl, "dobj", oeUrl);
+    },
+
+     saveDataFilter: function(button, e, eOpts) {
+        var me = this;
+        var dfcontroller = me.application.getController("df.controller.DataFilter");
+        var filterFor = button.up('window').down('dataFilterForm').getForm().findField('filterFor').getValue();
         var directoryTree = me.getDirTree();
         var node = directoryTree.getSelectedNode();
-        var properties = node.data.properties;
+
         var graphNode = node.parentNode;
         var scope = graphNode.data.properties.Context;
         var propapp = graphNode.data.properties["Internal Name"];
         var app = propapp;
         var graph = node.data.text;
-        var baseUri = properties['Base URI'];
-        var label = scope + '.' + app + '.' + graph;
-        var xid = node.data.properties.Id;
-        var relURI = "getAppDataFilter";
-        var reqParam = { baseUri : baseUri, scope : scope, app : app, graph : graph };
-        var getColsUrl = 'getColumnNames?' + '&scope ='  +scope+ '&app='+app+ '&graph='+graph ; 
-        
-        var dfcontroller = me.application.getController("df.controller.DataFilter");
-        dfcontroller.dataFiltersMenuItem(centerPanel,node, relURI, reqParam, getColsUrl, "appdata");
+        var ctx = '?scope =' + contextName + '&app=' + endpointName + '&graph=' + graph;
+        var relURI = "Directory/dataFilter";
+        var reqParam = { scope: contextName, app: endpointName, graph: graph };
+        dfcontroller.saveDataFilter(node,reqParam, ctx, relURI,button);
+       
     },
-	
+
     onSpecialKey: function (f, e) {
         if (f.labelCls.split(' ')[0] == 'ux-rangemenu-icon') {
             if (e.getKey() == e.ENTER) {
@@ -1388,6 +1407,7 @@ Ext.define('AM.controller.Directory', {
             }
         }
     },
+
     onShowGrap: function (items, e, eOpts) {
         var me = this;
         var tree = this.getDirTree();
@@ -1451,15 +1471,15 @@ Ext.define('AM.controller.Directory', {
             success: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
                 if (responseObj.response.Level == 0) {
-					var parentNode = node.parentNode;
-					var nodeIndex = parentNode.indexOf(node); 
-					parentNode.removeChild(node); 
-					parentNode.insertChild(nodeIndex, Ext.JSON.decode(response.responseText).nodes[0]); 
-					//me.setLoading(false);
-					tree.view.refresh();
+                    var parentNode = node.parentNode;
+                    var nodeIndex = parentNode.indexOf(node);
+                    parentNode.removeChild(node);
+                    parentNode.insertChild(nodeIndex, Ext.JSON.decode(response.responseText).nodes[0]);
+                    //me.setLoading(false);
+                    tree.view.refresh();
                     //showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
                     //Ext.widget('messagepanel', { title: 'Result', msg: responseObj.response.Messages.join('\n') });
-					Ext.example.msg('Notification', 'Data Mode switched successfully!');
+                    Ext.example.msg('Notification', 'Data Mode switched successfully!');
                 }
                 content.getEl().unmask();
                 //tree.onReload();

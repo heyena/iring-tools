@@ -42,8 +42,8 @@ Ext.define('df.controller.DataFilter', {
 	abc : function(){
 		
 	},
-	
-	dataFiltersMenuItem: function(centerPanel,node,relURI, reqParam, getColsUrl, filterFor) {
+
+	dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, filterFor, oeUrl) {
 		var me = this;
         var view = Ext.widget('dataFilterWin');
         view.setTitle("Configure Data Filter");
@@ -136,7 +136,7 @@ Ext.define('df.controller.DataFilter', {
             }
         });
         Ext.Ajax.request({
-            url : 'getDataFilterOE',
+            url: oeUrl,
             params: reqParam,
             method: 'POST',
             timeout : 86400000, // 24 hours
@@ -310,7 +310,7 @@ Ext.define('df.controller.DataFilter', {
 	        var  arrClose = Ext.getCmp('closeGroup_'+i).getValue();*/
 	
 	    }
-	
+	    var isAdmin = obj.getForm().findField('isAdmin').getValue();
 	    var context = ctx;
 	    var oExpressList = Ext.ComponentQuery.query('#OExpress', obj);
 	    var oExpress =  oExpressList[0];
@@ -344,18 +344,20 @@ Ext.define('df.controller.DataFilter', {
 	            relationalOper : arrRelaOper,
 	            value : arrValue,
 	            logicalOper : arrLogOper,
-	            closeGroup : arrClose,
+	            closeGroup: arrClose,
+                isAdmin: isAdmin,
 	            reqParams: reqParams
 	        },
 	        method: 'POST',
 	        timeout : 120000,
 	        success : function(response, request) {
 	            Ext.Ajax.request({
-	                url : 'reset?dtoContext=' + escape(context.substring(1)),
+	                url: 'Directory/reset?dtoContext=' + escape(context.substring(1)),
 	                method : 'POST'
 	
 	            });
 	            button.up('.window').close();
+	            panelEnable();
 	        },
 	        failure : function(response, request) {
 	            Ext.Msg.alert("save failed");
