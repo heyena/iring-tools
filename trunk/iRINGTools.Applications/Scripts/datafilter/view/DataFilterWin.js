@@ -7,7 +7,7 @@ Ext.define('df.view.DataFilterWin', {
         type: 'fit'
     },
     title: 'Data Filter',
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         Ext.applyIf(me, {
             items: {
@@ -28,18 +28,31 @@ Ext.define('df.view.DataFilterWin', {
                         },
                         {
                             xtype: 'button',
-                            handler: function(button, event) {
-                                this.up('.window').close();
-
+                            handler: function (button, event) {
+                                me.onReset();
                             },
                             text: 'Cancel'
                         }
                     ]
                 }
-            ]
+            ],
+            listeners: {
+                close: {
+                    fn: me.onReset,
+                    scope: me
+                }
+            }
         });
 
         me.callParent(arguments);
+    },
+    onReset: function () {
+        var me = this;
+        //var win = me.up('.window');
+        me.down('dataFilterForm').getForm().reset();
+        me.destroy();
+        panelEnable();
+
     }
 
 });
