@@ -28,6 +28,9 @@ namespace org.iringtools.library
 
     [DataMember(Name = "items", Order = 5, EmitDefaultValue = false)]
     public List<DataItem> items { get; set; }
+
+    //[DataMember(Name = "valueLists", Order = 6, EmitDefaultValue = false)]
+    //public List<ValueList> valueLists { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/data", Name = "item")]
