@@ -100,6 +100,8 @@ namespace org.iringtools.adapter
                     {
                         IDataObject dataObj = dataObjects[i];
 
+                        dataObject = FindGraphDataObject(dataObj.GetType().Name);
+
                         if (dataObj != null)
                         {
                             if (i == 0)
@@ -110,7 +112,8 @@ namespace org.iringtools.adapter
                             DataItem dataItem = new DataItem()
                             {
                                 properties = new Dictionary<string, object>(),
-                                valueList = new Dictionary<string,ValueList>()
+                                valueList = new Dictionary<string,ValueList>(),
+                                type = dataObj.GetType().Name
                             };
 
                             if (dataObj is GenericDataObject)
@@ -334,7 +337,8 @@ namespace org.iringtools.adapter
                             DataItem dataItem = new DataItem()
                             {
                                 properties = new Dictionary<string, object>(),
-                                valueList = new Dictionary<string, ValueList>()
+                                valueList = new Dictionary<string, ValueList>(),
+                                type = dataObj.GetType().Name
                             };
 
                             if (dataObj is GenericDataObject)
