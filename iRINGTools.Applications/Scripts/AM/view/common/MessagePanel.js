@@ -13,6 +13,13 @@ Ext.define('AM.view.common.MessagePanel', {
         var me = this;
 
         Ext.applyIf(me, {
+            buttonAlign: 'center',
+            buttons: [{
+                text: 'OK',
+                handler: function () {
+                    this.up('window').close();
+                }
+            }],
             items: [{
                 xtype: 'textarea',
                 overflowY: 'auto',
