@@ -1,3 +1,5 @@
+
+
 Ext.define('AM.view.nhconfig.ConnectionPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.connectionpanel',
@@ -127,11 +129,7 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
                     scope: me,
                     handler: me.loadValues
                 }]
-            }],
-            listeners: {
-                afterrender: me.loadValues,
-                scope: me
-            }
+            }]
         });
 
         me.callParent(arguments);
@@ -149,7 +147,11 @@ Ext.define('AM.view.nhconfig.ConnectionPanel', {
             me.getForm().setValues(me.record);
         }
         else {
-            me.getForm().findField('dbProvider').setValue('MsSql2008');
+            var dbProvider = me.getForm().findField('dbProvider');
+
+            if (dbProvider.getValue() == null) {
+                dbProvider.setValue('MsSql2008');
+            }
         }
     },
 
