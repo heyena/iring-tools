@@ -235,7 +235,7 @@ Ext.define('AM.controller.NHConfig', {
                 failure: function (form, action) {
                     configPanel.setLoading(false);
                     Ext.widget('messagepanel', {
-                        title: 'Connection Error', 
+                        title: 'Connection Error',
                         msg: 'Unable to connect to data source.'
                     });
                 }
@@ -464,6 +464,8 @@ Ext.define('AM.controller.NHConfig', {
             description: null
         };
 
+        var valid = true;
+
         Ext.each(objectsNode.childNodes, function (objectNode) {
             var objProps = objectNode.raw.properties;
             var keyNodes = objectNode.findChild('text', 'Keys').childNodes;
@@ -480,6 +482,13 @@ Ext.define('AM.controller.NHConfig', {
                 dataRelationships: [],
                 description: objProps.description
             };
+
+            if (keyNodes.length == 0) {
+                valid = false;
+                var message = 'Object ' + objProps.objectName + ' does not have any keys configured.';
+                Ext.widget('messagepanel', { title: 'Configuration Error', msg: message });
+                return;
+            }
 
             Ext.each(keyNodes, function (keyNode) {
                 var props = keyNode.raw.properties;
@@ -536,50 +545,55 @@ Ext.define('AM.controller.NHConfig', {
             dbDictionary.dataObjects.push(dataObject);
         });
 
-        Ext.Ajax.request({
-            url: 'NHibernate/SaveDBDictionary',
-            method: 'POST',
-            timeout: 300000,  // 5 min
-            params: {
-                scope: me.scope,
-                app: me.app
-            },
-            jsonData: dbDictionary,
-            success: function (response, request) {
-                configPanel.setLoading(false);
+        if (!valid) {
+            configPanel.setLoading(false);
+        }
+        else {
+            Ext.Ajax.request({
+                url: 'NHibernate/SaveDBDictionary',
+                method: 'POST',
+                timeout: 300000,  // 5 min
+                params: {
+                    scope: me.scope,
+                    app: me.app
+                },
+                jsonData: dbDictionary,
+                success: function (response, request) {
+                    configPanel.setLoading(false);
 
-                var result = Ext.decode(response.responseText);
-                if (!result.success) {
-                    Ext.widget('messagepanel', { title: 'Save Error', msg: result.message });
-                    return;
-                }
-
-                var dirTree = me.getDirectoryTree();
-                dirTree.store.proxy.extraParams.type = 'DataObjectsNode';
-                dirTree.setLoading();
-
-                dirTree.store.load({
-                    node: me.dirNode,
-                    callback: function (records, operation, success) {
-                        dirTree.setLoading(false);
-
-                        if (success) {
-                            Ext.example.msg('Notification', 'Configuration saved successfully!');
-                            me.dirNode.expand();
-							dirTree.view.refresh();
-                        }
-                        else {
-                            var msg = operation.request.scope.reader.jsonData.message;
-                            Ext.widget('messagepanel', { title: 'Refresh Error', msg: msg });
-                        }
+                    var result = Ext.decode(response.responseText);
+                    if (!result.success) {
+                        Ext.widget('messagepanel', { title: 'Save Error', msg: result.message });
+                        return;
                     }
-                });
-            },
-            failure: function (response, request) {
-                configPanel.setLoading(false);
-                var msg = operation.request.scope.reader.jsonData.message;
-                Ext.widget('messagepanel', { title: 'Save Error', msg: response.responseText });
-            }
-        });
+
+                    var dirTree = me.getDirectoryTree();
+                    dirTree.store.proxy.extraParams.type = 'DataObjectsNode';
+                    dirTree.setLoading();
+
+                    dirTree.store.load({
+                        node: me.dirNode,
+                        callback: function (records, operation, success) {
+                            dirTree.setLoading(false);
+
+                            if (success) {
+                                Ext.example.msg('Notification', 'Configuration saved successfully!');
+                                me.dirNode.expand();
+                                dirTree.view.refresh();
+                            }
+                            else {
+                                var msg = operation.request.scope.reader.jsonData.message;
+                                Ext.widget('messagepanel', { title: 'Refresh Error', msg: msg });
+                            }
+                        }
+                    });
+                },
+                failure: function (response, request) {
+                    configPanel.setLoading(false);
+                    var msg = operation.request.scope.reader.jsonData.message;
+                    Ext.widget('messagepanel', { title: 'Save Error', msg: response.responseText });
+                }
+            });
+        }
     }
 });
