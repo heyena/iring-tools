@@ -2,8 +2,7 @@ Ext.Loader.setConfig({
   enabled: true,
   garbageCollect: true,
   paths: {
-    'Ext.ux': 'Scripts/ext-4.2.1.883/ux',
-	'df': 'Scripts/datafilter'
+    'Ext.ux': 'Scripts/ext-4.2.1.883/ux'
   }
 });
 
@@ -32,8 +31,7 @@ Ext.application({
         'Directory',
         'Search',
         'Spreadsheet',
-        'NHConfig',
-		'df.controller.DataFilter'
+        'NHConfig'
   ],
 
   models: [
@@ -92,7 +90,7 @@ Ext.application({
 });
 
 Ext.Ajax.on('requestexception', function (conn, response, options) {
-  if (response.status == 0 || response.status == 408) {
+  if (response.status == 408) {
       location.reload(true);
   }
 });
