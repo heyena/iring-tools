@@ -260,106 +260,31 @@ Ext.define('df.controller.DataFilter', {
 	},
 	
 	saveDataFilter: function(node,reqParams, ctx, relURI,button) {
-	    var me = this;
+        var me = this;
 	    var obj = me.getDataFilter();
-	    var form = obj.getValues(true);
-	    var expressList = Ext.ComponentQuery.query('#Expressions', obj);
-	    var express =  expressList[0];
-	    //var express = Ext.getCmp('Expressions');
-	    var config = Ext.apply({}, express.initialConfig.items[1]);
-	    var ExpressCount = express.items.length; 
-	    var arrOpen = [];
-	    var arrProName = [];
-	    var arrRelaOper = [];
-	    var arrValue = [];
-	    var arrLogOper = [];
-	    var arrClose = [];
-	
-	
-	    for(var i=1; i <= ExpressCount-1; i++)    
-	    {
-	        var arrOpenList = Ext.ComponentQuery.query('#openCount_'+i, obj);
-	        arrOpen[i] =  arrOpenList[0].getValue();
-	        // arrOpen[i] = Ext.getCmp('openCount_'+i).getValue();
-	
-	        var arrProNameList = Ext.ComponentQuery.query('#propertyName_'+i, obj);
-	        arrProName[i] =  arrProNameList[0].getValue();    
-	        // arrProName[i] = Ext.getCmp('propertyName_'+i).getValue();
-	
-	        var arrRelaOperList = Ext.ComponentQuery.query('#relationalOperator_'+i, obj);
-	        arrRelaOper[i] =  arrRelaOperList[0].getValue();
-	        // arrRelaOper[i] = Ext.getCmp('relationalOperator_'+i).getValue();
-	
-	        var arrValueList = Ext.ComponentQuery.query('#value_'+i, obj);
-	        arrValue[i] =  arrValueList[0].getValue();
-	        //  arrValue[i] = Ext.getCmp('value_'+i).getValue();
-	
-	        var arrLogOperList = Ext.ComponentQuery.query('#logicalOperator_'+i, obj);
-	        arrLogOper[i] =  arrLogOperList[0].getValue();
-	        // arrLogOper[i] = Ext.getCmp('logicalOperator_'+i).getValue();
-	
-	        var arrCloseList = Ext.ComponentQuery.query('#closeGroup_'+i, obj);
-	        arrClose[i] =  arrCloseList[0].getValue();
-	        // arrClose[i] = Ext.getCmp('closeGroup_'+i).getValue();
-	
-	        /* var  arrOpen = Ext.getCmp('openCount_'+i).getValue();
-	        var  arrProName = Ext.getCmp('propertyName_'+i).getValue();
-	        var  arrRelaOper = Ext.getCmp('relationalOperator_'+i).getValue();
-	        var  arrValue = Ext.getCmp('value_'+i).getValue();
-	        var  arrLogOper = Ext.getCmp('logicalOperator_'+i).getValue();
-	        var  arrClose = Ext.getCmp('closeGroup_'+i).getValue();*/
-	
+	    var form = obj.getForm();
+	    var isAdmin = form.findField('isAdmin').getValue();
+	    if (isAdmin == 'on') {
+	        isAdmin = true;
 	    }
-	    var isAdmin = obj.getForm().findField('isAdmin').getValue();
-	    var context = ctx;
-	    var oExpressList = Ext.ComponentQuery.query('#OExpress', obj);
-	    var oExpress =  oExpressList[0];
-	    //var oExpress = Ext.getCmp('OExpress');
-	    var config = Ext.apply({}, oExpress.initialConfig.items[1]);
-	    var OExpressCount = oExpress.items.length; 
-	    console.log(" Order Expressions " + OExpressCount);
-	
-	    var arrSortOrder = [];
-	    var arrProNameOE = [];
-	
-	    for(var i=1; i <= OExpressCount-1; i++)
-	    {
-	
-	        var arrSortOrderList = Ext.ComponentQuery.query('#OESortOrder_'+i, obj);
-	        arrSortOrder[i] =  arrSortOrderList[0].getValue();
-	        var arrProNameList = Ext.ComponentQuery.query('#OEProName_'+i, obj);
-	        arrProNameOE[i] =  arrProNameList[0].getValue();
-	
-	    }
-	
-	    Ext.Ajax.request({
-	        url : relURI,
-	        params : {
-	            expressCountOE : OExpressCount,
-	            expressCount : ExpressCount,
-	            openGroup : arrOpen,
-	            propertyNameOE : arrProNameOE,
-	            sortOrder : arrSortOrder,
-	            propertyName : arrProName,
-	            relationalOper : arrRelaOper,
-	            value : arrValue,
-	            logicalOper : arrLogOper,
-	            closeGroup: arrClose,
-                isAdmin: isAdmin,
-	            reqParams: reqParams
+	    var reqParam = Ext.JSON.encode(reqParams);
+	    form.submit({
+	        url: relURI,
+	        params: {
+	            isAdmin: isAdmin,
+	            reqParams: reqParam
 	        },
 	        method: 'POST',
-	        timeout : 120000,
-	        success : function(response, request) {
+	        timeout: 120000,
+	        success: function (response, request) {
 	            Ext.Ajax.request({
-	                url: 'Directory/reset?dtoContext=' + escape(context.substring(1)),
-	                method : 'POST'
-	
+	                url: 'directory/reset?dtoContext=' + escape(ctx.substring(1)),
+	                method: 'POST'
 	            });
 	            button.up('.window').close();
 	            panelEnable();
 	        },
-	        failure : function(response, request) {
+	        failure: function (response, request) {
 	            Ext.Msg.alert("save failed");
 	        }
 	    });  
