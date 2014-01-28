@@ -74,20 +74,16 @@ Ext.define('df.view.DataFilterForm', {
                                 {
                                     xtype: 'button',
                                     handler: function(button, event) {
-                                        //me.onSave();
-                                        //var container = this;
                                         var container = this.up('fieldset');
                                         var config = Ext.apply({}, container.initialConfig.items[1]);
                                         var rowCount = container.items.length;
                                         var rowID = 'dataFilter'+'_'+rowCount;
                                         var rowCompList = Ext.ComponentQuery.query('#'+rowID, this);
                                         var rowCmp =  rowCompList[0];
-                                        //var rowCmp = Ext.getCmp(rowID);
                                         while(rowCmp){ 
                                             rowCount = rowCount+1;
                                             rowID = 'dataFilter'+'_'+rowCount;
                                             rowCmp = rowCompList[0];
-                                            //rowCmp = Ext.getCmp(rowID);    
                                         }
                                         config.itemId = rowID;
                                         //config.fieldLabel = rowCount;
@@ -107,12 +103,12 @@ Ext.define('df.view.DataFilterForm', {
                                         config.items[6].itemId = 'delete_' + rowCount;
 
                                         container.add(config);
-
+                                        this.up('dataFilterForm').getForm().findField('exprCount').setValue(rowCount);
                                     },
                                     margin: '5 0 5 10',
                                     border: false,
                                     itemId: 'save_0',
-                                    icon: 'Content/img/16x16/add.png'
+                                    icon: 'resources/images/16x16/add.png'
                                 }
                             ]
                         },
@@ -254,26 +250,6 @@ Ext.define('df.view.DataFilterForm', {
 
                                         for(var j=curID+1; j <= rowCount-1; j++)    
                                         {
-                                            //    var rowID = 'dataFilter_'+j-1;
-                                            /*      config.id = str;
-                                            //config.fieldLabel = rowCount;
-                                            config.items[0].name = 'openGroupCount_' +j-1;
-                                            config.items[1].name = 'propertyName_' +j-1;
-                                            config.items[2].name = 'relationalOperator_'+j-1;
-                                            config.items[3].name = 'value_'+j-1;
-                                            config.items[4].name = 'logicalOperator_' +j-1;
-                                            config.items[5].name = 'closeGroupCount_' +j-1;
-
-                                            config.items[0].id = 'openCount_'+j-1;
-                                            config.items[1].id = 'propertyName_' +j-1;
-                                            config.items[2].id = 'relationalOperator_'+j-1;
-                                            config.items[3].id = 'value_' +j-1;
-                                            config.items[4].id = 'logicalOperator_' +j-1;
-                                            config.items[5].id = 'closeGroup_' +j-1;
-                                            config.items[6].id = 'delete_' +j-1;*/
-
-                                            //  container.add(config);
-                                            //  var add = Ext.getCmp('save_0');
                                             var AddDf = Ext.ComponentQuery.query('#save_0', container);
                                             var add =  AddDf[0];
                                             add.handler.call(add); 
@@ -298,14 +274,20 @@ Ext.define('df.view.DataFilterForm', {
 
 
                                         }
+                                        //container.up('form').getForm().findField('exprCount').setValue(rowCount-1);
+                                        var oeField = Ext.ComponentQuery.query('#exprCountId', container.up('form'));
+                                        if(oeField[0].getValue() >= 1){
+                                        	oeField[0].setValue(oeField[0].getValue() - 1);
+                                        }else{
+                                        	oeField[0].setValue(0);
+                                        }
+                                        //oeField[0].setValue(oeField[0].getValue() - 1);
                                         container.el.unmask();
-
-
-                                    },
+                                	},
                                     border: false,
                                     itemId: 'delete_1',
                                     margin: '5 0 5 10',
-                                    icon: 'Content/img/16x16/delete-icon.png',
+                                    icon: 'resources/images/16x16/delete-icon.png',
                                     tooltip: 'remove Expression'
                                 }
                             ]
@@ -370,14 +352,15 @@ Ext.define('df.view.DataFilterForm', {
                                         config.items[1].itemId = 'OESortOrder_' + rowCount;
 
                                         config.items[2].itemId = 'OEDelete_' + rowCount;
-                                        container.add(config); 
+                                        container.add(config);
+                                        container.up('form').getForm().findField('oeExprCount').setValue(rowCount);
 
                                     },
                                     margins: '5',
                                     border: false,
                                     height: 22,
                                     itemId: 'OEAdd_0',
-                                    icon: 'Content/img/16x16/add.png'
+                                    icon: 'resources/images/16x16/add.png'
                                 }
                             ]
                         },
@@ -398,6 +381,7 @@ Ext.define('df.view.DataFilterForm', {
                                     flex: 1,
                                     margins: '6',
                                     itemId: 'OEProName_1',
+                                    name: 'OEProName_1',
                                     matchFieldWidth: false,
                                     displayField: 'name',
                                     queryMode: 'local',
@@ -433,18 +417,16 @@ Ext.define('df.view.DataFilterForm', {
                                         var arrSortOrder = [];
                                         var arrProName = [];
 
-
                                         for(var i=curID; i <= rowCount-1; i++)
                                         {
                                             var arrSortOrderList = Ext.ComponentQuery.query('#OESortOrder_'+i, container);
                                             arrSortOrder[i] =  arrSortOrderList[0].getValue();
-                                            // arrSortOrder[i] = Ext.getCmp('OESortOrder_'+i).getValue();
+                                            
                                             var arrProNameList = Ext.ComponentQuery.query('#OEProName_'+i, container);
                                             arrProName[i] =  arrProNameList[0].getValue();
-                                            // arrProName[i] = Ext.getCmp('OEProName_'+i).getValue();
+                                            
                                             var OeDisList = Ext.ComponentQuery.query('#OE_'+i, container);
                                             OeDisList[0].destroy();
-                                            //  Ext.getCmp('OE_'+i).destroy();
                                         }
 
                                         for(var j=curID+1; j <= rowCount-1; j++)
@@ -452,37 +434,51 @@ Ext.define('df.view.DataFilterForm', {
 
                                             var addOeList = Ext.ComponentQuery.query('#OEAdd_0', container);
                                             var add = addOeList[0];                                     
-                                            //  var add = Ext.getCmp('OEAdd_0');
                                             add.handler.call(add);
 
                                             var arrSortOrderList = Ext.ComponentQuery.query('#OESortOrder_'+(j-1), container);
                                             arrSortOrderList[0].setValue(arrSortOrder[j]);
-                                            //  Ext.getCmp('OESortOrder_'+(j-1)).setValue(arrSortOrder[j]);
-
+                                            
                                             var arrProNameList = Ext.ComponentQuery.query('#OEProName_'+(j-1), container);
                                             arrProNameList[0].setValue(arrProName[j]);
-                                            //Ext.getCmp('OEProName_'+(j-1)).setValue(arrProName[j]);
-
-                                            // Ext.getCmp('delete_'+(j-1)).setValue(arrDel[j]);
                                         }
+                                        //container.up('form').getForm().findField('oeExprCount').setValue(rowCount-1);
+                                        var oeField = Ext.ComponentQuery.query('#oeExprCountId', container.up('form'));
+                                        if(oeField[0].getValue() >= 1){
+                                        	oeField[0].setValue(oeField[0].getValue() - 1);
+                                        }else{
+                                        	oeField[0].setValue(0);
+                                        }
+                                        //oeField[0].setValue(oeField[0].getValue() - 1);
                                         container.el.unmask();
                                     },
                                     margins: '6',
                                     border: false,
                                     itemId: 'OEDelete_1',
-                                    icon: 'Content/img/16x16/delete-icon.png'
+                                    icon: 'resources/images/16x16/delete-icon.png'
                                 }
                             ]
                         }
                     ]
                 },{
                 	xtype: 'checkboxfield',
-                	fieldLabel : 'Is Admin',
+                	fieldLabel : 'Apply for all users',
                 	name: 'isAdmin',
+                	value: 'false',
                 	margin: 5,
                 },{
                 	xtype: 'hiddenfield',
                 	name: 'filterFor'
+                },{
+                	xtype: 'hiddenfield',
+                	name: 'exprCount',
+                	itemId: 'exprCountId',
+                	value: 1
+                },{
+                	xtype: 'hiddenfield',
+                	name: 'oeExprCount',
+                	itemId: 'oeExprCountId',
+                	value: 1
                 }
             ]
         });
