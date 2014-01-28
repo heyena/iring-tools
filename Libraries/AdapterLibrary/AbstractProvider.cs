@@ -2433,8 +2433,14 @@ namespace org.iringtools.adapter
                 _logger.DebugFormat("Initializing Projection: {0} as {1}", resource, format);
                 InitializeProjection(resource, ref format, false);
 
+
+
                 DataDictionary dictionary = GetDictionary(project, application);
-                _dataObjDef = dictionary.GetDataObject(_tipMap.dataObjectName);
+                //_dataObjDef = dictionary.GetDataObject(_tipMap.dataObjectName);
+
+                _dataObjDef = dictionary.GetTableObject(_tipMap.dataObjectName);
+                
+
 
                 AddURIsInSettingCollection(project, application, resource);
 
@@ -2454,9 +2460,14 @@ namespace org.iringtools.adapter
                 }
 
                 _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
+
+                string tempObjectName = _dataObjDef.objectName.ToString();
+                _dataObjDef.objectName = tempObjectName.Split('.')[0];
                 _dataObjects = _dataLayerGateway.Get(_dataObjDef, GetKey(filter), start, limit);
 
-                _projectionEngine.Count = _dataLayerGateway.GetCount(_dataObjDef, filter);
+                _projectionEngine.Count = _dataObjects.Count;// _dataLayerGateway.GetCount(_dataObjDef, GetKey(filter));
+                _dataObjDef.objectName = tempObjectName;
+
                 _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
 
                 _projectionEngine.FullIndex = fullIndex;
