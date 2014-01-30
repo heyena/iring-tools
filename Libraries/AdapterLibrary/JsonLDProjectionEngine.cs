@@ -671,26 +671,28 @@ namespace org.iringtools.adapter
             {
                 foreach (ParameterMap parameterMap in tipMap.parameterMaps)
                 {
-                    if (child)
+                    if(!String.IsNullOrWhiteSpace(parameterMap.name))
                     {
-                        tableMapping.Add(parameterMap.dataPropertyName.Split('.').GetValue(FIELD).ToString(), parameterMap.name);
-                    }
-                    else
-                    {
-                        tableMapping.Add(parameterMap.dataPropertyName, parameterMap.name);
-
-                        if (parameterMap.valueList != null)
+                        if (child)
                         {
-                            ValueListWithParameter valueListWithParameter = new ValueListWithParameter
-                            {
-                                parameterName = parameterMap.name,
-                                valueList = parameterMap.valueList
-                            };
+                            tableMapping.Add(parameterMap.dataPropertyName.Split('.').GetValue(FIELD).ToString(), parameterMap.name);
+                        }
+                        else
+                        {
+                            tableMapping.Add(parameterMap.dataPropertyName, parameterMap.name);
 
-                            valueListMapping.Add(parameterMap.dataPropertyName, valueListWithParameter);
+                            if (parameterMap.valueList != null)
+                            {
+                                ValueListWithParameter valueListWithParameter = new ValueListWithParameter
+                                {
+                                    parameterName = parameterMap.name,
+                                    valueList = parameterMap.valueList
+                                };
+
+                                valueListMapping.Add(parameterMap.dataPropertyName, valueListWithParameter);
+                            }
                         }
                     }
-
                 }
             }
         }
@@ -703,13 +705,16 @@ namespace org.iringtools.adapter
             {
                 foreach (ParameterMap parameterMap in tipMap.parameterMaps)
                 {
-                    if (child)
+                    if (!String.IsNullOrWhiteSpace(parameterMap.name))
                     {
-                        tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName.Split('.').GetValue(FIELD).ToString());
-                    }
-                    else
-                    {
-                        tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName);
+                        if (child)
+                        {
+                            tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName.Split('.').GetValue(FIELD).ToString());
+                        }
+                        else
+                        {
+                            tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName);
+                        }
                     }
 
                 }
