@@ -69,19 +69,17 @@ Ext.define('df.controller.DataFilter', {
             method: 'POST',
             timeout : 86400000, // 24 hours
             success : function(response, request) {
-                var dfList = Ext.JSON.decode(response.responseText);
-                if(dfList !== null)
+                var respObj = Ext.JSON.decode(response.responseText);
+                if (respObj !== null)
                 {
-                    for(var i=0; i < dfList.length; i++)
+                    for (var i = 0; i < respObj.length; i++)
                     {
-                        console.log("dfList.length is " + dfList.length);
-                        console.log("dfList[i][3] is " + dfList[i][3]);
-                        var open = dfList[i][0];
-                        var log = dfList[i][1];
-                        var rel = dfList[i][2];
-                        var prop = dfList[i][3];
-                        var value = dfList[i][4];
-                        var close = dfList[i][5];
+                        var open = respObj[i].dfList[0];
+                        var log = respObj[i].dfList[1];
+                        var rel = respObj[i].dfList[2];
+                        var prop = respObj[i].dfList[3];
+                        var value = respObj[i].dfList[4];
+                        var close = respObj[i].dfList[5];
 
                         if (i+1 >= 2)
                         {
@@ -115,15 +113,6 @@ Ext.define('df.controller.DataFilter', {
                         arrLogOperList[0].setValue(log);                
                         var arrCloseList = Ext.ComponentQuery.query('#closeGroup_'+(i+1), obj);
                         arrCloseList[0].setValue(close);
-
-
-                       /* Ext.getCmp('openCount_'+(i+1)).setValue(open);
-                        Ext.getCmp('propertyName_'+(i+1)).setValue(prop);
-                        Ext.getCmp('relationalOperator_'+(i+1)).setValue(rel);
-                        Ext.getCmp('value_'+(i+1)).setValue(value);
-                        Ext.getCmp('logicalOperator_'+(i+1)).setValue(log);
-                        Ext.getCmp('closeGroup_'+(i+1)).setValue(close);*/
-
                     }
                     centerPanel.getEl().unmask();
                     view.show();
@@ -141,15 +130,12 @@ Ext.define('df.controller.DataFilter', {
             method: 'POST',
             timeout : 86400000, // 24 hours
             success : function(response, request) {
-                var dfList = Ext.JSON.decode(response.responseText);
-                //  formdata.setValues({name : form.name,description : form.description, sourceUri : form.sourceUri, sourceScopeName : form.sourceScope, sourceAppName : form.sourceApp, sourceGraphName : form.sourceGraph , targetUri :form.targetUri, targetScopeName : form.targetScope, targetAppName : form.targetApp, targetGraphName : form.targetGraph, oldConfigName : commConfigName, oldCommName : commodity, oldScope :scope});   
-                if(dfList !== null)
-                {
-                    for(var i=0; i < dfList.length; i++)
-                    {
+                var resObj = Ext.JSON.decode(response.responseText);
+                if (resObj !== null) {
+                    for (var i = 0; i < resObj.length; i++) {
 
-                        var prop = dfList[i][0];
-                        var sort = dfList[i][1];      
+                        var prop = resObj[i].dfList[0];
+                        var sort = resObj[i].dfList[1];  
 
                         if (i+1 >= 2)
                         {
@@ -173,7 +159,7 @@ Ext.define('df.controller.DataFilter', {
                 Ext.Msg.alert("Error fetching Filters");
             }
         });
-        if(dfList !== null)
+        if (respObj !== null)
         {
             centerPanel.getEl().unmask();
             view.show();
@@ -192,79 +178,13 @@ Ext.define('df.controller.DataFilter', {
 	        propertyStore.load();
 	
 	},
-	
-	FillDataFilterOE: function(dfList){
-	   for(var i=0; i < dfList.length; i++) {
-		   	var prop = dfList[i][0];
-	        var sort = dfList[i][1];      
-	        if (i+1 >= 2)
-	        {
-	            var OEAddList = Ext.ComponentQuery.query('#OEAdd_0', obj); 
-	            var add =  OEAddList[0];
-	            add.handler.call(add);
-	        }
-	        var arrProNameList = Ext.ComponentQuery.query('#OEProName_'+(i+1), obj); 
-	        arrProNameList[0].setValue(prop);  
-	
-	        var arrSortOrderList = Ext.ComponentQuery.query('#OESortOrder_'+(i+1), obj); 
-	        arrSortOrderList[0].setValue(sort);  
-	
-	    }
-	
-	},
-	
-	FillDataFilterExpression: function(dfList){
-		for(var i=0; i < dfList.length; i++){
-	            console.log("dfList.length is " + dfList.length);
-	            console.log("dfList[i][3] is " + dfList[i][3]);
-	            var open = dfList[i][0];
-	            var log = dfList[i][1];
-	            var rel = dfList[i][2];
-	            var prop = dfList[i][3];
-	            var value = dfList[i][4];
-	            var close = dfList[i][5];
-	
-	            if (i+1 >= 2)
-	            {
-	                var AddDf = Ext.ComponentQuery.query('#save_0', obj);
-	                var add =  AddDf[0];
-	                add.handler.call(add); 
-	            }
-	            var arrOpenList = Ext.ComponentQuery.query('#openCount_'+(i+1), obj);
-	            arrOpenList[0].setValue(open);
-	            var arrProNameList = Ext.ComponentQuery.query('#propertyName_'+(i+1), obj); 
-	            arrProNameList[0].setValue(prop);  
-	            var columnName = Ext.ComponentQuery.query('#propertyName_'+(i+1), obj)[0].getValue();
-	            var relationalStore;
-	            if(columnName === "Transfer Type")
-	            {
-	                relationalStore = Ext.getStore('RelationalStoreforTransferType');
-	                relationalStore.load();
-	
-	            } else{
-	                relationalStore = Ext.getStore('RelationalStoreComplete');
-	                relationalStore.load();
-	            }
-	            var arrRelaOperList = Ext.ComponentQuery.query('#relationalOperator_'+(i+1), obj);
-	            arrRelaOperList[0].bindStore(relationalStore);  
-	            arrRelaOperList[0].setValue(rel); 
-	
-	            var arrValueList = Ext.ComponentQuery.query('#value_'+(i+1), obj);
-	            arrValueList[0].setValue(value);                
-	            var arrLogOperList = Ext.ComponentQuery.query('#logicalOperator_'+(i+1), obj);
-	            arrLogOperList[0].setValue(log);                
-	            var arrCloseList = Ext.ComponentQuery.query('#closeGroup_'+(i+1), obj);
-	            arrCloseList[0].setValue(close);
-		}                       
-	
-	},
-	
+		
 	saveDataFilter: function(node,reqParams, ctx, relURI,button) {
         var me = this;
 	    var obj = me.getDataFilter();
 	    var form = obj.getForm();
 	    var isAdmin = form.findField('isAdmin').getValue();
-	    if (isAdmin == 'on') {
+	    if (isAdmin == 'On') {
 	        isAdmin = true;
 	    }
 	    var reqParam = Ext.JSON.encode(reqParams);
