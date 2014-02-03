@@ -32,44 +32,6 @@ namespace iRINGTools.Web.Models
         return response;
       }
 
-       /*
-      public Grid GetGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
-      {
-        try
-        {
-          this.graph = graph;
-
-          if (start == "0" || start == "1")
-          {
-            GetDataDictionary(scope, app, false);
-          }
-          else
-          {
-            GetDataDictionary(scope, app);
-          }
-
-          if (response != "")
-            return null;
-
-          GetDataItems(scope, app, graph, filter, sort, dir, start, limit);
-
-          if (response != "")
-            return null;
-
-          GetDataGrid();
-
-          if (response != "")
-            return null;
-        }
-        catch (Exception ex)
-        {
-          response = response + " " + ex.Message.ToString();
-        }
-
-        return dataGrid;
-      }
-        */
-
       public StoreViewModel GetGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
       {
           try
@@ -193,6 +155,7 @@ namespace iRINGTools.Web.Models
               dir = sortArr[7];
           
           }
+
           DataFilter dataFilter = CreateDataFilter(filter, sort, dir);
           string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
           string dataItemsJson = string.Empty;
@@ -464,31 +427,52 @@ namespace iRINGTools.Web.Models
               List<Expression> expressions = new List<Expression>();
               dataFilter.Expressions = expressions;
 
-              foreach (Dictionary<String, String> filterExpression in filterExpressions)
+              foreach (Dictionary<String, String> expr in filterExpressions)
               {
                 Expression expression = new Expression();
                 expressions.Add(expression);
 
-                if (expressions.Count > 1)
+                if (expr.ContainsKey("conjunction")) // new filter
                 {
-                  expression.LogicalOperator = LogicalOperator.And;
+                    if (expr["conjunction"] != null)
+                    {
+                        if (expr["conjunction"].Length == 0)
+                        {
+                            expression.LogicalOperator = LogicalOperator.None;
+                        }
+                        else
+                        {
+                            expression.LogicalOperator = (LogicalOperator)
+                                Enum.Parse(typeof(LogicalOperator), expr["conjunction"]);
+                        }
+                    }
+
+                    expression.RelationalOperator = (RelationalOperator)
+                        Enum.Parse(typeof(RelationalOperator), expr["operator"]);
+                }
+                else // legacy ux filter
+                {
+                    if (expressions.Count > 1)
+                    {
+                        expression.LogicalOperator = LogicalOperator.And;
+                    }
+
+                    if (expr.ContainsKey("comparison"))
+                    {
+                        expression.RelationalOperator = (RelationalOperator)
+                            Enum.Parse(typeof(RelationalOperator), expr["comparison"]);
+                    }
+                    else
+                    {
+                        expression.RelationalOperator = RelationalOperator.EqualTo;
+                    }
                 }
 
-                if (filterExpression.ContainsKey("comparison") && filterExpression["comparison"] != null)
-                {										
-                  RelationalOperator optor = GetOpt(filterExpression["comparison"]);
-                  expression.RelationalOperator = optor;
-                }
-                else
-                {
-                  expression.RelationalOperator = RelationalOperator.EqualTo;
-                }
-
-                expression.PropertyName = filterExpression["field"];
+                expression.PropertyName = expr["field"];
 
                 Values values = new Values();
                 expression.Values = values;
-                string value = filterExpression["value"];
+                string value = expr["value"];
                 values.Add(value);
               }
             }

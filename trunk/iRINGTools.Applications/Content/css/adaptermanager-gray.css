@@ -24,10 +24,21 @@
     padding-right: 10px;
 }
 
+.item-remove
+{
+    background-image: url('../img/16x16/list-remove.png') !important;
+}
+
+.filter
+{
+    background-image: url('../img/16x16/filter.png') !important;
+}
+
 .x-tree
 {
     background-color: #fff;
 }
+
 .bg_TreeNodeColor
 {
     background-color: #E8E8E8 !important;
