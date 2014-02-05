@@ -236,9 +236,7 @@ namespace org.iringtools.library
             string key = objectType.keyProperties[i].keyPropertyName;
             DataProperty prop = objectType.dataProperties.Find(x => x.propertyName.ToLower() == key.ToLower());
 
-            string expr = (IsNumeric(prop.dataType))
-              ? string.Format("{0} = {1}", key, idParts[i])
-              : string.Format("{0} = '{1}'", key, idParts[i]);
+            string expr = string.Empty;
 
             if (IsNumeric(prop.dataType))
             {
