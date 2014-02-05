@@ -4545,9 +4545,18 @@ namespace org.iringtools.adapter
         string searchPath = string.Empty;
         try
         {
+            string appDataPath = _settings["AppDataPath"];
             string strPattern = scope + "." + app + ".*";
             string strPatterntoremove = scope + "." + app + ".";
-            searchPath = AppDomain.CurrentDomain.BaseDirectory + _settings["AppDataPath"];
+            if (appDataPath.StartsWith(".") || (appDataPath.StartsWith("\\"))
+                && !appDataPath.Contains(@":\"))
+            {
+                searchPath = AppDomain.CurrentDomain.BaseDirectory + appDataPath;
+            }
+            else
+            {
+                searchPath = appDataPath;
+            }
             string[] filePaths = Directory.GetFiles(searchPath, strPattern);
 
             foreach (string name in filePaths)
