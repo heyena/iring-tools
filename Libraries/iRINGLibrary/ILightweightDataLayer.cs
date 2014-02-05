@@ -240,6 +240,19 @@ namespace org.iringtools.library
               ? string.Format("{0} = {1}", key, idParts[i])
               : string.Format("{0} = '{1}'", key, idParts[i]);
 
+            if (IsNumeric(prop.dataType))
+            {
+                expr = string.Format("{0} = {1}", key, idParts[i]);
+            }
+            else if (string.IsNullOrEmpty(idParts[i]))
+            {
+                expr = string.Format("({0} = '' OR {0} IS NULL)", key);
+            }
+            else
+            {
+                expr = string.Format("{0} = '{1}'", key, idParts[i]);
+            }
+
             if (exprBuilder.Length > 0)
             {
               exprBuilder.Append(" AND ");
