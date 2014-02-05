@@ -4541,23 +4541,29 @@ namespace org.iringtools.adapter
     /// <returns></returns>
     public List<Files> GetDownloadedList(string scope, string app)
     {
-        List<Files> FFile = new List<Files>();
-        string strPattern = scope + "." + app + ".*";
-        string strPatterntoremove = scope + "." + app + ".";
-        string searchPath = AppDomain.CurrentDomain.BaseDirectory + _settings["AppDataPath"];
-        string[] filePaths = Directory.GetFiles(searchPath, strPattern);       
-
-        foreach (string name in filePaths)
+        List<Files> lstFile = new List<Files>();
+        string searchPath = string.Empty;
+        try
         {
-            Files _file = new Files();
-            if(name.Contains("\\"))
-            _file.File =name.Substring(name.LastIndexOf("\\") + 1).Remove(0,strPatterntoremove.Length);
-            
-            FFile.Add(_file);
-            //FFile.Add(_file);
-        }
+            string strPattern = scope + "." + app + ".*";
+            string strPatterntoremove = scope + "." + app + ".";
+            searchPath = AppDomain.CurrentDomain.BaseDirectory + _settings["AppDataPath"];
+            string[] filePaths = Directory.GetFiles(searchPath, strPattern);
 
-        return FFile;
+            foreach (string name in filePaths)
+            {
+                Files file = new Files();
+                if (name.Contains("\\"))
+                    file.File = name.Substring(name.LastIndexOf("\\") + 1).Remove(0, strPatterntoremove.Length);
+
+                lstFile.Add(file);
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.Error("Error getting file information: " + e.Message + " at file search path - " + searchPath);
+        }
+        return lstFile;
     }
   
 
