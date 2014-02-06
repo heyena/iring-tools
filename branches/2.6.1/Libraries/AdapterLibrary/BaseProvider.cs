@@ -72,6 +72,16 @@ namespace org.iringtools.adapter
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
+      string path = _settings["AppDataPath"];
+      if (!path.EndsWith("\\")) path += "\\";
+
+      if (!path.StartsWith(@"\\") && !path.Contains(@":\"))
+      {
+          path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+      }
+
+      _settings["AppDataPath"] = path;
+
       _settings[CACHE_CONNSTR_LEVEL] = "Adapter";
 
       #region initialize webHttpClient for converting old mapping
@@ -153,15 +163,8 @@ namespace org.iringtools.adapter
           }
         }
       }
-      
-      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
-      // Ninject Extension requires fully qualified path.
-      string adapterBindingPath = Path.Combine(
-        _settings["BaseDirectoryPath"],
-        relativePath
-      );
-
+      string adapterBindingPath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
       _kernel.Load(adapterBindingPath);
       
       InitializeIdentity();
@@ -240,7 +243,6 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error initializing identity: {0}", ex));
-        throw ex;
       }
     }
 
@@ -481,14 +483,7 @@ namespace org.iringtools.adapter
 
       _settings["Scope"] = scope;
 
-      string relativePath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["AppDataPath"], scope);
-
-      // Ninject Extension requires fully qualified path.
-      string dataLayerBindingPath = Path.Combine(
-        _settings["BaseDirectoryPath"],
-        relativePath
-      );
-
+      string dataLayerBindingPath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["AppDataPath"], scope);
       _settings["BindingConfigurationPath"] = dataLayerBindingPath;
 
       string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", _settings["AppDataPath"], scope);

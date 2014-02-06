@@ -26,8 +26,17 @@ namespace org.iringtools.adapter
             BuildManager.GetReferencedAssemblies(); // make sure assemblies are loaded even though methods may not have been called yet        
             
             DataLayers dataLayers = GetDataLayers();
-            string path = AppDomain.CurrentDomain.BaseDirectory + "\\App_Data\\DataLayers.xml";
-            Utility.Write<DataLayers>(dataLayers, path);
+
+            string path = ConfigurationManager.AppSettings["AppDataPath"];
+            if (!path.EndsWith("\\")) path += "\\";
+
+            if (!path.StartsWith(@"\\") && !path.Contains(@":\"))
+            {
+                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+            }
+            
+            string dataLayerPath = path + "DataLayers.xml";
+            Utility.Write<DataLayers>(dataLayers, dataLayerPath);
         }
 
         protected void Application_BeginRequest(object sender, EventArgs e)

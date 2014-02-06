@@ -155,7 +155,7 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        string spreadsheetPath = Path.Combine(_settings["BaseDirectoryPath"], _settings["AppDataPath"], string.Format("SpreadsheetData.{0}.xlsx", _settings["Scope"]));
+        string spreadsheetPath = Path.Combine(_settings["AppDataPath"], string.Format("SpreadsheetData.{0}.xlsx", _settings["Scope"]));
         FileStream fsSrc = new FileStream(spreadsheetPath, FileMode.Open, FileAccess.Read);
         DocumentBytes document = new DocumentBytes();
         document.DocumentPath = spreadsheetPath;
