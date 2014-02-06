@@ -66,30 +66,6 @@ namespace org.iringtools.library
           this.Set(key, settings[key]);
         }
       }
-
-      //Consolidate legacy XML folder to App_Data folder
-      if (this["AppDataPath"] == @".\App_Data\" && Directory.Exists(@".\XML\"))
-      {
-        try
-        {
-          string[] srcFiles = Directory.GetFiles(@".\XML\", "*.*");
-
-          foreach (string srcFile in srcFiles)
-          {
-            string fileName = Path.GetFileName(srcFile);
-            string destFile = Path.Combine(this["AppDataPath"], fileName);
-
-            if (File.Exists(destFile))
-              File.Delete(srcFile);
-            else
-              File.Move(srcFile, destFile);
-          }
-        }
-        catch (Exception e)
-        {
-          _logger.Warn("Error moving legacy XML files to App Data: " + e);
-        }
-      }
     }
 
     public NetworkCredential GetProxyCredential()

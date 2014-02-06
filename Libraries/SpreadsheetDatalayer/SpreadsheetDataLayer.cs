@@ -571,7 +571,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         SpreadsheetConfiguration config = Utility.DeserializeFromXElement<SpreadsheetConfiguration>(configuration);
-        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"], string.Format("spreadsheet-configuration.{0}.xml", _settings["scope"]));
+        string path = Path.Combine(_settings["AppDataPath"], string.Format("spreadsheet-configuration.{0}.xml", _settings["scope"]));
         Utility.Write<SpreadsheetConfiguration>(config, path, true);
 
       }

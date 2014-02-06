@@ -4353,7 +4353,7 @@ namespace org.iringtools.adapter
             string savedFileName = string.Empty;
 
             savedFileName = Path.Combine(
-                   AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"],
+                   _settings["AppDataPath"],
                    Path.GetFileName(fileName));
 
             try
