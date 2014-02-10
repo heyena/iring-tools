@@ -32,7 +32,8 @@ Ext.application({
         'Directory',
         'Search',
         'Spreadsheet',
-        'NHConfig'
+        'NHConfig',
+        'df.controller.DataFilter'
   ],
 
   models: [

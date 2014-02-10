@@ -1348,8 +1348,8 @@ Ext.define('AM.controller.Directory', {
         var graph = node.data.text;
 
         var relURI = "Directory/getDataFilter";
-        var reqParam = { scope: contextName, app: endpointName, graph: graph };
-        var getColsUrl = 'GridManager/getGridDefinition?' + 'scope =' + contextName + '&app=' + endpointName + '&graph=' + graph;
+        var reqParam = { scope: contextName, app: endpointName, graph: graph, start: 0, limit :25 };
+        var getColsUrl = 'GridManager/pages';
         var oeUrl = 'Directory/getDataFilter';
         panelDisable();
         var dfcontroller = me.application.getController("df.controller.DataFilter");

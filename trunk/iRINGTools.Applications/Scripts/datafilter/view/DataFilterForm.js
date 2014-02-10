@@ -188,12 +188,28 @@ Ext.define('df.view.DataFilterForm', {
                                     editable: false,
                                     store: [
                                         [
-                                            '0',
-                                            'AND'
+                                            0,
+                                            'None'
                                         ],
                                         [
-                                            '1',
-                                            'OR'
+                                            1,
+                                            'And'
+                                        ],
+                                        [
+                                            2,
+                                            'Or'
+                                        ],
+                                        [
+                                            3,
+                                            'Not'
+                                        ],
+                                        [
+                                            4,
+                                            'AndNot'
+                                        ],
+                                        [
+                                            5,
+                                            'OrNot'
                                         ]
                                     ]
                                 },
@@ -397,11 +413,11 @@ Ext.define('df.view.DataFilterForm', {
                                     editable: false,
                                     store: [
                                         [
-                                            '0',
+                                            0,
                                             'Asc'
                                         ],
                                         [
-                                            '1',
+                                            1,
                                             'Desc'
                                         ]
                                     ]
