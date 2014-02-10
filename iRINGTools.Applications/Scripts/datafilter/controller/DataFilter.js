@@ -116,10 +116,10 @@ dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, 
 	            if(respObj.dataFilter !== null)
                 {
 	            	var resp = respObj.dataFilter;
-	            	if(resp.exprList.length >0){
-	            		 for(var i=0; i < resp.exprList.length; i++)
+	            	if(resp.Expressions.length >0){
+	            	    for (var i = 0; i < resp.Expressions.length; i++)
 	                     {
-	            			 var lItem = resp.exprList[i];
+	                         var lItem = resp.Expressions[i];
 	                         var open = lItem.openGroupCount;
 	                         var log = lItem.logicalOperator;
 	                         var rel = lItem.relationalOperator;
@@ -166,11 +166,11 @@ dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, 
 	                     //view.show();
 	                  }
 	            	}
-	            	if(resp.objExprList.length >0){
+	            	if(resp.OrderExpressions.length >0){
 	            		
-	            		for(var i=0; i < resp.objExprList.length; i++)
+	            		for(var i=0; i < resp.OrderExpressions.length; i++)
 	                    {
-	            			var lItem = resp.objExprList[i];
+	            			var lItem = resp.OrderExpressions[i];
 	                        var prop = lItem.propertyName;
 	                        var sort = lItem.sortOrder;      
 
