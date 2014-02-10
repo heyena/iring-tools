@@ -12,11 +12,11 @@ Ext.define('df.store.RelationalStoreforTransferType', {
             storeId: 'RelationalStoreforTransferType',
             data: [
                 {
-                    name: '0',
+                    name: 0,
                     value: 'EqualTo'
                 },
                 {
-                    name: '1',
+                    name: 1,
                     value: 'NotEqualTo'
                 }
             ],

@@ -113,19 +113,19 @@ dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, 
 	        success: function (response, request) {
 	            var respObj = Ext.JSON.decode(response.responseText);
 	            //propertyStore.loadData(respObj.metaData.columns);
-	            if(respObj.dataFilter !== null)
+	            if(respObj.items !== null)
                 {
-	            	var resp = respObj.dataFilter;
+	            	var resp = respObj.items;
 	            	if(resp.Expressions.length >0){
 	            	    for (var i = 0; i < resp.Expressions.length; i++)
 	                     {
 	                         var lItem = resp.Expressions[i];
-	                         var open = lItem.openGroupCount;
-	                         var log = lItem.logicalOperator;
-	                         var rel = lItem.relationalOperator;
-	                         var prop = lItem.propertyName;
-	                         var value = lItem.values;
-	                         var close = lItem.closeGroupCount;
+	                         var open = lItem.OpenGroupCount;
+	                         var log = lItem.LogicalOperator;
+	                         var rel = lItem.RelationalOperator;
+	                         var prop = lItem.PropertyName;
+	                         var value = lItem.Values;
+	                         var close = lItem.CloseGroupCount;
 
 	                         if (i+1 >= 2)
 	                         {
@@ -171,8 +171,8 @@ dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, 
 	            		for(var i=0; i < resp.OrderExpressions.length; i++)
 	                    {
 	            			var lItem = resp.OrderExpressions[i];
-	                        var prop = lItem.propertyName;
-	                        var sort = lItem.sortOrder;      
+	                        var prop = lItem.PropertyName;
+	                        var sort = lItem.SortOrder;      
 
 	                        if (i+1 >= 2)
 	                        {
@@ -187,7 +187,8 @@ dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, 
 	                        arrSortOrderList[0].setValue(sort);  
 	                        obj.getForm().findField('oeExprCount').setValue(i+1);
 	                    }
-	            	}
+	                }
+	                obj.getForm().findField('isAdmin').setValue(resp.isAdmin);
                    
                 obj.getForm().findField('filterFor').setValue(filterFor);
                 }

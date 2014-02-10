@@ -12,39 +12,39 @@ Ext.define('df.store.RelationalStoreComplete', {
             storeId: 'RelationalStoreComplete',
             data: [
                 {
-                    name: '0',
+                    name: 0,
                     value: 'EqualTo'
                 },
                 {
-                    name: '1',
+                    name: 1,
                     value: 'NotEqualTo'
                 },
                 {
-                    name: '2',
+                    name: 2,
                     value: 'LessThan'
                 },
                 {
-                    name: '3',
+                    name: 3,
                     value: 'LessThan'
                 },
                 {
-                    name: '4',
+                    name: 4,
                     value: 'Contains'
                 },
                 {
-                    name: '5',
+                    name: 5,
                     value: 'StartsWith'
                 },
                 {
-                    name: '6',
+                    name: 6,
                     value: 'EndsWith'
                 },
                 {
-                    name: '7',
+                    name: 7,
                     value: 'GreaterThanOrEqual'
                 },
                 {
-                    name: '8',
+                    name: 8,
                     value: 'LesserThanOrEqual'
                 }
             ],
