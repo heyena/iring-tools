@@ -16,7 +16,7 @@ Ext.define('df.store.ColumnNameStore', {
             proxy: {
                 type: 'ajax',
                 reader: {
-                    type: 'array'
+                    type: 'json'
                 }
             }
         }, cfg)]);
