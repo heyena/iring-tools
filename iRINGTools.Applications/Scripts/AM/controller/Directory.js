@@ -1347,13 +1347,13 @@ Ext.define('AM.controller.Directory', {
         var endpointName = node.parentNode.parentNode.data.property['Internal Name'];
         var graph = node.data.text;
 
-        var relURI = "Directory/getDataObjFilter";
+        var relURI = "Directory/getDataFilter";
         var reqParam = { scope: contextName, app: endpointName, graph: graph };
-        var getColsUrl = 'Directory/getColumnNames?' + 'scope =' + contextName + '&app=' + endpointName + '&graph=' + graph;
-        var oeUrl = 'Directory/getDataFilterOE';
+        var getColsUrl = 'GridManager/getGridDefinition?' + 'scope =' + contextName + '&app=' + endpointName + '&graph=' + graph;
+        var oeUrl = 'Directory/getDataFilter';
         panelDisable();
         var dfcontroller = me.application.getController("df.controller.DataFilter");
-        dfcontroller.dataFiltersMenuItem(centerPanel, node, relURI, reqParam, getColsUrl, "dobj", oeUrl);
+        dfcontroller.dataFiltersMenuItem(centerPanel, node, relURI, reqParam, getColsUrl, "dobj");
     },
 
      saveDataFilter: function(button, e, eOpts) {
@@ -1364,9 +1364,8 @@ Ext.define('AM.controller.Directory', {
         var node = directoryTree.getSelectedNode();
 
         var graphNode = node.parentNode;
-        var scope = graphNode.data.properties.Context;
-        var propapp = graphNode.data.properties["Internal Name"];
-        var app = propapp;
+        var contextName = node.parentNode.parentNode.parentNode.data.property['Internal Name'];
+        var endpointName = node.parentNode.parentNode.data.property['Internal Name'];
         var graph = node.data.text;
         var ctx = '?scope =' + contextName + '&app=' + endpointName + '&graph=' + graph;
         var relURI = "Directory/dataFilter";

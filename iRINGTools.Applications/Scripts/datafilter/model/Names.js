@@ -4,7 +4,7 @@ Ext.define('df.model.Names', {
 
     fields: [
         {
-            name: 'name'
+            name: 'text'
         },
         {
             name: 'value'

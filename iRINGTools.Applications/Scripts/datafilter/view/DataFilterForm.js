@@ -108,7 +108,7 @@ Ext.define('df.view.DataFilterForm', {
                                     margin: '5 0 5 10',
                                     border: false,
                                     itemId: 'save_0',
-                                    icon: 'resources/images/16x16/add.png'
+                                    icon: 'Content/img/16x16/add.png'
                                 }
                             ]
                         },
@@ -137,10 +137,10 @@ Ext.define('df.view.DataFilterForm', {
                                     itemId: 'propertyName_1',
                                     name: 'propertyName_1',
                                     matchFieldWidth: false,
-                                    displayField: 'name',
+                                    displayField: 'text',
                                     queryMode: 'local',
                                     store: 'ColumnNameStore',
-                                    valueField: 'value',
+                                    valueField: 'text',
                                     listeners: {
                                         select: {
                                             fn: me.onPropertyName_1Select,
@@ -287,7 +287,7 @@ Ext.define('df.view.DataFilterForm', {
                                     border: false,
                                     itemId: 'delete_1',
                                     margin: '5 0 5 10',
-                                    icon: 'resources/images/16x16/delete-icon.png',
+                                    icon: 'Content/img/16x16/delete-icon.png',
                                     tooltip: 'remove Expression'
                                 }
                             ]
@@ -360,7 +360,7 @@ Ext.define('df.view.DataFilterForm', {
                                     border: false,
                                     height: 22,
                                     itemId: 'OEAdd_0',
-                                    icon: 'resources/images/16x16/add.png'
+                                    icon: 'Content/img/16x16/add.png'
                                 }
                             ]
                         },
@@ -383,10 +383,10 @@ Ext.define('df.view.DataFilterForm', {
                                     itemId: 'OEProName_1',
                                     name: 'OEProName_1',
                                     matchFieldWidth: false,
-                                    displayField: 'name',
+                                    displayField: 'text',
                                     queryMode: 'local',
                                     store: 'ColumnNameStore',
-                                    valueField: 'value'
+                                    valueField: 'text'
                                 },
                                 {
                                     xtype: 'combobox',
@@ -455,7 +455,7 @@ Ext.define('df.view.DataFilterForm', {
                                     margins: '6',
                                     border: false,
                                     itemId: 'OEDelete_1',
-                                    icon: 'resources/images/16x16/delete-icon.png'
+                                    icon: 'Content/img/16x16/delete-icon.png'
                                 }
                             ]
                         }
