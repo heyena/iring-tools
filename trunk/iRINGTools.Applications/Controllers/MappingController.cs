@@ -782,28 +782,31 @@ namespace org.iringtools.web.controllers
             string dataType = role.dataType;
             record["dataType"] = dataType;
 
-            if (!dataType.ToLower().StartsWith("xsd:"))
+            if (dataType != null)
             {
+              if (!dataType.ToLower().StartsWith("xsd:"))
+              {
                 if (!string.IsNullOrEmpty(role.value))
                 {
-                    record["value"] = role.value;
+                  record["value"] = role.value;
                 }
                 else
                 {
-                    string label = GetClassLabel(role.dataType);
-                    if (!string.IsNullOrEmpty(label))
-                        record["value"] = label;
+                  string label = GetClassLabel(role.dataType);
+                  if (!string.IsNullOrEmpty(label))
+                    record["value"] = label;
                 }
-            }
-            
-            if (role.dataType.ToLower().StartsWith("xsd:") || role.type == RoleType.ObjectProperty
-                || !string.IsNullOrEmpty(role.valueListName))
-            {
+              }
+
+              if (role.dataType.ToLower().StartsWith("xsd:") || role.type == RoleType.ObjectProperty
+                  || !string.IsNullOrEmpty(role.valueListName))
+              {
                 record["propertyName"] = role.propertyName;
                 if (!string.IsNullOrEmpty(role.valueListName))
                 {
-                    record["valueListName"] = role.valueListName;
+                  record["valueListName"] = role.valueListName;
                 }
+              }
             }
 
             node.record = record;
