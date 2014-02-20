@@ -831,6 +831,128 @@ namespace org.iringtools.web.controllers
         return Json(container, JsonRequestBehavior.AllowGet);
     }
 
+    public ActionResult getDataFilter(string scope, string app, string graph)
+    {
+        string keyName = string.Format("{0}.{1}.{2}", scope, app, graph);
+
+        DataFilter filter = (DataFilter)Session[keyName];
+
+        if (filter == null)
+        {
+            filter = new DataFilter();
+            _repository.GetFilterFile(ref filter, keyName);
+        }
+
+        JsonContainer<DataFilter> container = new JsonContainer<DataFilter>();
+        container.items = filter;
+        container.success = true;
+         container.total = filter.Expressions.Count + filter.OrderExpressions.Count;
+
+        return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult dataFilter(FormCollection form)
+    {
+        try
+        {
+            DataFilter gridDataFilter = new DataFilter();
+
+            int expCount = Convert.ToInt16(form["exprCount"]);
+            int oeExpCount = Convert.ToInt16(form["oeExprCount"]);
+
+            int ec = 1;
+            while (ec <= expCount)
+            {
+                Expression expression = new Expression();
+
+                if (!string.IsNullOrEmpty(form["openGroupCount_" + ec]))
+                    expression.OpenGroupCount = Convert.ToInt16(form["openGroupCount_" + ec]);
+
+                if (!string.IsNullOrEmpty(form["propertyName_" + ec]))
+                    expression.PropertyName = form["propertyName_" + ec];
+
+                if (!string.IsNullOrEmpty(form["relationalOperator_" + ec]))
+                    expression.RelationalOperator = (RelationalOperator)Enum.Parse(typeof(RelationalOperator), form["relationalOperator_" + ec]);
+
+                if (!string.IsNullOrEmpty(form["value_" + ec]))
+                    expression.Values = new Values() { form["value_" + ec] };
+
+                if (!string.IsNullOrEmpty(form["logicalOperator_" + ec]))
+                    expression.LogicalOperator = (LogicalOperator)Enum.Parse(typeof(LogicalOperator), form["logicalOperator_" + ec]);
+
+                if (!string.IsNullOrEmpty(form["closeGroupCount_" + ec]))
+                    expression.CloseGroupCount = Convert.ToInt16(form["closeGroupCount_" + ec]);
+
+                gridDataFilter.Expressions.Add(expression);
+                ec++;
+            }
+
+            int oec = 1;
+            while (oec <= oeExpCount)
+            {
+                if (!(string.IsNullOrEmpty(form["OEProName_" + oec]) &&
+                        string.IsNullOrEmpty(form["OESortOrder_" + oec])))
+                {
+                    gridDataFilter.OrderExpressions.Add(
+                     new OrderExpression()
+                     {
+                         PropertyName = form["OEProName_" + oec],
+                         SortOrder = (SortOrder)Enum.Parse(typeof(SortOrder), form["OESortOrder_" + oec]),
+                     }
+                   );
+                }
+                    oec++;
+            }
+
+            if (form["isAdmin"].ToLower() == "false")
+            {
+                gridDataFilter.isAdmin = false;
+            }
+            else if (form["isAdmin"].ToLower() == "on")
+            {
+                gridDataFilter.isAdmin = true;
+            }
+
+            string requestParam = form["reqParams"];
+            string parametrs = System.Text.RegularExpressions.Regex.Replace(requestParam, @"[""{}]", string.Empty);
+
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(parametrs) && (parametrs.Contains(",")))
+            {
+                string[] arr = parametrs.Split(',');
+
+                foreach (string str in arr)
+                {
+                    if (str.Contains(":"))
+                    {
+                        string[] arr1 = str.Split(':');
+                        dict.Add(arr1[0], arr1[1]);
+                    }
+                }
+            }
+
+
+            string keyName = string.Format("{0}.{1}.{2}", dict["scope"], dict["app"], dict["graph"]);
+            if (gridDataFilter.isAdmin)
+            {
+                _repository.SaveFilterFile(gridDataFilter, keyName);
+                Session.Remove(keyName);
+            }
+            else
+            {
+                Session.Add(keyName, gridDataFilter);
+                _repository.DeleteFilterFile(keyName);
+            }
+
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+        catch (Exception e)
+        {
+            _logger.Error("Error in saving data Filter File: " + e.ToString());
+            throw e;
+        }
+    }
+
     #region Private Methods
 
     private Mapping GetMapping(string scope, string application)

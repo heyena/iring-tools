@@ -63,6 +63,9 @@ namespace org.iringtools.library
     [DataMember(Name = "rollupExpressions", Order = 2, EmitDefaultValue = false)]
     public List<RollupExpression> RollupExpressions { get; set; }
 
+    [DataMember(Name = "isAdmin", Order = 3, EmitDefaultValue = false)]
+    public bool isAdmin { get; set; }	
+
     [Obsolete("Use ToSqlWhereClause(DatabaseDictionary dbDictionary, string tableName, string objectAlias) instead")]
     public string ToSqlWhereClause(DataDictionary dataDictionary, string tableName, string objectAlias)
     {

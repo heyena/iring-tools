@@ -43,9 +43,23 @@ namespace org.iringtools.web.controllers
         public ActionResult Pages(FormCollection form)
         {
             _repository.Session = Session;
-
             JsonContainer<Grid> container = new JsonContainer<Grid>();
-            dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
+
+            string keyName = string.Format("{0}.{1}.{2}", form["scope"], form["app"], form["graph"]);
+            DataFilter filter = (DataFilter)Session[keyName];
+            if (filter == null)
+            {
+                _repository.GetFilterFile(ref filter, keyName);
+            }
+
+            if (filter == null)
+            {
+                dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
+            }
+            else
+            {
+                dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], filter, form["start"], form["limit"]);
+            }
 
             string response = _repository.GetResponse();
             if (response != "")
