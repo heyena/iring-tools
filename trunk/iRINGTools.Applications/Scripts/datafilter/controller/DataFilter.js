@@ -209,12 +209,13 @@ Ext.define('df.controller.DataFilter', {
         if (isAdmin == 'On') {
             isAdmin = true;
         }
-        var reqParam = Ext.JSON.encode(reqParams);
+        //var reqParam = Ext.JSON.encode(reqParams);
+		var reqParam2 = reqParams['scope']+'.'+reqParams['app']+'.'+reqParams['graph'];
         form.submit({
             url: relURI,
             params: {
                 isAdmin: isAdmin,
-                reqParams: reqParam
+                reqParams: reqParam2//reqParam
             },
             method: 'POST',
             timeout: 120000,
