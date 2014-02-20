@@ -913,26 +913,7 @@ namespace org.iringtools.web.controllers
                 gridDataFilter.isAdmin = true;
             }
 
-            string requestParam = form["reqParams"];
-            string parametrs = System.Text.RegularExpressions.Regex.Replace(requestParam, @"[""{}]", string.Empty);
-
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-            if (!string.IsNullOrEmpty(parametrs) && (parametrs.Contains(",")))
-            {
-                string[] arr = parametrs.Split(',');
-
-                foreach (string str in arr)
-                {
-                    if (str.Contains(":"))
-                    {
-                        string[] arr1 = str.Split(':');
-                        dict.Add(arr1[0], arr1[1]);
-                    }
-                }
-            }
-
-
-            string keyName = string.Format("{0}.{1}.{2}", dict["scope"], dict["app"], dict["graph"]);
+            string keyName = form["reqParams"];
             if (gridDataFilter.isAdmin)
             {
                 _repository.SaveFilterFile(gridDataFilter, keyName);
