@@ -32,6 +32,7 @@ namespace iRINGTools.Web.Models
         protected string _dataServiceUri = null;
         protected string _hibernateServiceUri = null;
         protected string _referenceDataServiceUri = null;
+        protected string _servicesBasePath = string.Empty;
 
         public IDictionary<string, string> AuthHeaders { get; set; }
 
@@ -60,6 +61,11 @@ namespace iRINGTools.Web.Models
             _referenceDataServiceUri = _settings["RefDataServiceUri"];
             if (_referenceDataServiceUri.EndsWith("/"))
                 _referenceDataServiceUri = _referenceDataServiceUri.Remove(_referenceDataServiceUri.Length - 1);
+
+            if (!string.IsNullOrEmpty(_settings["BaseDirectoryPath"]) && _settings["BaseDirectoryPath"].Contains("Applications"))
+            {
+                _servicesBasePath = _settings["BaseDirectoryPath"].Replace("Applications", "Services");
+            }
         }
 
         public HttpSessionStateBase Session { get; set; }
@@ -229,6 +235,30 @@ namespace iRINGTools.Web.Models
             }
 
             return nvlobj;
+        }
+
+        public void SaveFilterFile(DataFilter filter, string fileName)
+        {
+            string filterPath = String.Format("{0}filter.{1}.xml", _servicesBasePath + _settings["AppDataPath"], fileName);
+            Utility.Write<DataFilter>(filter, filterPath, true);
+        }
+
+        public void GetFilterFile(ref DataFilter filter, string fileName)
+        {
+            string filterPath = String.Format("{0}filter.{1}.xml", _servicesBasePath + _settings["AppDataPath"], fileName);
+            if (File.Exists(filterPath))
+            {
+                filter = Utility.Read<DataFilter>(filterPath, true);
+            }
+        }
+
+        public void DeleteFilterFile(string fileName)
+        {
+            string filterPath = String.Format("{0}filter.{1}.xml", _servicesBasePath + _settings["AppDataPath"], fileName);
+            if (File.Exists(filterPath))
+            {
+                File.Delete(filterPath);
+            }
         }
 
         public Entity GetClassLabel(string classId)

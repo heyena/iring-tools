@@ -67,6 +67,43 @@ namespace iRINGTools.Web.Models
 
           return dataGrid;
       }
+
+      public StoreViewModel GetGrid(string scope, string app, string graph, DataFilter filter, string start, string limit)
+      {
+          try
+          {
+              this.graph = graph;
+
+              if (start == "0" || start == "1")
+              {
+                  GetDataDictionary(scope, app, false);
+              }
+              else
+              {
+                  GetDataDictionary(scope, app);
+              }
+
+              if (response != "")
+                  return null;
+
+              GetDataItems(scope, app, graph, filter, start, limit);
+
+              if (response != "")
+                  return null;
+
+              GetDataGrid();
+
+              if (response != "")
+                  return null;
+          }
+          catch (Exception ex)
+          {
+              response = response + " " + ex.Message.ToString();
+          }
+
+          return dataGrid;
+      }
+
       private void GetDataDictionary(String scope, String app)
       {
         GetDataDictionary(scope, app, false);
@@ -188,6 +225,45 @@ namespace iRINGTools.Web.Models
           _logger.Error("Error getting data items." + ex);
           response = response + " " + ex.Message.ToString();
         }
+      }
+
+      private void GetDataItems(string scope, string app, string graph, DataFilter dataFilter, string start, string limit)
+      {
+          try
+          {
+              string format = "json";
+              
+              string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
+              string dataItemsJson = string.Empty;
+
+              WebHttpClient client = CreateWebClient(_dataServiceUri);
+              string isAsync = _settings["Async"];
+
+              if (isAsync != null && isAsync.ToLower() == "true")
+              {
+                  client.Async = true;
+                  string statusUrl = client.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
+
+                  if (string.IsNullOrEmpty(statusUrl))
+                  {
+                      throw new Exception("Asynchronous status URL not found.");
+                  }
+
+                  dataItemsJson = WaitForRequestCompletion<string>(_dataServiceUri, statusUrl);
+              }
+              else
+              {
+                  dataItemsJson = client.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
+              }
+
+              DataItemSerializer serializer = new DataItemSerializer();
+              dataItems = serializer.Deserialize<DataItems>(dataItemsJson, false);
+          }
+          catch (Exception ex)
+          {
+              _logger.Error("Error getting data items." + ex);
+              response = response + " " + ex.Message.ToString();
+          }
       }
 
       private void GetDataGrid()

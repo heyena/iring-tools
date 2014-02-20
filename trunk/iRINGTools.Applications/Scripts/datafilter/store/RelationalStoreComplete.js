@@ -21,11 +21,11 @@ Ext.define('df.store.RelationalStoreComplete', {
                 },
                 {
                     name: 2,
-                    value: 'LessThan'
+                    value: 'StartsWith'
                 },
                 {
                     name: 3,
-                    value: 'LessThan'
+                    value: 'EndsWith'
                 },
                 {
                     name: 4,
@@ -33,11 +33,11 @@ Ext.define('df.store.RelationalStoreComplete', {
                 },
                 {
                     name: 5,
-                    value: 'StartsWith'
+                    value: 'In'
                 },
                 {
                     name: 6,
-                    value: 'EndsWith'
+                    value: 'GreaterThan'
                 },
                 {
                     name: 7,
@@ -45,6 +45,10 @@ Ext.define('df.store.RelationalStoreComplete', {
                 },
                 {
                     name: 8,
+                    value: 'LesserThan'
+                },
+                {
+                    name: 9,
                     value: 'LesserThanOrEqual'
                 }
             ],
