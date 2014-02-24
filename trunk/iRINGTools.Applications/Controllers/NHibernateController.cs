@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using System.Collections.Specialized;
 using org.iringtools.utility;
 using System.IO;
+using System.Web.Script.Serialization;
+using System.Xml;
 
 namespace org.iringtools.web.controllers
 {
@@ -17,6 +19,8 @@ namespace org.iringtools.web.controllers
         private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateController));
         private const string ONS_PREFIX = "org.iringtools.adapter.datalayer.proj_";
         private AdapterRepository _repository;
+        private CustomError _CustomError = null;
+        private CustomErrorLog _CustomErrorLog = null;
 
         public NHibernateController() : this(new AdapterRepository()) { }
 
@@ -29,10 +33,11 @@ namespace org.iringtools.web.controllers
 
         public ActionResult DBProviders()
         {
-            NameValueList providers = new NameValueList();            
+            NameValueList providers = new NameValueList();
 
             try
             {
+                
                 foreach (Provider provider in System.Enum.GetValues(typeof(Provider)))
                 {
                     string value = provider.ToString();
@@ -44,7 +49,10 @@ namespace org.iringtools.web.controllers
             }
             catch (Exception e)
             {
-                return Json(new { success = false, message = e.ToString() });
+                _logger.Error(e.ToString());
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIDBProviders, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -52,6 +60,8 @@ namespace org.iringtools.web.controllers
         {
             try
             {
+                
+                
                 Dictionary<string, string> conElts = new Dictionary<string, string>();
                 conElts.Add("dbProvider", form["dbProvider"]);
                 conElts.Add("dbServer", form["dbServer"]);
@@ -64,11 +74,15 @@ namespace org.iringtools.web.controllers
                 conElts.Add("portNumber", form["portNumber"]);
 
                 List<string> tableNames = _repository.GetTableNames(form["scope"], form["app"], conElts);
-                return Json(new {success = true, data = tableNames});
+                return Json(new { success = true, data = tableNames });
             }
             catch (Exception e)
             {
-                return Json(new { success = false, error = e.ToString() });
+                // return Json(new { success = false, error = e.ToString() });
+                _logger.Error(e.ToString());
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUITableName, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -76,6 +90,7 @@ namespace org.iringtools.web.controllers
         {
             try
             {
+               
                 string scope = form["scope"];
                 string app = form["app"];
                 string selectedTables = form["selectedTables"];
@@ -97,7 +112,7 @@ namespace org.iringtools.web.controllers
                 objectsTree.Add(root);
 
                 DatabaseDictionary dictionary = _repository.GetDBDictionary(scope, app);
-                
+
                 Dictionary<string, string> conElts = null;
                 if (dictionary != null && !string.IsNullOrEmpty(dictionary.ConnectionString))
                 {
@@ -148,7 +163,7 @@ namespace org.iringtools.web.controllers
                         {
                             configTables.Add(dataObject.tableName);
                         }
-                    }                    
+                    }
 
                     if (configTables != null && configTables.Count > 0)
                     {
@@ -316,7 +331,11 @@ namespace org.iringtools.web.controllers
             }
             catch (Exception e)
             {
-                return Json(new { success = false, message = e.ToString() });
+                //return Json(new { success = false, message = e.ToString() });
+                _logger.Error(e.ToString());
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUItree, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -324,6 +343,7 @@ namespace org.iringtools.web.controllers
         {
             try
             {
+               
                 string scope = Request.Params["scope"];
                 string app = Request.Params["app"];
 
@@ -341,13 +361,15 @@ namespace org.iringtools.web.controllers
                 }
                 else
                 {
-                    string message = string.Join(" ", response.Messages);
-                    return Json(new { success = false, message =  message});
+                    return Json(new { success = false, message = response.Messages, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
+
                 }
             }
             catch (Exception e)
             {
-                return Json(new { success = true, message = e.ToString() });
+                //return Json(new { success = true, message = e.ToString() });
+              
+                return null;
             }
         }
 
