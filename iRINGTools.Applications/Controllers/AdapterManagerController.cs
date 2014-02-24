@@ -8,6 +8,7 @@ using org.iringtools.library;
 using Newtonsoft.Json;
 using System.Collections.Specialized;
 using org.iringtools.utility;
+using System.Web.Script.Serialization;
 
 namespace org.iringtools.web.controllers
 {
@@ -15,6 +16,8 @@ namespace org.iringtools.web.controllers
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterManagerController));
         private AdapterRepository _repository;
+        private CustomError _CustomError = null;
+        private CustomErrorLog _CustomErrorLog = null;
 
         public AdapterManagerController() : this(new AdapterRepository()) { }
 
@@ -43,13 +46,27 @@ namespace org.iringtools.web.controllers
             catch (Exception e)
             {
                 _logger.Error(e.ToString());
-                throw e;
+                if (e.InnerException != null)
+                {
+                    string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
+                    var jsonSerialiser = new JavaScriptSerializer();
+                    CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+                    return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    _CustomErrorLog = new CustomErrorLog();
+                    _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUICacheInfo, e, _logger);
+                    return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
+                }
+                //throw e;
             }
         }
 
         public ActionResult DBProviders()
         {
-            NameValueList providers = new NameValueList();            
+            NameValueList providers = new NameValueList();
 
             try
             {
@@ -64,7 +81,10 @@ namespace org.iringtools.web.controllers
             }
             catch (Exception e)
             {
-                return Json(new { success = false, message = e.ToString() });
+                // return Json(new { success = false, message = e.ToString() });
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIDBProviders, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -78,14 +98,46 @@ namespace org.iringtools.web.controllers
             catch (Exception e)
             {
                 _logger.Error(e.ToString());
-                throw e;
+                if (e.InnerException != null)
+                {
+                    string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;
+                    var jsonSerialiser = new JavaScriptSerializer();
+                    CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+                    return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    _CustomErrorLog = new CustomErrorLog();
+                    _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIDBDictionary, e, _logger);
+                    return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
+                }
+                //throw e;
             }
         }
 
         public JsonResult RegenAll()
         {
-            Response response = _repository.RegenAll();
-            return Json(response, JsonRequestBehavior.AllowGet);
+            try
+            {
+                Response response = _repository.RegenAll();
+                if (response.Level == StatusLevel.Success)
+                {
+                    return Json(response, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, message = response.Messages, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
+                }
+
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.ToString());
+                return null;
+                //throw e;
+            }
+
         }
 
         public JsonResult Refresh(FormCollection form)
@@ -148,7 +200,14 @@ namespace org.iringtools.web.controllers
             }
             nodes.Add(dataObjectsNode);
 
-            return Json(new { response, nodes }, JsonRequestBehavior.AllowGet);
+            if (response.Level == StatusLevel.Success)
+            {
+                return Json(new { response, nodes }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { success = false, message = response.Messages, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
+            }
             //return Json(response, JsonRequestBehavior.AllowGet);
         }
 
