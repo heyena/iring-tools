@@ -14,13 +14,16 @@ using System.IO;
 using org.iringtools.utility;
 using System.Runtime.Serialization;
 using System.Xml.Linq;
+using System.Web.Script.Serialization;
+using System.Xml;
 
 namespace org.iringtools.web.controllers
 {
   public class DirectoryController : BaseController
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
-    
+    private CustomError _CustomError = null;
+    private CustomErrorLog _CustomErrorLog = null;
     private AdapterRepository _repository;
     private string _keyFormat = "Mapping.{0}.{1}";
     
@@ -517,21 +520,58 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception e)
       {
-        _logger.Error(e.ToString());
-        throw e;
+        //_logger.Error(e.ToString());
+        //throw e;
+          
+                _logger.Error(e.ToString());
+                if (e.InnerException != null)
+                {
+                    string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;
+                    var jsonSerialiser = new JavaScriptSerializer();
+                    CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+                    return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    _CustomErrorLog = new CustomErrorLog();
+                    _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUINode, e, _logger);
+                    return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
       }
     }
 
     public ActionResult DataLayers()
     {
-      DataLayers dataLayers = _repository.GetDataLayers();
+        try
+        {
+            DataLayers dataLayers = _repository.GetDataLayers();
 
-      JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
-      container.items = dataLayers;
-      container.success = true;
-      container.total = dataLayers.Count;
+            JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
+            container.items = dataLayers;
+            container.success = true;
+            container.total = dataLayers.Count;
 
-      return Json(container, JsonRequestBehavior.AllowGet);
+            return Json(container, JsonRequestBehavior.AllowGet);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e.ToString());
+            if (e.InnerException != null)
+            {
+                string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
+                var jsonSerialiser = new JavaScriptSerializer();
+                CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+                return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUIDataLayer, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
+            }
+
+        }
     }
 
     public string DataLayer(JsonTreeNode node, FormCollection form)
@@ -568,267 +608,403 @@ namespace org.iringtools.web.controllers
 
     public JsonResult Scope(FormCollection form)
     {
-        string success = String.Empty;
-        string scopeName = string.Empty;
-
-        if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
+        try
         {
-            scopeName = form["displayName"];
-            success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
+
+            string success = String.Empty;
+            string scopeName = string.Empty;
+
+            if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
+            {
+                scopeName = form["displayName"];
+                success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
+            }
+            else
+            {
+                scopeName = form["contextName"];
+                success = _repository.UpdateScope(form["contextName"], form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
+            }
+            if (success.Trim().Contains("Error"))
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.getErrorResponse(success);
+
+                return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+            ScopeProject scope = _repository.GetScope(scopeName);
+            JsonTreeNode node = new JsonTreeNode
+            {
+                nodeType = "async",
+                type = "ScopeNode",
+                iconCls = "scope",
+                id = scope.Name,
+                text = scope.DisplayName,
+                expanded = false,
+                leaf = false,
+                children = null,
+                record = scope
+            };
+
+            node.property = new Dictionary<string, string>();
+            node.property.Add("Internal Name", scope.Name);
+            node.property.Add("Display Name", scope.DisplayName);
+            node.property.Add("Description", scope.Description);
+            nodes.Add(node);
+
+            return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
+            // return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
-        else
+        catch (Exception e)
         {
-            scopeName = form["contextName"];
-            success = _repository.UpdateScope(form["contextName"], form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
+            _logger.Error(e.ToString());
+            if (e.InnerException != null)
+            {
+                string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
+                var jsonSerialiser = new JavaScriptSerializer();
+                CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+                return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUIScope, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
+            }
+
         }
 
-        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-        ScopeProject scope = _repository.GetScope(scopeName);
-        JsonTreeNode node = new JsonTreeNode
-        {
-            nodeType = "async",
-            type = "ScopeNode",
-            iconCls = "scope",
-            id = scope.Name,
-            text = scope.DisplayName,
-            expanded = false,
-            leaf = false,
-            children = null,
-            record = scope
-        };
-
-        node.property = new Dictionary<string, string>();
-        node.property.Add("Internal Name", scope.Name);
-        node.property.Add("Display Name", scope.DisplayName);
-        node.property.Add("Description", scope.Description);
-        nodes.Add(node);
-
-        return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
-        // return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult Application(FormCollection form)
     {
-        string success = String.Empty;
-        string scopeName = form["Scope"];
-        string cacheImportURI = form["cacheImportURI"];
-        long cacheTimeout = String.IsNullOrWhiteSpace(form["cacheTimeout"]) ? 0 : Convert.ToInt64(form["cacheTimeout"]);
-        string permissions = form["permissions"];
-
-        library.Configuration configuration = new Configuration
+        try
         {
-            AppSettings = new AppSettings
+            string success = String.Empty;
+            string scopeName = form["Scope"];
+            string cacheImportURI = form["cacheImportURI"];
+            long cacheTimeout = String.IsNullOrWhiteSpace(form["cacheTimeout"]) ? 0 : Convert.ToInt64(form["cacheTimeout"]);
+            string permissions = form["permissions"];
+
+            library.Configuration configuration = new Configuration
             {
-                Settings = new List<Setting>()
-            }
-        };
-
-        CacheInfo cacheInfo = new CacheInfo
-        {
-            ImportURI = cacheImportURI,
-            Timeout = cacheTimeout
-        };
-
-        for (int i = 0; i < form.AllKeys.Length; i++)
-        {
-            //if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && 
-            //  form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val"
-            //  && form.GetKey(i).ToLower() != "cacheimporturi" && form.GetKey(i).ToLower() != "cachetimeout")
-            if (form.GetKey(i).ToLower().StartsWith("key"))
-            {
-                String key = form[i];
-                if (i + 1 < form.AllKeys.Length)
+                AppSettings = new AppSettings
                 {
-                    String value = form[i + 1];
-                    configuration.AppSettings.Settings.Add(new Setting()
+                    Settings = new List<Setting>()
+                }
+            };
+
+            CacheInfo cacheInfo = new CacheInfo
+            {
+                ImportURI = cacheImportURI,
+                Timeout = cacheTimeout
+            };
+
+            for (int i = 0; i < form.AllKeys.Length; i++)
+            {
+                //if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && 
+                //  form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val"
+                //  && form.GetKey(i).ToLower() != "cacheimporturi" && form.GetKey(i).ToLower() != "cachetimeout")
+                if (form.GetKey(i).ToLower().StartsWith("key"))
+                {
+                    String key = form[i];
+                    if (i + 1 < form.AllKeys.Length)
                     {
-                        Key = key,
-                        Value = value
-                    });
-                }
-            }
-        }
-
-        List<string> groups = new List<string>();
-        if (permissions.Contains(","))
-        {
-            string[] arrstring = permissions.Split(',');
-            groups = new List<string>(arrstring);
-        }
-        else
-        {
-            groups.Add(permissions);
-        }
-
-        ScopeApplication application = new ScopeApplication()
-        {
-            DisplayName = form["displayName"],//form["Name"],
-            Name = form["Name"],
-            Description = form["Description"],
-            Assembly = form["assembly"],
-            Configuration = configuration,
-            CacheInfo = cacheInfo,
-            PermissionGroup = new PermissionGroups()
-        };
-        if (!string.IsNullOrEmpty(permissions))
-            application.PermissionGroup.AddRange(groups);
-
-        if (String.IsNullOrEmpty(form["Application"]))
-        {
-            success = _repository.AddApplication(scopeName, application);
-        }
-        else
-        {
-            success = _repository.UpdateApplication(scopeName, form["Application"], application);
-        }
-
-        //string applicationName = form["Application"];
-        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
-        ScopeProject scope = _repository.GetScope(scopeName);
-        ScopeApplication app = (from apps in scope.Applications
-                                where apps.Name == application.Name
-                                select apps).FirstOrDefault();
-
-        Configuration config = _repository.GetConfig(scope.Name, app.Name);
-        app.Configuration = config;
-
-        DataLayer dataLayer = _repository.GetDataLayer(scope.Name, app.Name);
-
-        if (dataLayer != null)
-        {
-            JsonTreeNode node = new JsonTreeNode
-            {
-                nodeType = "async",
-                type = "ApplicationNode",//"appNode",
-                iconCls = "application",
-                id = scope.Name + "/" + app.Name,
-                text = app.DisplayName,
-                expanded = false,
-                leaf = false,
-                children = null,
-                record = new
-                {
-                    Name = app.Name,
-                    DisplayName = app.DisplayName,
-                    Description = app.Description,
-                    DataLayer = dataLayer.Name,
-                    Assembly = dataLayer.Assembly,
-                    Configuration = app.Configuration,
-                    CacheImportURI = app.CacheInfo == null ? "" : app.CacheInfo.ImportURI,
-                    CacheTimeout = app.CacheInfo == null ? "" : Convert.ToString(app.CacheInfo.Timeout),
-                    PermissionGroups = app.PermissionGroup
-                }
-            };
-
-            node.property = new Dictionary<string, string>();
-            node.property.Add("Internal Name", app.Name);
-            node.property.Add("Display Name", app.DisplayName);
-            node.property.Add("Description", app.Description);
-            node.property.Add("Data Layer", dataLayer.Name);
-            node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
-
-
-            JsonTreeNode dataObjectsNode = new JsonTreeNode
-            {
-                nodeType = "async",
-                type = "DataObjectsNode",
-                iconCls = "folder",
-                id = scopeName + "/" + app.Name + "/DataObjects",
-                text = "Data Objects",
-                expanded = false,
-                leaf = false,
-                children = null,
-                property = new Dictionary<string, string>()
-            };
-
-            if (scope != null)
-            {
-                ScopeApplication scopeapplication = scope.Applications.Find(x => x.Name.ToLower() == app.Name.ToLower());
-
-                if (scopeapplication != null)
-                {
-                    dataObjectsNode.property.Add("Data Mode", scopeapplication.DataMode.ToString());
+                        String value = form[i + 1];
+                        configuration.AppSettings.Settings.Add(new Setting()
+                        {
+                            Key = key,
+                            Value = value
+                        });
+                    }
                 }
             }
 
-            JsonTreeNode graphsNode = new JsonTreeNode
+            List<string> groups = new List<string>();
+            if (permissions.Contains(","))
             {
-                nodeType = "async",
-                type = "GraphsNode",
-                iconCls = "folder",
-                id = scopeName + "/" + app.Name + "/Graphs",
-                text = "Graphs",
-                expanded = false,
-                leaf = false,
-                children = null
-            };
-
-            JsonTreeNode ValueListsNode = new JsonTreeNode
+                string[] arrstring = permissions.Split(',');
+                groups = new List<string>(arrstring);
+            }
+            else
             {
-                nodeType = "async",
-                type = "ValueListsNode",
-                iconCls = "folder",
-                id = scopeName + "/" + app.Name + "/ValueLists",
-                text = "ValueLists",
-                expanded = false,
-                leaf = false,
-                children = null
+                groups.Add(permissions);
+            }
+
+            ScopeApplication application = new ScopeApplication()
+            {
+                DisplayName = form["displayName"],//form["Name"],
+                Name = form["Name"],
+                Description = form["Description"],
+                Assembly = form["assembly"],
+                Configuration = configuration,
+                CacheInfo = cacheInfo,
+                PermissionGroup = new PermissionGroups()
             };
+            if (!string.IsNullOrEmpty(permissions))
+                application.PermissionGroup.AddRange(groups);
 
-            if (node.children == null)
-                node.children = new List<JsonTreeNode>();
-            node.children.Add(dataObjectsNode);
-            node.children.Add(graphsNode);
-            node.children.Add(ValueListsNode);
+            if (String.IsNullOrEmpty(form["Application"]))
+            {
+                success = _repository.AddApplication(scopeName, application);
+            }
+            else
+            {
+                success = _repository.UpdateApplication(scopeName, form["Application"], application);
+            }
+            if (success.Trim().Contains("Error"))
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.getErrorResponse(success);
+                return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
 
-            nodes.Add(node);
+            //string applicationName = form["Application"];
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+            ScopeProject scope = _repository.GetScope(scopeName);
+            ScopeApplication app = (from apps in scope.Applications
+                                    where apps.Name == application.Name
+                                    select apps).FirstOrDefault();
+
+            Configuration config = _repository.GetConfig(scope.Name, app.Name);
+            app.Configuration = config;
+
+            DataLayer dataLayer = _repository.GetDataLayer(scope.Name, app.Name);
+
+            if (dataLayer != null)
+            {
+                JsonTreeNode node = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = "ApplicationNode",//"appNode",
+                    iconCls = "application",
+                    id = scope.Name + "/" + app.Name,
+                    text = app.DisplayName,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = new
+                    {
+                        Name = app.Name,
+                        DisplayName = app.DisplayName,
+                        Description = app.Description,
+                        DataLayer = dataLayer.Name,
+                        Assembly = dataLayer.Assembly,
+                        Configuration = app.Configuration,
+                        CacheImportURI = app.CacheInfo == null ? "" : app.CacheInfo.ImportURI,
+                        CacheTimeout = app.CacheInfo == null ? "" : Convert.ToString(app.CacheInfo.Timeout),
+                        PermissionGroups = app.PermissionGroup
+                    }
+                };
+
+                node.property = new Dictionary<string, string>();
+                node.property.Add("Internal Name", app.Name);
+                node.property.Add("Display Name", app.DisplayName);
+                node.property.Add("Description", app.Description);
+                node.property.Add("Data Layer", dataLayer.Name);
+                node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
+
+
+                JsonTreeNode dataObjectsNode = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = "DataObjectsNode",
+                    iconCls = "folder",
+                    id = scopeName + "/" + app.Name + "/DataObjects",
+                    text = "Data Objects",
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    property = new Dictionary<string, string>()
+                };
+
+                if (scope != null)
+                {
+                    ScopeApplication scopeapplication = scope.Applications.Find(x => x.Name.ToLower() == app.Name.ToLower());
+
+                    if (scopeapplication != null)
+                    {
+                        dataObjectsNode.property.Add("Data Mode", scopeapplication.DataMode.ToString());
+                    }
+                }
+
+                JsonTreeNode graphsNode = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = "GraphsNode",
+                    iconCls = "folder",
+                    id = scopeName + "/" + app.Name + "/Graphs",
+                    text = "Graphs",
+                    expanded = false,
+                    leaf = false,
+                    children = null
+                };
+
+                JsonTreeNode ValueListsNode = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = "ValueListsNode",
+                    iconCls = "folder",
+                    id = scopeName + "/" + app.Name + "/ValueLists",
+                    text = "ValueLists",
+                    expanded = false,
+                    leaf = false,
+                    children = null
+                };
+
+                if (node.children == null)
+                    node.children = new List<JsonTreeNode>();
+                node.children.Add(dataObjectsNode);
+                node.children.Add(graphsNode);
+                node.children.Add(ValueListsNode);
+
+                nodes.Add(node);
+            }
+
+            return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
+            //JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            //return result;
         }
+        catch (Exception e)
+        {
+            _logger.Error(e.ToString());
+            if (e.InnerException != null)
+            {
+                string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
+                var jsonSerialiser = new JavaScriptSerializer();
+                CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+                return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errAddUIApplication, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-        return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
-        //JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        //return result;
+            }
+        }
     }
 
     public JsonResult DeleteScope(FormCollection form)
     {
-      _repository.DeleteScope(form["nodeid"]);
+        try
+        {
+            string success = String.Empty;
+            success = _repository.DeleteScope(form["nodeid"]);
+            if (success.Trim().Contains("Error"))
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.getErrorResponse(success);
+                return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
 
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e.ToString());
+            _CustomErrorLog = new CustomErrorLog();
+            _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUIDeleteScope, e, _logger);
+            return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+        }
     }
 
     public JsonResult DeleteApplication(FormCollection form)
     {
-      string context = form["nodeid"];
-      string scope = context.Split('/')[0];
-      string application = context.Split('/')[1];
+        try
+        {
+            string context = form["nodeid"];
+            string scope = context.Split('/')[0];
+            string application = context.Split('/')[1];
+            string success = String.Empty;
 
-      _repository.DeleteApplication(scope, application);
-
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            success = _repository.DeleteApplication(scope, application);
+            if (success.Trim().Contains("Error"))
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.getErrorResponse(success);
+                return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e.ToString());
+            _CustomErrorLog = new CustomErrorLog();
+            _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUIDeleteApplication, e, _logger);
+            return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+        }
     }
 
     public ActionResult SecurityGroups()
     {
-        List<Dictionary<string, string>> lstgroups = _repository.GetSecurityGroups();
-        JsonContainer<List<Dictionary<string, string>>> container = new JsonContainer<List<Dictionary<string, string>>>();
-        container.items = lstgroups;
-        container.success = true;
-        container.total = lstgroups.Count;
+        try
+        {
+            List<Dictionary<string, string>> lstgroups = _repository.GetSecurityGroups();
+            JsonContainer<List<Dictionary<string, string>>> container = new JsonContainer<List<Dictionary<string, string>>>();
+            container.items = lstgroups;
+            container.success = true;
+            container.total = lstgroups.Count;
 
-        return Json(container, JsonRequestBehavior.AllowGet);
+            return Json(container, JsonRequestBehavior.AllowGet);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e.ToString());
+            if (e.InnerException != null)
+            {
+                string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
+                var jsonSerialiser = new JavaScriptSerializer();
+                CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+                return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUISecurityGroup, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
+            }
+        }
     }
 
     public ActionResult InitializeUISettings()
     {
-        NameValueList nvlSettings = _repository.GetGlobalVariables();
 
-        JsonContainer<NameValueList> container = new JsonContainer<NameValueList>();
-        container.items = nvlSettings;
-        container.success = true;
-        container.total = nvlSettings.Count;
+        try
+        {
+            NameValueList nvlSettings = _repository.GetGlobalVariables();
 
-        return Json(container, JsonRequestBehavior.AllowGet);
+            JsonContainer<NameValueList> container = new JsonContainer<NameValueList>();
+            container.items = nvlSettings;
+            container.success = true;
+            container.total = nvlSettings.Count;
+
+            return Json(container, JsonRequestBehavior.AllowGet);
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e.ToString());
+            if (e.InnerException != null)
+            {
+                string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
+                var jsonSerialiser = new JavaScriptSerializer();
+                CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+                return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUIInitializeUISettings, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
+            }
+        }
+
     }
 
     public ActionResult getDataFilter(string scope, string app, string graph)
