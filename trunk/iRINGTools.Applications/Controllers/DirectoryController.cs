@@ -567,7 +567,7 @@ namespace org.iringtools.web.controllers
             {
                 _CustomErrorLog = new CustomErrorLog();
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUIDataLayer, e, _logger);
-                return Json(new { success = false, message = "[ Message Id " + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
             }
 
@@ -610,7 +610,6 @@ namespace org.iringtools.web.controllers
     {
         try
         {
-
             string success = String.Empty;
             string scopeName = string.Empty;
 
@@ -670,8 +669,7 @@ namespace org.iringtools.web.controllers
             {
                 _CustomErrorLog = new CustomErrorLog();
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUIScope, e, _logger);
-                return Json(new { success = false, message = "[ Message Id " + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
-
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
 
         }
