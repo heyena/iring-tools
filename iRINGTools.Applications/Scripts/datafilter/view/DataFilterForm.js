@@ -481,7 +481,7 @@ Ext.define('df.view.DataFilterForm', {
                 	fieldLabel : 'Apply for all users',
                 	name: 'isAdmin',
                 	value: 'false',
-                	margin: 5,
+                	margin: 5
                 },{
                 	xtype: 'hiddenfield',
                 	name: 'filterFor'
