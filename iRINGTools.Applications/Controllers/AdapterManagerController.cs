@@ -206,7 +206,7 @@ namespace org.iringtools.web.controllers
 
                 if (response.Level == StatusLevel.Success)
                 {
-                    return Json(new { response, nodes }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = true, response, nodes }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
