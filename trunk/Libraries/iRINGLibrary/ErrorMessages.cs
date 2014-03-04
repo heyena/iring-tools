@@ -50,6 +50,7 @@ namespace org.iringtools.library
         public static readonly string errGetUICacheInfo = "There is an error occured while getting catche information";
         public static readonly string errUIRefresh = "There is an error occured while refreshing";
         public static readonly string errRefreshCache = "There is an error occured while refreshing cache";
+        public static readonly string errUIDataFilter = "There is an error occured while filterind data";
         #endregion
 
         #region NHibernateController
