@@ -28,6 +28,8 @@ namespace org.iringtools.library
         public static readonly string errRefreshAll = "There is an error occured while refreshing.";
         public static readonly string errDeleteApp = "There is an error occured while deleting application";
         public static readonly string errSwitchDataMode= "There is an error occured while switching data mode";
+        public static readonly string errUIRefreshCache = "There is an error occcured while refreshing cache";
+        public static readonly string errUIImportCache = "There is an error occured while importing cache";
         #endregion
 
         #region Directory Controller
@@ -51,6 +53,7 @@ namespace org.iringtools.library
         public static readonly string errUIRefresh = "There is an error occured while refreshing";
         public static readonly string errRefreshCache = "There is an error occured while refreshing cache";
         public static readonly string errUIDataFilter = "There is an error occured while filterind data";
+        public static readonly string errUISwitchDataMode = "Threre is an error occured while swith data  mode";
         #endregion
 
         #region NHibernateController
@@ -74,7 +77,7 @@ namespace org.iringtools.library
         public static readonly string errUIMapValueList = "There is an error occured while getting map value list";
         public static readonly string errUIDeleteMapTemplate = "There is an error occured while deleting mapping template";
         public static readonly string errUIDeleteValueList = "There is an error occured while deleting value list";
-        public static readonly string errUIValueListMap = "There is an error occured while mapping  value list";
+        public static readonly string errUIValueListMap = "There is an error occured while adding valuemap";
         public static readonly string errUIDeleteValueMap = "There is an error occured while deleting value map";
         public static readonly string errUICopyValueList = "There is an error occured while copying value list";
         public static readonly string errUIValueList = "There is an error occured while listing value";
@@ -86,7 +89,10 @@ namespace org.iringtools.library
         public static readonly string errUIUploadFile = "There is an error occured while uploading file";
         public static readonly string errUIGetFile = "There is an error occured while getting file";  
         #endregion
-
+        
+        #region GridController
+        public static readonly string errUIGridPages = "There is an error occured while paging in grid";
+        #endregion
 
     }
 }
