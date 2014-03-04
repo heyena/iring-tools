@@ -165,61 +165,83 @@ namespace org.iringtools.web.controllers
 
         public JsonResult SwitchDataMode(FormCollection form)
         {
-            string context = form["nodeid"];
-            string mode = form["mode"];
-            string[] names = context.Split('/');
-            string scopeName = names[0];
-            string applicationName = names[1];
 
-            Response response = _repository.SwitchDataMode(scopeName, applicationName, mode);
-
-            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-            JsonTreeNode dataObjectsNode = new JsonTreeNode
+            try
             {
-                nodeType = "async",
-                type = "DataObjectsNode",
-                iconCls = "folder",
-                id = context + "/DataObjects",
-                text = "Data Objects",
-                expanded = false,
-                leaf = false,
-                children = null,
-                property = new Dictionary<string, string>()
-            };
 
-            ScopeProject scope = _repository.GetScope(scopeName);
+                string context = form["nodeid"];
+                string mode = form["mode"];
+                string[] names = context.Split('/');
+                string scopeName = names[0];
+                string applicationName = names[1];
 
-            if (scope != null)
-            {
-                ScopeApplication application = scope.Applications.Find(x => x.Name.ToLower() == applicationName.ToLower());
+                Response response = _repository.SwitchDataMode(scopeName, applicationName, mode);
 
-                if (application != null)
+                List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                JsonTreeNode dataObjectsNode = new JsonTreeNode
                 {
-                    dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
-                }
-            }
-            nodes.Add(dataObjectsNode);
+                    nodeType = "async",
+                    type = "DataObjectsNode",
+                    iconCls = "folder",
+                    id = context + "/DataObjects",
+                    text = "Data Objects",
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    property = new Dictionary<string, string>()
+                };
 
-            if (response.Level == StatusLevel.Success)
-            {
-                return Json(new { response, nodes }, JsonRequestBehavior.AllowGet);
+                ScopeProject scope = _repository.GetScope(scopeName);
+
+                if (scope != null)
+                {
+                    ScopeApplication application = scope.Applications.Find(x => x.Name.ToLower() == applicationName.ToLower());
+
+                    if (application != null)
+                    {
+                        dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
+                    }
+                }
+                nodes.Add(dataObjectsNode);
+
+                if (response.Level == StatusLevel.Success)
+                {
+                    return Json(new { response, nodes }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, message = response.Messages, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
+                }
+                //return Json(response, JsonRequestBehavior.AllowGet);
             }
-            else
+
+            catch (Exception e)
             {
-                return Json(new { success = false, message = response.Messages, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUISwitchDataMode, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
-            //return Json(response, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult RefreshCache(FormCollection form)
         {
-            string scope = form["scope"];
-            string app = form["app"];
-            int timeout = int.Parse(form["timeout"]);
+            try
+            {
+                string scope = form["scope"];
+                string app = form["app"];
+                int timeout = int.Parse(form["timeout"]);
 
-            Response response = _repository.RefreshCache(scope, app, timeout);
+                Response response = _repository.RefreshCache(scope, app, timeout);
 
-            return Json(response, JsonRequestBehavior.AllowGet);
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIRefreshCache, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public JsonResult RefreshObjectCache(FormCollection form)
@@ -237,14 +259,24 @@ namespace org.iringtools.web.controllers
 
         public JsonResult ImportCache(FormCollection form)
         {
-            string scope = form["scope"];
-            string app = form["app"];
-            string importURI = form["importURI"];
-            int timeout = int.Parse(form["timeout"]);
+            try
+            {
+                string scope = form["scope"];
+                string app = form["app"];
+                string importURI = form["importURI"];
+                int timeout = int.Parse(form["timeout"]);
 
-            Response response = _repository.ImportCache(scope, app, importURI, timeout);
+                Response response = _repository.ImportCache(scope, app, importURI, timeout);
 
-            return Json(response, JsonRequestBehavior.AllowGet);
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIImportCache, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public JsonResult DeleteCache(FormCollection form)
