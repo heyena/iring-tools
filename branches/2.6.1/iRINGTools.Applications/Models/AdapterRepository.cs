@@ -24,7 +24,7 @@ namespace iRINGTools.Web.Models
     public class AdapterRepository : IAdapterRepository
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
-
+        private CustomError _CustomError = null;
         protected ServiceSettings _settings;
         protected string _proxyHost;
         protected string _proxyPort;
@@ -32,6 +32,7 @@ namespace iRINGTools.Web.Models
         protected string _dataServiceUri = null;
         protected string _hibernateServiceUri = null;
         protected string _referenceDataServiceUri = null;
+        protected string _servicesBasePath = string.Empty;
 
         public IDictionary<string, string> AuthHeaders { get; set; }
 
@@ -60,6 +61,11 @@ namespace iRINGTools.Web.Models
             _referenceDataServiceUri = _settings["RefDataServiceUri"];
             if (_referenceDataServiceUri.EndsWith("/"))
                 _referenceDataServiceUri = _referenceDataServiceUri.Remove(_referenceDataServiceUri.Length - 1);
+
+            if (!string.IsNullOrEmpty(_settings["BaseDirectoryPath"]) && _settings["BaseDirectoryPath"].Contains("Applications"))
+            {
+                _servicesBasePath = _settings["BaseDirectoryPath"].Replace("Applications", "Services");
+            }
         }
 
         public HttpSessionStateBase Session { get; set; }
@@ -166,6 +172,8 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
+               // throw ex;
             }
 
             return obj;
@@ -183,6 +191,7 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
             }
 
             return obj;
@@ -209,6 +218,7 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
             }
 
             return dicSecuritygroups;
@@ -226,9 +236,34 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
             }
 
             return nvlobj;
+        }
+
+        public void SaveFilterFile(DataFilter filter, string fileName)
+        {
+            string filterPath = String.Format("{0}filter.{1}.xml", _servicesBasePath + _settings["AppDataPath"], fileName);
+            Utility.Write<DataFilter>(filter, filterPath, true);
+        }
+
+        public void GetFilterFile(ref DataFilter filter, string fileName)
+        {
+            string filterPath = String.Format("{0}filter.{1}.xml", _servicesBasePath + _settings["AppDataPath"], fileName);
+            if (File.Exists(filterPath))
+            {
+                filter = Utility.Read<DataFilter>(filterPath, true);
+            }
+        }
+
+        public void DeleteFilterFile(string fileName)
+        {
+            string filterPath = String.Format("{0}filter.{1}.xml", _servicesBasePath + _settings["AppDataPath"], fileName);
+            if (File.Exists(filterPath))
+            {
+                File.Delete(filterPath);
+            }
         }
 
         public Entity GetClassLabel(string classId)
@@ -242,6 +277,7 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
             }
             return entity;
         }
@@ -258,7 +294,11 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
+                              
             }
+
+           
 
             return scope;
         }
@@ -354,6 +394,7 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
             }
 
             return obj;
@@ -484,12 +525,14 @@ namespace iRINGTools.Web.Models
           };
                 }
 
-                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                WebHttpClient client = CreateWebClient(_adapterServiceUri); 
                 obj = client.Post<ScopeProject>("/scopes", scope, true);
             }
+
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
             }
 
             return obj;
@@ -539,6 +582,7 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
             }
 
             return obj;
@@ -557,6 +601,7 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
             }
 
             return obj;
@@ -575,6 +620,7 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
             }
 
             return obj;
@@ -593,6 +639,7 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
+                throw;
             }
 
             return obj;
@@ -651,11 +698,12 @@ namespace iRINGTools.Web.Models
             {
                 _logger.Error(ex.Message);
 
-                response = new Response()
-                {
-                    Level = StatusLevel.Error,
-                    Messages = new Messages { ex.Message }
-                };
+                //response = new Response()
+                //{
+                //    Level = StatusLevel.Error,
+                //    Messages = new Messages { ex.Message }
+                //};
+                return PrepareErrorResponse(ex, ErrorMessages.errUIRefresh);
             }
 
             return response;
@@ -663,11 +711,19 @@ namespace iRINGTools.Web.Models
 
         public Response Refresh(string scope, string application, string dataObjectName)
         {
-            WebHttpClient client = CreateWebClient(_adapterServiceUri);
-            client.Timeout = 600000;
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                client.Timeout = 600000;
 
-            Response response = client.Get<Response>(String.Format("/{0}/{1}/{2}/refresh", scope, application, dataObjectName));
-            return response;
+                Response response = client.Get<Response>(String.Format("/{0}/{1}/{2}/refresh", scope, application, dataObjectName));
+                return response;
+            }
+            catch (Exception e)
+            {
+                return PrepareErrorResponse(e, ErrorMessages.errUIRefresh);
+            }
+
         }
 
         public Response UpdateDataLayer(MemoryStream dataLayerStream)
@@ -682,13 +738,13 @@ namespace iRINGTools.Web.Models
             {
                 _logger.Error(ex.Message);
 
-                Response response = new Response()
-                {
-                    Level = StatusLevel.Error,
-                    Messages = new Messages { ex.Message }
-                };
-
-                return response;
+                //Response response = new Response()
+                //{
+                //    Level = StatusLevel.Error,
+                //    Messages = new Messages { ex.Message }
+                //};
+                return PrepareErrorResponse(ex, ErrorMessages.errUdateDataLayer);
+                //return response;
             }
         }
 
@@ -725,11 +781,12 @@ namespace iRINGTools.Web.Models
             {
                 _logger.Error(ex.Message);
 
-                response = new Response()
-                {
-                    Level = StatusLevel.Error,
-                    Messages = new Messages { ex.Message }
-                };
+                //response = new Response()
+                //{
+                //    Level = StatusLevel.Error,
+                //    Messages = new Messages { ex.Message }
+                //};
+                return PrepareErrorResponse(ex, ErrorMessages.errSwitchDataMode);
             }
 
             return response;
@@ -768,11 +825,12 @@ namespace iRINGTools.Web.Models
             {
                 _logger.Error(ex.Message);
 
-                response = new Response()
-                {
-                    Level = StatusLevel.Error,
-                    Messages = new Messages { ex.Message }
-                };
+                //response = new Response()
+                //{
+                //    Level = StatusLevel.Error,
+                //    Messages = new Messages { ex.Message }
+                //};
+                return PrepareErrorResponse(ex, ErrorMessages.errRefreshCache);
             }
 
             return response;
@@ -907,9 +965,18 @@ namespace iRINGTools.Web.Models
 
         public CacheInfo GetCacheInfo(string scope, string app)
         {
-            WebHttpClient client = CreateWebClient(_adapterServiceUri);
-            string relativePath = string.Format("/{0}/{1}/cacheinfo", scope, app);
-            return client.Get<CacheInfo>(relativePath);
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                string relativePath = string.Format("/{0}/{1}/cacheinfo", scope, app);
+                return client.Get<CacheInfo>(relativePath);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.ToString());
+                throw;
+
+            }
         }
 
         #region NHibernate Configuration Wizard support methods
@@ -927,16 +994,25 @@ namespace iRINGTools.Web.Models
 
         public DatabaseDictionary GetDBDictionary(string scope, string application)
         {
-            WebHttpClient client = CreateWebClient(_hibernateServiceUri);
-            DatabaseDictionary dbDictionary = client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
-
-            string connStr = dbDictionary.ConnectionString;
-            if (!String.IsNullOrEmpty(connStr))
+            try
             {
-                dbDictionary.ConnectionString = Utility.EncodeTo64(connStr);
-            }
+                WebHttpClient client = CreateWebClient(_hibernateServiceUri);
+                DatabaseDictionary dbDictionary = client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
 
-            return dbDictionary;
+                string connStr = dbDictionary.ConnectionString;
+                if (!String.IsNullOrEmpty(connStr))
+                {
+                    dbDictionary.ConnectionString = Utility.EncodeTo64(connStr);
+                }
+
+                return dbDictionary;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.ToString());
+                throw;
+
+            }
         }
 
         public Response SaveDBDictionary(string scope, string app, DatabaseDictionary dictionary)
@@ -950,11 +1026,14 @@ namespace iRINGTools.Web.Models
             }
             catch (Exception ex)
             {
-                response = new Response()
-                {
-                    Level = StatusLevel.Error,
-                    Messages = new Messages() { ex.ToString() }
-                };
+                //response = new Response()
+                //{
+                //    Level = StatusLevel.Error,
+                //    Messages = new Messages() { ex.ToString() }
+                //};
+
+                return PrepareErrorResponse(ex, ErrorMessages.errUISaveDBDirectory);
+
             }
 
             return response;
@@ -1140,10 +1219,41 @@ namespace iRINGTools.Web.Models
 
         public Response RegenAll()
         {
-            WebHttpClient client = CreateWebClient(_adapterServiceUri);
-            Response response = client.Get<Response>("/generate");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                Response response = client.Get<Response>("/generate");
+                return response;
+            }
+            catch(Exception e)
+            {
+                _logger.Error(e.ToString());
+                return PrepareErrorResponse(e, ErrorMessages.errUIRegenAll);
+                throw;
+            }
+        }
+
+        private Response PrepareErrorResponse(Exception ex, string errMsg)
+        {
+            _logger.Error(ex.ToString());
+            CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+            _CustomError = objCustomErrorLog.customErrorLogger(errMsg, ex, _logger);
+            Response response = new Response
+            {
+                Level = StatusLevel.Error,
+                Messages = new Messages
+          {
+            //ex.Message
+             "[ " + _CustomError.msgId + "] " +errMsg 
+          },
+                StatusText = _CustomError.stackTraceDescription,
+                StatusCode = HttpStatusCode.InternalServerError,
+                StatusList = null
+            };
             return response;
         }
         #endregion
+
+      
     }
 }

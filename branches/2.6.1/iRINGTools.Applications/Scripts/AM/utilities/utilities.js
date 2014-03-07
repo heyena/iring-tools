@@ -70,6 +70,16 @@ function getLastXString(str, num) {
 }
 
 
+function panelDisable() {
+    var dPanel = Ext.getCmp('directoryTreeID');
+    dPanel.getEl().mask();
+}
+
+function panelEnable() {
+    var dPanel = Ext.getCmp('directoryTreeID');
+    dPanel.getEl().unmask();
+}
+
 ///overrides required to display correct text on dragstart
 
 /*Ext.override(Ext.view.DragZone, {

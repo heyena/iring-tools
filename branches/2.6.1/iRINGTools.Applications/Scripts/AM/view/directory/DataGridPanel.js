@@ -1,7 +1,7 @@
 Ext.define('AM.view.directory.DataGridPanel', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.dynamicgrid',
-
+    xtype: 'myGrid',
     requires: [
         'AM.view.override.directory.DataGridPanel',
         'AM.store.DataGridStore'
