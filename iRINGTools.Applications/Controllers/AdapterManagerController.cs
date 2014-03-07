@@ -233,7 +233,8 @@ namespace org.iringtools.web.controllers
 
                 Response response = _repository.RefreshCache(scope, app, timeout);
 
-                return Json(response, JsonRequestBehavior.AllowGet);
+                //return Json(response, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, response, JsonRequestBehavior.AllowGet });
             }
 
             catch (Exception e)
