@@ -25,38 +25,60 @@ using System.Runtime.Serialization.Json;
 
 namespace org.iringtools.web.controllers
 {
-	public class GridManagerController : BaseController
-	{
-		private static readonly ILog _logger = LogManager.GetLogger(typeof(GridManagerController));
-		private GridRepository _repository { get; set; }
-		//private Grid dataGrid;		
-        private StoreViewModel dataGrid;
-
-		public GridManagerController() : this(new GridRepository()) {}
-
-		public GridManagerController(GridRepository repository)
-		{
-			_repository = repository;
-      _repository.AuthHeaders = _authHeaders;
-		}
-
-		public ActionResult Pages(FormCollection form)
+    public class GridManagerController : BaseController
     {
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(GridManagerController));
+        private GridRepository _repository { get; set; }
+        //private Grid dataGrid;		
+        private StoreViewModel dataGrid;
+        private CustomError _CustomError = null;
+        private CustomErrorLog _CustomErrorLog = null;
+        public GridManagerController() : this(new GridRepository()) { }
 
-       
+        public GridManagerController(GridRepository repository)
+        {
+            _repository = repository;
+            _repository.AuthHeaders = _authHeaders;
+        }
 
-      _repository.Session = Session;
+        public ActionResult Pages(FormCollection form)
+        {
+            try
+            {
+                _repository.Session = Session;
+                JsonContainer<Grid> container = new JsonContainer<Grid>();
 
-			JsonContainer<Grid> container = new JsonContainer<Grid>();
-			dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
+                string keyName = string.Format("{0}.{1}.{2}", form["scope"], form["app"], form["graph"]);
+                DataFilter filter = (DataFilter)Session[keyName];
+                if (filter == null)
+                {
+                    _repository.GetFilterFile(ref filter, keyName);
+                }
 
-			string response = _repository.GetResponse();
-			if (response != "")
-			{
-              return Json(new { success = false, message = response }, JsonRequestBehavior.AllowGet);
-			}
+                if (filter == null)
+                {
+                    dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
+                }
+                else
+                {
+                    dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], filter, form["start"], form["limit"]);
+                }
 
-            return Json(dataGrid, JsonRequestBehavior.AllowGet);
-		}		
-	}
+                string response = _repository.GetResponse();
+                if (response != "")
+                {
+                    return Json(new { success = false, message = response }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(dataGrid, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+        }
+    }
 }

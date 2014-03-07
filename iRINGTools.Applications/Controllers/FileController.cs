@@ -18,7 +18,8 @@ namespace org.iringtools.web.controllers
         private static readonly ILog _logger = LogManager.GetLogger(typeof(FileController));
         private FileRepository _repository;
         private ServiceSettings _settings = null;
-
+        private CustomError _CustomError = null;
+        private CustomErrorLog _CustomErrorLog = null;
         public FileController() : this(new FileRepository()) { }
 
         public FileController(FileRepository repository)
@@ -54,7 +55,7 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-             
+                
                 string filename = file.Substring(0,file.LastIndexOf('.'));
                 string ext = file.Substring(file.LastIndexOf('.') + 1);
 
@@ -64,7 +65,11 @@ namespace org.iringtools.web.controllers
             catch (Exception ioEx)
             {
                 _logger.Error(ioEx.Message);
-                throw ioEx;
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIExportFile, ioEx, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
+                //throw ioEx;
             }
         }
 
@@ -78,6 +83,7 @@ namespace org.iringtools.web.controllers
         {
             try
             {
+                
                // string datalayer = "org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer";
                 string savedFileName = string.Empty;
 
@@ -103,11 +109,17 @@ namespace org.iringtools.web.controllers
             catch (Exception ex)
             {
 
-                return new JsonResult()
-                {
-                    ContentType = "text/html",
-                    Data = PrepareErrorResponse(ex)
-                };
+                //return new JsonResult()
+                //{
+                //    ContentType = "text/html",
+                //    Data = PrepareErrorResponse(ex)
+                //};
+
+                _logger.Error(ex.Message);
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIUploadFile, ex, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
             }
             return new JsonResult()
             {
@@ -134,7 +146,10 @@ namespace org.iringtools.web.controllers
             catch (Exception ioEx)
             {
                 _logger.Error(ioEx.Message);
-                throw ioEx;
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIGetFile, ioEx, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+               // throw ioEx;
             }                     
             
         }            

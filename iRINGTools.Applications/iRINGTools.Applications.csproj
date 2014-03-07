@@ -192,6 +192,7 @@
     <Content Include="Content\img\document-save.png" />
     <Content Include="Content\img\fade.png" />
     <Content Include="Content\img\file-mapping.png" />
+    <Content Include="Content\img\16x16\filter.png" />
     <Content Include="Content\img\folder-close.png" />
     <Content Include="Content\img\folder-open.png" />
     <Content Include="Content\img\folder.png" />
@@ -199,7 +200,7 @@
     <Content Include="Content\img\iring-tools-logo.png" />
     <Content Include="Content\img\iRINGTools_logo.png" />
     <Content Include="Content\img\list-add.png" />
-    <Content Include="Content\img\list-remove.png" />
+    <Content Include="Content\img\16x16\list-remove.png" />
     <Resource Include="Content\img\relation.png" />
     <Content Include="Content\img\system-file-manager.png" />
     <Content Include="Content\img\table_refresh.png" />
@@ -376,6 +377,14 @@
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetTree.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetWindow.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />
+    <Content Include="Scripts\common\QuickFilter.js" />
+    <Content Include="Scripts\datafilter\controller\DataFilter.js" />
+    <Content Include="Scripts\datafilter\model\Names.js" />
+    <Content Include="Scripts\datafilter\store\ColumnNameStore.js" />
+    <Content Include="Scripts\datafilter\store\RelationalStoreComplete.js" />
+    <Content Include="Scripts\datafilter\store\RelationalStoreforTransferType.js" />
+    <Content Include="Scripts\datafilter\view\DataFilterForm.js" />
+    <Content Include="Scripts\datafilter\view\DataFilterWin.js" />
     <Content Include="Scripts\extjs-4.1.1\ext-all-debug.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
@@ -419,6 +428,9 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App_Data\ldap.default.conf" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

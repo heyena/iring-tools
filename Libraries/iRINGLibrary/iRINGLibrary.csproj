@@ -121,6 +121,9 @@
     <Compile Include="BaseSQLDataLayer.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Contexts.cs" />
+    <Compile Include="CustomError.cs" />
+    <Compile Include="CustomErrorLog.cs" />
+    <Compile Include="ErrorMessages.cs" />
     <Compile Include="ExchangeConfig.cs" />
     <Compile Include="GenericContentObject.cs" />
     <Compile Include="DocumentBytes.cs" />
