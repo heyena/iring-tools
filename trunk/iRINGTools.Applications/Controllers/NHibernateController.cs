@@ -368,8 +368,11 @@ namespace org.iringtools.web.controllers
             catch (Exception e)
             {
                 //return Json(new { success = true, message = e.ToString() });
-              
-                return null;
+                //  return null;
+                _logger.Error(e.ToString());
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUISaveDBDirectory, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
         }
 
