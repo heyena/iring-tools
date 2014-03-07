@@ -62,7 +62,7 @@ namespace org.iringtools.library
         public static readonly string errUISaveDBDirectory = "There is an error occured while saving DB Directory"; 
         #endregion
         #region MappingConroller
-        public static readonly string errUIAddClassMap = "There is an error occured while class map";
+        public static readonly string errUIAddClassMap = "There is an error occured while adding/Editing Class map";
         public static readonly string errUIAddTemplateMap = "There is an error occured while adding template map";
         public static readonly string errUIGetMappingNode = "There is an error occured while getting mapping node";
         public static readonly string errUIDeleteClassMap = "There is an error occured while deleting class map";
@@ -74,7 +74,7 @@ namespace org.iringtools.library
         public static readonly string errUIMapProperty = "There is an error occured while mapping property";
         public static readonly string errUIMapConstant = "There is an error occured while mapping constant";
         public static readonly string errUIMakeReference = "There is an error occured while making reference";
-        public static readonly string errUIMapValueList = "There is an error occured while getting map value list";
+        public static readonly string errUIMapValueList = "There is an error occured while mapping value list";
         public static readonly string errUIDeleteMapTemplate = "There is an error occured while deleting mapping template";
         public static readonly string errUIDeleteValueList = "There is an error occured while deleting value list";
         public static readonly string errUIValueListMap = "There is an error occured while adding valuemap";
