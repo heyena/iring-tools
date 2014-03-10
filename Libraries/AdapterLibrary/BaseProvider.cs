@@ -72,6 +72,16 @@ namespace org.iringtools.adapter
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
+      string path = _settings["AppDataPath"];
+      if (!path.EndsWith("\\")) path += "\\";
+
+      if (!path.StartsWith(@"\\") && !path.Contains(@":\"))
+      {
+          path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+      }
+
+      _settings["AppDataPath"] = path;
+
       _settings[CACHE_CONNSTR_LEVEL] = "Adapter";
 
       #region initialize webHttpClient for converting old mapping
