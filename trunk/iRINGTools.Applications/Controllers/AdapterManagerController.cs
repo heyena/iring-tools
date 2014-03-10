@@ -269,7 +269,7 @@ namespace org.iringtools.web.controllers
 
                 Response response = _repository.ImportCache(scope, app, importURI, timeout);
 
-                return Json(response, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, response, JsonRequestBehavior.AllowGet });
             }
 
             catch (Exception e)
