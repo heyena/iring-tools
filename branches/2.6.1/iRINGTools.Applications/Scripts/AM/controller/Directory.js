@@ -651,6 +651,7 @@ Ext.define('AM.controller.Directory', {
         var nodeState = '/Scopes/' + node.internalId;
         tree.body.mask('Loading...', 'x-mask-loading');
         var storeProxy = store.getProxy();
+        store.getProxy().extraParams.refresh = true;
         storeProxy.on('exception', function (proxy, response, operation) {
             var msg = Ext.JSON.decode(response.responseText).message;
             Ext.widget('messagepanel', { title: 'Error', msg: msg });
@@ -661,6 +662,8 @@ Ext.define('AM.controller.Directory', {
             callback: function (records, options, success) {
                 tree.body.unmask();
                 tree.view.refresh();
+                tree.store.getProxy().extraParams.refresh = false;
+
             }
         });
     },
