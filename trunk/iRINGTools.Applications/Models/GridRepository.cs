@@ -533,10 +533,12 @@ namespace iRINGTools.Web.Models
                         expression.LogicalOperator = LogicalOperator.And;
                     }
 
-                    if (expr.ContainsKey("comparison"))
+                    if (expr.ContainsKey("comparison") && expr["comparison"] != null )
                     {
-                        expression.RelationalOperator = (RelationalOperator)
-                            Enum.Parse(typeof(RelationalOperator), expr["comparison"]);
+                        //expression.RelationalOperator = (RelationalOperator)
+                        //Enum.Parse(typeof(RelationalOperator), expr["comparison"]);
+                        RelationalOperator optor = GetOpt(expr["comparison"]);
+                        expression.RelationalOperator = optor;
                     }
                     else
                     {
