@@ -46,7 +46,8 @@ Ext.define('AM.store.DirectoryTreeStore', {
           endpoint: null,
           baseUrl: null,
           related: null,
-          security: null
+          security: null,
+          refresh: false
         },
         timeout: 600000,
         url: 'directory/getnode',
