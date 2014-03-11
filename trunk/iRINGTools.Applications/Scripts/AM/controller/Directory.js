@@ -56,7 +56,8 @@ Ext.define('AM.controller.Directory', {
         'directory.VirtualPropertyForm',
         'directory.VirtualPropertyGrid',
         'directory.VirtualPropertyWindow',
-        'menus.VirtualPropertyMenu'
+        'menus.VirtualPropertyMenu',
+		'common.ExceptionPanel'
     ],
 
     refs: [
@@ -230,9 +231,12 @@ Ext.define('AM.controller.Directory', {
                 //tree.onReload();
             },
             failure: function (response, request) {
-                //var message = 'Error deleting scope!';
-                Ext.widget('messagepanel', { title: 'Warning', msg: 'Error deleting scope!' });
-                //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+                    var resp = Ext.decode(response.responseText);
+					var userMsg = resp['message'];
+					var detailMsg = resp['stackTraceDescription'];
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+                    Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
             }
         });
     },
@@ -336,6 +340,7 @@ Ext.define('AM.controller.Directory', {
                 nodeid: node.data.id
             },
             success: function (response, request) {
+                var resp = Ext.decode(response.responseText);
                 var parentNode = node.parentNode;
                 parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
@@ -343,9 +348,12 @@ Ext.define('AM.controller.Directory', {
                 //tree.onReload();
             },
             failure: function (response, request) {
-                //var message = 'Error deleting application!';
-                Ext.widget('messagepanel', { title: 'Warning', msg: 'Error deleting application!' });
-                //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+				var resp = Ext.decode(response.responseText);
+				var userMsg = resp['message'];
+				var detailMsg = resp['stackTraceDescription'];
+				var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+				Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+				Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
             }
         });
     },
@@ -437,9 +445,13 @@ Ext.define('AM.controller.Directory', {
             gridProxy.on('exception', function (proxy, response, operation) {
                 content.getEl().unmask();
                 gridPanel.destroy();
-                var msg = Ext.JSON.decode(response.responseText).message;
-                //showDialog(400, 150, 'Error', msg, Ext.Msg.OK, null);
-                Ext.widget('messagepanel', { title: 'Error', msg: msg });
+                var responseObj = Ext.JSON.decode(response.responseText);
+				var userMsg = responseObj['message'];
+				var detailMsg = responseObj['stackTraceDescription'];
+                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+				Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+				Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+				//Ext.widget('messagepanel', { title: 'Error', msg: msg });
             }, me);
 
             gridStore.load({
@@ -1472,6 +1484,7 @@ Ext.define('AM.controller.Directory', {
             },
             success: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
+                if(responseObj.success){
                 if (responseObj.response.Level == 0) {
                     var parentNode = node.parentNode;
                     var nodeIndex = parentNode.indexOf(node);
@@ -1485,6 +1498,14 @@ Ext.define('AM.controller.Directory', {
                 }
                 content.getEl().unmask();
                 //tree.onReload();
+				}else{
+					content.getEl().unmask();
+					var userMsg = responseObj.message;
+					var detailMsg = responseObj.stackTraceDescription;
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+				}
             },
             failure: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);

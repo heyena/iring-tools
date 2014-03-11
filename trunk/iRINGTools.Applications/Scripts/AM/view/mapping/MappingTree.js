@@ -275,7 +275,6 @@ Ext.define('AM.view.mapping.MappingTree', {
         var store = me.store;
         var params = store.getProxy().extraParams;
         var state = me.getState();
-
         if (node) {
             store.on('beforeload', function (store, operation, eopts) {
                 params.graph = graphName;
@@ -308,11 +307,20 @@ Ext.define('AM.view.mapping.MappingTree', {
                 baseUrl: mapPanel.baseUrl
             },
             success: function (result, request) {
-                Ext.example.msg('Notification', 'Configuration saved successfully!');
-                me.onReload();
+					var resp = Ext.decode(result.responseText);
+					if(resp.success){
+						Ext.example.msg('Notification', 'Configuration saved successfully!');
+						me.onReload();
+					}else{
+						var userMsg = resp['message'];
+						var detailMsg = resp['stackTraceDescription'];
+						var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+						Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+						Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+					}
             },
             failure: function (result, request) {
-                return false;
+				return false;
             }
         });
     },

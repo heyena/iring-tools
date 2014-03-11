@@ -197,15 +197,19 @@ Ext.define('AM.view.directory.ScopeForm', {
 					//Ext.ComponentQuery.query('directorytree')[0].onReload();
                 },
                 failure: function (response, request) {
-                    if (response.items != undefined && response.items[3].value !== undefined) {
+                    /*if (response.items != undefined && response.items[3].value !== undefined) {
                         var rtext = response.items[3].value;
                          Ext.widget('messagepanel', { title: 'Error saving folder changes', msg: 'Changes of ' + rtext + ' are not saved.'});
-						//showDialog(400, 100, 'Error saving folder changes', 'Changes of ' + rtext + ' are not saved.', Ext.Msg.OK, null);
-                        return;
-                    }
-                    //var message = 'Error saving changes!';
-                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});
-					//showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+						return;
+                    }*/
+                    //Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});
+					var resp = Ext.decode(request.response.responseText);
+					var userMsg = resp['message'];
+					var detailMsg = resp['stackTraceDescription'];
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+                    Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+                  
                 }
             });
         } else {

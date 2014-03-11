@@ -25,7 +25,6 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
     initComponent: function () {
         var me = this;
-
         Ext.applyIf(me, {
             stateEvents: [
                 'temcollapse',
@@ -87,22 +86,26 @@ Ext.define('AM.view.directory.DirectoryTree', {
     onReload: function (options) {
         var me = this;
         var state = me.getState();
-
         me.on('beforeload', function (store, action) {
             me.getStore().getProxy().extraParams.type = 'ScopesNode';
         });
-
+		var storeProxy = me.store.getProxy();
+        storeProxy.on('exception', function (proxy, response, operation) {
+			var resp = Ext.JSON.decode(response.responseText);
+			var userMsg = resp['message'];
+			var detailMsg = resp['stackTraceDescription'];
+			var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+			Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+			Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+        }, me);
         me.getEl().mask("Loading", 'x-mask-loading');
-
         me.store.load({
             node: me.getRootNode(),
             callback: function (records, options, success) {
                 var nodes = state.expandedNodes || [];
-
                 Ext.each(nodes, function (path) {
                     me.expandPath(path, 'text');
                 });
-
                 me.getEl().unmask();
             }
         });
