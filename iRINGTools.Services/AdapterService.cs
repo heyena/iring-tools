@@ -711,7 +711,7 @@ namespace org.iringtools.services
                 Messages = new Messages
           {
             //ex.Message
-            errMsg
+            "[ " + _CustomError.msgId + "] " + errMsg  
           },
                 StatusText = "[ " + _CustomError.msgId + "] " + _CustomError.stackTraceDescription,
                 StatusCode = HttpStatusCode.InternalServerError,
