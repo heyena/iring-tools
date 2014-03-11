@@ -193,7 +193,7 @@ namespace org.iringtools.services
         {
             try
             {
-                
+               
                 return _adapterProvider.UpdateScope(scope, updatedScope);
             }
             catch (Exception ex)
@@ -711,7 +711,7 @@ namespace org.iringtools.services
                 Messages = new Messages
           {
             //ex.Message
-            "[ " + _CustomError.msgId + "] " + errMsg  
+            "[ Message Id " + _CustomError.msgId + "] - " + errMsg  
           },
                 StatusText = "[ " + _CustomError.msgId + "] " + _CustomError.stackTraceDescription,
                 StatusCode = HttpStatusCode.InternalServerError,
