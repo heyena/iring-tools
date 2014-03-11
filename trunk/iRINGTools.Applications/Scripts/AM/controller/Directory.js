@@ -224,10 +224,20 @@ Ext.define('AM.controller.Directory', {
                 'nodeid': node.data.id
             },
             success: function (response, request) {
-                var parentNode = node.parentNode;
-                parentNode.removeChild(node);
-                tree.getSelectionModel().select(parentNode);
-                tree.view.refresh();
+				var resp = Ext.decode(response.responseText);
+				if(resp.success){
+					var parentNode = node.parentNode;
+					parentNode.removeChild(node);
+					tree.getSelectionModel().select(parentNode);
+					tree.view.refresh();
+				}else{
+					var userMsg = resp['message'];
+					var detailMsg = resp['stackTraceDescription'];
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+                    Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+				}
+                
                 //tree.onReload();
             },
             failure: function (response, request) {
@@ -341,10 +351,19 @@ Ext.define('AM.controller.Directory', {
             },
             success: function (response, request) {
                 var resp = Ext.decode(response.responseText);
-                var parentNode = node.parentNode;
-                parentNode.removeChild(node);
-                tree.getSelectionModel().select(parentNode);
-                tree.view.refresh();
+				if(resp.success){
+					var parentNode = node.parentNode;
+					parentNode.removeChild(node);
+					tree.getSelectionModel().select(parentNode);
+					tree.view.refresh();
+				}else{
+					var userMsg = resp['message'];
+					var detailMsg = resp['stackTraceDescription'];
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+				}
+                
                 //tree.onReload();
             },
             failure: function (response, request) {
@@ -665,8 +684,13 @@ Ext.define('AM.controller.Directory', {
         var storeProxy = store.getProxy();
         store.getProxy().extraParams.refresh = true;
         storeProxy.on('exception', function (proxy, response, operation) {
-            var msg = Ext.JSON.decode(response.responseText).message;
-            Ext.widget('messagepanel', { title: 'Error', msg: msg });
+			var responseObj = Ext.JSON.decode(response.responseText);
+			var userMsg = responseObj['message'];
+			var detailMsg = responseObj['stackTraceDescription'];
+			var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+			Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+			Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+            //Ext.widget('messagepanel', { title: 'Error', msg: msg });
             //showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
         }, me);
         store.load({
