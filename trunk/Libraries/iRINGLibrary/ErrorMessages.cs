@@ -68,7 +68,7 @@ namespace org.iringtools.library
         public static readonly string errUIDeleteClassMap = "There is an error occured while deleting class map";
         public static readonly string errUIResetMapping = "There is an error occured while resetting mapping";
         public static readonly string errUIMakeProcessor = "There is an error occured while making processor";
-        public static readonly string errUIGraphMapping = "There is an error occured while mapping graph";
+        public static readonly string errUIGraphMapping = "There is an error occured while creating/updating graph";
         public static readonly string errUIUpdateMap = "There is an error occured while updating map";
         public static readonly string errUIDeletegraphMap = "There is an error occured while deleting graph map";
         public static readonly string errUIMapProperty = "There is an error occured while mapping property";
