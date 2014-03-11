@@ -228,9 +228,14 @@ Ext.define('AM.view.mapping.MapValueListForm', {
                 win.fireEvent('save', me);
             },
             failure: function (result, request) {
-	        //var message = 'Failed to Map ValueList to RoleMap';
-	        //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-		Ext.widget('messagepanel', { title: 'Warning', msg: 'Failed to Map ValueList to RoleMap.'});
+				//var message = 'Failed to Map ValueList to RoleMap';
+				//showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+				var resp = Ext.decode(request.response.responseText);
+				var userMsg = resp['message'];
+				var detailMsg = resp['stackTraceDescription'];
+				var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+				Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+				Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
             }
         });
     },

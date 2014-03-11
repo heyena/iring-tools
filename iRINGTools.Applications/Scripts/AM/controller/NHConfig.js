@@ -94,7 +94,6 @@ Ext.define('AM.controller.NHConfig', {
 
     onNHConfig: function (dirNode) {
         var me = this;
-
         me.dirNode = dirNode;
         me.scope = dirNode.parentNode.data.property['Internal Name'];
         me.app = dirNode.data.property['Internal Name'];
@@ -118,28 +117,28 @@ Ext.define('AM.controller.NHConfig', {
 
     reload: function (configPanel) {
         var me = this;
-
         var treePanel = configPanel.down('objectstreepanel');
         var params = treePanel.getStore().proxy.extraParams;
         params.scope = me.scope;
         params.app = me.app;
-
         configPanel.setLoading();
         treePanel.store.load({
             callback: function (records, operation, success) {
                 configPanel.setLoading(false);
-
                 if (success) {
                     var container = configPanel.down('#configcontainer');
                     var connInfo = treePanel.getRootNode().firstChild.raw.properties.connectionInfo;
                     var connPanel = container.down('connectionpanel');
-
                     connPanel.setRecord(connInfo);
                     treePanel.getRootNode().expand();
                 }
                 else {
-                    var msg = operation.request.scope.reader.jsonData.message;
-                    Ext.widget('messagepanel', { title: 'Load Error', msg: msg });
+                    //var resp = Ext.decode(request.response.responseText);
+					var userMsg = operation.request.scope.reader.jsonData.message;
+					var detailMsg = operation.request.scope.reader.jsonData.stackTraceDescription;
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
                 }
             }
         });
@@ -228,16 +227,17 @@ Ext.define('AM.controller.NHConfig', {
                     configPanel.setLoading(false);
                     var tableNames = action.result.data;
                     var objectsNode = objectsTree.getRootNode().firstChild;
-
                     objectsNode.raw.properties['tableNames'] = tableNames;
                     objectsTree.fireEvent('itemclick', objectsTree.getView(), objectsNode);
                 },
                 failure: function (form, action) {
                     configPanel.setLoading(false);
-                    Ext.widget('messagepanel', {
-                        title: 'Connection Error',
-                        msg: 'Unable to connect to data source.'
-                    });
+                    var resp = Ext.decode(action.response.responseText);
+					var userMsg = resp['message'];
+					var detailMsg = resp['stackTraceDescription'];
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
                 }
             });
         }
@@ -440,9 +440,7 @@ Ext.define('AM.controller.NHConfig', {
         var treePanel = button.up('objectstreepanel');
         var configPanel = treePanel.up('mainconfigpanel');
         var objectsNode = treePanel.getRootNode().firstChild;
-
         configPanel.setLoading();
-
         var connInfo = configPanel.down('connectionpanel').getForm().getValues();
         var connStr = (connInfo.dbProvider.toLowerCase().indexOf('mssql') != -1)
             ? 'Data Source=' + connInfo.dbServer + '\\' + connInfo.dbInstance + ';' + 'Initial Catalog=' +
@@ -560,13 +558,15 @@ Ext.define('AM.controller.NHConfig', {
                 jsonData: dbDictionary,
                 success: function (response, request) {
                     configPanel.setLoading(false);
-
                     var result = Ext.decode(response.responseText);
                     if (!result.success) {
-                        Ext.widget('messagepanel', { title: 'Save Error', msg: result.message });
+                        var userMsg = result['message'];
+						var detailMsg = result['stackTraceDescription'];
+						var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+						Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+						Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
                         return;
                     }
-
                     var dirTree = me.getDirectoryTree();
                     dirTree.store.proxy.extraParams.type = 'DataObjectsNode';
                     dirTree.setLoading();
