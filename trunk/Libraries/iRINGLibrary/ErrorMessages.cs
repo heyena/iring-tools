@@ -80,7 +80,7 @@ namespace org.iringtools.library
         public static readonly string errUIValueListMap = "There is an error occured while adding valuemap";
         public static readonly string errUIDeleteValueMap = "There is an error occured while deleting value map";
         public static readonly string errUICopyValueList = "There is an error occured while copying value list";
-        public static readonly string errUIValueList = "There is an error occured while listing value";
+        public static readonly string errUIValueList = "There is an error occured while creating value list";
         public static readonly string errUIGetLabels = "There is an error occured while getting labels";    
         #endregion
 
