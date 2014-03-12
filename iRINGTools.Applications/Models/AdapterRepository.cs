@@ -798,6 +798,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
+                
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 client.Timeout = timeout;
 
@@ -842,6 +843,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
+               
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 client.Timeout = 3600000;
 
@@ -885,6 +887,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
+                
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 client.Timeout = timeout;
 
@@ -912,11 +915,14 @@ namespace iRINGTools.Web.Models
             {
                 _logger.Error(ex.Message);
 
-                response = new Response()
-                {
-                    Level = StatusLevel.Error,
-                    Messages = new Messages { ex.Message }
-                };
+                //response = new Response()
+                //{
+                //    Level = StatusLevel.Error,
+                //    Messages = new Messages { ex.Message }
+                //};
+
+                return PrepareErrorResponse(ex, ErrorMessages.errUIImportCache);
+
             }
 
             return response;
