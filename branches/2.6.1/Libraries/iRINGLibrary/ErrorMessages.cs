@@ -62,25 +62,25 @@ namespace org.iringtools.library
         public static readonly string errUISaveDBDirectory = "There is an error occured while saving DB Directory"; 
         #endregion
         #region MappingConroller
-        public static readonly string errUIAddClassMap = "There is an error occured while class map";
+        public static readonly string errUIAddClassMap = "There is an error occured while adding/Editing Class map";
         public static readonly string errUIAddTemplateMap = "There is an error occured while adding template map";
         public static readonly string errUIGetMappingNode = "There is an error occured while getting mapping node";
         public static readonly string errUIDeleteClassMap = "There is an error occured while deleting class map";
         public static readonly string errUIResetMapping = "There is an error occured while resetting mapping";
         public static readonly string errUIMakeProcessor = "There is an error occured while making processor";
-        public static readonly string errUIGraphMapping = "There is an error occured while mapping graph";
+        public static readonly string errUIGraphMapping = "There is an error occured while creating/updating graph";
         public static readonly string errUIUpdateMap = "There is an error occured while updating map";
         public static readonly string errUIDeletegraphMap = "There is an error occured while deleting graph map";
         public static readonly string errUIMapProperty = "There is an error occured while mapping property";
         public static readonly string errUIMapConstant = "There is an error occured while mapping constant";
         public static readonly string errUIMakeReference = "There is an error occured while making reference";
-        public static readonly string errUIMapValueList = "There is an error occured while getting map value list";
+        public static readonly string errUIMapValueList = "There is an error occured while mapping value list";
         public static readonly string errUIDeleteMapTemplate = "There is an error occured while deleting mapping template";
         public static readonly string errUIDeleteValueList = "There is an error occured while deleting value list";
         public static readonly string errUIValueListMap = "There is an error occured while adding valuemap";
         public static readonly string errUIDeleteValueMap = "There is an error occured while deleting value map";
         public static readonly string errUICopyValueList = "There is an error occured while copying value list";
-        public static readonly string errUIValueList = "There is an error occured while listing value";
+        public static readonly string errUIValueList = "There is an error occured while creating value list";
         public static readonly string errUIGetLabels = "There is an error occured while getting labels";    
         #endregion
 
