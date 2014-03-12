@@ -161,16 +161,22 @@ Ext.define('AM.view.directory.ImportCacheForm', {
             },
             success: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
-
-                if (responseObj.Level == 0) {
+				if(responseObj.success){
+					if (responseObj.response.Level == 0) {
                     Ext.ComponentQuery.query('directorytree')[0].onReload();
                     me.up('window').close();
                     Ext.example.msg('Notification', 'Cache refreshed successfully!');
-                }
-                else {
-                     Ext.widget('messagepanel', { title: 'Refresh Cache Error', msg: responseObj.Messages.join('\n')});
+					}else {
+						 Ext.widget('messagepanel', { title: 'Refresh Cache Error', msg: responseObj.response.Messages.join('\n')});
 					//showDialog(500, 160, 'Refresh Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
                 }
+				}else{
+					var userMsg = responseObj['message'];
+					var detailMsg = responseObj['stackTraceDescription'];
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+				}
 				me.setDisabled(false);
 				me.getEl().unmask();
             },
@@ -205,15 +211,23 @@ Ext.define('AM.view.directory.ImportCacheForm', {
             },
             success: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
-                if (responseObj.Level == 0) {
+				if(responseObj.success){
+					if (responseObj.response.Level == 0) {
                     Ext.ComponentQuery.query('directorytree')[0].onReload();
                     me.up('window').close();
                     Ext.example.msg('Notification', 'Cache imported successfully!');
                 }
                 else {
-                    Ext.widget('messagepanel', { title: 'Import Cache Error', msg: responseObj.Messages.join('\n')});
+						Ext.widget('messagepanel', { title: 'Import Cache Error', msg: responseObj.response.Messages.join('\n')});
 					//showDialog(500, 160, 'Import Cache Error', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
                 }
+				}else{
+					var userMsg = responseObj['message'];
+					var detailMsg = responseObj['stackTraceDescription'];
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+				}
 				me.setDisabled(false);
 				me.getEl().unmask();
             },

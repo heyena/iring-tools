@@ -308,8 +308,17 @@ Ext.define('AM.view.mapping.MappingTree', {
                 baseUrl: mapPanel.baseUrl
             },
             success: function (result, request) {
+					var resp = Ext.decode(result.responseText);
+					if(resp.success){
                 Ext.example.msg('Notification', 'Configuration saved successfully!');
                 me.onReload();
+					}else{
+						var userMsg = resp['message'];
+						var detailMsg = resp['stackTraceDescription'];
+						var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+						Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+						Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+					}
             },
             failure: function (result, request) {
                 return false;

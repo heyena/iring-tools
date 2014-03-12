@@ -79,7 +79,12 @@ Ext.define('AM.controller.Mapping', {
                     tree.view.refresh();
                 }
                 else {
-                    Ext.widget('messagepanel', { title: 'Error', msg: res.message });
+                    var userMsg = res.message;
+					var detailMsg = res.stackTraceDescription;
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+					//Ext.widget('messagepanel', { title: 'Error', msg: res.message });
                 }
                 tree.getEl().unmask();
             },
@@ -199,7 +204,18 @@ Ext.define('AM.controller.Mapping', {
             var mapTree = mapPanel.down('mappingtree');
             var treeStore = mapTree.getStore();
             var params = treeStore.getProxy().extraParams;
-
+			var treeProxy = treeStore.getProxy();
+			treeProxy.on('exception', function (proxy, response, operation) {
+                content.getEl().unmask();
+                mapPanel.destroy();
+                var responseObj = Ext.JSON.decode(response.responseText);
+				var userMsg = responseObj['message'];
+				var detailMsg = responseObj['stackTraceDescription'];
+                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+				Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+				Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+				//Ext.widget('messagepanel', { title: 'Error', msg: msg });
+            }, me);
             treeStore.on('beforeload', function (store, operation, eopts) {
                 params.id = operation.node.data.identifier;
                 params.graph = node.internalId;  //graphName;
@@ -510,11 +526,20 @@ Ext.define('AM.controller.Mapping', {
                 mappingNode: node.data.id
             },
             success: function (response, request) {
+                var res = Ext.decode(response.responseText);
+				if(res.success){
                 var parentNode = node.parentNode;
                 parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
                 //tree.onReload();
                 tree.view.refresh();
+				}else{
+					var userMsg = res.message;
+					var detailMsg = res.stackTraceDescription;
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+				}
             },
             failure: function (response, request) {
                 Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Value Map.' });
@@ -566,7 +591,12 @@ Ext.define('AM.controller.Mapping', {
                     tree.view.refresh();
                 }
                 else {
-                    Ext.widget('messagepanel', { title: 'Error', msg: res.message });
+                    var resp = Ext.decode(result.responseText);
+					var userMsg = resp['message'];
+					var detailMsg = resp['stackTraceDescription'];
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
                 }
                 tree.getEl().unmask();
             },
@@ -720,7 +750,11 @@ Ext.define('AM.controller.Mapping', {
                     tree.view.refresh();
                 }
                 else {
-                    Ext.widget('messagepanel', { title: 'Error', msg: res.message });
+                    var userMsg = res['message'];
+					var detailMsg = res['stackTraceDescription'];
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
                 }
                 tree.getEl().unmask();
             },
@@ -746,11 +780,20 @@ Ext.define('AM.controller.Mapping', {
                 graphName: getLastXString(node.id, 1)
             },
             success: function (response, request) {
+				var res = Ext.decode(response.responseText);
+				if(res.success){
                 var parentNode = node.parentNode;
                 parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
                 //tree.onReload();
                 tree.view.refresh();
+				}else{
+					var userMsg = res.message;
+					var detailMsg = res.stackTraceDescription;
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+				}
             },
             failure: function (response, request) {
                 Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Graph Map.' });
@@ -774,12 +817,19 @@ Ext.define('AM.controller.Mapping', {
                 mappingNode: node.data.id
             },
             success: function (response, request) {
-                //tree.getSelectionModel().select(parentNode);
-                //tree.onReload();
+				var res = Ext.decode(response.responseText);
+				if(res.success){
                 var parentNode = node.parentNode;
                 parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
                 tree.view.refresh();
+				}else{
+					var userMsg = res.message;
+					var detailMsg = res.stackTraceDescription;
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+				}
             },
             failure: function (response, request) {
                 Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Value List.' });
@@ -835,7 +885,12 @@ Ext.define('AM.controller.Mapping', {
                     tree.view.refresh();
                 }
                 else {
-                    Ext.widget('messagepanel', { title: 'Error', msg: res.message });
+                    var userMsg = res.message;
+					var detailMsg = res.stackTraceDescription;
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+					//Ext.widget('messagepanel', { title: 'Error', msg: res.message });
                 }
                 tree.getEl().unmask();
             },

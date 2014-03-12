@@ -91,7 +91,15 @@ Ext.define('AM.view.directory.DirectoryTree', {
         me.on('beforeload', function (store, action) {
             me.getStore().getProxy().extraParams.type = 'ScopesNode';
         });
-
+		var storeProxy = me.store.getProxy();
+        storeProxy.on('exception', function (proxy, response, operation) {
+			var resp = Ext.JSON.decode(response.responseText);
+			var userMsg = resp['message'];
+			var detailMsg = resp['stackTraceDescription'];
+			var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+			Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+			Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+        }, me);
         me.getEl().mask("Loading", 'x-mask-loading');
 
         me.store.load({

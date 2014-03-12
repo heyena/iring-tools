@@ -74,6 +74,7 @@ Ext.application({
 			url: 'directory/InitializeUISettings',
 			success: function(response){
 				var text = Ext.JSON.decode(response.responseText);
+				if(text.success){
 				for(var i = 0; i<text.items.length; i++){
 				    var name = text.items[i].Name;
 					var val = text.items[i].Value;
@@ -83,6 +84,13 @@ Ext.application({
 					if(name == 'isAdmin'){
 					   utilsObj.isAdmin = val;
 					}
+				}
+				}else{
+					var userMsg = text['message'];
+					var detailMsg = text['stackTraceDescription'];
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
 				}
 			},
 			failure: function(response){
