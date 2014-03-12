@@ -138,8 +138,12 @@ Ext.define('AM.controller.NHConfig', {
                     treePanel.getRootNode().expand();
                 }
                 else {
-                    var msg = operation.request.scope.reader.jsonData.message;
-                    Ext.widget('messagepanel', { title: 'Load Error', msg: msg });
+                    //var resp = Ext.decode(request.response.responseText);
+					var userMsg = operation.request.scope.reader.jsonData.message;
+					var detailMsg = operation.request.scope.reader.jsonData.stackTraceDescription;
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
                 }
             }
         });
@@ -234,10 +238,12 @@ Ext.define('AM.controller.NHConfig', {
                 },
                 failure: function (form, action) {
                     configPanel.setLoading(false);
-                    Ext.widget('messagepanel', {
-                        title: 'Connection Error',
-                        msg: 'Unable to connect to data source.'
-                    });
+                    var resp = Ext.decode(action.response.responseText);
+					var userMsg = resp['message'];
+					var detailMsg = resp['stackTraceDescription'];
+					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
                 }
             });
         }
@@ -563,7 +569,11 @@ Ext.define('AM.controller.NHConfig', {
 
                     var result = Ext.decode(response.responseText);
                     if (!result.success) {
-                        Ext.widget('messagepanel', { title: 'Save Error', msg: result.message });
+                        var userMsg = result['message'];
+						var detailMsg = result['stackTraceDescription'];
+						var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+						Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+						Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
                         return;
                     }
 
