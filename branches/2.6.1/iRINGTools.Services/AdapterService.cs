@@ -52,6 +52,7 @@ namespace org.iringtools.services
         {
             try
             {
+               
                 OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
                 context.ContentType = "application/xml";
                 return _adapterProvider.GetScopes();
@@ -149,6 +150,7 @@ namespace org.iringtools.services
         {
             try
             {
+                
                 return _adapterProvider.UploadFile(filecontent, scope + "." + app + "." + Convert.ToString(HttpContext.Current.Request.Headers.GetValues("FileName")[0]));
             }
             catch (Exception ex)
@@ -177,7 +179,7 @@ namespace org.iringtools.services
         {
             try
             {
-              
+               
                 return _adapterProvider.AddScope(scope);
             }
             catch (Exception ex)
@@ -193,7 +195,7 @@ namespace org.iringtools.services
         {
             try
             {
-                
+              
                 return _adapterProvider.UpdateScope(scope, updatedScope);
             }
             catch (Exception ex)
@@ -209,6 +211,7 @@ namespace org.iringtools.services
         {
             try
             {
+               
                 return _adapterProvider.DeleteScope(scope);
             }
             catch (Exception ex)
@@ -240,7 +243,7 @@ namespace org.iringtools.services
         {
             try
             {
-               
+                
                 return _adapterProvider.UpdateApplication(scope, app, updatedApplication);
             }
             catch (Exception ex)
@@ -256,7 +259,7 @@ namespace org.iringtools.services
         {
             try
             {
-              
+                
                 return _adapterProvider.DeleteApplication(scope, app);
             }
             catch (Exception ex)
@@ -711,7 +714,7 @@ namespace org.iringtools.services
                 Messages = new Messages
           {
             //ex.Message
-            errMsg
+            "[ Message Id " + _CustomError.msgId + "] - " + errMsg  
           },
                 StatusText = "[ " + _CustomError.msgId + "] " + _CustomError.stackTraceDescription,
                 StatusCode = HttpStatusCode.InternalServerError,
