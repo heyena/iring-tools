@@ -234,6 +234,12 @@ namespace org.iringtools.web.controllers
                 Response response = _repository.RefreshCache(scope, app, timeout);
 
                 //return Json(response, JsonRequestBehavior.AllowGet);
+                if (response.Level == StatusLevel.Error)
+                {
+                    return Json(new { success = false, message = response.Messages, stackTraceDescription = response.StatusText}, JsonRequestBehavior.AllowGet );
+
+                }
+
                 return Json(new { success = true, response, JsonRequestBehavior.AllowGet });
             }
 
@@ -269,7 +275,14 @@ namespace org.iringtools.web.controllers
 
                 Response response = _repository.ImportCache(scope, app, importURI, timeout);
 
-                return Json(response, JsonRequestBehavior.AllowGet);
+                if (response.Level == StatusLevel.Error)
+                {
+                    return Json(new { success = false, message = response.Messages, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
+
+                }
+
+
+                return Json(new { success = true, response, JsonRequestBehavior.AllowGet });
             }
 
             catch (Exception e)
