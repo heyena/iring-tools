@@ -40,7 +40,7 @@ namespace org.iringtools.library
         public static readonly string errGetUIInitializeUISettings = "There is an error occured in security group at controller";
         public static readonly string errGetUIDataLayer = "There is an error occured while getting Data Layer";
         public static readonly string errGetUINode = "There is an error occured while getting nodes";
-        public static readonly string errAddUIApplication = "There is an error occured while Adding Application"; 
+        public static readonly string errAddUIApplication = "There is an error occured while Adding/Updating Application"; 
 
         #endregion
 
