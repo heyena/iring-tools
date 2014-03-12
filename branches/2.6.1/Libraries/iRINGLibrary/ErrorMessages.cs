@@ -33,7 +33,7 @@ namespace org.iringtools.library
         #endregion
 
         #region Directory Controller
-        public static readonly string errGetUIScope = "There is an error occured while adding scope at controller";
+        public static readonly string errGetUIScope = "There is an error occured while adding/Updating scope at controller";
         public static readonly string errGetUIDeleteScope = "There is an error occured while deleting scope at controller";
         public static readonly string errGetUIDeleteApplication = "There is an error occured while deleting application at controller";
         public static readonly string errGetUISecurityGroup = "There is an error occured in security group at controller";
