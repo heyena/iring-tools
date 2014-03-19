@@ -756,6 +756,7 @@ namespace org.iringtools.web.controllers
             Dictionary<string, string> record = new Dictionary<string, string>();
             record["class name"] = classMap.name;
             record["class id"] = classMap.id;
+            record["identifier delimiter"] = classMap.identifierDelimiter;
             record["identifier"] = string.Join(",", classMap.identifiers);
             if (classMap.identifiers.Count > 1)
             {

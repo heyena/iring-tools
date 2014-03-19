@@ -356,25 +356,35 @@ Ext.define('AM.view.mapping.ClassMapForm', {
         var classIndex = '0';
         var newEdit = 'NEW';
         var delimeter = '_';
-        if (record != null && record.classMap != null) {
+        /*if (record != null && record.classMap != null) {
             identifier = record.classMap.identifiers[0];
             if (record.classMap.identifiers.length > 1) {
                 for (var i = 1; i < record.classMap.identifiers.length; i++) {
                     identifier = identifier + ',' + record.classMap.identifiers[i];
                 }
             }
-            //identifier = getLastXString(record.record.classTemplateMaps[0].classMap.identifiers[0], 1).split('.')[1];
-            //identifier = record.classTemplateMaps[0].classMap.identifiers[0];
             classlabel = record.classMap.name;
             classId = record.classMap.id;
             classIndex = record.classMap.index;
             newEdit = 'EDIT';
             if (record.classMap.identifierDelimiter != null)
                 delimeter = record.classMap.identifierDelimiter;
+        }*/
+        if (record != null) {
+            identifier = record['identifier'];
+			/*var identifierArr = identifier.split(',');
+            if (identifierArr.length > 1) {
+                for (var i = 1; i < identifierArr.length; i++) {
+                    identifier = identifier + ',' + identifierArr[i].split('.')[1];
+                }
+            }*/
+            classlabel = record['class name'];
+            classId = record['class id'];
+            //classIndex = record.classMap.index;
+            newEdit = 'EDIT';
+            if (record['identifier delimiter']!= null)
+                delimeter = record['identifier delimiter'];
         }
-        //if(record!=null)
-        //identifier = 'Identifier: ' + identifier;
-
         pcon.update(identifier);
         ccon.update(classlabel);
         me.getForm().findField('newEdit').setValue(newEdit);

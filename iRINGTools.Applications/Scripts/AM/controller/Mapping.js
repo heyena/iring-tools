@@ -309,8 +309,11 @@ Ext.define('AM.controller.Mapping', {
         var mapPanel = content.items.map[itemId]; //content.items.map['GraphMap-' + graph];
 
         node = tree.getSelectedNode();
-        record = node.data.record;
-        var roleName = node.data.text;
+        if(node.data.children)
+			record = node.data.children[0].record;//node.data.record;
+        else
+			record = node.data.record;
+		var roleName = node.data.text;
         if (roleName.indexOf('unmapped') != -1) {
             roleName = roleName.split('[')[0];
         }
