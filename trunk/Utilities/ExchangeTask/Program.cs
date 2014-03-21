@@ -66,6 +66,7 @@ namespace ExchangeTask
                     _logger.Info("Use client token.");
                     request.Headers.Add("AuthType", _authType);
                     request.Headers.Add("ClientToken", clientToken);
+                    request.Headers.Add("UserName", _clientId);
                 }
             
                 request.Timeout = _requestTimeout;
