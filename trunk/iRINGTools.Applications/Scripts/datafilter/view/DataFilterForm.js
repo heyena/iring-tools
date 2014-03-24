@@ -42,6 +42,12 @@ Ext.define('df.view.DataFilterForm', {
                                 {
                                     xtype: 'displayfield',
                                     flex: 1,
+                                    margins: '0 0 0 25',
+                                    value: '<b>Logical Operator</b>'
+                                },
+                                {
+                                    xtype: 'displayfield',
+                                    flex: 1,
                                     margins: '0 0 0 50',
                                     value: '<b>Property Name</b>'
                                 },
@@ -58,12 +64,6 @@ Ext.define('df.view.DataFilterForm', {
                                     margin: '',
                                     name: 'ValueLabel',
                                     value: '<b>Value</b>'
-                                },
-                                {
-                                    xtype: 'displayfield',
-                                    flex: 1,
-                                    margins: '0 0 0 25',
-                                    value: '<b>Logical Operator</b>'
                                 },
                                 {
                                     xtype: 'displayfield',
@@ -88,17 +88,27 @@ Ext.define('df.view.DataFilterForm', {
                                         config.itemId = rowID;
                                         //config.fieldLabel = rowCount;
                                         config.items[0].name = 'openGroupCount_' + rowCount;
-                                        config.items[1].name = 'propertyName_' + rowCount;
-                                        config.items[2].name = 'relationalOperator_' + rowCount;
-                                        config.items[3].name = 'value_' + rowCount;
-                                        config.items[4].name = 'logicalOperator_' + rowCount;
+										config.items[1].name = 'logicalOperator_' + rowCount;
+										
+										if(rowCount == 1){
+                                        	 config.items[1].disabled = true;
+                                        	 config.items[1].value = null;
+                                        }else{
+                                        	 config.items[1].disabled = false;
+                                        	 config.items[1].value = 0;
+                                        }
+										
+                                        config.items[2].name = 'propertyName_' + rowCount;
+                                        config.items[3].name = 'relationalOperator_' + rowCount;
+                                        config.items[4].name = 'value_' + rowCount;
                                         config.items[5].name = 'closeGroupCount_' + rowCount;
 
                                         config.items[0].itemId = 'openCount_' + rowCount;
-                                        config.items[1].itemId = 'propertyName_' + rowCount;
-                                        config.items[2].itemId = 'relationalOperator_' + rowCount;
-                                        config.items[3].itemId = 'value_' + rowCount;
-                                        config.items[4].itemId = 'logicalOperator_' + rowCount;
+										config.items[1].itemId = 'logicalOperator_' + rowCount;
+                                        config.items[2].itemId = 'propertyName_' + rowCount;
+                                        config.items[3].itemId = 'relationalOperator_' + rowCount;
+                                        config.items[4].itemId = 'value_' + rowCount;
+                                        
                                         config.items[5].itemId = 'closeGroup_' + rowCount;
                                         config.items[6].itemId = 'delete_' + rowCount;
 
@@ -129,6 +139,41 @@ Ext.define('df.view.DataFilterForm', {
                                 },
                                 {
                                     xtype: 'combobox',
+                                    flex: 1,
+                                    margins: '5 0 5 10',
+                                    itemId: 'logicalOperator_1',
+                                    name: 'logicalOperator_1',
+                                    editable: false,
+									disabled :true,
+                                    store: [
+                                        [
+                                            0,
+                                            'None'
+                                        ],
+                                        [
+                                            1,
+                                            'And'
+                                        ],
+                                        [
+                                            2,
+                                            'Or'
+                                        ],
+                                        [
+                                            3,
+                                            'Not'
+                                        ],
+                                        [
+                                            4,
+                                            'AndNot'
+                                        ],
+                                        [
+                                            5,
+                                            'OrNot'
+                                        ]
+                                    ]
+                                },
+                                {
+                                    xtype: 'combobox',
                                     listConfig: {
                                         width: '450'
                                     },
@@ -138,6 +183,7 @@ Ext.define('df.view.DataFilterForm', {
                                     name: 'propertyName_1',
                                     matchFieldWidth: false,
                                     displayField: 'text',
+									allowBlank: false,
                                     queryMode: 'local',
                                     store: 'ColumnNameStore',
                                     valueField: 'text',
@@ -167,6 +213,7 @@ Ext.define('df.view.DataFilterForm', {
                                     name: 'relationalOperator_1',
                                     editable: false,
                                     matchFieldWidth: false,
+									value :0,
                                     displayField: 'value',
                                     queryMode: 'local',
                                     store: 'RelationalStoreComplete',
@@ -177,41 +224,8 @@ Ext.define('df.view.DataFilterForm', {
                                     flex: 1,
                                     margins: '5 0 5 10',
                                     itemId: 'value_1',
+									allowBlank: false,
                                     name: 'value_1'
-                                },
-                                {
-                                    xtype: 'combobox',
-                                    flex: 1,
-                                    margins: '5 0 5 10',
-                                    itemId: 'logicalOperator_1',
-                                    name: 'logicalOperator_1',
-                                    editable: false,
-                                    store: [
-                                        [
-                                            0,
-                                            'None'
-                                        ],
-                                        [
-                                            1,
-                                            'And'
-                                        ],
-                                        [
-                                            2,
-                                            'Or'
-                                        ],
-                                        [
-                                            3,
-                                            'Not'
-                                        ],
-                                        [
-                                            4,
-                                            'AndNot'
-                                        ],
-                                        [
-                                            5,
-                                            'OrNot'
-                                        ]
-                                    ]
                                 },
                                 {
                                     xtype: 'textfield',
@@ -237,6 +251,11 @@ Ext.define('df.view.DataFilterForm', {
                                         var arrClose = [];
                                         //var arrDel =[];
 
+										if(curID == 1 && rowCount > 2 ){
+                                        	Ext.Msg.alert("You can't delete first row.");
+                                        	return;
+                                        }
+										
                                         for(var i=curID; i <= rowCount-1; i++)    
                                         {
                                             var arrOpenList = Ext.ComponentQuery.query('#openCount_'+i, container);
@@ -284,6 +303,11 @@ Ext.define('df.view.DataFilterForm', {
 
                                             var arrLogOperList = Ext.ComponentQuery.query('#logicalOperator_'+(j-1), container);
                                             arrLogOperList[0].setValue(arrLogOper[j]);
+											var tval = j-1;
+                                            if(tval ==  1){
+                                            	arrLogOperList[0].setDisabled(true);
+                                            	arrLogOperList[0].setValue("");
+                                            }
 
                                             var arrCloseList = Ext.ComponentQuery.query('#closeGroup_'+(j-1), container);
                                             arrCloseList[0].setValue(arrClose[j]);
