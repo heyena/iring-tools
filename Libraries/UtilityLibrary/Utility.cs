@@ -1612,8 +1612,18 @@ namespace org.iringtools.utility
     {
         if (String.IsNullOrEmpty(dateTime))
             return dateTime;
-      
-      DateTime dt = DateTime.Parse(dateTime);
+
+      DateTime dt;
+      if (dateTime.Contains("T"))
+      {
+          dt = DateTime.ParseExact(dateTime,"yyyy-MM-dd'T'HH:mm:ss.000-00:00",CultureInfo.InvariantCulture,
+                                             DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
+      }
+      else
+      {
+          dt = DateTime.Parse(dateTime);
+      }
+
       return ToXsdDateTime(dt); 
     }
 
