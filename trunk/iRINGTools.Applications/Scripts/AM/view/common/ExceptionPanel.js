@@ -4,8 +4,10 @@ Ext.define('AM.view.common.ExceptionPanel', {
     msg: '',
     autoShow: true,
     autoHeight:true,
-    //height: 225,
-    width: 400,
+    height: 280,
+    width: 470,
+	minWidth:460,
+	minHeight:280,
     layout:'anchor',
     
     initComponent: function() {
@@ -16,7 +18,7 @@ Ext.define('AM.view.common.ExceptionPanel', {
             items: [{
                 xtype: 'textareafield',
                 border: false,
-                anchor: '100% 25%',
+                anchor: '100% 40%',
                 //height: 100,
                 //width: 400,
                 id: 'expValue',
@@ -33,7 +35,7 @@ Ext.define('AM.view.common.ExceptionPanel', {
                     {
 						xtype: 'textareafield',
 						height: 200,
-						anchor: '100% 100%',
+						anchor: '100% 60%',
 						border: false,
 						id: 'expValue2',
 						//overflowY: 'auto',
