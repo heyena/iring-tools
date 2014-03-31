@@ -1432,11 +1432,17 @@ Ext.define('AM.controller.Directory', {
                         //showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
                     }
                 }, me);
+                //var fVal = Ext.JSON.encode(f.dataIndex +":"+f.getValue());
+                var fVal = f.dataIndex + ":" + f.getValue();
+                gridStore.on('beforeload', function (store, action) {
+                    var params = gridStore.proxy.extraParams;
+                    params.filter = fVal;
+                }, me);
                 gridStore.load({
                     callback: function (records, response) {
                         if (records != undefined && records[0] != undefined && records[0].store.proxy.reader.metaData) {
-                            //gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
-                            gridPanel.reconfigure(gridStore);
+                            gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
+                            //gridPanel.reconfigure(gridStore);
                         }
                     }
                 });
