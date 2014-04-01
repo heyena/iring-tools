@@ -1387,7 +1387,7 @@ Ext.define('AM.controller.Directory', {
         var graph = node.data.text;
 
         var relURI = "Directory/getDataFilter";
-        var reqParam = { scope: contextName, app: endpointName, graph: graph, start: 0, limit :25 };
+        var reqParam = { scope: contextName, app: endpointName, graph: graph, start: 0, limit: 25 };
         var getColsUrl = 'GridManager/pages';
         var oeUrl = 'Directory/getDataFilter';
         panelDisable();
@@ -1395,7 +1395,7 @@ Ext.define('AM.controller.Directory', {
         dfcontroller.dataFiltersMenuItem(centerPanel, node, relURI, reqParam, getColsUrl, "dobj");
     },
 
-     saveDataFilter: function(button, e, eOpts) {
+    saveDataFilter: function (button, e, eOpts) {
         var me = this;
         var dfcontroller = me.application.getController("df.controller.DataFilter");
         var filterFor = button.up('window').down('dataFilterForm').getForm().findField('filterFor').getValue();
@@ -1409,15 +1409,18 @@ Ext.define('AM.controller.Directory', {
         var ctx = '?scope =' + contextName + '&app=' + endpointName + '&graph=' + graph;
         var relURI = "Directory/dataFilter";
         var reqParam = { scope: contextName, app: endpointName, graph: graph };
-        dfcontroller.saveDataFilter(node,reqParam, ctx, relURI,button);
-       
+        dfcontroller.saveDataFilter(node, reqParam, ctx, relURI, button);
+
     },
 
     onSpecialKey: function (f, e) {
         if (f.labelCls.split(' ')[0] == 'ux-rangemenu-icon') {
             if (e.getKey() == e.ENTER) {
-                if (!f.up('grid').filters.menuItem.checked)
-                    f.up('grid').filters.menuItem.setChecked(true, true);
+                if (f.grid != undefined) {
+                    if (!f.up('menu').parentItem.checked) {
+                        f.up('menu').parentItem.setChecked(true, true);
+                    }
+                }
                 var me = this;
                 var gridPanel = me.getMainContent().activeTab;
                 var gridStore = gridPanel.getStore();
@@ -1434,11 +1437,18 @@ Ext.define('AM.controller.Directory', {
                         //showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
                     }
                 }, me);
+                //var fVal = Ext.JSON.encode(f.dataIndex +":"+f.getValue());
+                var fVal = f.dataIndex + ":" + f.getValue();
+                gridStore.on('beforeload', function (store, action) {
+                    var params = gridStore.proxy.extraParams;
+                    params.filter = fVal;
+                }, me);
+
                 gridStore.load({
                     callback: function (records, response) {
                         if (records != undefined && records[0] != undefined && records[0].store.proxy.reader.metaData) {
-                            //gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
-                            gridPanel.reconfigure(gridStore);
+                            gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
+                            //gridPanel.reconfigure(gridStore);
                         }
                     }
                 });
