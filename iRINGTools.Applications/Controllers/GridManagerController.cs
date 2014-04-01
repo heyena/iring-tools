@@ -22,6 +22,7 @@ using VDS.RDF;
 using System.Text;
 using log4net;
 using System.Runtime.Serialization.Json;
+using System.Web.Script.Serialization;
 
 namespace org.iringtools.web.controllers
 {
@@ -90,7 +91,10 @@ namespace org.iringtools.web.controllers
                 string response = _repository.GetResponse();
                 if (response != "")
                 {
-                    return Json(new { success = false, message = response }, JsonRequestBehavior.AllowGet);
+                    //return Json(new { success = false, message = response }, JsonRequestBehavior.AllowGet);
+                    var jsonSerialiser = new JavaScriptSerializer();
+                    CustomError json = (CustomError)jsonSerialiser.Deserialize(response, typeof(CustomError));
+                    return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
                 }
 
                 return Json(dataGrid, JsonRequestBehavior.AllowGet);
