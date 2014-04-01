@@ -46,7 +46,7 @@ Ext.define('AM.view.menus.AppDataMenu', {
 		  xtype: 'menuitem',
 		  action: 'appDataFiltersMenuItem',
 		  icon: 'Content/img/16x16/file-table.png',
-          hidden:true,
+          hidden:false,
 		  text: 'Configure Filter'
 		}
       ]
