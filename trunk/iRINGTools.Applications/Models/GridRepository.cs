@@ -21,6 +21,8 @@ namespace iRINGTools.Web.Models
       private StoreViewModel dataGrid;
       private string graph;
       private string response = "";
+      private CustomError _CustomError = null;
+      private CustomErrorLog _CustomErrorLog = null;
 
       public GridRepository()
       {
@@ -36,6 +38,7 @@ namespace iRINGTools.Web.Models
       {
           try
           {
+             
               this.graph = graph;
 
               if (start == "0" || start == "1")
@@ -62,7 +65,11 @@ namespace iRINGTools.Web.Models
           }
           catch (Exception ex)
           {
-              response = response + " " + ex.Message.ToString();
+              //response = response + " " + ex.Message.ToString();
+              CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+              _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, ex, _logger);
+              response = response + " " + throwJsonResponse(_CustomError);
+
           }
 
           return dataGrid;
@@ -72,6 +79,7 @@ namespace iRINGTools.Web.Models
       {
           try
           {
+             
               this.graph = graph;
 
               if (start == "0" || start == "1")
@@ -98,7 +106,11 @@ namespace iRINGTools.Web.Models
           }
           catch (Exception ex)
           {
-              response = response + " " + ex.Message.ToString();
+              //response = response + " " + ex.Message.ToString();
+              CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+              _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, ex, _logger);
+              response = response + " " + throwJsonResponse(_CustomError);
+
           }
 
           return dataGrid;
@@ -113,6 +125,7 @@ namespace iRINGTools.Web.Models
       {
         try
         {
+           
           string dictKey = string.Format("Dictionary.{0}.{1}", scope, app);
 
           if (usesCache)
@@ -177,7 +190,11 @@ namespace iRINGTools.Web.Models
         catch (Exception ex)
         {
           _logger.Error("Error getting dictionary." + ex);
-          response = response + " " + ex.Message.ToString();
+          //response = response + " " + ex.Message.ToString();
+          CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+          _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, ex, _logger);
+          response = response + " " + throwJsonResponse(_CustomError);
+
         }
       }
 
@@ -223,7 +240,11 @@ namespace iRINGTools.Web.Models
         catch (Exception ex)
         {
           _logger.Error("Error getting data items." + ex);
-          response = response + " " + ex.Message.ToString();
+          //response = response + " " + ex.Message.ToString();
+          CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+          _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, ex, _logger);
+          response = response + " " + throwJsonResponse(_CustomError);
+
         }
       }
 
@@ -231,6 +252,7 @@ namespace iRINGTools.Web.Models
       {
           try
           {
+             
               string format = "json";
               
               string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
@@ -262,7 +284,10 @@ namespace iRINGTools.Web.Models
           catch (Exception ex)
           {
               _logger.Error("Error getting data items." + ex);
-              response = response + " " + ex.Message.ToString();
+              //response = response + " " + ex.Message.ToString();
+              CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+              _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, ex, _logger);
+              response = response + " " + throwJsonResponse(_CustomError);
           }
       }
 
@@ -494,6 +519,7 @@ namespace iRINGTools.Web.Models
         {
           try
           {
+             
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             List<Dictionary<String, String>> filterExpressions = 
               (List<Dictionary<String, String>>)serializer.Deserialize(filter, typeof(List<Dictionary<String, String>>));
@@ -558,7 +584,10 @@ namespace iRINGTools.Web.Models
           catch (Exception ex)
           {
             _logger.Error("Error deserializing filter: " + ex);
-            response = response + " " + ex.Message.ToString();
+            //response = response + " " + ex.Message.ToString();
+            CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+            _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, ex, _logger);
+            response = response + " " + throwJsonResponse(_CustomError);
           }
         }
 
@@ -580,19 +609,33 @@ namespace iRINGTools.Web.Models
           {
             try
             {
+               
               orderExpression.SortOrder = (SortOrder)Enum.Parse(typeof(SortOrder), sortOrderEnumVal);
             }
             catch (Exception ex)
             {
               _logger.Error(ex.ToString());
-              response = response + " " + ex.Message.ToString();
+             // response = response + " " + ex.Message.ToString();
+              CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+              _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, ex, _logger);
+              response = response + " " + throwJsonResponse(_CustomError);
             }
           }
         }
 
         return dataFilter;
       }
+
+
+      public string throwJsonResponse(CustomError response)
+      {
+          string jsonMsg;
+          return jsonMsg = Utility.SerializeJson(response, true);
+      }
+
     }
+
+
 
     public class DataObjectComparer : IComparer<DataObject>
     {
