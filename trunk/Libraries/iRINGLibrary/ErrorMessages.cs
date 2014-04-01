@@ -91,7 +91,7 @@ namespace org.iringtools.library
         #endregion
         
         #region GridController
-        public static readonly string errUIGridPages = "There is an error occured while paging in grid";
+        public static readonly string errUIGridPages = "There is an error occured while capturing data for Grid";
         #endregion
 
     }
