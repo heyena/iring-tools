@@ -10,7 +10,9 @@ Ext.define('AM.view.directory.DataGridPanel', {
     closable: true,
     store: 'DataGridStore',
     style: 'background-color: #fff;',
-
+	//verticalScrollerType:null,//'paginggridscroller',
+	//loadMask:false,
+	//invalidateScrollerOnRefresh:false,
     initComponent: function () {
         var me = this;
 

@@ -29,6 +29,7 @@ Ext.define('AM.store.DataGridStore', {
       remoteSort: true,
       storeId: 'DataGridStore',
       pageSize: 25,
+	  //buffered: false,
       proxy: {
         type: 'ajax',
         actionMethods: {
