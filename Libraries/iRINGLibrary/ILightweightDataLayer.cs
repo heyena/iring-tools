@@ -473,7 +473,12 @@ namespace org.iringtools.library
 
       try
       {
-        dataObjects = (List<SerializableDataObject>)serializer.Deserialize(stream);
+        stream.Position = 0;
+        //dataObjects = (List<SerializableDataObject>)serializer.Deserialize(stream);
+        while (stream.Position != stream.Length)
+        {
+            dataObjects.AddRange((List<SerializableDataObject>)serializer.Deserialize(stream));
+        }
       }
       catch (Exception e)
       {
