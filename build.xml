@@ -171,9 +171,6 @@
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
   </Target>
 
-  <Target Name="Test">
-    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test_reports\test-results.xml" />
-  </Target>
 
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
