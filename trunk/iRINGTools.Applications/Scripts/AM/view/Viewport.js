@@ -79,7 +79,7 @@ Ext.define('AM.view.Viewport', {
                     title: 'Grid Settings',
                     //autoLoad: 'about.aspx',
                     bodyStyle: 'background:#fff;padding:5px',
-                    width: 350,
+                    width: 260,
                     height: 150,
                     closable: true,
                     //autoScroll: true,
