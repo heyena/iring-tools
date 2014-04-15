@@ -104,6 +104,12 @@ Ext.define('AM.view.directory.ApplicationForm', {
           allowBlank: false
         },
         {
+          xtype: 'textfield',
+          fieldLabel: 'Internal Name',
+          name: 'internalName',
+          allowBlank: false
+        },
+        {
           xtype: 'textareafield',
           fieldLabel: 'Description',
           name: 'description'
