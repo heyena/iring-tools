@@ -223,7 +223,8 @@ Ext.define('AM.view.directory.GraphMapForm', {
     });
 
     var classdd = new Ext.dd.DropTarget(ctarget.getEl(), {
-      ddGroup: 'refdataGroup',
+      //ddGroup: 'refdataGroup',
+	  ddGroup:'propertyGroup',
       notifyEnter: function (classdd, e, data) {
         if (data.records[0].data.type != 'ClassNode')
         return this.dropNotAllowed;

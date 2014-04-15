@@ -39,8 +39,9 @@ Ext.define('AM.view.mapping.MappingTree', {
             viewConfig: {
                 plugins: [
                     Ext.create('Ext.tree.plugin.TreeViewDragDrop', {
-                        ddGroup: 'refdataGroup',
-                        enableDrag: false
+                        //ddGroup: 'refdataGroup',
+                        ddGroup: 'propertyGroup',
+						enableDrag: false
                     })
                 ],
                 listeners: {
@@ -103,8 +104,56 @@ Ext.define('AM.view.mapping.MappingTree', {
         var graphName = tempArr[tempArr.length - 1];
         var modelType = data.records[0].data.type;
         var node = overModel;
-
-        if (overModel.data.type == 'RoleMapNode') {
+		if (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'DataPropertyNode') {
+			var dataObj = data.records[0].data.parentId.split('/');
+			var propertyName = dataObj[dataObj.length-1]+'.'+data.records[0].data.text;
+			var scope = pan.contextName;
+            var app = pan.endpoint;
+			var classIndex = overModel.parentNode.parentNode.data.identifierIndex;
+			var classId = overModel.parentNode.parentNode.data.identifier;
+			var tempId = overModel.parentNode.data.id.split('/');
+			var mappingNode = overModel.parentNode.data.parentId + '/' + tempId[tempId.length - 1] + '/' + overModel.data.record.name;
+			var index = overModel.parentNode.parentNode.indexOf(overModel.parentNode);
+			me.setLoading();
+            Ext.Ajax.request({
+                url: 'mapping/mapproperty', 
+                method: 'POST',
+                params: {
+							propertyName:propertyName,
+							classIndex:classIndex,
+							graphName:graphName,
+							classId:classId,
+							index:index,
+							contextName:scope,
+							endpoint:app,
+							mappingNode:mappingNode
+                },
+                success: function (result, request) {
+                    var res = Ext.JSON.decode(result.responseText);
+                    if (res.success) {
+                        var parentNode = node.parentNode;
+                        var nodeIndex = parentNode.indexOf(node);
+                        parentNode.removeChild(node);
+                        parentNode.insertChild(nodeIndex, res.node);
+						//tree.view.refresh();
+						me.view.refresh();
+                    }
+                    else {
+                        //Ext.widget('messagepanel', { title: 'asdasd', msg: res.message });
+						var userMsg = res.message;
+						var detailMsg = res.stackTraceDescription;
+						var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
+						Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
+						Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+                    }
+                    me.setLoading(false);
+                },
+                failure: function (result, request) {
+                    Ext.widget('messagepanel', { title: 'Error', msg: 'Error in mapping property.' });
+                    me.setLoading(false);
+                }
+            });
+		}/*else if (overModel.data.type == 'RoleMapNode') {
             reference = data.records[0].data.record.Uri;
             label = data.records[0].data.record.Label;
             roleId = overModel.data.record.id;
@@ -138,6 +187,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                         var nodeIndex = parentNode.indexOf(node);
                         parentNode.removeChild(node);
                         parentNode.insertChild(nodeIndex, res.node);
+						me.view.refresh();
                     }
                     else {
                         Ext.widget('messagepanel', { title: 'Error', msg: res.message });
@@ -149,7 +199,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                     me.setLoading(false);
                 }
             });
-        }
+        }*/
         else if (modelType == 'TemplateNode') { //(data.records[0].data.type == 'TemplateNode') {
             ntype = overModel.data.type;
             parentid = overModel.data.identifier;

@@ -31,7 +31,8 @@ Ext.define('AM.view.search.SearchTree', {
         plugins: [
           Ext.create('Ext.tree.plugin.TreeViewDragDrop', {
             dragField: 'text',
-            ddGroup: 'refdataGroup',
+            //ddGroup: 'refdataGroup',
+			ddGroup: 'propertyGroup',
             dragText: '{0}',
             enableDrop: false
           })

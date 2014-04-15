@@ -261,7 +261,8 @@ Ext.define('AM.view.mapping.ClassMapForm', {
         var ccont = me.down('#cmccontainer');
         var classDropTarget = new Ext.dd.DropTarget(ccont.getEl(), {
             scope: me,
-            ddGroup: 'refdataGroup',
+            //ddGroup: 'refdataGroup',
+			ddGroup:'propertyGroup',
             copy: false,
             overClass: 'over',
             notifyEnter: function (dd, e, data) {
