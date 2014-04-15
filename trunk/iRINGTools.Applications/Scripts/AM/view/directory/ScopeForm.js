@@ -87,6 +87,12 @@ Ext.define('AM.view.directory.ScopeForm', {
                 allowBlank: false
             },
             {
+                xtype: 'textfield',
+                fieldLabel: 'Internal Name',
+                name: 'internalName',
+                allowBlank: false
+            },
+            {
                 xtype: 'hiddenfield',
                 itemId: 'contextname',
                 name: 'contextName'

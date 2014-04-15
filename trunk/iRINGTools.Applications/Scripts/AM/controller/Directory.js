@@ -168,6 +168,7 @@ Ext.define('AM.controller.Directory', {
             var name = node.data.record.Name;
             var displayName = node.data.record.DisplayName;
             var description = node.data.record.Description;
+            var internalName = node.data.record.InternalName;
             win.title = 'Edit Scope';
             var state = 'edit';
 
@@ -179,6 +180,7 @@ Ext.define('AM.controller.Directory', {
                     }
                 });
             }
+            form.getForm().findField('internalName').setReadOnly(true);
 
         } else {
             var name = '';
@@ -204,6 +206,7 @@ Ext.define('AM.controller.Directory', {
         form.getForm().findField('oldContext').setValue(context);
         form.getForm().findField('description').setValue(description);
         form.getForm().findField('name').setValue(name);
+        form.getForm().findField('internalName').setValue(internalName);
         form.getForm().findField('displayName').setValue(displayName);
         form.getForm().findField('contextName').setValue(name);
         form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
@@ -224,29 +227,29 @@ Ext.define('AM.controller.Directory', {
                 'nodeid': node.data.id
             },
             success: function (response, request) {
-				var resp = Ext.decode(response.responseText);
-				if(resp.success){
-					var parentNode = node.parentNode;
-					parentNode.removeChild(node);
-					tree.getSelectionModel().select(parentNode);
-					tree.view.refresh();
-				}else{
-					var userMsg = resp['message'];
-					var detailMsg = resp['stackTraceDescription'];
-					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-                    Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
-				}
-                
+                var resp = Ext.decode(response.responseText);
+                if (resp.success) {
+                    var parentNode = node.parentNode;
+                    parentNode.removeChild(node);
+                    tree.getSelectionModel().select(parentNode);
+                    tree.view.refresh();
+                } else {
+                    var userMsg = resp['message'];
+                    var detailMsg = resp['stackTraceDescription'];
+                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+                }
+
                 //tree.onReload();
             },
             failure: function (response, request) {
-                    var resp = Ext.decode(response.responseText);
-					var userMsg = resp['message'];
-					var detailMsg = resp['stackTraceDescription'];
-					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-                    Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+                var resp = Ext.decode(response.responseText);
+                var userMsg = resp['message'];
+                var detailMsg = resp['stackTraceDescription'];
+                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
             }
         });
     },
@@ -260,6 +263,19 @@ Ext.define('AM.controller.Directory', {
         var cacheImportURI = '';
         var cacheTimeout = '';
         var context = node.data.parentId; //node.parentNode.data.text;//node.parentNode.data.record.Name;//node.data.record.ContextName;
+
+        var conf = {
+            id: 'newwin-' + node.data.id,
+            title: '',
+            iconCls: 'tabsApplication',
+            node: node,
+            modal: true
+        };
+
+        var win = Ext.widget('applicationwindow', conf);
+
+        var form = win.down('form');
+
         if (item.itemId == 'editendpoint') {
             var name = node.data.record.Name;
             var displayName = node.data.record.DisplayName;
@@ -273,7 +289,8 @@ Ext.define('AM.controller.Directory', {
             var cacheImportURI = node.data.record.CacheImportURI;
             var cacheTimeout = node.data.record.CacheTimeout;
             var permission = node.data.record.PermissionGroups;
-
+            var internalName = node.data.record.InternalName; ;
+            form.getForm().findField('internalName').setReadOnly(true);
         } else {
             var wintitle = 'Add Application';
             var state = '';
@@ -282,17 +299,7 @@ Ext.define('AM.controller.Directory', {
             var path = node.internalId;
         }
 
-        var conf = {
-            id: 'newwin-' + node.data.id,
-            title: wintitle,
-            iconCls: 'tabsApplication',
-            node: node,
-            modal: true
-        };
-
-        var win = Ext.widget('applicationwindow', conf);
-
-        var form = win.down('form');
+        win.setTitle(wintitle);
 
         win.on('save', function () {
             win.close();
@@ -327,7 +334,7 @@ Ext.define('AM.controller.Directory', {
         form.getForm().findField('oldAssembly').setValue(assembly);
         form.getForm().findField('name').setValue(name);
         form.getForm().findField('displayName').setValue(displayName);
-
+        form.getForm().findField('internalName').setValue(internalName);
         form.getForm().findField('description').setValue(description);
         form.getForm().findField('context').setValue(name);
         form.getForm().findField('assembly').setValue(assembly);
@@ -351,28 +358,28 @@ Ext.define('AM.controller.Directory', {
             },
             success: function (response, request) {
                 var resp = Ext.decode(response.responseText);
-				if(resp.success){
-					var parentNode = node.parentNode;
-					parentNode.removeChild(node);
-					tree.getSelectionModel().select(parentNode);
-					tree.view.refresh();
-				}else{
-					var userMsg = resp['message'];
-					var detailMsg = resp['stackTraceDescription'];
-					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
-				}
-                
+                if (resp.success) {
+                    var parentNode = node.parentNode;
+                    parentNode.removeChild(node);
+                    tree.getSelectionModel().select(parentNode);
+                    tree.view.refresh();
+                } else {
+                    var userMsg = resp['message'];
+                    var detailMsg = resp['stackTraceDescription'];
+                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+                }
+
                 //tree.onReload();
             },
             failure: function (response, request) {
-				var resp = Ext.decode(response.responseText);
-				var userMsg = resp['message'];
-				var detailMsg = resp['stackTraceDescription'];
-				var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-				Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-				Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+                var resp = Ext.decode(response.responseText);
+                var userMsg = resp['message'];
+                var detailMsg = resp['stackTraceDescription'];
+                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
             }
         });
     },
@@ -443,7 +450,7 @@ Ext.define('AM.controller.Directory', {
         var graph = node.data.text;
         var title = contextName + '.' + endpointName + '.' + graph;
         var gridPanel = content.down('dynamicgrid[title=' + title + ']');
-		var checkboxForGrid = Ext.getElementById('gridCheckbox').checked;
+        var checkboxForGrid = Ext.getElementById('gridCheckbox').checked;
         if (!gridPanel) {
 
             content.getEl().mask("Loading...", "x-mask-loading");
@@ -459,46 +466,46 @@ Ext.define('AM.controller.Directory', {
                 params.app = endpointName; //node.parentNode.parentNode.data.property.Name;
                 params.scope = contextName; //node.parentNode.parentNode.parentNode.data.property.Name ;
                 params.graph = graph;
-				if(checkboxForGrid){
-					   params.limit = 100000;
-					   store.pageSize = 100;
-					   //store.buffered = true;
-					   //store.leadingBufferZone = 300;
-					   //gridPanel.verticalScrollerType = 'paginggridscroller';
-					   //gridPanel.loadMask = true;
-					   if(gridPanel.dockedItems.length>=2)
-							gridPanel.dockedItems.removeAt(1);
-				}
+                if (checkboxForGrid) {
+                    params.limit = 100000;
+                    store.pageSize = 100;
+                    //store.buffered = true;
+                    //store.leadingBufferZone = 300;
+                    //gridPanel.verticalScrollerType = 'paginggridscroller';
+                    //gridPanel.loadMask = true;
+                    if (gridPanel.dockedItems.length >= 2)
+                        gridPanel.dockedItems.removeAt(1);
+                }
             }, me);
 
             gridProxy.on('exception', function (proxy, response, operation) {
                 content.getEl().unmask();
                 gridPanel.destroy();
                 var responseObj = Ext.JSON.decode(response.responseText);
-				var userMsg = responseObj['message'];
-				var detailMsg = responseObj['stackTraceDescription'];
-                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-				Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-				Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
-				//Ext.widget('messagepanel', { title: 'Error', msg: msg });
+                var userMsg = responseObj['message'];
+                var detailMsg = responseObj['stackTraceDescription'];
+                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+                //Ext.widget('messagepanel', { title: 'Error', msg: msg });
             }, me);
-           gridStore.load({
-					 callback: function (records, response) {
-						if (records != undefined) {
-							if (records[0]) {
-								gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
-								//content.getEl().unmask();
-							} else {
-								if (response) {
-									//showDialog(200, 50, 'Warning', 'Authentication failure', Ext.Msg.OK, null);
-									//showDialog(500, 300, 'Error', response.response.responseText, Ext.Msg.OK, null);
-								}
-								return true;
-							}
-						}
+            gridStore.load({
+                callback: function (records, response) {
+                    if (records != undefined) {
+                        if (records[0]) {
+                            gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
+                            //content.getEl().unmask();
+                        } else {
+                            if (response) {
+                                //showDialog(200, 50, 'Warning', 'Authentication failure', Ext.Msg.OK, null);
+                                //showDialog(500, 300, 'Error', response.response.responseText, Ext.Msg.OK, null);
+                            }
+                            return true;
+                        }
+                    }
 
-					 }
-					});
+                }
+            });
             content.getEl().unmask();
             content.add(gridPanel);
         }
@@ -693,12 +700,12 @@ Ext.define('AM.controller.Directory', {
         var storeProxy = store.getProxy();
         store.getProxy().extraParams.refresh = true;
         storeProxy.on('exception', function (proxy, response, operation) {
-			var responseObj = Ext.JSON.decode(response.responseText);
-			var userMsg = responseObj['message'];
-			var detailMsg = responseObj['stackTraceDescription'];
-			var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-			Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-			Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+            var responseObj = Ext.JSON.decode(response.responseText);
+            var userMsg = responseObj['message'];
+            var detailMsg = responseObj['stackTraceDescription'];
+            var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+            Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+            Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
             //Ext.widget('messagepanel', { title: 'Error', msg: msg });
             //showDialog(500, 300, 'Error', msg, Ext.Msg.OK, null);
         }, me);
@@ -1396,7 +1403,7 @@ Ext.define('AM.controller.Directory', {
         var graph = node.data.text;
 
         var relURI = "Directory/getDataFilter";
-        var reqParam = { scope: contextName, app: endpointName, graph: graph, start: 0, limit :25 };
+        var reqParam = { scope: contextName, app: endpointName, graph: graph, start: 0, limit: 25 };
         var getColsUrl = 'GridManager/pages';
         var oeUrl = 'Directory/getDataFilter';
         panelDisable();
@@ -1404,7 +1411,7 @@ Ext.define('AM.controller.Directory', {
         dfcontroller.dataFiltersMenuItem(centerPanel, node, relURI, reqParam, getColsUrl, "dobj");
     },
 
-     saveDataFilter: function(button, e, eOpts) {
+    saveDataFilter: function (button, e, eOpts) {
         var me = this;
         var dfcontroller = me.application.getController("df.controller.DataFilter");
         var filterFor = button.up('window').down('dataFilterForm').getForm().findField('filterFor').getValue();
@@ -1418,8 +1425,8 @@ Ext.define('AM.controller.Directory', {
         var ctx = '?scope =' + contextName + '&app=' + endpointName + '&graph=' + graph;
         var relURI = "Directory/dataFilter";
         var reqParam = { scope: contextName, app: endpointName, graph: graph };
-        dfcontroller.saveDataFilter(node,reqParam, ctx, relURI,button);
-       
+        dfcontroller.saveDataFilter(node, reqParam, ctx, relURI, button);
+
     },
 
     onSpecialKey: function (f, e) {
@@ -1517,28 +1524,28 @@ Ext.define('AM.controller.Directory', {
             },
             success: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
-                if(responseObj.success){
-                if (responseObj.response.Level == 0) {
-                    var parentNode = node.parentNode;
-                    var nodeIndex = parentNode.indexOf(node);
-                    parentNode.removeChild(node);
-                    parentNode.insertChild(nodeIndex, Ext.JSON.decode(response.responseText).nodes[0]);
-                    //me.setLoading(false);
-                    tree.view.refresh();
-                    //showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
-                    //Ext.widget('messagepanel', { title: 'Result', msg: responseObj.response.Messages.join('\n') });
-                    Ext.example.msg('Notification', 'Data Mode switched successfully!');
+                if (responseObj.success) {
+                    if (responseObj.response.Level == 0) {
+                        var parentNode = node.parentNode;
+                        var nodeIndex = parentNode.indexOf(node);
+                        parentNode.removeChild(node);
+                        parentNode.insertChild(nodeIndex, Ext.JSON.decode(response.responseText).nodes[0]);
+                        //me.setLoading(false);
+                        tree.view.refresh();
+                        //showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+                        //Ext.widget('messagepanel', { title: 'Result', msg: responseObj.response.Messages.join('\n') });
+                        Ext.example.msg('Notification', 'Data Mode switched successfully!');
+                    }
+                    content.getEl().unmask();
+                    //tree.onReload();
+                } else {
+                    content.getEl().unmask();
+                    var userMsg = responseObj.message;
+                    var detailMsg = responseObj.stackTraceDescription;
+                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                 }
-                content.getEl().unmask();
-                //tree.onReload();
-				}else{
-					content.getEl().unmask();
-					var userMsg = responseObj.message;
-					var detailMsg = responseObj.stackTraceDescription;
-					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
-				}
             },
             failure: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
