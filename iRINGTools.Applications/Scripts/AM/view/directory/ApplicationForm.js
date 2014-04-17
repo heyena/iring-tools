@@ -99,7 +99,7 @@ Ext.define('AM.view.directory.ApplicationForm', {
         },
         {
           xtype: 'textfield',
-          fieldLabel: 'Name',
+          fieldLabel: 'Display Name',
           name: 'displayName',
           allowBlank: false
         },
