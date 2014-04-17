@@ -50,6 +50,14 @@ Ext.define('df.store.RelationalStoreComplete', {
                 {
                     name: 9,
                     value: 'LesserThanOrEqual'
+                },
+				{
+                    name: 10,
+                    value: 'IsNull'
+                },
+                {
+                    name: 11,
+                    value: 'IsNotNull'
                 }
             ],
             fields: [
