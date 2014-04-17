@@ -168,7 +168,7 @@ Ext.define('AM.controller.Directory', {
             var name = node.data.record.Name;
             var displayName = node.data.record.DisplayName;
             var description = node.data.record.Description;
-            var internalName = node.data.record.InternalName;
+            var internalName = node.data.record.Name;
             win.title = 'Edit Scope';
             var state = 'edit';
 
@@ -289,7 +289,8 @@ Ext.define('AM.controller.Directory', {
             var cacheImportURI = node.data.record.CacheImportURI;
             var cacheTimeout = node.data.record.CacheTimeout;
             var permission = node.data.record.PermissionGroups;
-            var internalName = node.data.record.InternalName; ;
+            var internalName = node.data.record.Name; 
+           
             form.getForm().findField('internalName').setReadOnly(true);
         } else {
             var wintitle = 'Add Application';
