@@ -1260,6 +1260,55 @@ namespace iRINGTools.Web.Models
         }
         #endregion
 
+        public string AddScope(string name, string description, string cacheDBConnStr, string permissions, string displayName)
+        {
+            string obj = null;
+
+            try
+            {
+                List<string> groups = new List<string>();
+                if (permissions.Contains(","))
+                {
+                    string[] arrstring = permissions.Split(',');
+                    groups = new List<string>(arrstring);
+                }
+                else
+                {
+                    groups.Add(permissions);
+                }
+                ScopeProject scope = new ScopeProject()
+                {
+                    Name = name,
+                    Description = description,
+                    Configuration = new org.iringtools.library.Configuration() { AppSettings = new AppSettings() },
+                    PermissionGroup = new PermissionGroups(),
+                    DisplayName = displayName //   displayName
+                };
+                if (!string.IsNullOrEmpty(permissions))
+                    scope.PermissionGroup.AddRange(groups);
+
+                if (!String.IsNullOrWhiteSpace(cacheDBConnStr))
+                {
+                    scope.Configuration.AppSettings.Settings = new List<Setting>(){
+            new Setting(){
+                  Key = "iRINGCacheConnStr",
+                  Value = cacheDBConnStr
+              }
+          };
+                }
+
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                obj = client.Post<ScopeProject>("/scopes", scope, true);
+            }
+
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+            }
+
+            return obj;
+        }
       
     }
 }
