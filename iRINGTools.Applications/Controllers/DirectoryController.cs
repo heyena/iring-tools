@@ -616,8 +616,13 @@ namespace org.iringtools.web.controllers
 
                 if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
                 {
-                    scopeName = form["displayName"];
-                    success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
+                    
+                    //scopeName = form["displayName"];
+                    scopeName = form["internalName"];  
+                  //  success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
+                    success = _repository.AddScope(form["internalName"], form["description"], form["cacheDBConnStr"], form["permissions"], form["displayName"]);
+
+                   
                 }
                 else
                 {
@@ -735,7 +740,7 @@ namespace org.iringtools.web.controllers
                 ScopeApplication application = new ScopeApplication()
                 {
                     DisplayName = form["displayName"],//form["Name"],
-                    Name = form["Name"],
+                    Name = form["internalName"],
                     Description = form["Description"],
                     Assembly = form["assembly"],
                     Configuration = configuration,
