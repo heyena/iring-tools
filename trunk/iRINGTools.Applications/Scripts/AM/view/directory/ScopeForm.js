@@ -82,7 +82,7 @@ Ext.define('AM.view.directory.ScopeForm', {
             },
             {
                 xtype: 'textfield',
-                fieldLabel: 'Name',
+                fieldLabel: 'Display Name',
                 name: 'displayName',
                 allowBlank: false
             },
