@@ -1646,7 +1646,7 @@ namespace org.iringtools.utility
         }
         catch (Exception)
         {
-            dt = DateTime.ParseExact(dateTime, "yyyy-MM-ddTHH:mm:ss-00:00", CultureInfo.InvariantCulture);
+            dt = DateTime.ParseExact(dateTime, "yyyy-MM-dd", CultureInfo.InvariantCulture);
         }
 
         return dt;
