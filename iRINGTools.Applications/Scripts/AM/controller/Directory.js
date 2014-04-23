@@ -1433,8 +1433,11 @@ Ext.define('AM.controller.Directory', {
     onSpecialKey: function (f, e) {
         if (f.labelCls.split(' ')[0] == 'ux-rangemenu-icon') {
             if (e.getKey() == e.ENTER) {
-                if (!f.up('grid').filters.menuItem.checked)
-                    f.up('grid').filters.menuItem.setChecked(true, true);
+                if (f.grid != undefined) {
+                    if (!f.up('menu').parentItem.checked) {
+                        f.up('menu').parentItem.setChecked(true, true);
+                    }
+                }
                 var me = this;
                 var gridPanel = me.getMainContent().activeTab;
                 var gridStore = gridPanel.getStore();
