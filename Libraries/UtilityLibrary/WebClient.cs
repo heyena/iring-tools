@@ -472,14 +472,15 @@ namespace org.iringtools.utility
 
         if (e.GetType() == typeof(WebException))
         {
-          HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
-          Stream responseStream = response.GetResponseStream();
-          error = Utility.SerializeFromStream(responseStream);
-          error = error.Remove(error.IndexOf("<html>"));
+            HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
+            Stream responseStream = response.GetResponseStream();
+            error = Utility.SerializeFromStream(responseStream);
+            if (error.Contains("<html>"))
+                error = error.Remove(error.IndexOf("<html>"));
         }
         else
         {
-          error = e.Message;
+            error = e.Message;
         }
 
         string uri = _baseUri + relativeUri;
