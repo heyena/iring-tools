@@ -140,6 +140,15 @@ namespace org.iringtools.nhibernate
                 case RelationalOperator.Contains:
                   criterion = NHibernate.Criterion.Expression.Like(propertyName, wildcard + value + wildcard);
                   break;
+//337
+                  case RelationalOperator.IsNull:
+                  criterion = NHibernate.Criterion.Expression.IsNull(propertyName);
+                  break;
+                  case RelationalOperator.IsNotNull:
+                  criterion = NHibernate.Criterion.Expression.IsNotNull(propertyName);
+                  break;
+//337
+
 
                 case RelationalOperator.In:
                   if (dataProperty.dataType == DataType.String)
