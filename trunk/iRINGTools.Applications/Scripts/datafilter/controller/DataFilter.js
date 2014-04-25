@@ -152,6 +152,11 @@ dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, 
 
                         var arrValueList = Ext.ComponentQuery.query('#value_' + (i + 1), obj);
                         arrValueList[0].setValue(value);
+						if(rel==10 || rel==11)
+							arrValueList[0].disable(true);
+						else
+							arrValueList[0].enable(true);
+							
                         var arrLogOperList = Ext.ComponentQuery.query('#logicalOperator_' + (i + 1), obj);
                         arrLogOperList[0].setValue(log);
                         var arrCloseList = Ext.ComponentQuery.query('#closeGroup_' + (i + 1), obj);
