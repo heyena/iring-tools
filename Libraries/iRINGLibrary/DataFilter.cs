@@ -444,6 +444,107 @@ namespace org.iringtools.library
           }
           break;
 
+//Jiara 337
+        case RelationalOperator.IsNull:
+          if (isString)
+          {
+              if (expression.Values.FirstOrDefault() == null || expression.Values.FirstOrDefault().Trim() == "" || expression.Values.FirstOrDefault().Trim()== string.Empty) // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is null");
+                  break;
+              }
+              if (expression.IsCaseSensitive)
+              {
+                  value = expression.Values.FirstOrDefault();
+              }
+              else
+              {
+                  value = expression.Values.FirstOrDefault().ToUpper();
+              }
+
+              sqlExpression.Append(qualColumnName + "='" + value.Replace("'", "''") + "'");
+          }
+          else if (dataProperty.dataType == DataType.DateTime)
+          {
+              if (expression.Values.FirstOrDefault() == null) // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is null");
+                  break;
+              }
+              if (_provider.ToUpper().StartsWith("ORACLE"))
+              {
+                  //e.g. dateTimeCol = TO_TIMESTAMP_TZ('<date string>', '<format>')
+                  sqlExpression.Append(qualColumnName + "=" + ToOracleDateTimeExpression(expression.Values));
+              }
+              else
+              {
+                  //e.g. dateTimeCol = '<date string>'
+                  sqlExpression.Append(qualColumnName + "='" + expression.Values.FirstOrDefault() + "'");
+              }
+          }
+          else
+          {
+              if (expression.Values.FirstOrDefault() == null) // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is null");
+                  break;
+              }
+              sqlExpression.Append(qualColumnName + "=" + expression.Values.FirstOrDefault() + "");
+          }
+          break;
+
+        case RelationalOperator.IsNotNull:
+          if (isString)
+          {
+              if (expression.Values.FirstOrDefault() == null || expression.Values.FirstOrDefault().Trim() == "" || expression.Values.FirstOrDefault().Trim() == string.Empty) // Filter on not null
+              {
+                  sqlExpression.Append(qualColumnName + " is not null");
+                  break;
+              }
+              if (expression.IsCaseSensitive)
+              {
+                  value = expression.Values.FirstOrDefault();
+              }
+              else
+              {
+                  value = expression.Values.FirstOrDefault().ToUpper();
+              }
+
+              sqlExpression.Append(qualColumnName + "='" + value.Replace("'", "''") + "'");
+          }
+          else if (dataProperty.dataType == DataType.DateTime)
+          {
+              if (expression.Values.FirstOrDefault() == null) // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is null");
+                  break;
+              }
+              if (_provider.ToUpper().StartsWith("ORACLE"))
+              {
+                  //e.g. dateTimeCol = TO_TIMESTAMP_TZ('<date string>', '<format>')
+                  sqlExpression.Append(qualColumnName + "=" + ToOracleDateTimeExpression(expression.Values));
+              }
+              else
+              {
+                  //e.g. dateTimeCol = '<date string>'
+                  sqlExpression.Append(qualColumnName + "='" + expression.Values.FirstOrDefault() + "'");
+              }
+          }
+          else
+          {
+              if (expression.Values.FirstOrDefault() == null) // Filter on null
+              {
+                  sqlExpression.Append(qualColumnName + " is null");
+                  break;
+              }
+              sqlExpression.Append(qualColumnName + "=" + expression.Values.FirstOrDefault() + "");
+          }
+          break;
+
+     //Jira 337
+
+
+
         case RelationalOperator.EqualTo:
           if (isString)
           {
@@ -1397,6 +1498,10 @@ namespace org.iringtools.library
     LesserThan,
     [EnumMember]
     LesserThanOrEqual,
+    [EnumMember]
+    IsNull,
+    [EnumMember]
+    IsNotNull,
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "sortOrder")]
