@@ -1056,6 +1056,8 @@ namespace org.iringtools.web.controllers
 
                     if (!string.IsNullOrEmpty(form["value_" + ec]))
                         expression.Values = new Values() { form["value_" + ec] };
+                    else
+                        expression.Values = new Values() { string.Empty };
 
                     if (!string.IsNullOrEmpty(form["logicalOperator_" + ec]))
                         expression.LogicalOperator = (LogicalOperator)Enum.Parse(typeof(LogicalOperator), form["logicalOperator_" + ec]);
