@@ -217,7 +217,13 @@ Ext.define('df.view.DataFilterForm', {
                                     displayField: 'value',
                                     queryMode: 'local',
                                     store: 'RelationalStoreComplete',
-                                    valueField: 'name'
+                                    valueField: 'name',
+									listeners: {
+                                        select: {
+                                            fn: me.onRelationalOperator_1Change,
+                                            scope: me
+                                        }
+                                    }
                                 },
                                 {
                                     xtype: 'textfield',
@@ -525,7 +531,22 @@ Ext.define('df.view.DataFilterForm', {
 
         me.callParent(arguments);
     },
-
+	onRelationalOperator_1Change: function(combo, records, eOpts){
+		var selValue = combo.getRawValue();
+		var count = combo.getItemId().split('_')[1];
+		var valueFieldId = '#value_'+count;
+		var valueField = Ext.ComponentQuery.query(valueFieldId)[0];
+		if(selValue == 'IsNull' || selValue == 'IsNotNull'){
+			if(valueField.getValue()!="")
+			   valueField.setValue('')
+				
+			valueField.disable(true);
+			//valueField.disabled = true;
+		}else{
+			//valueField.disabled = false;
+			valueField.enable(true);
+		}
+	},
     onPropertyName_1Select: function(combo, records, eOpts) {
         var itemId = combo.itemId;
         var length = itemId.length;
