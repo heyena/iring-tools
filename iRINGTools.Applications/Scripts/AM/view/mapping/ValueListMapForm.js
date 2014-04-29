@@ -125,7 +125,8 @@ Ext.define('AM.view.mapping.ValueListMapForm', {
     var me = this;
     var ccont = me.down('#vlmfccontainer');
     var classdd = new Ext.dd.DropTarget(ccont.getEl(), {
-      ddGroup: 'refdataGroup',
+      //ddGroup: 'refdataGroup',
+	  ddGroup:'propertyGroup',
       notifyDrop: function (classdd, e, data) {
         if (data.records[0].data.type != 'ClassNode') {
           //var message = 'Please slect a RDL Class...';
