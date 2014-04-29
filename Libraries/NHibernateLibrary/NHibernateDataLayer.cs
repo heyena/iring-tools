@@ -81,14 +81,9 @@ namespace org.iringtools.adapter.datalayer
         relativePath
       );
       
-      relativePath = String.Format("{0}SummaryBindingConfiguration.{1}.xml",
+      _summaryBindingPath = String.Format("{0}SummaryBindingConfiguration.{1}.xml",
         _settings["AppDataPath"],
         _settings["Scope"]
-      );
-
-      _summaryBindingPath = Path.Combine(
-        _settings["BaseDirectoryPath"],
-        relativePath
       );
 
       //_kernel.Load(_authorizationBindingPath);

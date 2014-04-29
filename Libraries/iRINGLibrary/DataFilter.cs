@@ -109,13 +109,19 @@ namespace org.iringtools.library
         {
           whereClause.Append(" WHERE ");
 
+ 
           foreach (Expression expression in this.Expressions)
           {
-            if (whereClause.Length <= 8) // To avoid adding logical operator after where clause.
-            {
-              expression.LogicalOperator = iringtools.library.LogicalOperator.None;
-            }
 
+            //if (whereClause.Length <= 8) // To avoid adding logical operator after where clause.
+            //{
+            //  expression.LogicalOperator = iringtools.library.LogicalOperator.None;
+            //}
+
+            if(expression.Equals(this.Expressions.Last()))
+            {
+                expression.LogicalOperator = iringtools.library.LogicalOperator.None;
+            }
             string sqlExpression = ResolveSqlExpression(dataObject, expression, objectAlias);
             whereClause.Append(sqlExpression);
           }
@@ -310,11 +316,11 @@ namespace org.iringtools.library
       bool isString = (propertyType == DataType.String || propertyType == DataType.Char);
       StringBuilder sqlExpression = new StringBuilder();
 
-      if (expression.LogicalOperator != LogicalOperator.None)
-      {
-        string logicalOperator = ResolveLogicalOperator(expression.LogicalOperator);
-        sqlExpression.Append(" " + logicalOperator + " ");
-      }
+      //if (expression.LogicalOperator != LogicalOperator.None)
+      //{
+      //  string logicalOperator = ResolveLogicalOperator(expression.LogicalOperator);
+      //  sqlExpression.Append(" " + logicalOperator + " ");
+      //}
 
       for (int i = 0; i < expression.OpenGroupCount; i++)
         sqlExpression.Append("(");
@@ -777,8 +783,17 @@ namespace org.iringtools.library
           throw new Exception("Relational operator does not exist.");
       }
 
+
       for (int i = 0; i < expression.CloseGroupCount; i++)
-        sqlExpression.Append(")");
+          sqlExpression.Append(")");
+
+      if (expression.LogicalOperator != LogicalOperator.None)
+      {
+          string logicalOperator = ResolveLogicalOperator(expression.LogicalOperator);
+          sqlExpression.Append(" " + logicalOperator + " ");
+      }
+
+      
 
       return sqlExpression.ToString();
     }

@@ -67,13 +67,14 @@ namespace org.iringtools.adapter
                 if (_settings["LdapConfiguration"] != null && _settings["LdapConfiguration"].ToLower() == "true")
                 {
                     utility.Utility.isLdapConfigured = true;
+
                     utility.Utility.InitializeConfigurationRepository(new Type[] { 
-            typeof(DataDictionary), 
-            typeof(DatabaseDictionary),
-            typeof(XElementClone),
-            typeof(AuthorizedUsers),
-            typeof(Mapping)
-          });
+                        typeof(DataDictionary), 
+                        typeof(DatabaseDictionary),
+                        typeof(XElementClone),
+                        typeof(AuthorizedUsers),
+                        typeof(Mapping)
+                    });
                 }
             }
             catch (Exception e)
@@ -827,7 +828,6 @@ namespace org.iringtools.adapter
                 string path = _settings["AppDataPath"];
                 string context = scope.Name + "." + application.Name;
                 string bindingPath = String.Format("{0}BindingConfiguration.{1}.xml", path, context);
-                //XElement binding = XElement.Load(bindingPath);
                 XElement binding = utility.Utility.GetxElementObject(bindingPath);
 
                 if (binding.Element("bind").Attribute("to").Value.Contains(typeof(NHibernateDataLayer).Name))
@@ -4344,7 +4344,7 @@ namespace org.iringtools.adapter
         {
             try
             {
-                string path = AppDomain.CurrentDomain.BaseDirectory + "\\App_Data\\DataLayers.xml";
+                string path = _settings["AppDataPath"] + "DataLayers.xml";
                 DataLayers dataLayers = Utility.Read<DataLayers>(path);
                 return dataLayers;
             }
@@ -4409,13 +4409,7 @@ namespace org.iringtools.adapter
         public DocumentBytes GetResourceData(string scope, string app)
         {
             DocumentBytes documentBytes = new DocumentBytes();
-
             string path = _settings["AppDataPath"];
-            if (!path.StartsWith(@"\\") && !path.Contains(@":\"))
-            {
-                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
-            }
-
             string[] filePaths = Directory.GetFiles(path, "SpreadsheetData." + scope + "." + app + ".xlsx");
             string fileName = filePaths[0];
 
@@ -4438,11 +4432,6 @@ namespace org.iringtools.adapter
         public byte[] GetResourceDataBytes(string scope, string app)
         {
             string path = _settings["AppDataPath"];
-            if (!path.StartsWith(@"\\") && !path.Contains(@":\"))
-            {
-                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
-            }
-
             string[] filePaths = Directory.GetFiles(path, scope + "." + app + ".*.mdb");
 
             if (filePaths.Length > 0)
@@ -4462,16 +4451,10 @@ namespace org.iringtools.adapter
         /// <returns></returns>
         public Response UploadFile(Stream filecontent, string fileName)
         {
-
             Response response = new Response();
             response.Messages = new Messages();
 
             string path = _settings["AppDataPath"];
-            if (!path.StartsWith(@"\\") && !path.Contains(@":\"))
-            {
-                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
-            }
-
             string savedFileName = Path.Combine(path, Path.GetFileName(fileName));
 
             try
@@ -4520,11 +4503,6 @@ namespace org.iringtools.adapter
             DocumentBytes documentBytes = new DocumentBytes();
 
             string path = _settings["AppDataPath"];
-            if (!path.StartsWith(@"\\") && !path.Contains(@":\"))
-            {
-                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
-            }
-
             string[] filePaths = Directory.GetFiles(path, scope + "." + app + "." + fileName + "." + extension);
             string file = filePaths[0];
 
@@ -4563,11 +4541,6 @@ namespace org.iringtools.adapter
             string patternToRemove = scope + "." + app + ".";
 
             string path = _settings["AppDataPath"];
-            if (!path.StartsWith(@"\\") && !path.Contains(@":\"))
-            {
-                path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
-            }
-
             string[] filePaths = Directory.GetFiles(path, pattern);
             foreach (string name in filePaths)
             {

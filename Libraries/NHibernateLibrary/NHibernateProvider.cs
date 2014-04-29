@@ -56,6 +56,16 @@ namespace org.iringtools.nhibernate
       _settings.AppendSettings(settings);
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+      string path = _settings["AppDataPath"];
+      if (!path.EndsWith("\\")) path += "\\";
+
+      if (!path.StartsWith(@"\\") && !path.Contains(@":\"))
+      {
+          path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+      }
+
+      _settings["AppDataPath"] = path;
     }
 
     #region public methods

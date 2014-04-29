@@ -4,9 +4,9 @@
 		<name>Seq1</name>
 		<exchanges>
 			<exchange>
-				<baseURL>http://localhost:8080/apps/runUnattendedExchange</baseURL>
-				<scope>12345</scope>
-				<exchangeId>1</exchangeId>
+				<baseURL>http://irtapp-core-beta.becpsn.com:8080/apps/runUnattendedExchange</baseURL>
+				<scope>NDGSO</scope>
+				<exchangeId>2</exchangeId>
 			</exchange>
 		</exchanges>
 	</sequence>

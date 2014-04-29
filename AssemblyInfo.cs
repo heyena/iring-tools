@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("iringug.org")]
 [assembly: AssemblyProduct("iRINGTools")]
-[assembly: AssemblyCopyright("Copyright © 2014, iringug.org")]
+[assembly: AssemblyCopyright("Copyright © 2012, iringug.org")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("2.6.0.0")]
-[assembly: AssemblyFileVersion("2.6.0.0")]
+[assembly: AssemblyVersion("2.5.0.6525")]
+[assembly: AssemblyFileVersion("2.5.0.6525")]

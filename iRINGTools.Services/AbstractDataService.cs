@@ -322,10 +322,6 @@ namespace org.iringtools.services
             {
                 context.StatusCode = HttpStatusCode.Unauthorized;
             }
-            else if (ex is WebFaultException)
-            {
-                context.StatusCode = HttpStatusCode.NotFound;
-            }
             else
             {
                 context.StatusCode = HttpStatusCode.InternalServerError;

@@ -1,0 +1,17 @@
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\FillClassPaths.exe.config
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\FillClassPaths.exe
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\FillClassPaths.pdb
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\iRINGLibrary.dll
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\UtilityLibrary.dll
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\log4net.dll
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\StaticDust.Configuration.dll
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\Newtonsoft.Json.dll
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\Ionic.Zip.dll
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\iRINGLibrary.pdb
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\UtilityLibrary.pdb
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\log4net.xml
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\Newtonsoft.Json.pdb
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\bin\Debug\Newtonsoft.Json.xml
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\obj\x86\Debug\FillClassPaths.exe
+C:\IRINGTools\Adapter\Utilities\FillClassPaths\obj\x86\Debug\FillClassPaths.pdb

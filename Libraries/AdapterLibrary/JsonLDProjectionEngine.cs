@@ -100,8 +100,6 @@ namespace org.iringtools.adapter
                     {
                         IDataObject dataObj = dataObjects[i];
 
-                        dataObject = FindGraphDataObject(dataObj.GetType().Name);
-
                         if (dataObj != null)
                         {
                             if (i == 0)
@@ -112,8 +110,7 @@ namespace org.iringtools.adapter
                             DataItem dataItem = new DataItem()
                             {
                                 properties = new Dictionary<string, object>(),
-                                valueList = new Dictionary<string,ValueList>(),
-                                type = dataObj.GetType().Name
+                                valueList = new Dictionary<string,ValueList>()
                             };
 
                             if (dataObj is GenericDataObject)
@@ -190,16 +187,16 @@ namespace org.iringtools.adapter
                                         if (valueListMapping.ContainsKey(key))
                                         {
 
-                                            ValueList valueList = new ValueList();
-                                            ValueCollection valueCollection = new ValueCollection();
+                                            ValueList vl = new ValueList();
+                                            ValueCollection vc = new ValueCollection();
                                             foreach (var item in valueListMapping[key].valueList.values)
                                             {
                                                 if (item.value.Equals(value))
                                                 {
-                                                    valueCollection.Add(new ValueItem() { value = item.label, uri = item.uri, label = valueListMapping[key].valueList.name });
-                                                    valueList.values = valueCollection;
-
-                                                    dataItem.valueList.Add(valueListMapping[key].parameterName, valueList);
+                                                    vc.Add(new ValueItem() { value = item.label, uri = item.uri, label = valueListMapping[key].valueList.name});
+                                                    vl.values = vc;
+                                                    
+                                                    dataItem.valueList.Add(valueListMapping[key].parameterName, vl);
                                                 }
                                             }
                                         }
@@ -337,8 +334,7 @@ namespace org.iringtools.adapter
                             DataItem dataItem = new DataItem()
                             {
                                 properties = new Dictionary<string, object>(),
-                                valueList = new Dictionary<string, ValueList>(),
-                                type = dataObj.GetType().Name
+                                valueList = new Dictionary<string, ValueList>()
                             };
 
                             if (dataObj is GenericDataObject)
@@ -414,17 +410,16 @@ namespace org.iringtools.adapter
                                         if (valueListMapping.ContainsKey(key))
                                         {
 
-                                            ValueList valueList = new ValueList();
-                                            ValueCollection valueCollection = new ValueCollection();
+                                            ValueList vl = new ValueList();
+                                            ValueCollection vc = new ValueCollection();
                                             foreach (var item in valueListMapping[key].valueList.values)
                                             {
                                                 if (item.value.Equals(value))
                                                 {
-                                                    valueCollection.Add(new ValueItem() { value = item.label, uri = item.uri, label = valueListMapping[key].valueList.name });
-                                                    valueList.values = valueCollection;
+                                                    vc.Add(new ValueItem() { value = item.label, uri = item.uri, label = valueListMapping[key].valueList.name });
+                                                    vl.values = vc;
 
-                                                    dataItem.valueList.Add(valueListMapping[key].parameterName, valueList);
-                                                   // dataItems.valueLists.Add(vl);
+                                                    dataItem.valueList.Add(valueListMapping[key].parameterName, vl);
                                                 }
                                             }
                                         }
@@ -671,28 +666,26 @@ namespace org.iringtools.adapter
             {
                 foreach (ParameterMap parameterMap in tipMap.parameterMaps)
                 {
-                    if(!String.IsNullOrWhiteSpace(parameterMap.name))
+                    if (child)
                     {
-                        if (child)
-                        {
-                            tableMapping.Add(parameterMap.dataPropertyName.Split('.').GetValue(FIELD).ToString(), parameterMap.name);
-                        }
-                        else
-                        {
-                            tableMapping.Add(parameterMap.dataPropertyName, parameterMap.name);
+                        tableMapping.Add(parameterMap.dataPropertyName.Split('.').GetValue(FIELD).ToString(), parameterMap.name);
+                    }
+                    else
+                    {
+                        tableMapping.Add(parameterMap.dataPropertyName, parameterMap.name);
 
-                            if (parameterMap.valueList != null)
+                        if (parameterMap.valueList != null)
+                        {
+                            ValueListWithParameter valueListWithParameter = new ValueListWithParameter
                             {
-                                ValueListWithParameter valueListWithParameter = new ValueListWithParameter
-                                {
-                                    parameterName = parameterMap.name,
-                                    valueList = parameterMap.valueList
-                                };
+                                parameterName = parameterMap.name,
+                                valueList = parameterMap.valueList
+                            };
 
-                                valueListMapping.Add(parameterMap.dataPropertyName, valueListWithParameter);
-                            }
+                            valueListMapping.Add(parameterMap.dataPropertyName, valueListWithParameter);
                         }
                     }
+
                 }
             }
         }
@@ -705,16 +698,13 @@ namespace org.iringtools.adapter
             {
                 foreach (ParameterMap parameterMap in tipMap.parameterMaps)
                 {
-                    if (!String.IsNullOrWhiteSpace(parameterMap.name))
+                    if (child)
                     {
-                        if (child)
-                        {
-                            tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName.Split('.').GetValue(FIELD).ToString());
-                        }
-                        else
-                        {
-                            tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName);
-                        }
+                        tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName.Split('.').GetValue(FIELD).ToString());
+                    }
+                    else
+                    {
+                        tableMapping.Add(parameterMap.name, parameterMap.dataPropertyName);
                     }
 
                 }

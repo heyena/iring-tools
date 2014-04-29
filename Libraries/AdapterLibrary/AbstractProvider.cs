@@ -2433,14 +2433,8 @@ namespace org.iringtools.adapter
                 _logger.DebugFormat("Initializing Projection: {0} as {1}", resource, format);
                 InitializeProjection(resource, ref format, false);
 
-
-
                 DataDictionary dictionary = GetDictionary(project, application);
-                //_dataObjDef = dictionary.GetDataObject(_tipMap.dataObjectName);
-
-                _dataObjDef = dictionary.GetTableObject(_tipMap.dataObjectName);
-                
-
+                _dataObjDef = dictionary.GetDataObject(_tipMap.dataObjectName);
 
                 AddURIsInSettingCollection(project, application, resource);
 
@@ -2460,14 +2454,9 @@ namespace org.iringtools.adapter
                 }
 
                 _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
-
-                string tempObjectName = _dataObjDef.objectName.ToString();
-                _dataObjDef.objectName = tempObjectName.Split('.')[0];
                 _dataObjects = _dataLayerGateway.Get(_dataObjDef, GetKey(filter), start, limit);
 
-                _projectionEngine.Count = _dataObjects.Count;// _dataLayerGateway.GetCount(_dataObjDef, GetKey(filter));
-                _dataObjDef.objectName = tempObjectName;
-
+                _projectionEngine.Count = _dataLayerGateway.GetCount(_dataObjDef, filter);
                 _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
 
                 _projectionEngine.FullIndex = fullIndex;
@@ -2880,7 +2869,6 @@ namespace org.iringtools.adapter
             try
             {
                 XElement responseXml = _tipServiceClient.Post<XElement, XElement>(String.Format("/{0}/{1}", tip, method), trXml, true);
-
                 string path = string.Format("{0}TipMapping.{1}.{2}.xml", _settings["AppDataPath"], project, application);
 
                 TipMapping tipMapping = Utility.DeserializeDataContract<TipMapping>(responseXml.ToString());
@@ -2979,11 +2967,6 @@ namespace org.iringtools.adapter
                 graphClassMap = _graphMap.classTemplateMaps.FirstOrDefault().classMap;
 
 
-                mappedProperties = new Dictionary<string, IDictionary<string, mapping.Identifiers>>();
-
-                mappedValueLists = new Dictionary<string, IDictionary<string, ValueList>>();
-
-
                 if (_graphMap != null)
                 {
                     foreach (var templateMaps in _graphMap.classTemplateMaps)
@@ -2993,29 +2976,8 @@ namespace org.iringtools.adapter
 
                         foreach (var templateMap in templateMaps.templateMaps)
                         {
-                            //mappedProperties = _graphMap.GetMappedPropertiesWithPath(templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
-                            //mappedValueLists = _graphMap.GetMappedValueListsWithPath(_mapping.valueListMaps, templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
-
-                            foreach (var item in _graphMap.GetMappedPropertiesWithPath(templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index))
-                            {
-                                mappedProperties.Add(item.Key, item.Value);
-                            }
-
-                            foreach (var item in _graphMap.GetMappedValueListsWithPath(_mapping.valueListMaps, templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index))
-                            {
-                                mappedValueLists.Add(item.Key, item.Value);
-                            }
-
-                            //foreach (var item in mappedProperties)
-                            //{
-                            //    mappedPropertiesCollection.Add(item.Key, item.Value);
-                            //}
-
-                            //foreach (var item in mappedValueLists)
-                            //{
-                            //    mappedValueListsCollection.Add(item.Key, item.Value);
-                            //}
-                            
+                            mappedProperties = _graphMap.GetMappedPropertiesWithPath(templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
+                            mappedValueLists = _graphMap.GetMappedValueListsWithPath(_mapping.valueListMaps, templateMap.id, templateMap.index, templateMaps.classMap.id, templateMaps.classMap.index);
                             templateIndex++;
                         }
                     }
@@ -3032,7 +2994,7 @@ namespace org.iringtools.adapter
                     pm.dataPropertyName = element.Key;
                     pm.identifiers.AddRange(element.Value.ToList());
                 }
-
+                
                 tipRequest.parameterMaps.Add(pm);
             }
 
@@ -3114,12 +3076,6 @@ namespace org.iringtools.adapter
                         classIdentifier = Utility.ConvertSpecialCharInbound(classIdentifier, arrSpecialcharlist, arrSpecialcharValue);    //Handling special Characters here.
                         List<string> identifiers = new List<string> { classIdentifier };
                         _dataObjects = _dataLayerGateway.Get(_dataObjDef, identifiers);
-                    }
-
-                    if (_dataObjects == null)
-                    {
-                        _logger.Warn("Data object with identifier [" + classIdentifier + "] not found.");
-                        throw new WebFaultException(HttpStatusCode.NotFound);
                     }
 
                     _projectionEngine.Count = _dataObjects.Count;
@@ -3341,14 +3297,8 @@ namespace org.iringtools.adapter
                 }
                 _dataObjects = _dataLayerGateway.Get(relatedType, new List<string> { relatedId });
 
-
                 if (_dataObjects != null)
                 {
-                    if (_dataObjects.Count == 0)
-                    {
-                        _logger.Warn("Data object with identifier [" + relatedId + "] not found.");
-                        throw new WebFaultException(HttpStatusCode.NotFound);
-                    }
                     _projectionEngine.Count = _dataObjects.Count;
                 }
 
@@ -4403,7 +4353,7 @@ namespace org.iringtools.adapter
             string savedFileName = string.Empty;
 
             savedFileName = Path.Combine(
-                   AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"],
+                   _settings["AppDataPath"],
                    Path.GetFileName(fileName));
 
             try

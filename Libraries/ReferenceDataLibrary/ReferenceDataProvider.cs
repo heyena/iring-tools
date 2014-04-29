@@ -97,6 +97,17 @@ namespace org.iringtools.refdata
                 _settings = this._kernel.Get<ReferenceDataSettings>();
                 _settings.AppendSettings(settings);
                 Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+                string path = _settings["AppDataPath"];
+                if (!path.EndsWith("\\")) path += "\\";
+
+                if (!path.StartsWith(@"\\") && !path.Contains(@":\"))
+                {
+                    path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+                }
+
+                _settings["AppDataPath"] = path;
+
                 _pageSize = Convert.ToInt32(_settings["PageSize"]);
                 _useExampleRegistryBase = Convert.ToBoolean(_settings["UseExampleRegistryBase"]);
                 var queriesPath = _settings["AppDataPath"] + QUERIES_FILE_NAME;

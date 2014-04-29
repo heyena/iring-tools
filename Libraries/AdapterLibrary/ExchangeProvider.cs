@@ -74,13 +74,8 @@ namespace org.iringtools.exchange
       _response = new Response();
       _response.StatusList = new List<Status>();
       _kernel.Bind<Response>().ToConstant(_response);
-      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
-            _settings["XmlPath"]
-          );
-      string bindingConfigurationPath = Path.Combine(
-        _settings["BaseDirectoryPath"],
-        relativePath
-      );
+      string bindingConfigurationPath = String.Format("{0}BindingConfiguration.Adapter.xml",
+            _settings["AppDataPath"]);
       _kernel.Load(bindingConfigurationPath);
       InitializeIdentity();
     }
@@ -377,16 +372,9 @@ namespace org.iringtools.exchange
             AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
             _settings.AppendSettings(appSettings);
           }
-          string relativePath = String.Format("{0}BindingConfiguration.{1}.xml",
-            _settings["XmlPath"],
-            scope
-          );
-
-          //Ninject Extension requires fully qualified path.
-          string bindingConfigurationPath = Path.Combine(
-            _settings["BaseDirectoryPath"],
-            relativePath
-          );
+          string bindingConfigurationPath = String.Format("{0}BindingConfiguration.{1}.xml",
+            _settings["AppDataPath"],
+            scope);
 
           _settings["BindingConfigurationPath"] = bindingConfigurationPath;
 
