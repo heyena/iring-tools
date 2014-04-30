@@ -1,0 +1,17 @@
+﻿<agentconfig xmlns="http://www.iringtools.org/library"
+	xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<tasksequence>
+		<name>InfoWorks</name>
+		<tasks>
+			<task>
+				<baseURL>http://localhost:54321/adapter</baseURL>
+				<assembly>bechtel.ipix.datalayers.infoworks.IWDataLayer, IWDataLayer</assembly>
+				<scope>PandaTemple</scope>
+				<app>iw</app>
+			</task>
+		</tasks>
+	</tasksequence>
+</agentconfig>
+
+
+
