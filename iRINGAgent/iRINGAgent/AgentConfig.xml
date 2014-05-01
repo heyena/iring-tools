@@ -4,10 +4,12 @@
 		<name>InfoWorks</name>
 		<tasks>
 			<task>
+				<tasktype>cache</tasktype>
 				<baseURL>http://localhost:54321/adapter</baseURL>
 				<assembly>bechtel.ipix.datalayers.infoworks.IWDataLayer, IWDataLayer</assembly>
-				<scope>PandaTemple</scope>
+				<project>PandaTemple</project>
 				<app>iw</app>
+				<scope>12345</scope>
 			</task>
 		</tasks>
 	</tasksequence>

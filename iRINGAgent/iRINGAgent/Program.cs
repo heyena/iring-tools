@@ -33,15 +33,14 @@ namespace org.iringtools.agent
 
         private static int _requestTimeout = 28800000;  // 8 hours
         private static TaskSequence _sequence = null;
+        
 
         static void Main(string[] args)
         {
             try
             {
                 log4net.Config.XmlConfigurator.Configure();
-
                 //GenerateSampleAgentSequence();
-
                 string sequenceName = "InfoWorks"; //args[0];
                 if (Initialize(sequenceName))
                 {
@@ -59,25 +58,55 @@ namespace org.iringtools.agent
         static void RunTask()
         {
             _logger.Debug("RunTask ...");
+            AdapterSettings adapterSettings;
+            NameValueCollection settings;
+
             string clientToken = GetClientToken();
 
-            foreach (Task x in _sequence.Tasks)
+            foreach (Task task in _sequence.Tasks)
             {
-                string url = string.Format("{0}?scope={1}&xid={2}", x.BaseURL, x.Scope, x.App);
-                WebRequest request = CreateWebRequest(url);
+                string assembly = task.Assembly;
+                string project = task.Project;
+                string app = task.App;
 
-                if (!string.IsNullOrEmpty(clientToken))
+                settings = ConfigurationManager.AppSettings;
+
+                adapterSettings = new AdapterSettings();
+                adapterSettings.AppendSettings(settings);
+                adapterSettings["ProjectName"] = project; 
+                adapterSettings["ApplicationName"] = app; 
+                adapterSettings["Scope"] = project + "." + app;
+
+                if (task.TaskType.ToLower().Equals("caching"))
                 {
-                    _logger.Info("Use client token.");
-                    request.Headers.Add("AuthType", _authType);
-                    request.Headers.Add("ClientToken", clientToken);
-                    request.Headers.Add("UserName", _clientId);
+                    //load the data layer dll using agent provider
+
+                    AgentProvider agentProvider = new AgentProvider(adapterSettings);
+                    agentProvider.ProcessTask(task);
+                    
+
+                    _logger.Info("Caching Task finished: " );
+
                 }
+                else if (task.TaskType.ToLower().Equals("exchange"))
+                {
+                    string url = string.Format("{0}?scope={1}&xid={2}", task.BaseURL, task.Scope, task.ExchangeId);
+                    WebRequest request = CreateWebRequest(url);
 
-                request.Timeout = _requestTimeout;
-                string responseText = GetResponseText(request);
+                    if (!string.IsNullOrEmpty(clientToken))
+                    {
+                        _logger.Info("Use client token.");
+                        request.Headers.Add("AuthType", _authType);
+                        request.Headers.Add("ClientToken", clientToken);
+                        request.Headers.Add("UserName", _clientId);
+                    }
 
-                _logger.Info("Agent Task finished: " + responseText);
+                    request.Timeout = _requestTimeout;
+                    string responseText = GetResponseText(request);
+
+                    _logger.Info("Exchange task finished: " + responseText);
+
+                }     
             }
         }
 
