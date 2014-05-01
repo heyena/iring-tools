@@ -28,19 +28,28 @@ namespace org.iringtools.agent
     [DataContract(Namespace = "http://www.iringtools.org/library", Name = "task")]
     public class Task
     {
-        [DataMember(Name = "baseURL", Order = 0)]
+        [DataMember(Name = "tasktype", Order = 0)]
+        public string TaskType { get; set; }
+
+        [DataMember(Name = "baseURL", Order = 1)]
         public string BaseURL { get; set; }
 
-        [DataMember(Name = "assembly", Order = 1)]
+        [DataMember(Name = "assembly", Order = 2)]
         public string Assembly { get; set; }
 
-        [DataMember(Name = "scope", Order = 2)]
-        public string Scope { get; set; }
+        [DataMember(Name = "project", Order = 3)]
+        public string Project { get; set; }
 
-        [DataMember(Name = "app", Order = 3)]
+        [DataMember(Name = "app", Order = 4)]
         public string App { get; set; }
 
-        [DataMember(Name = "params", Order = 4)]
+        [DataMember(Name = "scope", Order = 5)]
+        public string Scope { get; set; }
+
+        [DataMember(Name = "exchangeId", Order = 6)]
+        public string ExchangeId { get; set; }
+
+        [DataMember(Name = "params", Order = 7)]
         public Dictionary<string, string> taskParams { get; set; }
     }
 }

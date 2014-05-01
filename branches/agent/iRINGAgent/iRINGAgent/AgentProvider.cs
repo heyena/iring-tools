@@ -20,6 +20,7 @@ namespace org.iringtools.agent
         private static ILog _logger = LogManager.GetLogger(typeof(AgentProvider));
         private string[] arrSpecialcharlist;
         private string[] arrSpecialcharValue;
+        
 
         [Inject]
         public AgentProvider(NameValueCollection settings)
@@ -52,7 +53,19 @@ namespace org.iringtools.agent
             }
         }
 
-        //InitializeScope(project, application);
-        //InitializeDataLayer();
+        public void ProcessTask(Task task)
+        {
+            try
+            {
+                InitializeScope(task.Project, task.App);
+                InitializeDataLayer();
+                _dataLayerGateway.GetDictionary();
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error processing Task: " + e.Message);
+            }
+        }
+      
     }
 }
