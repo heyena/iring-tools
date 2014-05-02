@@ -851,7 +851,9 @@ namespace org.iringtools.adapter.projection
 
               if (valueListMap != null && valueListMap.valueMaps != null)
               {
-                ValueMap valueMap = valueListMap.valueMaps.Find(x => x.uri == value);
+               /// ValueMap valueMap = valueListMap.valueMaps.Find(x => x.uri == value); 
+
+                ValueMap valueMap = valueListMap.valueMaps.Find(x => x.label == value);
 
                 if (valueMap != null)
                 {
