@@ -34,22 +34,19 @@ namespace org.iringtools.agent
         [DataMember(Name = "baseURL", Order = 1)]
         public string BaseURL { get; set; }
 
-        [DataMember(Name = "assembly", Order = 2)]
-        public string Assembly { get; set; }
-
-        [DataMember(Name = "project", Order = 3)]
+        [DataMember(Name = "project", Order = 2)]
         public string Project { get; set; }
 
-        [DataMember(Name = "app", Order = 4)]
+        [DataMember(Name = "app", Order = 3)]
         public string App { get; set; }
 
-        [DataMember(Name = "scope", Order = 5)]
+        [DataMember(Name = "scope", Order = 4)]
         public string Scope { get; set; }
 
-        [DataMember(Name = "exchangeId", Order = 6)]
+        [DataMember(Name = "exchangeId", Order = 5)]
         public string ExchangeId { get; set; }
 
-        [DataMember(Name = "params", Order = 7)]
+        [DataMember(Name = "params", Order = 6)]
         public Dictionary<string, string> taskParams { get; set; }
     }
 }
