@@ -65,7 +65,6 @@ namespace org.iringtools.agent
 
             foreach (Task task in _sequence.Tasks)
             {
-                string assembly = task.Assembly;
                 string project = task.Project;
                 string app = task.App;
 
@@ -77,10 +76,9 @@ namespace org.iringtools.agent
                 adapterSettings["ApplicationName"] = app; 
                 adapterSettings["Scope"] = project + "." + app;
 
-                if (task.TaskType.ToLower().Equals("caching"))
+                if (task.TaskType.ToLower().Equals("cache"))
                 {
-                    //load the data layer dll using agent provider
-
+                    //Call agent provider
                     AgentProvider agentProvider = new AgentProvider(adapterSettings);
                     agentProvider.ProcessTask(task);
                     
@@ -217,10 +215,12 @@ namespace org.iringtools.agent
                 {
                     new Task
                     {
+                        TaskType = "",
                         BaseURL = "",
-                        Assembly = "",
+                        Project = "",
+                        App = "",
                         Scope = "",
-                        App = ""
+                        ExchangeId = ""
                     }
                 }
             };
