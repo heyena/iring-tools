@@ -41,7 +41,7 @@ namespace org.iringtools.agent
             {
                 log4net.Config.XmlConfigurator.Configure();
                 //GenerateSampleAgentSequence();
-                string sequenceName = "InfoWorks"; //args[0];
+                string sequenceName = args[0]; //"InfoWorks";
                 if (Initialize(sequenceName))
                 {
                     RunTask();
