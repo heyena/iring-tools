@@ -9,9 +9,6 @@
 				<project>99999_000</project>
 				<app>iw</app>
 				<scope>99999_000</scope>
-				<params>
-					<param id='pagesize' value='1000'/>
-				</params>
 			</task>
 		</tasks>
 	</tasksequence>
