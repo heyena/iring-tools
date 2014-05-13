@@ -6,9 +6,9 @@
 			<task>
 				<tasktype>cache</tasktype>
 				<baseURL>http://localhost:54321/adapter</baseURL>
-				<project>99999_000</project>
+				<project>PandaTemple</project>
 				<app>iw</app>
-				<scope>99999_000</scope>
+				<scope>PandaTemple</scope>
 			</task>
 		</tasks>
 	</tasksequence>
