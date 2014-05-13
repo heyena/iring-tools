@@ -63,11 +63,17 @@ namespace org.iringtools.web.controllers
                         filter = new DataFilter();
                         Expression expression = new Expression();
                         string[] filterVal = form["filter"].Split(':');
-                        expression.Values = new Values() { filterVal[1] };
-                        expression.PropertyName = filterVal[0];
-                        expression.RelationalOperator = (RelationalOperator)Enum.Parse(typeof(RelationalOperator), "EqualTo");
-                        filter.Expressions.Add(expression);
-                        dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], filter, form["start"], form["limit"]);
+                        if (filterVal.Count() == 2)
+                        {
+                            expression.Values = new Values() { filterVal[1] };
+                            expression.PropertyName = filterVal[0];
+                            expression.RelationalOperator = (RelationalOperator)Enum.Parse(typeof(RelationalOperator), "EqualTo");
+                            filter.Expressions.Add(expression);
+                            dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], filter, form["start"], form["limit"]);
+                           
+                        }
+                        else
+                            dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
                     }
                     else
                         dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
@@ -77,10 +83,15 @@ namespace org.iringtools.web.controllers
                 {
 
                     string[] filterVal = form["filter"].Split(':');
-                    filter.Expressions[0].Values[0] = filterVal[1];
-                    filter.Expressions[0].PropertyName = filterVal[0];
-                    filter.Expressions[0].RelationalOperator = (RelationalOperator)Enum.Parse(typeof(RelationalOperator), "EqualTo");
-                    dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], filter, form["start"], form["limit"]);
+                    if (filterVal.Count() == 2)
+                    {
+                        filter.Expressions[0].Values[0] = filterVal[1];
+                        filter.Expressions[0].PropertyName = filterVal[0];
+                        filter.Expressions[0].RelationalOperator = (RelationalOperator)Enum.Parse(typeof(RelationalOperator), "EqualTo");
+                        dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], filter, form["start"], form["limit"]);
+                    }
+                    else
+                        dataGrid = _repository.GetGrid(form["scope"], form["app"], form["graph"], filter, form["start"], form["limit"]);
                 }
                 else
                 {
