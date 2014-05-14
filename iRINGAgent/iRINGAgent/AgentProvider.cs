@@ -69,12 +69,7 @@ namespace org.iringtools.agent
 
                 if (task.TaskType.ToLower().Equals("cache"))
                 {
-                    InitializeScope(task.Project, task.App);
-                    InitializeDataLayer();
-                    _dictionary = _dataLayerGateway.GetDictionary();
-
-                    RefreshCache(task.Scope, task.App, false);
-
+                    RefreshCache(task.Project, task.App, false);
                 }
                 else if (task.TaskType.ToLower().Equals("exchange"))
                 {

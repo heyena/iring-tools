@@ -50,17 +50,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdapterLibrary">
-      <HintPath>..\lib\AdapterLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="iRINGLibrary">
-      <HintPath>..\lib\iRINGLibrary.dll</HintPath>
+    <Reference Include="IWDataLayer">
+      <HintPath>..\..\..\..\..\svncorp-dmz\iringtools_datalayers\iw_datalayer\trunk\IWDataLayer\bin\Debug\IWDataLayer.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\lib\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="MyIdentityProvider">
-      <HintPath>..\lib\MyIdentityProvider.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
@@ -70,6 +64,9 @@
     </Reference>
     <Reference Include="Ninject.Extensions.Xml">
       <HintPath>..\lib\ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="SSOIdentityProvider">
+      <HintPath>..\..\..\..\..\svncorp-dmz\iringtools_datalayers\security\csharp\SSOIdentityProvider\bin\Debug\SSOIdentityProvider.dll</HintPath>
     </Reference>
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\lib\StaticDust.Configuration.dll</HintPath>
@@ -94,9 +91,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UtilityLibrary">
-      <HintPath>..\lib\UtilityLibrary.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AgentProvider.cs" />
@@ -108,6 +102,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="App_Data\99999_000.config" />
+    <None Include="App_Data\99999_000.iw.config" />
+    <None Include="iRINGAgent.log" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -130,6 +127,27 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\trunk\Libraries\AdapterLibrary\AdapterLibrary.csproj">
+      <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
+      <Name>AdapterLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\trunk\Libraries\iRINGLibrary\iRINGLibrary.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\trunk\Libraries\UtilityLibrary\UtilityLibrary.csproj">
+      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
+      <Name>UtilityLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AgentConfig.xml" />
+    <Content Include="App_Data\BindingConfiguration.99999_000.iw.xml" />
+    <Content Include="App_Data\Configuration.99999_000.iw.xml" />
+    <Content Include="App_Data\IWFilter.99999_000.iw.documents.xml" />
+    <Content Include="App_Data\Scopes.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
