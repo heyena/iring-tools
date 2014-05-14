@@ -4,17 +4,15 @@ Ext.define('common.QuickFilter', {
 
     grid: null,
 	win: null,
-	
 	constructor: function (config) {
 		config = config || {};
     },
 	
 	init: function(grid) {
 		var me = this;
-		
+		myFlag = false;
 		me.grid = grid;
 		me.grid.filters = [];
-		
 		me.grid.on('cellcontextmenu', me.addFilter, me);       
         me.grid.store.on('beforeload', me.onBeforeLoad, me);
         
@@ -157,23 +155,33 @@ Ext.define('common.QuickFilter', {
               {
                   xtype: 'button',
                   handler: function (button, event) {
-                	  button.up('window').close();
+					   	  myFlag = true;
+						  button.up('window').close();
 			      },
                   text: 'OK'
               },
               {
                   xtype: 'button',
                   handler: function (button, event) {
-                	  button.up('window').close();
+                	  myFlag = false;
+					  button.up('window').close();
                 	  me.reload();
                   },
                   text: 'Apply'
               }]
     	   }]
 		});
+		me.win.on('close', me.closeWindow, me);
 	},
-	
+	closeWindow:function (win, eOpts){
+		 if(myFlag!= true){
+				var myGrid = win.down('grid');
+				myGrid.filters.splice(0, myGrid.filters.length);
+				}
+		 myFlag = false;
+	},
 	addFilter: function(view, td, cellIndex, record, tr, rowIndex, e) {
+	   
     	var me = this;
     	var field = record.fields.items[cellIndex].name;
     	
