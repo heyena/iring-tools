@@ -163,7 +163,7 @@ Ext.define('common.QuickFilter', {
               {
                   xtype: 'button',
                   handler: function (button, event) {
-                	  myFlag = false;
+                	  myFlag = true;
 					  button.up('window').close();
                 	  me.reload();
                   },
