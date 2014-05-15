@@ -192,6 +192,7 @@ namespace org.iringtools.services
         {
             try
             {
+                format = "jsonld";
                 _hmCommonService.Search(project, app, resource, query, format, start, limit, sortOrder, sortBy, indexStyle);
             }
             catch (Exception ex)

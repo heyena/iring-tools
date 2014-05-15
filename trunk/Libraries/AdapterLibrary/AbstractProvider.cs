@@ -2539,11 +2539,12 @@ namespace org.iringtools.adapter
         {
             try
             {
+                base.format = format;
                 InitializeScope(project, application);
                 InitializeDataLayer();
-                _dataObjDef = _dictionary.GetDataObject(resource);
 
-                AddURIsInSettingCollection(project, application, resource);
+                _tipMap = _tipMapping.FindTipMap(resource);
+                //AddURIsInSettingCollection(project, application, resource);
 
                 if (!_dictionary.enableSearch)
                     throw new WebFaultException(HttpStatusCode.NotFound);
@@ -2620,13 +2621,13 @@ namespace org.iringtools.adapter
                         filter.OrderExpressions.Add(orderBy);
                     }
 
-                    _dataObjects = _dataLayerGateway.Search(_dataObjDef.objectName, query, filter, start, limit);
-                    _projectionEngine.Count = _dataLayerGateway.SearchCount(_dataObjDef.objectName, query, filter);
+                    _dataObjects = _dataLayerGateway.Search(_tipMap.dataObjectName, query, filter, start, limit);
+                    _projectionEngine.Count = _dataLayerGateway.SearchCount(_tipMap.dataObjectName, query, filter);
                 }
                 else
                 {
-                    _dataObjects = _dataLayerGateway.Search(_dataObjDef.objectName, query, null, start, limit);
-                    _projectionEngine.Count = _dataLayerGateway.SearchCount(_dataObjDef.objectName, query, null);
+                    _dataObjects = _dataLayerGateway.Search(_tipMap.dataObjectName, query, null, start, limit);
+                    _projectionEngine.Count = _dataLayerGateway.SearchCount(_tipMap.dataObjectName, query, null);
                 }
 
                 _projectionEngine.FullIndex = fullIndex;
