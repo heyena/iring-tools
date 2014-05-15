@@ -74,18 +74,18 @@ namespace org.iringtools.agent
 
             try
             {
-                //string configPath = ConfigurationManager.AppSettings["AgentConfig"];
                 if (File.Exists(configPath))
                 {
                     AgentConfig config = Utility.Read<AgentConfig>(configPath, true);
                     foreach (TaskSequence sequence in config)
                     {
                         _sequence = sequence;
+                        break;
                     }
                 }
                 else
                 {
-                    _logger.Error("Agent Configuration not found.");
+                    _logger.Error("Agent Configuration [" + configPath + "] not found.");
                     return false;
                 }
             }
