@@ -3,10 +3,6 @@
 
   <PropertyGroup>
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
-    <Major>2</Major>
-    <Minor>7</Minor>
-    <Build>0</Build>
-    <Revision>0</Revision>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -30,7 +26,8 @@
     <LandingDeploymentDir>$(DeploymentDir)\iRINGTools</LandingDeploymentDir>
     <SolutionFile>iring-tools.sln</SolutionFile>
 
-	<DropLocation>\\chisd90210\Bechtel Builds\iRingTools\Trunk\Adapter</DropLocation>
+<DropLocation>\\chisd90210\Bechtel Builds\iRingTools\Trunk\Adapter</DropLocation>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -128,20 +125,29 @@
       <Options>a -tzip -y -r</Options>
       <OutputDir>$(DeploymentDir)</OutputDir>
       <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
-      <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
+      <ZipFile>$(DeploymentDir)\iRINGTools-</ZipFile>
     </DeploymentPackage>
   </ItemGroup>
 
-	<Target Name="GCcheckout">
-	<Exec command="svn checkout https://iring-tools.googlecode.com/svn/trunk/ E:\WORKSPACE\iRing_Tools_Datalayers\Adapter_trunk --username SSABuild@gmail.com"/>
-	</Target>
-
-  <Target Name="Version">
+  <Target Name="Versioning">
     <Message Text="Updating assembly info ..." />
+    <XmlRead XPath="/version/major" XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Major" />
+    </XmlRead>
+	
+    <XmlRead XPath="/version/minor" XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Minor" />
+    </XmlRead>
+	
+    <XmlRead XPath="/version/build" XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Build" />
+    </XmlRead>
 
-    <SvnVersion LocalPath="$(MSBuildProjectDirectory)">
-      <Output TaskParameter="Revision" PropertyName="Revision" />
-    </SvnVersion>
+    <!--<XmlUpdate XPath="/version/revision" XmlFileName="version.xml" value="$(BUILD_NUMBER)"/>-->
+
+     <XmlRead XPath="/version/revision" XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="revision" />
+     </XmlRead>
 
     <FileUpdate
       Files="$(AssemblyInfoFile)"
@@ -172,7 +178,7 @@
           Command="Copy $(RDFImportExportDir)\RDFImportExport_Default.config $(RDFImportExportDir)\App.config" />
   </Target>
 
-  <Target Name="CoreBuild" DependsOnTargets="Version">
+  <Target Name="CoreBuild" DependsOnTargets="Versioning">
     <Message Text="Performing MSBuild ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
   </Target>
@@ -213,7 +219,7 @@
   </Target>
 
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
-    <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
+    <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile)$(Major).$(Minor).$(Build).$(Revision).zip %(DeploymentPackage.FileSet)" />
     <Exec Command="RmDir /S /Q $(DeploymentDir)\iRINGTools" />
   </Target>
 
@@ -229,6 +235,7 @@
     </ItemGroup>
     <Copy SourceFiles="@(PublishedOutput)" DestinationFiles="$(DropLocation)\$(Major).$(Minor).$(Build).$(Revision)\Release\%(RecursiveDir)%(Filename)%(Extension)"/>
   </Target>
+
 
   <Target Name="Build" DependsOnTargets="CoreBuild"/>
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild"/>
