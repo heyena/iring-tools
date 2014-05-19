@@ -18,6 +18,7 @@ using org.iringtools.mapping;
 using org.iringtools.utility;
 using StaticDust.Configuration;
 using org.iringtools.library.tip;
+using System.Web;
 
 namespace org.iringtools.adapter
 {
@@ -484,9 +485,13 @@ namespace org.iringtools.adapter
         }
       }
 
-      if (!scopeFound)
+      if (!scopeFound && projectName == String.Empty)
       {
         scope = String.Format("all.{0}", applicationName);
+      }
+      else if (!scopeFound)
+      {
+          throw new Exception("Project or Application Name not found.");
       }
 
       _settings["Scope"] = scope;
