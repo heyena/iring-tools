@@ -133,7 +133,7 @@
   <Target Name="Version">
     <Message Text="Updating assembly info ..." />
 
-    <SvnVersion LocalPath="$(MSBuildProjectDirectory)" ToolPath="$(ProgramFiles)\TortoiseSVN\bin\svn.exe">
+    <SvnVersion LocalPath="$(MSBuildProjectDirectory)" ToolPath="$(ProgramFiles)\TortoiseSVN\bin">
       <Output TaskParameter="Revision" PropertyName="Revision" />
     </SvnVersion>
 
