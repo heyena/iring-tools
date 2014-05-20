@@ -14,6 +14,7 @@ namespace iRINGTools.Web.Models
 {
     public class GridRepository : AdapterRepository, IGridRepository
     {
+	
       private static readonly ILog _logger = LogManager.GetLogger(typeof(GridRepository));
       
       private DataDictionary dataDict;
