@@ -127,7 +127,7 @@
       <Options>a -tzip -y -r</Options>
       <OutputDir>$(DeploymentDir)</OutputDir>
       <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
-      <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
+      <ZipFile>$(DeploymentDir)\iRINGTools-</ZipFile>
     </DeploymentPackage>
   </ItemGroup>
   
@@ -241,7 +241,7 @@
   </Target>
 
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
-    <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
+    <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile)$(Major).$(Minor).$(Build).$(Revision).zip %(DeploymentPackage.FileSet)" />
     <Exec Command="RmDir /S /Q $(DeploymentDir)\iRINGTools" />
   </Target>
   
@@ -251,12 +251,13 @@
   </Target>
 
 
-  <Target  Name="Drop">
+<Target Name="Drop">
     <ItemGroup>
-      <PublishedOutput Include="dist\**\*.*"/>
+      <PublishedOutput Include="Deployment\**\*.*"/>
     </ItemGroup>
-    <Copy SourceFiles="@(PublishedOutput)" DestinationFiles="@(PublishedOutput->'$(DropLocation)\$(Major).$(Minor).$(Build).$(Revision)\Release\%(RecursiveDir)%(Filename)%(Extension)')"/>
+    <Copy SourceFiles="@(PublishedOutput)" DestinationFiles="$(DropLocation)\$(Major).$(Minor).$(Build).$(Revision)\Release\%(RecursiveDir)%(Filename)%(Extension)"/>
   </Target>
+
 
   <Target Name="Build" DependsOnTargets="CoreBuild"/>
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild"/>
