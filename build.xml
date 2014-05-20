@@ -247,7 +247,7 @@
   
   <Target Name="Commit">
     <!-- Use svn commit dashdashFORCEdashLOG to commit versioned file as a log message in SVN -->
-    <Exec command="svn commit -m $(Major).$(Minor).$(Build).$(Revision) $(MSBuildProjectDirectory)\version.xml --username SQABUILD@gmail.com --password ek7Ks8EH9Kn3" />
+    <Exec command="svn commit -m $(Major).$(Minor).$(Build).$(Revision) $(MSBuildProjectDirectory)\version.xml --username SQABUILD@gmail.com" />
   </Target>
 
 
