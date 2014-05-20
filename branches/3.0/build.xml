@@ -131,7 +131,7 @@
     </DeploymentPackage>
   </ItemGroup>
   
-    <Target Name="Versioning">
+  <Target Name="Versioning">
     <Message Text="Updating assembly info ..." />
     <XmlRead
       XPath="/version/major"
