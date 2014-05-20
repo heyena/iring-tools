@@ -29,6 +29,7 @@
     <UtilitiesDeploymentDir>$(DeploymentDir)\iRINGTools\Utils</UtilitiesDeploymentDir>
     <LandingDeploymentDir>$(DeploymentDir)\iRINGTools</LandingDeploymentDir>
     <SolutionFile>iring-tools.sln</SolutionFile>
+    <DropLocation>\\amers.ibechtel.com\apps\BUILDDROPS\DataLayers\iRINGTools\Trunk\Adapter</DropLocation>
   </PropertyGroup>
 
   <ItemGroup>
@@ -129,6 +130,39 @@
       <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
     </DeploymentPackage>
   </ItemGroup>
+  
+  <Target Name="Versioning">
+    <Message Text="Updating assembly info ..." />
+    <XmlRead
+      XPath="/version/major"
+      XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Major" />
+    </XmlRead>
+
+    <XmlRead
+      XPath="/version/minor"
+      XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Minor" />
+    </XmlRead>
+
+    <XmlRead
+      XPath="/version/build"
+      XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="Build" />
+    </XmlRead>
+
+   <XmlUpdate XPath="/version/revision" XmlFileName="version.xml" value="$(BUILD_NUMBER)"/>
+
+     <XmlRead XPath="/version/revision" XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="revision" />
+     </XmlRead>
+
+   <FileUpdate
+      Files="$(AssemblyInfoFile)"
+      Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*"
+      ReplacementText="$(Major).$(Minor).$(Build).$(BUILD_NUMBER)"/>
+
+  </Target>
 
   <Target Name="Version">
     <Message Text="Updating assembly info ..." />
@@ -166,7 +200,7 @@
           Command="Copy $(RDFImportExportDir)\RDFImportExport_Default.config $(RDFImportExportDir)\App.config" />
   </Target>
 
-  <Target Name="CoreBuild" DependsOnTargets="Version">
+  <Target Name="CoreBuild" DependsOnTargets="Versioning">
     <Message Text="Performing MSBuild ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
   </Target>
@@ -210,9 +244,22 @@
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
     <Exec Command="RmDir /S /Q $(DeploymentDir)\iRINGTools" />
   </Target>
+  
+  <Target Name="Commit">
+    <!-- Use svn commit dashdashFORCEdashLOG to commit versioned file as a log message in SVN -->
+    <Exec command="svn commit -m $(Major).$(Minor).$(Build).$(Revision) $(MSBuildProjectDirectory)\version.xml" />
+  </Target>
+
+
+  <Target  Name="Drop">
+    <ItemGroup>
+      <PublishedOutput Include="dist\**\*.*"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(PublishedOutput)" DestinationFiles="@(PublishedOutput->'$(DropLocation)\$(Major).$(Minor).$(Build).$(Revision)\Release\%(RecursiveDir)%(Filename)%(Extension)')"/>
+  </Target>
 
   <Target Name="Build" DependsOnTargets="CoreBuild"/>
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild"/>
   
-  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
+  <Target Name="All" DependsOnTargets="Rebuild; CreatePackages; Drop"/>
 </Project>
