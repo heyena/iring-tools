@@ -24,6 +24,7 @@ namespace org.iringtools.web.controllers
       {
         //
         // process authentication if a provider is configured
+		// 
         //
         string authNProviderName = ConfigurationManager.AppSettings["AuthenticationProvider"];
 
