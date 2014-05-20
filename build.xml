@@ -122,7 +122,16 @@
     </UtilitiesDeployment>
   </ItemGroup>
   
-  <Target Name="Versioning">
+  <ItemGroup>
+    <DeploymentPackage Include="*.*" Exclude="*.zip">
+      <Options>a -tzip -y -r</Options>
+      <OutputDir>$(DeploymentDir)</OutputDir>
+      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
+      <ZipFile>$(DeploymentDir)\iRINGTools-</ZipFile>
+    </DeploymentPackage>
+  </ItemGroup>
+  
+    <Target Name="Versioning">
     <Message Text="Updating assembly info ..." />
     <XmlRead
       XPath="/version/major"
@@ -154,15 +163,6 @@
       ReplacementText="$(Major).$(Minor).$(Build).$(BUILD_NUMBER)"/>
 
   </Target>
-
-  <ItemGroup>
-    <DeploymentPackage Include="*.*" Exclude="*.zip">
-      <Options>a -tzip -y -r</Options>
-      <OutputDir>$(DeploymentDir)</OutputDir>
-      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
-      <ZipFile>$(DeploymentDir)\iRINGTools-</ZipFile>
-    </DeploymentPackage>
-  </ItemGroup>
 
   <Target Name="Version">
     <Message Text="Updating assembly info ..." />
