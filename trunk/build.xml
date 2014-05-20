@@ -29,7 +29,7 @@
     <UtilitiesDeploymentDir>$(DeploymentDir)\iRINGTools\Utils</UtilitiesDeploymentDir>
     <LandingDeploymentDir>$(DeploymentDir)\iRINGTools</LandingDeploymentDir>
     <SolutionFile>iring-tools.sln</SolutionFile>
-    <DropLocation>\\amers.ibechtel.com\apps\BUILDDROPS\DataLayers\iRINGTools\Trunk\Adapter</DropLocation>
+    <DropLocation>\\amers.ibechtel.com\apps\BUILDDROPS\iRINGTools\Trunk\Adapter</DropLocation>
   </PropertyGroup>
 
   <ItemGroup>
