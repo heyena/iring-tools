@@ -3,10 +3,6 @@
 
   <PropertyGroup>
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
-    <Major>2</Major>
-    <Minor>7</Minor>
-    <Build>0</Build>
-    <Revision>0</Revision>
   </PropertyGroup>
 
   <PropertyGroup>
