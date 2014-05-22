@@ -52,7 +52,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
     },
 
     onClick: function (dataview, record, item, index, e, eOpts) {
-        var me = this;
+		var me = this;
         try {
             var pan = dataview.up('panel').up('panel');
             prop = pan.down('propertygrid');

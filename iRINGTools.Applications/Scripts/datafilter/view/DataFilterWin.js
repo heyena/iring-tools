@@ -1,8 +1,12 @@
 Ext.define('df.view.DataFilterWin', {
     extend: 'Ext.window.Window',
     alias: 'widget.dataFilterWin',
-
-    autoScroll: true,
+    //height: 400,
+	minWidth:500,
+	minHeight:400,
+	modal:true,
+	//maxHeight:450,
+	//autoScroll : true,
     layout: {
         type: 'fit'
     },
