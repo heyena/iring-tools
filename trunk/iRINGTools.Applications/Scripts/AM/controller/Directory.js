@@ -192,7 +192,8 @@ Ext.define('AM.controller.Directory', {
             win.destroy();
             tree.view.refresh();
             tree.expandPath(tree.getRootNode().getPath());
-
+            var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
+            detailGrid.setSource({});
         }, me);
 
         win.on('cancel', function () {
@@ -305,6 +306,8 @@ Ext.define('AM.controller.Directory', {
         win.on('save', function () {
             win.close();
             tree.view.refresh();
+			var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
+            detailGrid.setSource({});
         }, me);
 
         win.on('Cancel', function () {
