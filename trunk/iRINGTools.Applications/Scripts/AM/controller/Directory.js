@@ -1410,7 +1410,7 @@ Ext.define('AM.controller.Directory', {
         var reqParam = { scope: contextName, app: endpointName, graph: graph, start: 0, limit: 25 };
         var getColsUrl = 'GridManager/pages';
         var oeUrl = 'Directory/getDataFilter';
-        panelDisable();
+        //panelDisable();
         var dfcontroller = me.application.getController("df.controller.DataFilter");
         dfcontroller.dataFiltersMenuItem(centerPanel, node, relURI, reqParam, getColsUrl, "dobj");
     },

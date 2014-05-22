@@ -3,29 +3,34 @@
 Ext.define('df.view.DataFilterForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.dataFilterForm',
-    height: 400,
+    //height: 400,
     margin: 1,
     width: 767,
-    autoScroll: true,
+    height:380,
+    layout:'anchor',
+    //anchor: '100% 100%',
+    //autoScroll: true,
     initComponent: function() {
         var me = this;
         Ext.applyIf(me, {
             items: [
                 {
                     xtype: 'fieldset',
-                    anchor: '100%',
-                    height: 197,
+                    anchor: '100% 47%',
+                    //height: 169,
                     itemId: 'Expressions',
-                    margin: 2,
-                    autoScroll: true,
+                    margin: 5,
+                    //autoScroll: true,
+                    overflowY:'auto',
                     layout: {
-                        type: 'auto'
+                        type: 'anchor'
                     },
                     title: 'Expressions',
                     items: [
                         {
                             xtype: 'container',
-                            height: 50,
+                            //height: 50,
+                            //width:600,
                             itemId: 'dataFilter_0',
                             layout: {
                                 align: 'stretch',
@@ -118,13 +123,21 @@ Ext.define('df.view.DataFilterForm', {
                                     margin: '5 0 5 10',
                                     border: false,
                                     itemId: 'save_0',
-                                    icon: 'Content/img/16x16/add.png'
+                                    icon: 'Content/img/16x16/add.png',
+                                    tooltip: 'add Expression'
+                                },
+                                {
+                                    xtype: 'displayfield',
+                                    //flex: 1,
+                                    margins: '0 0 0 25',
+                                    value: ''
                                 }
                             ]
                         },
                         {
                             xtype: 'container',
                             itemId: 'dataFilter_1',
+                             //width:600,
                             layout: {
                                 align: 'stretch',
                                 type: 'hbox'
@@ -148,27 +161,11 @@ Ext.define('df.view.DataFilterForm', {
                                     store: [
                                         [
                                             0,
-                                            'None'
-                                        ],
-                                        [
-                                            1,
                                             'And'
                                         ],
                                         [
-                                            2,
+                                            1,
                                             'Or'
-                                        ],
-                                        [
-                                            3,
-                                            'Not'
-                                        ],
-                                        [
-                                            4,
-                                            'AndNot'
-                                        ],
-                                        [
-                                            5,
-                                            'OrNot'
                                         ]
                                     ]
                                 },
@@ -213,7 +210,6 @@ Ext.define('df.view.DataFilterForm', {
                                     name: 'relationalOperator_1',
                                     editable: false,
                                     matchFieldWidth: false,
-									value :0,
                                     displayField: 'value',
                                     queryMode: 'local',
                                     store: 'RelationalStoreComplete',
@@ -335,6 +331,12 @@ Ext.define('df.view.DataFilterForm', {
                                     margin: '5 0 5 10',
                                     icon: 'Content/img/16x16/delete-icon.png',
                                     tooltip: 'remove Expression'
+                                },
+                                {
+                                    xtype: 'displayfield',
+                                    //flex: 1,
+                                    margins: '0 0 0 25',
+                                    value: ''
                                 }
                             ]
                         }
@@ -342,11 +344,12 @@ Ext.define('df.view.DataFilterForm', {
                 },
                 {
                     xtype: 'fieldset',
-                    anchor: '100%',
-                    height: 159,
+                    anchor: '100% 47%',
+                   // height: 159,
                     itemId: 'OExpress',
                     margin: 5,
-                    autoScroll: true,
+                    //autoScroll: true,
+                    overflowY:'auto',
                     layout: {
                         type: 'auto'
                     },
@@ -406,13 +409,20 @@ Ext.define('df.view.DataFilterForm', {
                                     border: false,
                                     height: 22,
                                     itemId: 'OEAdd_0',
-                                    icon: 'Content/img/16x16/add.png'
+                                    icon: 'Content/img/16x16/add.png',
+                                    tooltip: 'add Expression'
+                                },
+                                {
+                                    xtype: 'displayfield',
+                                    //flex: 1,
+                                    margins: '0 0 0 25',
+                                    value: ''
                                 }
                             ]
                         },
                         {
                             xtype: 'container',
-                            height: 33,
+                            //height: 33,
                             itemId: 'OE_1',
                             layout: {
                                 align: 'stretch',
@@ -501,7 +511,14 @@ Ext.define('df.view.DataFilterForm', {
                                     margins: '6',
                                     border: false,
                                     itemId: 'OEDelete_1',
-                                    icon: 'Content/img/16x16/delete-icon.png'
+                                    icon: 'Content/img/16x16/delete-icon.png',
+                                    tooltip: 'remove Expression'
+                                },
+                                {
+                                    xtype: 'displayfield',
+                                    //flex: 1,
+                                    margins: '0 0 0 25',
+                                    value: ''
                                 }
                             ]
                         }
