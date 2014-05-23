@@ -45,7 +45,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AESEncryptor", "Utilities\A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMXFGenerator", "Utilities\QMXFGenerator\QMXFGenerator.csproj", "{91086100-C634-450F-A560-4B5EFCBBF8E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGAgent", "..\branches\agent\iRINGAgent\iRINGAgent\iRINGAgent.csproj", "{E5E9C14A-CFF1-4933-A093-5683D1D31783}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGAgent", "Utilities\Agent\iRINGAgent\iRINGAgent.csproj", "{E5E9C14A-CFF1-4933-A093-5683D1D31783}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
