@@ -618,6 +618,100 @@ namespace org.iringtools.library
       return null;
     }
 
+    protected IContentObject ToContentObject(DataRow dataRow, DataObject objectDefinition)
+    {
+        IContentObject dataObject = null;
+
+        if (dataRow != null)
+        {
+            try
+            {
+                dataObject = new GenericContentObject() { ObjectType = objectDefinition.objectName };
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(string.Format("Error instantiating data object: {0}", ex));
+                throw ex;
+            }
+
+            if (dataObject != null && objectDefinition.dataProperties != null)
+            {
+                foreach (DataProperty objectProperty in objectDefinition.dataProperties)
+                {
+                    try
+                    {
+                        if (objectProperty.columnName != null)
+                        {
+                            if (dataRow.Table.Columns.Contains(objectProperty.columnName))
+                            {
+                                object value = dataRow[objectProperty.columnName];
+
+                                if (value.GetType() == typeof(System.DBNull))
+                                {
+                                    value = null;
+                                }
+
+                                dataObject.SetPropertyValue(objectProperty.propertyName, value);
+                            }
+                            else
+                            {
+                                _logger.Warn(String.Format("Value for column [{0}] not found in data row of table [{1}]",
+                                  objectProperty.columnName, objectDefinition.tableName));
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error(string.Format("Error getting data row value: {0}", ex));
+                        throw ex;
+                    }
+                }
+
+                // evaluate has-content expression            
+                if (_settings["HasContentExpression"] != null)
+                {
+                    string expression = _settings["HasContentExpression"].ToString();
+
+                    foreach (DataProperty prop in objectDefinition.dataProperties)
+                    {
+                        if (expression.Contains(prop.propertyName))
+                        {
+                            object value = dataObject.GetPropertyValue(prop.propertyName);
+
+                            if (value != null)
+                            {
+                                string valueStr = value.ToString();
+
+                                if (prop.dataType == DataType.Char || prop.dataType == DataType.String)
+                                {
+                                    valueStr = "\"" + valueStr + "\"";
+                                }
+
+                                expression = expression.Replace(prop.propertyName, valueStr);
+                            }
+                        }
+                    }
+
+                    if ((bool)Utility.Evaluate(expression))
+                    {
+                        ((GenericContentObject)dataObject).HasContent = true;
+                    }
+                }
+            }
+        }
+        else
+        {
+            dataObject = new GenericContentObject() { ObjectType = objectDefinition.objectName };
+
+            foreach (DataProperty objectProperty in objectDefinition.dataProperties)
+            {
+                dataObject.SetPropertyValue(objectProperty.propertyName, null);
+            }
+        }
+
+        return dataObject;
+    }
+
     protected IDataObject ToDataObject(DataRow dataRow, DataObject objectDefinition)
     {
       IDataObject dataObject = null;
