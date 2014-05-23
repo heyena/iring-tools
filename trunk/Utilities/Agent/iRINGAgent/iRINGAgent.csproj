@@ -50,26 +50,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IWDataLayer">
-      <HintPath>..\..\..\..\..\svncorp-dmz\iringtools_datalayers\iw_datalayer\trunk\IWDataLayer\bin\Debug\IWDataLayer.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
-      <HintPath>..\lib\log4net.dll</HintPath>
+      <HintPath>..\..\..\..\..\svncorp-dmz\iringtools_datalayers\Aconex_datalayer\trunk\lib\log4net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\dotnetRDF\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
-      <HintPath>..\lib\ninject2\Ninject.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="Ninject.Extensions.Xml">
-      <HintPath>..\lib\ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="SSOIdentityProvider">
-      <HintPath>..\..\..\..\..\svncorp-dmz\iringtools_datalayers\security\csharp\SSOIdentityProvider\bin\Debug\SSOIdentityProvider.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\Ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
     </Reference>
     <Reference Include="StaticDust.Configuration">
-      <HintPath>..\lib\StaticDust.Configuration.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -104,7 +98,6 @@
     </None>
     <None Include="App_Data\99999_000.config" />
     <None Include="App_Data\99999_000.iw.config" />
-    <None Include="iRINGAgent.log" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
