@@ -6,8 +6,8 @@ Ext.define('AM.view.directory.DataGridPanel', {
         'AM.view.override.directory.DataGridPanel',
         'AM.store.DataGridStore'
     ],
-
     closable: true,
+	quickFilterStore:[],
     store: 'DataGridStore',
     style: 'background-color: #fff;',
 	//verticalScrollerType:null,//'paginggridscroller',

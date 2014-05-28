@@ -156,7 +156,14 @@ Ext.define('common.QuickFilter', {
                   xtype: 'button',
                   handler: function (button, event) {
 					   	  myFlag = true;
-						  button.up('window').close();
+					  var activeTab = Ext.ComponentQuery.query('#contentPanelID')[0].getActiveTab();
+					  //activeTab.quickFilterStore;
+					  var tempStore  = button.up('window').down('grid').getStore();
+					  activeTab.quickFilterStore = [];
+					  for(var i=0;i<tempStore.data.length;i++){
+						  activeTab.quickFilterStore.push(tempStore.data.items[i].data);
+				      }
+					 button.up('window').close();
 			      },
                   text: 'OK'
               },
@@ -164,6 +171,13 @@ Ext.define('common.QuickFilter', {
                   xtype: 'button',
                   handler: function (button, event) {
                 	  myFlag = true;
+					  var activeTab = Ext.ComponentQuery.query('#contentPanelID')[0].getActiveTab();
+					  //activeTab.quickFilterStore;
+					  var tempStore  = button.up('window').down('grid').getStore();
+					  activeTab.quickFilterStore = [];
+					  for(var i=0;i<tempStore.data.length;i++){
+						  activeTab.quickFilterStore.push(tempStore.data.items[i].data);
+				      }
 					  button.up('window').close();
                 	  me.reload();
                   },
@@ -175,15 +189,37 @@ Ext.define('common.QuickFilter', {
 	},
 	closeWindow:function (win, eOpts){
 		 if(myFlag!= true){
+			    var activeTab = Ext.ComponentQuery.query('#contentPanelID')[0].getActiveTab();
+			    var quickFilterStore = activeTab.quickFilterStore;
 				var myGrid = win.down('grid');
-				myGrid.filters.splice(0, myGrid.filters.length);
+				var myStore = myGrid.getStore();
+				   for (var i=0,k=0; i<myStore.data.length;i++,k++) {
+					   var expr = myStore.data.items[i];
+					   var foundFlag = true;
+					   for(var j=0;j<quickFilterStore.length ;j++){
+						   if (expr.data.field == quickFilterStore[j].field &&
+								   expr.data.operator == quickFilterStore[j].operator &&
+								   expr.data.value == quickFilterStore[j].value) {
+							   foundFlag = false;
+						   }
+					   }
+					   if(foundFlag){
+						   //if(i == myGrid.filters.length)
+							 //  myGrid.filters.splice(i-1, 1);
+						   //else if(i>myGrid.filters.length)
+						     //  myGrid.filters.splice(i-1, 1);
+						   //else 
+							   myGrid.filters.splice(k, 1);
+							   --k;
+					   }
+			        }
 				}
 		 myFlag = false;
 	},
 	addFilter: function(view, td, cellIndex, record, tr, rowIndex, e) {
 	   
     	var me = this;
-    	var field = record.fields.items[cellIndex].name;
+    	var field = view.panel.columnManager.getHeaderAtIndex(cellIndex).text;//record.fields.items[actualCellIndex].name;
     	
     	var columns = view.panel.columnManager.getColumns();
     	var filterable = false;
@@ -197,13 +233,20 @@ Ext.define('common.QuickFilter', {
     	
     	if (filterable) {
 	    	var value = record.data[field];
-	    	
+	    	var addFlag = true;
+	    	for(var i=0;i<me.grid.filters.length;i++){
+	    		if(me.grid.filters[i].field == field){
+	    			addFlag = false;
+	    		}
+	    	}
+	    	if(addFlag){
 	    	me.grid.filters.push({
 	    		conjunction: (me.grid.filters.length == 0) ? '' : 'And', 
 	    		field: field, 
 	    		operator: 'EqualTo', 
 	    		value: value
 	        });
+	    	}
     	}
     	
     	me.show();
