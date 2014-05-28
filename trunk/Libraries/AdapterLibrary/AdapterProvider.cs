@@ -4344,7 +4344,8 @@ namespace org.iringtools.adapter
         {
             try
             {
-                string path = AppDomain.CurrentDomain.BaseDirectory + "\\App_Data\\DataLayers.xml";
+                //string path = AppDomain.CurrentDomain.BaseDirectory + "\\App_Data\\DataLayers.xml";
+                string path = _settings["AppDataPath"] + "DataLayers.xml";
                 DataLayers dataLayers = Utility.Read<DataLayers>(path);
                 return dataLayers;
             }
