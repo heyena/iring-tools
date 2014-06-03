@@ -1,0 +1,16 @@
+﻿{
+  "items": [
+    {
+      "name": "Groups"
+    },
+    {
+      "name": "Users"
+    },
+    {
+      "name": "Roles"
+    },
+    {
+      "name": "Permissions"
+    }
+  ]
+}

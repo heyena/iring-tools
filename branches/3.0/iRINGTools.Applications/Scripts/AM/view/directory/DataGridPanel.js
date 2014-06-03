@@ -4,16 +4,15 @@ Ext.define('AM.view.directory.DataGridPanel', {
     xtype: 'myGrid',
     requires: [
         'AM.view.override.directory.DataGridPanel',
-        'AM.store.DataGridStore'
+        'AM.store.DataGridStore',
+        'Ext.ux.grid.CustomFiltersFeature'
+  
     ],
 
     closable: true,
     store: 'DataGridStore',
     style: 'background-color: #fff;',
-	//verticalScrollerType:null,//'paginggridscroller',
-	//loadMask:false,
-	//invalidateScrollerOnRefresh:false,
-    initComponent: function () {
+	initComponent: function () {
         var me = this;
 
         Ext.applyIf(me, {
