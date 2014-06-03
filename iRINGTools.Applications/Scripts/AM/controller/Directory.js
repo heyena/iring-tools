@@ -465,21 +465,24 @@ Ext.define('AM.controller.Directory', {
 
             gridStore.on('beforeload', function (store, action) {
                 var params = store.proxy.extraParams;
-                params.start = (store.currentPage - 1) * store.pageSize;
-                params.limit = store.pageSize;
+                if (Ext.getElementById('gridCheckbox').checked == false) {
+                    params.start = (store.currentPage - 1) * store.pageSize;
+                    params.limit = store.pageSize;
+                }
+                
                 params.app = endpointName; //node.parentNode.parentNode.data.property.Name;
                 params.scope = contextName; //node.parentNode.parentNode.parentNode.data.property.Name ;
                 params.graph = graph;
-                if (checkboxForGrid) {
-                    params.limit = 100000;
-                    store.pageSize = 100;
-                    //store.buffered = true;
-                    //store.leadingBufferZone = 300;
-                    //gridPanel.verticalScrollerType = 'paginggridscroller';
-                    //gridPanel.loadMask = true;
-                    if (gridPanel.dockedItems.length >= 2)
-                        gridPanel.dockedItems.removeAt(1);
-                }
+//                if (checkboxForGrid) {
+//                    params.limit = 100000;
+//                    store.pageSize = 100;
+//                    //store.buffered = true;
+//                    //store.leadingBufferZone = 300;
+//                    //gridPanel.verticalScrollerType = 'paginggridscroller';
+//                    //gridPanel.loadMask = true;
+//                    if (gridPanel.dockedItems.length >= 2)
+//                        gridPanel.dockedItems.removeAt(1);
+//                }
             }, me);
 
             gridProxy.on('exception', function (proxy, response, operation) {

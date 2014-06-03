@@ -31,6 +31,7 @@
       <h2>iRINGTools Applications</h2>
       <ul>
       <li><a href="<%=ResolveUrl("~/AdapterManager") %>">Adapter Manager</a></li>
+	  <li><a href="<%=ResolveUrl("~/UserSecurityManager") %>">User Security Manager</a></li>
 	    </ul>
     </div>
   </body>

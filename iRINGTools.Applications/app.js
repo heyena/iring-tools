@@ -3,7 +3,8 @@ Ext.Loader.setConfig({
   garbageCollect: true,
   paths: {
     'Ext.ux': 'Scripts/ext-4.2.1.883/ux',
-	'df': 'Scripts/datafilter' 
+	'df': 'Scripts/datafilter',
+    'Ext.grid': 'Scripts/ext-4.2.1.883/src/grid'	
   }
 });
 
