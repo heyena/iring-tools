@@ -1,5 +1,5 @@
 
-Ext.define('USM.view.menu.RoleMenu', {
+Ext.define('USM.view.menus.RoleMenu', {
     extend: 'Ext.menu.Menu',
 
     initComponent: function() {

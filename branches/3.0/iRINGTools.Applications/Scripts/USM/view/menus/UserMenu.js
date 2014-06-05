@@ -1,5 +1,5 @@
 
-Ext.define('USM.view.menu.UserMenu', {
+Ext.define('USM.view.menus.UserMenu', {
     extend: 'Ext.menu.Menu',
 
     initComponent: function() {

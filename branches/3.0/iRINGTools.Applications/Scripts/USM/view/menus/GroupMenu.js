@@ -1,5 +1,5 @@
 
-Ext.define('EM.view.menu.SecurityMenu', {
+Ext.define('EM.view.menus.SecurityMenu', {
     extend: 'Ext.menu.Menu',
 
     initComponent: function() {
