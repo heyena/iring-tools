@@ -1,5 +1,5 @@
 
-Ext.define('USM.view.menu.PermissionMenu', {
+Ext.define('USM.view.menus.PermissionMenu', {
     extend: 'Ext.menu.Menu',
 
     initComponent: function() {
