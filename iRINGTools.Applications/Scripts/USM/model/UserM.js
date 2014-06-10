@@ -3,22 +3,22 @@
 
     fields: [
         {
-            name: 'username'
+            name: 'UserName'
         },
         {
-            name: 'fname'
+            name: 'UserFirstName'
         },
         {
-            name: 'lname'
+            name: 'UserLastName'
         },
         {
-            name: 'email'
+            name: 'UserEmail'
         },
         {
-            name: 'phone'
+            name: 'UserPhone'
         },
         {
-            name: 'description'
+            name: 'UserDesc'
         }
     ]
 });

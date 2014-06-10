@@ -15,15 +15,15 @@
             autoLoad: true,
             model: 'USM.model.GroupM',
             storeId: 'GroupJsonStore',
-            data: [{ "groupName": "iRing", "description": "iRing"}]
-//            proxy: {
-//                type: 'ajax',
-//                url: '/Scripts/USM/jsonfiles/groups.json',
-//                reader: {
-//                    type: 'json',
-//                    root: 'items'
-//                }
-//            }
+            //data: [{ "groupName": "iRing", "description": "iRing"}]
+            proxy: {
+                type: 'ajax',
+                url: '/Scripts/USM/jsonfiles/groups.json',
+                reader: {
+                    type: 'json',
+                    root: 'items'
+                }
+            }
         }, cfg)]);
     }
 });

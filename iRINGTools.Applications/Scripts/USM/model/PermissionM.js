@@ -3,10 +3,10 @@
 
     fields: [
         {
-            name: 'permissionname'
+            name: 'PermissionName'
         },
         {
-            name: 'description'
+            name: 'PermissionDesc'
         }
     ]
 });

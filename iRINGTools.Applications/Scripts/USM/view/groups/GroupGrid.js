@@ -11,13 +11,13 @@
             columns: [
                 {
                     xtype: 'gridcolumn',
-                    dataIndex: 'groupName',
+                    dataIndex: 'GroupName',
                     text: 'Group Name',
                     flex: 1,
                     menuDisabled: true
                 }, {
                     xtype: 'gridcolumn',
-                    dataIndex: 'description',
+                    dataIndex: 'GroupDesc',
                     text: 'Description',
                     flex: 2,
                     menuDisabled: true

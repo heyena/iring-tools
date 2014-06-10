@@ -3,10 +3,16 @@
 
     fields: [
         {
-            name: 'groupName'
+            name: 'GroupId'
         },
         {
-            name: 'description'
+            name: 'SiteId'
+        },
+        {
+            name: 'GroupName'
+        },
+        {
+            name: 'GroupDesc'
         }
     ]
 });

@@ -12,13 +12,13 @@ Ext.define('USM.view.roles.RoleGrid', {
             columns: [
                 {
                     xtype: 'gridcolumn',
-                    dataIndex: 'rolename',
+                    dataIndex: 'RoleName',
                     text: 'Role',
                     flex: 1,
                     menuDisabled: true
                 }, {
                     xtype: 'gridcolumn',
-                    dataIndex: 'description',
+                    dataIndex: 'RoleDesc',
                     text: 'Description',
                     flex: 2,
                     menuDisabled: true

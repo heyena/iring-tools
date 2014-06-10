@@ -1,7 +1,7 @@
 ﻿{
   "items": [
     {
-      "permissionname": "Tst Permission"
-    , &quot;description": "iRing" }
+      "PermissionName": "Tst Permission",
+     "PermissionDesc": "iRing" }
   ]
 }

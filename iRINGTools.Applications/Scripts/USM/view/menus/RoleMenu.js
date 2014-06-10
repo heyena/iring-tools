@@ -1,7 +1,7 @@
 
 Ext.define('USM.view.menus.RoleMenu', {
     extend: 'Ext.menu.Menu',
-
+    alias: 'widget.rolemenu',
     initComponent: function() {
         var me = this;
 
@@ -10,20 +10,23 @@ Ext.define('USM.view.menus.RoleMenu', {
                 {
                     xtype: 'menuitem',
                     action: 'addRole',
-                    icon: 'resources/images/16x16/add.png',
+                    iconCls: 'icon-add',
                     text: 'Add Role'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'editRole',
-                    icon: 'resources/images/16x16/edit-file.png',
+                    iconCls: 'icon-edit',
                     text: 'Edit Role'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'deleteRole',
-                    icon: 'resources/images/16x16/delete-icon.png',
+                    iconCls: 'icon-delete',
                     text: 'Delete Role'
+                },
+                {
+                    xtype: 'menuseparator'
                 },
                 {
                     xtype: 'menuitem',
@@ -36,6 +39,9 @@ Ext.define('USM.view.menus.RoleMenu', {
                     action: 'editPermissionRole',
                     icon: 'resources/images/16x16/edit-file.png',
                     text: 'Edit Permission/Role'
+                },
+                {
+                    xtype: 'menuseparator'
                 },
                 {
                     xtype: 'menuitem',

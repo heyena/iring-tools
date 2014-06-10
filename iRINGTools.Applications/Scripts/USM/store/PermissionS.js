@@ -15,15 +15,15 @@
             autoLoad: true,
             model: 'USM.model.PermissionM',
             storeId: 'PermissionJsonStore',
-            data: [{ "permissionname": "Tst Permission", "description": "iRing"}]
-//            proxy: {
-//                type: 'ajax',
-//                url: '/Scripts/USM/jsonfiles/permissions.json',
-//                reader: {
-//                    type: 'json',
-//                    root: 'items'
-//                }
-//            }
+            //data: [{ "permissionname": "Tst Permission", "description": "iRing"}]
+            proxy: {
+                type: 'ajax',
+                url: '/Scripts/USM/jsonfiles/permissions.json',
+                reader: {
+                    type: 'json',
+                    root: 'items'
+                }
+            }
         }, cfg)]);
     }
 });
