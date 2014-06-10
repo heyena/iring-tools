@@ -15,7 +15,7 @@
             autoLoad: true,
             model: 'USM.model.UserM',
             storeId: 'UserJsonStore',
-            data: [{ "username": "prashant", "fname": "Prashant", "lname": "Dubey", "email": "pdubey@bechtel.com", "phone": "8992", "description": "pdubey@bechtel.com"}] 
+            data: [{ "UserName": "prashant", "UserFirstName": "Prashant", "UserLastName": "Dubey", "UserEmail": "pdubey@bechtel.com", "UserPhone": "8992", "UserDesc": "pdubey@bechtel.com"}] 
 //            proxy: {
 //                type: 'ajax',
 //                url: '/Scripts/USM/jsonfiles/users.json',

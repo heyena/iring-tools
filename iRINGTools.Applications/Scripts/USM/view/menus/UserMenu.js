@@ -1,7 +1,7 @@
 
 Ext.define('USM.view.menus.UserMenu', {
     extend: 'Ext.menu.Menu',
-
+	alias: 'widget.usermenu',
     initComponent: function() {
         var me = this;
 
@@ -9,32 +9,34 @@ Ext.define('USM.view.menus.UserMenu', {
             items: [
                 {
                     xtype: 'menuitem',
-                    action: 'addUser',
-                    icon: 'resources/images/16x16/add.png',
+                    action: 'addEditUser',
+					itemId:'addUser',
+                    icon: 'Content/img/16x16/add.png',
                     text: 'Add User'
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'editUser',
-                    icon: 'resources/images/16x16/edit-file.png',
+                    action: 'addEditUser',
+					itemId:'editUser',
+                    icon: 'Content/img/16x16/edit.png',
                     text: 'Edit User'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'deleteUser',
-                    icon: 'resources/images/16x16/delete-icon.png',
+                    icon: 'Content/img/16x16/delete-icon.png',
                     text: 'Delete User'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'addUserToGroup',
-                    icon: 'resources/images/16x16/add.png',
+                    icon: 'Content/img/16x16/add.png',
                     text: 'Add User to Group'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'editUserGroup',
-                    icon: 'resources/images/16x16/edit-file.png',
+                    icon: 'Content/img/16x16/edit.png',
                     text: 'Edit User/Group'
                 }
             ]

@@ -12,37 +12,37 @@ Ext.define('USM.view.users.UserGrid', {
             columns: [
                 {
                     xtype: 'gridcolumn',
-                    dataIndex: 'username',
+                    dataIndex: 'UserName',
                     text: 'User Name',
                     flex: 2,
                     menuDisabled: true
                 }, {
                     xtype: 'gridcolumn',
-                    dataIndex: 'fname',
+                    dataIndex: 'UserFirstName',
                     text: 'First Name',
                     flex: 2,
                     menuDisabled: true
                 }, {
                     xtype: 'gridcolumn',
-                    dataIndex: 'lname',
+                    dataIndex: 'UserLastName',
                     text: 'Last Name',
                     flex: 2,
                     menuDisabled: true
                 }, {
                     xtype: 'gridcolumn',
-                    dataIndex: 'email',
+                    dataIndex: 'UserEmail',
                     text: 'E-mail',
                     flex: 2,
                     menuDisabled: true
                 }, {
                     xtype: 'gridcolumn',
-                    dataIndex: 'phone',
+                    dataIndex: 'UserPhone',
                     text: 'Phone',
                     flex: 2,
                     menuDisabled: true
                 }, {
                     xtype: 'gridcolumn',
-                    dataIndex: 'description',
+                    dataIndex: 'UserDesc',
                     text: 'Description',
                     flex: 2,
                     menuDisabled: true
