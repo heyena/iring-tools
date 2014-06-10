@@ -15,14 +15,15 @@
             autoLoad: true,
             model: 'USM.model.SecurityM',
             storeId: 'SecurityJsonStore',
-            proxy: {
+			data: [{"name": "Groups"},{"name": "Users"},{"name": "Roles"},{"name": "Permissions"}] 
+            /*proxy: {
                 type: 'ajax',
                 url: '/Scripts/USM/jsonfiles/security.json',
                 reader: {
                     type: 'json',
                     root: 'items'
                 }
-            }
+            }*/
         }, cfg)]);
     }
 });

@@ -32,7 +32,13 @@ Ext.define('USM.view.Viewport', {
                 {
                     xtype: 'usersecuritytabpanel',
                     id: 'maincontent',
-                    region: 'center'
+                    region: 'center',
+					listeners: {
+						afterrender: {
+							fn: me.onPanelAfterRender,
+							scope: me
+						}
+                }
                 },
                 {
                     xtype: 'securitygrid',
@@ -45,5 +51,10 @@ Ext.define('USM.view.Viewport', {
             ]
         });
         me.callParent(arguments);
-   }
+   },
+   onPanelAfterRender: function (component, eOpts) {
+        Ext.getBody().on("contextmenu", Ext.emptyFn, null, {
+            preventDefault: true
+        });
+    }
 });

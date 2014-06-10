@@ -10,6 +10,8 @@
 
         'menus.SecurityMenu',
         'menus.RoleMenu',
+		'menus.UserMenu',
+		'users.UserGrid',
         //'menus.PermissionMenu',
         'menus.GroupMenu',
         'groups.GroupForm',
@@ -24,6 +26,10 @@
 			{
 			    ref: 'usersecuritytabpanel',
 			    selector: 'viewport > usersecuritytabpanel'
+			},
+			{
+			    ref: 'userGrid',
+			    selector: 'viewport > usersecuritytabpanel > panel > usergrid'
 			}
     ],
 
@@ -74,10 +80,75 @@
             },
             "usersecuritytabpanel rolegrid": {
                 itemcontextmenu: me.onRoleItemClick
-            }
+            },
+			"usergrid": {
+                itemcontextmenu: me.onUserGridClick
+            },
+			"menuitem[action=addEditUser]": {
+                click: this.addOrEditUsers
+            },
+			"menuitem[action=deleteUser]": {
+                click: this.deleteUser
+            },
         });
     },
+	deleteUser:function(item,e, eOpts){
+		Ext.MessageBox.confirm('Delete', 'Are you sure ?', function(btn){
+			   if(btn === 'yes'){
+				   //some code
+			   }
+			   else{
+				  //some code
+			   }
+		 });
+	},
+	addOrEditUsers:function(item,e, eOpts){
+		 var me = this;
+		 var conf = {
+            title: '',
+            iconCls: 'tabsApplication'
+        };
+		var UserName,UserFirstName,UserLastName,UserEmail, UserPhone,UserDesc;
+        var win = Ext.widget('addUserformwindow', conf);
+        var form = win.down('form');
+		if(item.itemId=='editUser'){
+			win.setTitle('Edit User');
+			var selectedRecord = me.getUserGrid().getSelectionModel().getSelection()[0];
+			UserName = selectedRecord.data.UserName;
+			UserFirstName = selectedRecord.data.UserFirstName;
+			UserLastName = selectedRecord.data.UserLastName;
+			UserEmail = selectedRecord.data.UserEmail;
+			UserPhone = selectedRecord.data.UserPhone;
+			UserDesc = selectedRecord.data.UserDesc;
+		}else if(item.itemId=='addUser'){
+			win.setTitle('Add User');
+		}
+		/*win.on('save', function () {
+            win.destroy();
+            tree.view.refresh();
+            tree.expandPath(tree.getRootNode().getPath());
+            var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
+            detailGrid.setSource({});
+        }, me);*/
 
+        win.on('Cancel', function () {
+            win.destroy();
+        }, me);
+		   win.show();
+		form.getForm().findField('UserName').setValue(UserName);
+        form.getForm().findField('UserFirstName').setValue(UserFirstName);
+        form.getForm().findField('UserLastName').setValue(UserLastName);
+        form.getForm().findField('UserEmail').setValue(UserEmail);
+        form.getForm().findField('UserPhone').setValue(UserPhone);
+        form.getForm().findField('UserDesc').setValue(UserDesc);
+		win.show();
+	},
+	onUserGridClick:function(dataview, record, item, index, e, eOpts){
+		e.stopEvent();
+        var me = this;
+        var userMenu = Ext.widget('usermenu');
+        userMenu.showAt(e.getXY());
+	},
     onSecItemClick: function (dataview, record, item, index, e, eOpts) {
         e.stopEvent();
         var me = this;
@@ -110,7 +181,6 @@
     addGroup: function (btn) {
         var me = this;
         var win = Ext.widget('groupwindow');
-        win.show();
     },
 
     editGroup: function (btn) {
