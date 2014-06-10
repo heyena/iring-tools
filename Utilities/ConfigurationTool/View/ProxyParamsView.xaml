@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:xamlxtras="clr-namespace:ConfigurationTool.XamlXtras"
-             mc:Ignorable="d" d:DesignHeight="310" d:DesignWidth="455">
+             mc:Ignorable="d" d:DesignHeight="310" d:DesignWidth="470">
   <UserControl.Resources>
     <Style TargetType="{x:Type TextBox}">
       <Setter Property="Validation.ErrorTemplate">
@@ -32,8 +32,9 @@
             </Grid.Background>
             <Grid.ColumnDefinitions>
       <ColumnDefinition Width="125" />
-      <ColumnDefinition Width="262*" />
-      <ColumnDefinition Width="58" />
+      <ColumnDefinition Width="101" />
+                        <ColumnDefinition Width="176" />
+                        <ColumnDefinition Width="58" />
     </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
       <RowDefinition Height="50" />
@@ -55,7 +56,7 @@
     <Label Content="Password:" Grid.Row="3" Margin="18,6,0,6"  TabIndex="60" HorizontalContentAlignment="Right" FontFamily="Arial" FontSize="12" />
     <Label Content="Proxy Host:" Grid.Row="4" Margin="18,6,0,6"  TabIndex="80" HorizontalContentAlignment="Right" FontFamily="Arial" FontSize="12" />
     <Label Content="Proxy Port:" Grid.Row="5" Margin="18,6,0,6"  TabIndex="100" HorizontalContentAlignment="Right" FontFamily="Arial" FontSize="12" />
-    <TextBox Grid.Row="1" Grid.Column="1" Margin="0,6"  TabIndex="20">
+    <TextBox Grid.Row="1" Grid.Column="1" Margin="0,6"  TabIndex="20" Grid.ColumnSpan="2">
       <TextBox.Text>
         <Binding Path="ServicesWebConfig" ValidatesOnDataErrors="True">
           <Binding.ValidationRules>
@@ -64,7 +65,7 @@
         </Binding>
       </TextBox.Text>
     </TextBox>
-    <TextBox Grid.Row="2" Grid.Column="1" Margin="0,6" TabIndex="50">
+    <TextBox Grid.Row="2" Grid.Column="1" Margin="0,6" TabIndex="50" Grid.ColumnSpan="2">
       <TextBox.Text>
         <Binding Path="Username" ValidatesOnDataErrors="False">
           <!--<Binding.ValidationRules>
@@ -75,9 +76,9 @@
     </TextBox>
     <PasswordBox Grid.Row="3" Grid.Column="1" Margin="0,6" PasswordChar="*" TabIndex="70"
                      xamlxtras:PasswordBoxAssistant.BindPassword="true"
-                     xamlxtras:PasswordBoxAssistant.BoundPassword="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                     xamlxtras:PasswordBoxAssistant.BoundPassword="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2">
     </PasswordBox>
-    <TextBox Grid.Row="4" Grid.Column="1" Margin="0,6" TabIndex="90">
+    <TextBox Grid.Row="4" Grid.Column="1" Margin="0,6" TabIndex="90" Grid.ColumnSpan="2">
       <TextBox.Text>
         <Binding Path="ProxyHost" ValidatesOnDataErrors="False">
           <!--<Binding.ValidationRules>
@@ -86,7 +87,7 @@
         </Binding>
       </TextBox.Text>
     </TextBox>
-    <TextBox Grid.Row="5" Grid.Column="1" Margin="0,6"  TabIndex="110">
+    <TextBox Grid.Row="5" Grid.Column="1" Margin="0,6"  TabIndex="110" Grid.ColumnSpan="2">
       <TextBox.Text>
         <Binding Path="ProxyPort" ValidatesOnDataErrors="False">
           <!--<Binding.ValidationRules>
@@ -95,8 +96,8 @@
         </Binding>
       </TextBox.Text>
     </TextBox>
-    <Button Content="..." Command="{Binding GetIRTFolder}"  Grid.Row="1"  Grid.Column="2" Margin="6" TabIndex="30" FontFamily="Arial" FontSize="12" />
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="7" Grid.ColumnSpan="2" Grid.Column="1">
+    <Button Content="..." Command="{Binding GetIRTFolder}"  Grid.Row="1"  Grid.Column="3" Margin="6" TabIndex="30" FontFamily="Arial" FontSize="12" />
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="7" Grid.ColumnSpan="2" Grid.Column="2">
       <Button Content="Update" Command="{Binding UpdateCommand}" Grid.Row="6" Margin="6,6,0,6" Width="100" IsDefault="True"  TabIndex="120" Height="28" FontFamily="Arial" FontSize="12" />
       <Button Content="Reset" Command="{Binding ResetCommand}" Grid.Row="6" Grid.Column="1" Margin="6" Width="100" TabIndex="130" Height="28" FontFamily="Arial" FontSize="12" />
     </StackPanel>
@@ -159,6 +160,88 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
+
+            <TabItem Header="Security Configuration Tool" Name="tbSecurityConfig" IsEnabled="True">
+                <Grid>
+                    <Grid.Background>
+                        <SolidColorBrush Color="#FFF0F0F0"/>
+                    </Grid.Background>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="125" />
+                        <ColumnDefinition Width="262*" />
+                        <ColumnDefinition Width="58" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="125*" />
+                    </Grid.RowDefinitions>
+                    <Image Margin="5,5,6,5" 
+           Source="/Resources/iRINGTools_logo_small.png"/>
+                    <Viewbox Grid.Column="1" Margin="1,0,0,0" HorizontalAlignment="Left" Stretch="None">
+                        <TextBlock Name="tbSecConfigTitle" Text="{Binding RegAppName}" TextAlignment="Left" FontWeight="Bold" FontSize="20" Margin="0,15,22,5" FontFamily="Arial" />
+                    </Viewbox>
+                    <Label Content="Configuration File:" Target="{Binding ElementName=ServicesWebConfig}" Grid.Row="1" Margin="18,6,0,6" TabIndex="10" HorizontalContentAlignment="Right" FontFamily="Arial" FontSize="12" />
+                    <Label Content="Server Name:" Grid.Row="2" Margin="18,6,0,6"  TabIndex="30" HorizontalContentAlignment="Right" FontFamily="Arial" FontSize="12" />
+                    <Label Content="Catalog:" Grid.Row="3" Margin="18,6,0,6"  TabIndex="30" HorizontalContentAlignment="Right" FontFamily="Arial" FontSize="12" />
+                    <Label Content="User Name:" Grid.Row="4" Margin="18,6,0,6"  TabIndex="60" HorizontalContentAlignment="Right" FontFamily="Arial" FontSize="12" />
+                    <Label Content="Password:" Grid.Row="5" Margin="18,6,0,6"  TabIndex="80" HorizontalContentAlignment="Right" FontFamily="Arial" FontSize="12" />
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="0,6"  TabIndex="20" IsEnabled="True">
+                        <TextBox.Text>
+                            <Binding Path="ServicesWebConfig" ValidatesOnDataErrors="True">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="0,6" TabIndex="50" IsEnabled="True">
+                        <TextBox.Text>
+                            <Binding Path="ServerName" ValidatesOnDataErrors="False">
+                                <!--<Binding.ValidationRules>
+            <ExceptionValidationRule />
+          </Binding.ValidationRules>-->
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    
+                    <TextBox Grid.Row="3" Grid.Column="1" Margin="0,6" TabIndex="50" IsEnabled="True">
+                        <TextBox.Text>
+                            <Binding Path="Catalog" ValidatesOnDataErrors="False">
+                                <!--<Binding.ValidationRules>
+            <ExceptionValidationRule />
+          </Binding.ValidationRules>-->
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+<TextBox Grid.Row="4" Grid.Column="1" Margin="0,6"  TabIndex="70" IsEnabled="True">
+                        <TextBox.Text>
+                            <Binding Path="SecUsername" ValidatesOnDataErrors="True">
+                                <Binding.ValidationRules>
+                                    <ExceptionValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    
+                    <PasswordBox Grid.Row="5" Grid.Column="1" Margin="0,6" PasswordChar="*" TabIndex="90" IsEnabled="True"
+                     xamlxtras:PasswordBoxAssistant.BindPassword="true"
+                     xamlxtras:PasswordBoxAssistant.BoundPassword="{Binding Path=SecPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    </PasswordBox>
+                    <Button Content="..." Command="{Binding IRIFSecConfigCommand}"  Grid.Row="1"  Grid.Column="2" Margin="6" TabIndex="30" FontFamily="Arial" FontSize="12" IsEnabled="True" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="7" Grid.ColumnSpan="2" Grid.Column="1">
+                        <Button Content="Update" Command="{Binding UpdateSecurityCommand}" Grid.Row="6" Margin="6,6,0,6" Width="100" IsDefault="True"  TabIndex="120" Height="28" FontFamily="Arial" FontSize="12" IsEnabled="True" />
+                        <Button Content="Reset" Command="{Binding ResetSecurityCommand}" Grid.Row="6" Grid.Column="1" Margin="6" Width="100" TabIndex="130" Height="28" FontFamily="Arial" FontSize="12" IsEnabled="True" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+
         </TabControl>
     </Grid>
 </UserControl>
