@@ -22,6 +22,17 @@ namespace ConfigurationTool.Model
     public string ProxyHost { get; set; }
     public string ProxyPort { get; set; }
     public bool IsEnable { get; set; }
+//security config
+    public string ServerName { get; set; }
+    public string Catalog { get; set; }
+    public string SecUsername { get; set; }
+    public string SecPassword { get; set; }
+
+
+
+
+
+
 
     #endregion //Properties
   }
