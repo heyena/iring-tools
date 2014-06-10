@@ -1,7 +1,7 @@
 
 Ext.define('USM.view.menus.SecurityMenu', {
     extend: 'Ext.menu.Menu',
-
+    alias: 'widget.securitymenu',
     initComponent: function() {
         var me = this;
 
@@ -10,19 +10,19 @@ Ext.define('USM.view.menus.SecurityMenu', {
                 {
                     xtype: 'menuitem',
                     action: 'addGroup',
-                    icon: 'resources/images/16x16/add.png',
+                    iconCls: 'icon-add',
                     text: 'Add Group'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'editSecUserGroup',
-                    icon: 'resources/images/16x16/edit-file.png',
+                    iconCls: 'icon-edit',
                     text: 'Edit User/Group'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'editSecGroupRoles',
-                    icon: 'resources/images/16x16/delete-icon.png',
+                    iconCls: 'icon-edit',
                     text: 'Edit Group/Roles'
                 }
             ]

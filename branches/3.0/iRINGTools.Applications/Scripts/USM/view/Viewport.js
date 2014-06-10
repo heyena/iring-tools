@@ -25,7 +25,7 @@ Ext.define('USM.view.Viewport', {
                           '  <span style="float:right;margin-top:16px">' +
                           '      <a href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank" class="header-link">Help</a>' +
                           '      <a id="about-link" href="#" class="header-link">About</a>' +
-                          '      <a id="login-link" href="#" class="header-link"> Login/Logout</a>' +
+//                          '      <a id="login-link" href="#" class="header-link"> Login/Logout</a>' +
                           '  </span>' +
                           '</div>'
                 },

@@ -12,13 +12,13 @@ Ext.define('USM.view.permissions.PermissionGrid', {
             columns: [
                 {
                     xtype: 'gridcolumn',
-                    dataIndex: 'permissionname',
+                    dataIndex: 'PermissionName',
                     text: 'Permission',
                     flex: 2,
                     menuDisabled: true
                 }, {
                     xtype: 'gridcolumn',
-                    dataIndex: 'description',
+                    dataIndex: 'PermissionDesc',
                     text: 'Description',
                     flex: 2,
                     menuDisabled: true

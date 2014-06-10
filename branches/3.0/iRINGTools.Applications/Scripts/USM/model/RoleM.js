@@ -3,10 +3,10 @@
 
     fields: [
         {
-            name: 'rolename'
+            name: 'RoleName'
         },
         {
-            name: 'description'
+            name: 'RoleDesc'
         }
     ]
 });
