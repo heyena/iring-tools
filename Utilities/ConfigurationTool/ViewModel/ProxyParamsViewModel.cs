@@ -20,7 +20,9 @@ namespace ConfigurationTool.ViewModel
         RelayCommand _resetCommand;
         RelayCommand _resetRegistryCommand;
         RelayCommand _getIRTFolderCommand;
-
+        RelayCommand _SecurityConfigCommand;
+        RelayCommand _getIRIFSecConfigCommand;
+        RelayCommand _resetSecConfigCommand;
         public ProxyRepository ProxyParams
         {
             get
@@ -54,6 +56,11 @@ namespace ConfigurationTool.ViewModel
             _proxyRepository.Refresh();
             _proxyParams.ProxyHost = _proxyRepository.ProxyHost;
             _proxyParams.ProxyPort = _proxyRepository.ProxyPort;
+            _proxyParams.SecPassword = "";
+            _proxyParams.SecUsername = "";
+            _proxyParams.ServerName = "";
+            _proxyParams.Catalog = "";
+
         }
 
         ProxyParams _proxyParams;
@@ -224,6 +231,9 @@ namespace ConfigurationTool.ViewModel
             }
         }
 
+
+
+
         public string ProxyHost
         {
             get
@@ -289,6 +299,59 @@ namespace ConfigurationTool.ViewModel
                 return _updateRegCommand;
             }
         }
+
+
+        //sec config
+        public string ServerName
+        {
+            get
+            {
+                return _proxyParams.ServerName;
+            }
+            set
+            {
+                _proxyParams.ServerName = value;
+            }
+        }
+
+        public string Catalog
+        {
+            get
+            {
+                return _proxyParams.Catalog;
+            }
+            set
+            {
+                _proxyParams.Catalog = value;
+            }
+        }
+
+        public string SecUsername
+        {
+            get
+            {
+                return _proxyParams.SecUsername;
+            }
+            set
+            {
+                _proxyParams.SecUsername = value;
+            }
+        }
+
+        public string SecPassword
+        {
+            get
+            {
+                return _proxyParams.SecPassword;
+            }
+            set
+            {
+                _proxyParams.SecPassword = value;
+            }
+        }
+
+        //end of sec config
+
 
 
         void UpdateRegistryCommandExecute()
@@ -461,6 +524,7 @@ namespace ConfigurationTool.ViewModel
             OnPropertyChanged("ServicesWebConfig");
             OnPropertyChanged("RegUsername");
             OnPropertyChanged("RegPassword");
+
         }
         bool ResetRegistryCanExecute
         {
@@ -574,7 +638,7 @@ namespace ConfigurationTool.ViewModel
 
                         this.IsEnable = true;
                         OnPropertyChanged("IsEnable");
-                       
+
                     }
                     else
                     {
@@ -610,6 +674,205 @@ namespace ConfigurationTool.ViewModel
         {
             //todo: clear something?
         }
+
+        //Security config
+        public ICommand UpdateSecurityCommand
+        {
+            get
+            {
+                if (_SecurityConfigCommand == null)
+                {
+                    _SecurityConfigCommand = new RelayCommand(param => this.UpdateSecurityCommandExecute(), param => this.UpdateSecurityCommandCanExecute);
+                }
+                return _SecurityConfigCommand;
+            }
+        }
+        
+        void UpdateSecurityCommandExecute()
+        {
+            try
+            {
+                bool isValid = true;
+                if (_proxyParams.ServicesWebConfig == "")
+                {
+                    isValid = false;
+                    OnPropertyChanged("ServicesWebConfig");
+                }
+
+                if (!isValid)
+                {
+                    MessageBox.Show("One or more parameters invalid.", "Validation Failed", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                XDocument securityConfig = XDocument.Load(_proxyParams.ServicesWebConfig);
+
+                //if (String.IsNullOrEmpty(this.ServerName))
+                //{
+                //    securityConfig.RemoveSetting("iRINGConfigConnStr");
+                    
+                //}
+                //else
+                {
+                    //if (!String.IsNullOrEmpty(_proxyParams.))
+                    //{
+                        SecurityConfigCredential credentials = new SecurityConfigCredential
+                        {
+                            dataSource = _proxyParams.ServerName,
+                            initialCatalog = _proxyParams.Catalog,
+                            userId = _proxyParams.SecUsername,
+                            password = _proxyParams.SecPassword
+                        };
+                        credentials.Encrypt();
+
+                        securityConfig.UpdateSetting("iRINGConfigConnStr", credentials.encryptedToken);
+                   // }
+                    //else
+                   // {
+                   //     securityConfig.RemoveSetting("iRINGConfigConnStr");
+                   // }
+
+                   
+                }
+
+                securityConfig.Save(_proxyParams.ServicesWebConfig);
+
+                MessageBox.Show("Update complete.", "Update Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show("Error occurred while getting updating Security configuration. " + exc.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+
+            // sample code
+            //bool isupdated = true;
+
+            //if (_proxyParams.iRingToolsFolder!="")
+            //{
+            //    isupdated = false;
+            //}
+            //if (isupdated)
+            //{
+            //    BackgroundBrush = new SolidColorBrush(Colors.Green);
+            //}
+            //else
+            //{
+            //    BackgroundBrush = new SolidColorBrush(Colors.White);
+            //}
+
+        }
+
+        bool UpdateSecurityCommandCanExecute
+        {
+            get
+            {
+                //if (_proxyParams.Username!="")
+                //{
+                //    return false;
+                //}
+                return true;
+            }
+        }
+
+        public ICommand ResetSecurityCommand
+        {
+            get
+            {
+                if (_resetSecConfigCommand == null)
+                {
+                    _resetSecConfigCommand = new RelayCommand(param => this.ResetSecurityCommandExecute(), param => this.ResetSecurityCanExecute);
+                }
+                return _resetSecConfigCommand;
+            }
+        }
+        void ResetSecurityCommandExecute()
+        {
+            Reset();
+            OnPropertyChanged("ServerName");
+            OnPropertyChanged("Catalog");
+            OnPropertyChanged("SecUsername");
+            OnPropertyChanged("SecPassword");
+        }
+        bool ResetSecurityCanExecute
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public ICommand IRIFSecConfigCommand
+        {
+            get
+            {
+                if (_getIRIFSecConfigCommand == null)
+                {
+                    _getIRIFSecConfigCommand = new RelayCommand(param => this.GetIRTSecConfigFolderExecute(), param => this.GetIRTSecConfigFolderCanExecute);
+                }
+                return _getIRIFSecConfigCommand;
+            }
+        }
+
+        void GetIRTSecConfigFolderExecute()
+        {
+            try
+            {
+                // Configure open file dialog box
+                Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                dlg.FileName = "Web.config"; // Default file name
+                dlg.DefaultExt = ".config"; // Default file extension
+                dlg.Filter = "Web Configuration (.config)|*.config"; // Filter files by extension
+                dlg.Title = "Select the file Web.config in the iRINGTools Services folder";
+                Nullable<bool> result = dlg.ShowDialog();
+                if (result == true)
+                {
+                    // Get folder path
+                    _proxyParams.ServicesWebConfig = dlg.FileName;
+                    OnPropertyChanged("ServicesWebConfig");
+
+                    XDocument adminConfig = XDocument.Load(_proxyParams.ServicesWebConfig);
+
+                    string encryptedCredentials = adminConfig.GetSetting("iRINGConfigConnStr");
+                    //string encryptedRegCredentials = adminConfig.GetSetting("RegistryCredentialToken");
+                    //string[] constring=encryptedCredentials.Split(';');
+                    org.iringtools.utility.SecurityConfigCredential credentials = new org.iringtools.utility.SecurityConfigCredential(encryptedCredentials);
+                    //WebCredentials regcredentials = new WebCredentials(encryptedRegCredentials);
+                    if (credentials.isEncrypted) credentials.Decrypt();
+
+                    this.Catalog = credentials.initialCatalog;
+                    OnPropertyChanged("Catalog");
+                  //  this.SecUsername = credentials.userId;
+                    this.SecUsername = credentials.userId;
+                    OnPropertyChanged("SecUsername");
+                    this.SecPassword = credentials.password;
+                    OnPropertyChanged("SecPassword");
+                    this.ServerName = credentials.dataSource;
+                    //this.ServerName = constring[0];
+                    OnPropertyChanged("ServerName");
+                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show("Error occurred while getting folder. " + exc.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
+
+        bool GetIRTSecConfigFolderCanExecute
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+
+
+
+        //end of security config
+
+
+
+
     }
 
     public static class MyExtensions
