@@ -383,12 +383,16 @@
 	background-image: url(../img/16x16/accept.gif) ! important;
 }
 
-.icon-delete {
+.icon-cancel {
 	background-image: url(../img/16x16/cross.gif) ! important;
 }
 
+.icon-delete {
+	background-image: url(../img/16x16/delete-icon.png) ! important;
+}
+
 .icon-edit {
-	background-image: url(../img/16x16/page_edit.png) ! important;
+	background-image: url(../img/16x16/edit.png) ! important;
 }
 
 .icon-add {
