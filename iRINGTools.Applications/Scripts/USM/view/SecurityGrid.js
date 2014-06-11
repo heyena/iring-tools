@@ -15,6 +15,7 @@ Ext.define('USM.view.SecurityGrid', {
                     dataIndex: 'name',
                     text: '',
                     flex: 2,
+                    sortable : false,
                     menuDisabled: true,
                     renderer: function (value) {
                         return '<html> <b>' + value + '</b></html>';

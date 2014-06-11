@@ -36,6 +36,7 @@ Ext.define('USM.view.users.AddUserForm', {
               handler: function(button, event) {
                 me.onSave();
               },
+			  iconCls: 'icon-accept',
               text: 'Ok'
             },
             {
@@ -43,6 +44,7 @@ Ext.define('USM.view.users.AddUserForm', {
               handler: function(button, event) {
                 me.onReset();
               },
+			  iconCls: 'icon-cancel',
               text: 'Cancel'
             }
           ]

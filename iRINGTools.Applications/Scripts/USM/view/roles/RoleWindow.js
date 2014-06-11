@@ -13,9 +13,9 @@ Ext.define('USM.view.roles.RoleWindow', {
     layout: {
         type: 'fit'
     },
-    bodyPadding: 1,
+    bodyPadding: 0,
     title: 'Role',
-
+    resizable: false,
     initComponent: function () {
         var me = this;
 
@@ -41,7 +41,7 @@ Ext.define('USM.view.roles.RoleWindow', {
                             handler: function (button, event) {
                                 me.onReset();
                             },
-                            iconCls: 'icon-delete',
+                            iconCls: 'icon-cancel',
                             text: 'Cancel'
                         }
                     ]
