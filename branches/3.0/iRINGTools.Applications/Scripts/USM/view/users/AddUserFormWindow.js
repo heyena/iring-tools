@@ -6,6 +6,7 @@ Ext.define('USM.view.users.AddUserFormWindow', {
    'USM.view.users.AddUserForm'
   ],
   border: false,
+  modal: true,
   height: 240,
   width: 550,
   minHeight:240,

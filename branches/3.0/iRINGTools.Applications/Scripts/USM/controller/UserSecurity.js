@@ -7,19 +7,18 @@
         'UserSecurityTabPanel',
         'SecurityGrid',
         'groups.GroupGrid',
-
-        'menus.SecurityMenu',
-        'menus.RoleMenu',
-		'menus.UserMenu',
-		'users.UserGrid',
-        //'menus.PermissionMenu',
         'menus.GroupMenu',
         'groups.GroupForm',
         'groups.GroupWindow',
+        'menus.SecurityMenu',
+        'menus.UserMenu',
+		'users.UserGrid',
+        'menus.RoleMenu',
         'roles.RoleForm',
-        'roles.RoleWindow'//,
-        //'permissions.PermissionForm',
-        //'permissions.PermissionWindow'
+        'roles.RoleWindow',
+        'menus.PermissionMenu',
+        'permissions.PermissionForm',
+        'permissions.PermissionWindow'
     ],
 
     refs: [
@@ -92,6 +91,7 @@
             },
         });
     },
+
 	deleteUser:function(item,e, eOpts){
 		Ext.MessageBox.confirm('Delete', 'Are you sure ?', function(btn){
 			   if(btn === 'yes'){
@@ -102,6 +102,7 @@
 			   }
 		 });
 	},
+
 	addOrEditUsers:function(item,e, eOpts){
 		 var me = this;
 		 var conf = {
@@ -181,6 +182,7 @@
     addGroup: function (btn) {
         var me = this;
         var win = Ext.widget('groupwindow');
+        win.show();
     },
 
     editGroup: function (btn) {

@@ -31,13 +31,13 @@ Ext.define('USM.view.menus.RoleMenu', {
                 {
                     xtype: 'menuitem',
                     action: 'addPermissionToRole',
-                    icon: 'resources/images/16x16/add.png',
+                    iconCls: 'icon-add',
                     text: 'Add Permission to Role'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'editPermissionRole',
-                    icon: 'resources/images/16x16/edit-file.png',
+                    iconCls: 'icon-edit',
                     text: 'Edit Permission/Role'
                 },
                 {
@@ -46,13 +46,13 @@ Ext.define('USM.view.menus.RoleMenu', {
                 {
                     xtype: 'menuitem',
                     action: 'addRoletoGroup',
-                    icon: 'resources/images/16x16/add.png',
+                    iconCls: 'icon-add',
                     text: 'Add Role to Group'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'editRoleGroup',
-                    icon: 'resources/images/16x16/edit-file.png',
+                    iconCls: 'icon-edit',
                     text: 'Edit Role/Group'
                 }
             ]

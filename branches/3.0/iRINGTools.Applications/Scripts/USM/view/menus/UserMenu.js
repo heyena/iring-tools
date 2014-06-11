@@ -11,32 +11,32 @@ Ext.define('USM.view.menus.UserMenu', {
                     xtype: 'menuitem',
                     action: 'addEditUser',
 					itemId:'addUser',
-                    icon: 'Content/img/16x16/add.png',
+					iconCls: 'icon-add',
                     text: 'Add User'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'addEditUser',
 					itemId:'editUser',
-                    icon: 'Content/img/16x16/edit.png',
+					iconCls: 'icon-edit',
                     text: 'Edit User'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'deleteUser',
-                    icon: 'Content/img/16x16/delete-icon.png',
+                    iconCls: 'icon-delete',
                     text: 'Delete User'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'addUserToGroup',
-                    icon: 'Content/img/16x16/add.png',
+                    iconCls: 'icon-add',
                     text: 'Add User to Group'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'editUserGroup',
-                    icon: 'Content/img/16x16/edit.png',
+                    iconCls: 'icon-edit',
                     text: 'Edit User/Group'
                 }
             ]

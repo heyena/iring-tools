@@ -1,6 +1,7 @@
 
 Ext.define('USM.view.menus.PermissionMenu', {
     extend: 'Ext.menu.Menu',
+    alias: 'widget.permissionmenu',
 
     initComponent: function() {
         var me = this;
@@ -10,25 +11,34 @@ Ext.define('USM.view.menus.PermissionMenu', {
                 {
                     xtype: 'menuitem',
                     action: 'addPermission',
-                    icon: 'resources/images/16x16/add.png',
+                    iconCls: 'icon-add',
                     text: 'Add Permission'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'editPermission',
-                    icon: 'resources/images/16x16/edit-file.png',
+                    iconCls: 'icon-edit',
                     text: 'Edit Permission'
                 },
                 {
                     xtype: 'menuitem',
+                    action: 'deletePermission',
+                    iconCls: 'icon-delete',
+                    text: 'Delete Permission'
+                },
+                {
+                    xtype: 'menuseparator'
+                },
+                {
+                    xtype: 'menuitem',
                     action: 'addPermissionToRole',
-                    icon: 'resources/images/16x16/add.png',
+                    iconCls: 'icon-add',
                     text: 'Add Permission to Role'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'editPermissionRole',
-                    icon: 'resources/images/16x16/edit-file.png',
+                    iconCls: 'icon-edit',
                     text: 'Edit Role/Permission'
                 }
             ]

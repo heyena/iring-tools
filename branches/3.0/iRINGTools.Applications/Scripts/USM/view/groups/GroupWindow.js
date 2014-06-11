@@ -9,11 +9,12 @@ Ext.define('USM.view.groups.GroupWindow', {
 
     floating: 'true',
     border: false,
+    resizable : false,
     modal: true,
     layout: {
         type: 'fit'
     },
-    bodyPadding: 1,
+    bodyPadding: 0,
     title: 'Group',
 
     initComponent: function () {
@@ -41,7 +42,7 @@ Ext.define('USM.view.groups.GroupWindow', {
                             handler: function (button, event) {
                                 me.onReset();
                             },
-                            iconCls: 'icon-delete',
+                            iconCls: 'icon-cancel',
                             text: 'Cancel'
                         }
                     ]
