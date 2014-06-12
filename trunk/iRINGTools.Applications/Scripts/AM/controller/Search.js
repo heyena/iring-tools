@@ -65,6 +65,7 @@ Ext.define('AM.controller.Search', {
             if (action.node.data.type != "SearchNode" &&
                   action.node.data.type != "TemplateNode" &&
                   action.node.data.type != "SubclassesNode") {
+				  if(action.node.data.record)
                 repo = action.node.data.record.Repository;
             }
 
