@@ -4,7 +4,7 @@ Ext.define('USM.view.roles.RoleGrid', {
     alias: 'widget.rolegrid',
     resizable: true,
     store: 'RoleS',
-
+    resizable: false,
     initComponent: function () {
         var me = this;
 
