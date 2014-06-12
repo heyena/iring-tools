@@ -4,7 +4,7 @@ Ext.define('USM.view.users.UserGrid', {
     alias: 'widget.usergrid',
     resizable: true,
     store: 'UserS',
-
+    resizable: false,
     initComponent: function () {
         var me = this;
 
