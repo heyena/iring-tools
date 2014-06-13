@@ -52,7 +52,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ApplicationConfigurationLibrary">
-      <HintPath>..\ApplicationConfigurationLibrary\bin\Debug\ApplicationConfigurationLibrary.dll</HintPath>
+      <HintPath>..\Libraries\ApplicationConfigurationLibrary\bin\Debug\ApplicationConfigurationLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -107,7 +107,7 @@
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UserSecurityLibrary">
-      <HintPath>..\UserSecurityLibrary\bin\Debug\UserSecurityLibrary.dll</HintPath>
+      <HintPath>..\Libraries\UserSecurityLibrary\bin\Debug\UserSecurityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
