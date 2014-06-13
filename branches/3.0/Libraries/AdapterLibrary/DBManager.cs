@@ -170,6 +170,100 @@ namespace org.iringtools.adapter
       }
     }
 
+    public bool ExecuteNonQueryStoredProcedure(string connStr, string spName)
+    {
+        _logger.Debug(spName);
+
+        DbConnection dbConn = null;
+        DbCommand dbCmd = null;
+        int affectedRows = 0;
+
+        try
+        {
+            dbConn = OpenConnection(connStr);
+            dbCmd = new SqlCommand();
+            dbCmd.CommandType = System.Data.CommandType.StoredProcedure;
+            dbCmd.CommandText = spName;
+            dbCmd.Connection = dbConn;
+
+            dbCmd.CommandTimeout = 0;
+            affectedRows = dbCmd.ExecuteNonQuery();
+
+            return (affectedRows > 0);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Error executing stored procedure [" + spName + "]: " + ex.Message);
+            throw ex;
+        }
+        finally
+        {
+            CloseConnection(dbConn);
+        }
+    }
+
+    public bool ExecuteNonQueryStoredProcedure(string connStr, string spName, NameValueList spParamters)
+    {
+        _logger.Debug(spName);
+
+        DbConnection dbConn = null;
+        DbCommand dbCmd = null;
+        int affectedRows = 0;
+
+        try
+        {
+            dbConn = OpenConnection(connStr);   
+            dbCmd = new SqlCommand();
+            dbCmd.CommandType = System.Data.CommandType.StoredProcedure;
+            dbCmd.CommandText = spName;
+            dbCmd.Connection = dbConn;
+
+
+            foreach (ListItem item in spParamters)
+            {
+                dbCmd.Parameters.Add(new SqlParameter(item.Name, item.Value));
+            }
+            
+            dbCmd.CommandTimeout = 0;
+            affectedRows = dbCmd.ExecuteNonQuery();
+
+            return (affectedRows > 0);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Error executing stored procedure [" + spName + "]: " + ex.Message);
+            throw ex;
+        }
+        finally
+        {
+            CloseConnection(dbConn);
+        }
+    }
+
+    public DataTable ExecuteStoredProcedure(string connStr, string spName)
+    {
+        _logger.Debug(spName);
+        SqlConnection _conn = new SqlConnection(connStr);
+
+        try
+        {
+            _conn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(spName, _conn);
+            DataTable datatable = new DataTable();
+            adapter.Fill(datatable);
+            return datatable;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Error executing stored procedure [" + spName + "]: " + ex.Message);
+            throw ex;
+        }
+        finally
+        {
+            _conn.Close();
+        }
+    }
+
     #region helper methods
     private DbConnection OpenConnection(string connStr)
     {

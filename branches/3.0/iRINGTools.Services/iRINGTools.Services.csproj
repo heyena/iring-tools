@@ -51,6 +51,9 @@
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ApplicationConfigurationLibrary">
+      <HintPath>..\ApplicationConfigurationLibrary\bin\Debug\ApplicationConfigurationLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.Core.dll</HintPath>
@@ -103,6 +106,9 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="UserSecurityLibrary">
+      <HintPath>..\UserSecurityLibrary\bin\Debug\UserSecurityLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\BindingConfiguration.Adapter.xml">
@@ -180,6 +186,7 @@
     </Compile>
     <Compile Include="AbstractDataService.cs" />
     <Compile Include="AdapterDataService.cs" />
+    <Compile Include="ApplicationConfigurationService.cs" />
     <Compile Include="CommonDataService.cs" />
     <Compile Include="DataService.cs" />
     <Compile Include="DataTransferService.cs" />
@@ -197,6 +204,7 @@
     <Compile Include="ReferenceDataService.cs" />
     <Compile Include="SandboxService.cs" />
     <Compile Include="TipGeneratorService.cs" />
+    <Compile Include="UserSecurityService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />
