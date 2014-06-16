@@ -3,6 +3,9 @@
 
     fields: [
         {
+            name: 'UserId'
+        },
+        {
             name: 'UserName'
         },
         {
