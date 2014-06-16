@@ -18,7 +18,9 @@
         'roles.RoleWindow',
         'menus.PermissionMenu',
         'permissions.PermissionForm',
-        'permissions.PermissionWindow'
+        'permissions.PermissionWindow',
+        'groups.GrpUserSelectionPanel',
+        'ItemSelectorWindow'
     ],
 
     refs: [
@@ -67,6 +69,9 @@
             },
             "menuitem[action=editSecGroupRoles]": {
                 click: this.editGroupRoles
+            },
+            "menuitem[action=addUserToGroup]": {
+                click: this.addUserToGroup
             },
             "viewport securitygrid": {
                 itemcontextmenu: me.onSecItemClick
@@ -338,6 +343,11 @@
         });
     },
 
+    addUserToGroup : function(btn){
+        var me = this;
+        var win = Ext.widget('itemselectorwindow');
+        win.show();
+    },
     editUserGroup: function (btn) {
 
     },
