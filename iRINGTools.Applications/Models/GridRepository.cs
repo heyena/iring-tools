@@ -39,7 +39,13 @@ namespace iRINGTools.Web.Models
         {
             try
             {
+                if(Session[keyName]!=null)
+                {
+                    Session.Remove(keyName);
+                }
 
+
+                    
                 this.graph = graph;
 
                 if (start == "0" || start == "1")
