@@ -2,9 +2,6 @@
   "items": [
     {
       "GroupId" :"1","GroupName" :"iRing","GroupDesc" :"iRing"
-    },
-	{
-      "GroupId" :"2","GroupName" :"iRing DL","GroupDesc" :"iRing Data layer"
     }
 	]
 }

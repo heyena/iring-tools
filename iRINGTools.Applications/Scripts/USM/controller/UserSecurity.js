@@ -22,6 +22,7 @@
 	'permissions.PermissionSelectionPanel',
 	'permissions.PermissionSelectionPanelWindow',
 	'groups.GrpUserSelectionPanel',
+        'groups.UserGrpSelectionPanel',
         'ItemSelectorWindow'
     ],
 
@@ -75,6 +76,15 @@
             "menuitem[action=addUserToGroup]": {
                 click: this.addUserToGroup
             },
+            "menuitem[action=addGroupToUser]": {
+                click: this.addGroupToUser
+            },
+            "menuitem[action=editUserGroup]": {
+                click: this.editUserGroup
+            },
+            "menuitem[action=editGroupUser]": {
+                click: this.editGroupUser
+            },
             "viewport securitygrid": {
                 itemcontextmenu: me.onSecItemClick
             },
@@ -87,82 +97,84 @@
             "usersecuritytabpanel rolegrid": {
                 itemcontextmenu: me.onRoleItemClick
             },
-			"usergrid": {
+            "usergrid": {
                 itemcontextmenu: me.onUserGridClick
             },
-			"menuitem[action=addEditUser]": {
+            "menuitem[action=addEditUser]": {
                 click: this.addOrEditUsers
             },
-			"menuitem[action=deleteUser]": {
+            "menuitem[action=deleteUser]": {
                 click: this.deleteUser
             },
-			"menuitem[action=addPermissionToRole]": {
+            "menuitem[action=addPermissionToRole]": {
                 click: this.addPermissionToRole
             }
         });
     },
-	addPermissionToRole:function(item,e, eOpts){
-		 var win = Ext.widget('permissionselectionpanelwindow');
-		 win.show();
-	},
-	deleteUser:function(item,e, eOpts){
-		Ext.MessageBox.confirm('Delete', 'Are you sure ?', function(btn){
-			   if(btn === 'yes'){
-				   //some code
-			   }
-			   else{
-				  //some code
-			   }
-		 });
-	},
+    addPermissionToRole: function (item, e, eOpts) {
+        var win = Ext.widget('permissionselectionpanelwindow');
+        win.show();
+    },
+    deleteUser: function (item, e, eOpts) {
+        Ext.MessageBox.confirm('Delete', 'Are you sure ?', function (btn) {
+            if (btn === 'yes') {
+                //some code
+            }
+            else {
+                //some code
+            }
+        });
+    },
 
-	addOrEditUsers:function(item,e, eOpts){
-		 var me = this;
-		 var conf = {
+    addOrEditUsers: function (item, e, eOpts) {
+        var me = this;
+        var conf = {
             title: '',
             iconCls: 'tabsApplication'
         };
-		var UserName,UserFirstName,UserLastName,UserEmail, UserPhone,UserDesc;
+        var UserName, UserFirstName, UserLastName, UserEmail, UserPhone, UserDesc;
         var win = Ext.widget('addUserformwindow', conf);
         var form = win.down('form');
-		if(item.itemId=='editUser'){
-			win.setTitle('Edit User');
-			var selectedRecord = me.getUserGrid().getSelectionModel().getSelection()[0];
-			UserName = selectedRecord.data.UserName;
-			UserFirstName = selectedRecord.data.UserFirstName;
-			UserLastName = selectedRecord.data.UserLastName;
-			UserEmail = selectedRecord.data.UserEmail;
-			UserPhone = selectedRecord.data.UserPhone;
-			UserDesc = selectedRecord.data.UserDesc;
-		}else if(item.itemId=='addUser'){
-			win.setTitle('Add User');
-		}
-		/*win.on('save', function () {
-            win.destroy();
-            tree.view.refresh();
-            tree.expandPath(tree.getRootNode().getPath());
-            var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
-            detailGrid.setSource({});
+        if (item.itemId == 'editUser') {
+            win.setTitle('Edit User');
+            var selectedRecord = me.getUserGrid().getSelectionModel().getSelection()[0];
+            UserName = selectedRecord.data.UserName;
+            UserFirstName = selectedRecord.data.UserFirstName;
+            UserLastName = selectedRecord.data.UserLastName;
+            UserEmail = selectedRecord.data.UserEmail;
+            UserPhone = selectedRecord.data.UserPhone;
+            UserDesc = selectedRecord.data.UserDesc;
+        } else if (item.itemId == 'addUser') {
+            win.setTitle('Add User');
+        }
+        /*win.on('save', function () {
+        win.destroy();
+        tree.view.refresh();
+        tree.expandPath(tree.getRootNode().getPath());
+        var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
+        detailGrid.setSource({});
         }, me);*/
 
         win.on('Cancel', function () {
             win.destroy();
         }, me);
-		   win.show();
-		form.getForm().findField('UserName').setValue(UserName);
+        win.show();
+        form.getForm().findField('UserName').setValue(UserName);
         form.getForm().findField('UserFirstName').setValue(UserFirstName);
         form.getForm().findField('UserLastName').setValue(UserLastName);
         form.getForm().findField('UserEmail').setValue(UserEmail);
         form.getForm().findField('UserPhone').setValue(UserPhone);
         form.getForm().findField('UserDesc').setValue(UserDesc);
-		win.show();
-	},
-	onUserGridClick:function(dataview, record, item, index, e, eOpts){
-		e.stopEvent();
+        win.show();
+    },
+
+    onUserGridClick: function (dataview, record, item, index, e, eOpts) {
+        e.stopEvent();
         var me = this;
         var userMenu = Ext.widget('usermenu');
         userMenu.showAt(e.getXY());
-	},
+    },
+
     onSecItemClick: function (dataview, record, item, index, e, eOpts) {
         e.stopEvent();
         var me = this;
@@ -260,23 +272,23 @@
         form.getForm().setValues(rec[0].data);
         form.getForm().findField('actionType').setValue('EDIT');
         win.show();
-//        Ext.Ajax.request({
-//            url: 'usersecuritymanager/editRole',
-//            method: 'POST',
-//            params: {
-//                RoleId: roleId
-//            },
-//            success: function (response, options) {
-//                var responseObj = Ext.JSON.decode(response.responseText);
-//                var win = Ext.widget('rolewindow');
-//                var form = win.down('roleform');
-//                form.getForm().findField('actionType').setValue('EDIT');
-//                win.show();
-//            },
+        //        Ext.Ajax.request({
+        //            url: 'usersecuritymanager/editRole',
+        //            method: 'POST',
+        //            params: {
+        //                RoleId: roleId
+        //            },
+        //            success: function (response, options) {
+        //                var responseObj = Ext.JSON.decode(response.responseText);
+        //                var win = Ext.widget('rolewindow');
+        //                var form = win.down('roleform');
+        //                form.getForm().findField('actionType').setValue('EDIT');
+        //                win.show();
+        //            },
 
-//            failure: function (response, options) {
-//            }
-//        });
+        //            failure: function (response, options) {
+        //            }
+        //        });
     },
 
     deleteRole: function (btn) {
@@ -313,23 +325,23 @@
         form.getForm().setValues(rec[0].data);
         form.getForm().findField('actionType').setValue('EDIT');
         win.show();
-//        Ext.Ajax.request({
-//            url: 'usersecuritymanager/editPermission',
-//            method: 'POST',
-//            params: {
-//                PermissionId: permissionId
-//            },
-//            success: function (response, options) {
-//                var responseObj = Ext.JSON.decode(response.responseText);
-//                var win = Ext.widget('permissionwindow');
-//                var form = win.down('permissionform');
-//                form.getForm().findField('actionType').setValue('EDIT');
-//                win.show();
-//            },
+        //        Ext.Ajax.request({
+        //            url: 'usersecuritymanager/editPermission',
+        //            method: 'POST',
+        //            params: {
+        //                PermissionId: permissionId
+        //            },
+        //            success: function (response, options) {
+        //                var responseObj = Ext.JSON.decode(response.responseText);
+        //                var win = Ext.widget('permissionwindow');
+        //                var form = win.down('permissionform');
+        //                form.getForm().findField('actionType').setValue('EDIT');
+        //                win.show();
+        //            },
 
-//            failure: function (response, options) {
-//            }
-//        });
+        //            failure: function (response, options) {
+        //            }
+        //        });
     },
 
     deletePermission: function (btn) {
@@ -351,17 +363,91 @@
         });
     },
 
-    addUserToGroup : function(btn){
+    addUserToGroup: function (btn) {
         var me = this;
-        var win = Ext.widget('itemselectorwindow');
+        var win = new USM.view.ItemSelectorWindow({
+            form: Ext.widget('grpuserselectionpanel'),
+            title: 'Add/Remove Users to Group'
+        });
+        var form = win.down('grpuserselectionpanel');
+        var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
+        form.getForm().findField('selectedUsers').setValue(responseObj.items[0].UserId);
         win.show();
     },
-    editUserGroup: function (btn) {
 
+    editUserGroup: function (btn) {
+        var me = this;
+        var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
+        var groupId = rec[0].data.GroupId;
+        Ext.Ajax.request({
+            //url: 'usersecuritymanager/editUserGroup',
+            url: '/Scripts/USM/jsonfiles/selusers.json',
+            //            method: 'POST',
+            //            params: {
+            //                groupId: groupId
+            //            },
+            success: function (response, options) {
+                var responseObj = Ext.JSON.decode(response.responseText);
+                var win = new USM.view.ItemSelectorWindow({
+                    form: Ext.widget('grpuserselectionpanel'),
+                    title: 'Add/Remove Users to Group'
+                });
+                var form = win.down('grpuserselectionpanel');
+
+                var selArr = [];
+                form.on('beforerender', function (form, ept) {
+                    for (var i = 0; i < responseObj.items.length; i++) {
+                        selArr.push(responseObj.items[i].UserId);
+                    }
+                    form.getForm().findField('selectedUsers').setValue(selArr);
+                }, me);
+                win.show();
+            },
+            failure: function (response, options) {
+            }
+        });
     },
 
-    editGroupRoles: function (btn) {
+    addGroupToUser: function (btn) {
+        var me = this;
+        var win = new USM.view.ItemSelectorWindow({
+            form: Ext.widget('usergrpselectionpanel'),
+            title: 'Add/Remove Groups to User'
+        });
+        win.show();
+    },
 
+    editGroupUser: function (btn) {
+        var me = this;
+        var rec = Ext.getCmp('viewportid').down('usergrid').getSelectionModel().getSelection();
+        var userId = rec[0].data.UserId;
+        Ext.Ajax.request({
+            //url: 'usersecuritymanager/editUserGroup',
+            url: '/Scripts/USM/jsonfiles/selgroup.json',
+            //            method: 'POST',
+            //            params: {
+            //                userId: userId
+            //            },
+            success: function (response, options) {
+                var responseObj = Ext.JSON.decode(response.responseText);
+                var win = new USM.view.ItemSelectorWindow({
+                    form: Ext.widget('usergrpselectionpanel'),
+                    title: 'Add/Remove Groups to User'
+                });
+                var form = win.down('usergrpselectionpanel');
+                var selArr = [];
+
+                form.on('beforerender', function (form, ept) {
+                    for (var i = 0; i < responseObj.items.length; i++) {
+                        selArr.push(responseObj.items[i].GroupId);
+                    }
+                    form.getForm().findField('selectedGroups').setValue(selArr);
+                }, me);
+                win.show();
+            },
+            failure: function (response, options) {
+            }
+        });
     }
 
 });
