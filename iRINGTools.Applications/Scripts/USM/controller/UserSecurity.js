@@ -12,14 +12,16 @@
         'groups.GroupWindow',
         'menus.SecurityMenu',
         'menus.UserMenu',
-		'users.UserGrid',
+	'users.UserGrid',
         'menus.RoleMenu',
         'roles.RoleForm',
         'roles.RoleWindow',
         'menus.PermissionMenu',
         'permissions.PermissionForm',
         'permissions.PermissionWindow',
-        'groups.GrpUserSelectionPanel',
+	'permissions.PermissionSelectionPanel',
+	'permissions.PermissionSelectionPanelWindow',
+	'groups.GrpUserSelectionPanel',
         'ItemSelectorWindow'
     ],
 
@@ -94,9 +96,15 @@
 			"menuitem[action=deleteUser]": {
                 click: this.deleteUser
             },
+			"menuitem[action=addPermissionToRole]": {
+                click: this.addPermissionToRole
+            }
         });
     },
-
+	addPermissionToRole:function(item,e, eOpts){
+		 var win = Ext.widget('permissionselectionpanelwindow');
+		 win.show();
+	},
 	deleteUser:function(item,e, eOpts){
 		Ext.MessageBox.confirm('Delete', 'Are you sure ?', function(btn){
 			   if(btn === 'yes'){
