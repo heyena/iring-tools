@@ -1,0 +1,20 @@
+﻿{
+  "items": [
+    {
+	  "UserId" : "1",
+      "UserName": "prashant",
+      "UserFirstName": "Prashant",    
+      "UserLastName": "Dubey",
+      "UserEmail": "pdubey@bechtel.com",
+      "UserPhone": "8992" ,"UserDesc": "pdubey@bechtel.com" 
+	},
+	{
+	  "UserId" : "2",
+      "UserName": "prashant",
+      "UserFirstName": "Prashant",    
+      "UserLastName": "Dubey",
+      "UserEmail": "pdubey@bechtel.com",
+      "UserPhone": "8992" ,"UserDesc": "pdubey@bechtel.com" 
+	}
+  ]
+}
