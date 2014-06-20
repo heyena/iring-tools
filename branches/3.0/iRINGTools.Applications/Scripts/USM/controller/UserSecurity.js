@@ -12,17 +12,19 @@
         'groups.GroupWindow',
         'menus.SecurityMenu',
         'menus.UserMenu',
-	'users.UserGrid',
+	    'users.UserGrid',
         'menus.RoleMenu',
         'roles.RoleForm',
         'roles.RoleWindow',
         'menus.PermissionMenu',
         'permissions.PermissionForm',
         'permissions.PermissionWindow',
-	'permissions.PermissionSelectionPanel',
-	'permissions.PermissionSelectionPanelWindow',
-	'groups.GrpUserSelectionPanel',
+	    'permissions.PermissionSelectionPanel',
+	    'permissions.PermissionSelectionPanelWindow',
+	    'groups.GrpUserSelectionPanel',
         'groups.UserGrpSelectionPanel',
+        'roles.RoleGroupSelectionPanel',
+        'roles.GroupRoleSelectionPanel',
         'ItemSelectorWindow'
     ],
 
@@ -84,6 +86,12 @@
             },
             "menuitem[action=editGroupUser]": {
                 click: this.editGroupUser
+            },
+            "menuitem[action=addRemRoletoGroup]": {
+                click: this.addRemRoletoGroup
+            },
+            "menuitem[action=addRemGroupToRole]": {
+                click: this.addRemGroupToRole
             },
             "viewport securitygrid": {
                 itemcontextmenu: me.onSecItemClick
@@ -371,7 +379,7 @@
         });
         var form = win.down('grpuserselectionpanel');
         var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
-        form.getForm().findField('selectedUsers').setValue(responseObj.items[0].UserId);
+        form.getForm().findField('groupName').setValue(rec[0].data.GroupId);
         win.show();
     },
 
@@ -396,11 +404,14 @@
 
                 var selArr = [];
                 form.on('beforerender', function (form, ept) {
-                    for (var i = 0; i < responseObj.items.length; i++) {
-                        selArr.push(responseObj.items[i].UserId);
+                    if (responseObj != null) {
+                        for (var i = 0; i < responseObj.items.length; i++) {
+                            selArr.push(responseObj.items[i].UserId);
+                        }
+                        form.getForm().findField('selectedUsers').setValue(selArr);
                     }
-                    form.getForm().findField('selectedUsers').setValue(selArr);
                 }, me);
+                form.getForm().findField('groupName').setValue(groupId);
                 win.show();
             },
             failure: function (response, options) {
@@ -414,6 +425,10 @@
             form: Ext.widget('usergrpselectionpanel'),
             title: 'Add/Remove Groups to User'
         });
+        var form = win.down('usergrpselectionpanel');
+        var rec = Ext.getCmp('viewportid').down('usergrid').getSelectionModel().getSelection();
+        var userId = rec[0].data.UserId;
+        form.getForm().findField('userName').setValue(userId);
         win.show();
     },
 
@@ -438,11 +453,86 @@
                 var selArr = [];
 
                 form.on('beforerender', function (form, ept) {
-                    for (var i = 0; i < responseObj.items.length; i++) {
-                        selArr.push(responseObj.items[i].GroupId);
+                    if (responseObj != null) {
+                        for (var i = 0; i < responseObj.items.length; i++) {
+                            selArr.push(responseObj.items[i].GroupId);
+                        }
+                        form.getForm().findField('selectedGroups').setValue(selArr);
                     }
-                    form.getForm().findField('selectedGroups').setValue(selArr);
                 }, me);
+                form.getForm().findField('userName').setValue(userId);
+                win.show();
+            },
+            failure: function (response, options) {
+            }
+        });
+    },
+
+    addRemRoletoGroup: function (btn) {
+        var me = this;
+        var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
+        var groupId = rec[0].data.GroupId;
+        Ext.Ajax.request({
+            //url: 'usersecuritymanager/editUserGroup',
+            url: '/Scripts/USM/jsonfiles/selroles.json',
+            //            method: 'POST',
+            //            params: {
+            //                groupId: groupId
+            //            },
+            success: function (response, options) {
+                var responseObj = Ext.JSON.decode(response.responseText);
+                var win = new USM.view.ItemSelectorWindow({
+                    form: Ext.widget('rolegroupselectionpanel'),
+                    title: 'Add/Remove Roles to Group'
+                });
+                var form = win.down('rolegroupselectionpanel');
+                var selArr = [];
+
+                form.on('beforerender', function (form, ept) {
+                    if (responseObj != null) {
+                        for (var i = 0; i < responseObj.items.length; i++) {
+                            selArr.push(responseObj.items[i].RoleId);
+                        }
+                        form.getForm().findField('selectedRoles').setValue(selArr);
+                    }
+                }, me);
+                form.getForm().findField('groupName').setValue(groupId);
+                win.show();
+            },
+            failure: function (response, options) {
+            }
+        });
+    },
+
+    addRemGroupToRole: function (btn) {
+        var me = this;
+        var rec = Ext.getCmp('viewportid').down('rolegrid').getSelectionModel().getSelection();
+        var roleId = rec[0].data.RoleId;
+        Ext.Ajax.request({
+            //url: 'usersecuritymanager/editUserGroup',
+            url: '/Scripts/USM/jsonfiles/selgroup.json',
+            //            method: 'POST',
+            //            params: {
+            //                groupId: groupId
+            //            },
+            success: function (response, options) {
+                var responseObj = Ext.JSON.decode(response.responseText);
+                var win = new USM.view.ItemSelectorWindow({
+                    form: Ext.widget('grouproleselectionpanel'),
+                    title: 'Add/Remove Groups to Role'
+                });
+                var form = win.down('grouproleselectionpanel');
+                var selArr = [];
+
+                form.on('beforerender', function (form, ept) {
+                    if (responseObj != null) {
+                        for (var i = 0; i < responseObj.items.length; i++) {
+                            selArr.push(responseObj.items[i].GroupId);
+                        }
+                        form.getForm().findField('selectedGroups').setValue(selArr);
+                    }
+                }, me);
+                form.getForm().findField('roleName').setValue(roleId);
                 win.show();
             },
             failure: function (response, options) {

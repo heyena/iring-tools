@@ -3,6 +3,12 @@
 
     fields: [
         {
+            name: 'RoleId'
+        },
+        {
+            name: 'SiteId'
+        },
+        {
             name: 'RoleName'
         },
         {

@@ -3,6 +3,12 @@
 
     fields: [
         {
+            name: 'PermissionId'
+        },
+        {
+            name: 'SiteId'
+        },
+        {
             name: 'PermissionName'
         },
         {
