@@ -45,15 +45,9 @@ Ext.define('USM.view.menus.RoleMenu', {
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'addRoletoGroup',
+                    action: 'addRemGroupToRole',
                     iconCls: 'icon-add',
-                    text: 'Add Role to Group'
-                },
-                {
-                    xtype: 'menuitem',
-                    action: 'editRoleGroup',
-                    iconCls: 'icon-edit',
-                    text: 'Edit Role/Group'
+                    text: 'Add/Remove Group to Role'
                 }
             ]
         });

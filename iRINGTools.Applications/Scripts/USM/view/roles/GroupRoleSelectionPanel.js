@@ -1,6 +1,6 @@
-Ext.define('USM.view.groups.UserGrpSelectionPanel', {
+Ext.define('USM.view.roles.GroupRoleSelectionPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.usergrpselectionpanel',
+    alias: 'widget.grouproleselectionpanel',
 
     bodyStyle: 'background:#fff;padding:10px',
     width: 600,
@@ -10,7 +10,7 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
     ],
     initComponent: function () {
         var me = this;
-        utilsObj.grpUser = "User Groups";
+        utilsObj.grpRole = "Groups Role";
 
         Ext.applyIf(me, {
             items: [{
@@ -21,16 +21,16 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
                 items: [{
                     xtype: 'combobox',
                     disabled: false,
-                    name: 'userName',
+                    name: 'roleName',
                     allowBlank: false,
-                    fieldLabel: 'User',
-                    emptyText: 'Select User',
+                    fieldLabel: 'Role',
+                    emptyText: 'Select Role',
                     editable: false,
                     width: 100,
-                    displayField: 'UserName',
+                    displayField: 'RoleName',
                     forceSelection: false,
-                    store: 'UserS',
-                    valueField: 'UserId',
+                    store: 'RoleS',
+                    valueField: 'RoleId',
                     listeners: {
                         select: {
                             fn: me.onSelectGroup,
@@ -56,7 +56,7 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
                     valueField: 'GroupId',
                     msgTarget: 'side',
                     fromTitle: 'Groups',
-                    toTitle: utilsObj.grpUser
+                    toTitle: utilsObj.grpRole
                 }]
             }],
 
@@ -118,7 +118,7 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
         var form = me;
         if (me.getForm().isValid()) {
             msg = new Ext.window.MessageBox();
-            msg.wait('Saving Group ....');
+            msg.wait('Saving Groups ....');
             form.submit({
                 url: 'usersecuritymanager/saveSelGroup',
                 success: function (f, a) {
@@ -127,7 +127,7 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
                     if (btn.text == "Save") {
                         me.up('window').destroy();
                     }
-                    var message = 'Selected Groups saved successfully.';
+                    var message = 'Selected Groups to Role saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     return;
                 },
@@ -149,7 +149,7 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
 
     onSelectGroup: function (combo, records, eOpts) {
         var me = this;
-        var grpName = records[0].data.UserFirstName;
+        var roleName = records[0].data.RoleName;
         //utilsObj.grpUser = grpName + " Users";
         //me.down('itemselector').updateLayout();
         //me.updateLayout();

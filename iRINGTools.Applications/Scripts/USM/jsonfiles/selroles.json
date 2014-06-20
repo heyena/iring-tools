@@ -2,9 +2,6 @@
   "items": [
     {
       "RoleId" : "1" , "RoleName": "T Role" ,"RoleDesc": "iRing" 
-	},
-	{
-      "RoleId" : "2" , "RoleName": "T Role2" ,"RoleDesc": "iRing2" 
 	}
   ]
 }

@@ -29,14 +29,15 @@ Ext.define('USM.view.menus.UserMenu', {
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'addGroupToUser',
+                    action: 'editGroupUser',
                     iconCls: 'icon-add',
-                    text: 'Add Group to User'
+                    text: 'Add/Remove Group to User'
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'editGroupUser',
+                    action: 'editGroupUser1',
                     iconCls: 'icon-edit',
+                    hidden: true,
                     text: 'Edit Group/User'
                 }
             ]

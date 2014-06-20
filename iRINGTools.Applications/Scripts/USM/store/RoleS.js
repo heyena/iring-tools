@@ -15,15 +15,14 @@
             autoLoad: true,
             model: 'USM.model.RoleM',
             storeId: 'RoleJsonStore',
-            data: [{ "RoleName": "T Role", "RoleDesc": "iRing"}]
-            /*proxy: {
+            proxy: {
                 type: 'ajax',
                 url: '/Scripts/USM/jsonfiles/roles.json',
                 reader: {
                     type: 'json',
                     root: 'items'
                 }
-            }*/
+            }
         }, cfg)]);
     }
 });

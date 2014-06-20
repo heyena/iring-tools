@@ -30,14 +30,15 @@ Ext.define('USM.view.menus.GroupMenu', {
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'addUserToGroup',
+                    action: 'editUserGroup',
                     iconCls: 'icon-add',
-                    text: 'Add User to Group'
+                    text: 'Add/Remove User to Group'
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'editUserGroup',
+                    action: 'editUserGroup1',
                     iconCls: 'icon-edit',
+                    hidden: true,
                     text: 'Edit User/Group'
                 },
                 {
@@ -45,15 +46,9 @@ Ext.define('USM.view.menus.GroupMenu', {
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'addRoletoGroup',
+                    action: 'addRemRoletoGroup',
                     iconCls: 'icon-add',
-                    text: 'Add Role to Group'
-                },
-                {
-                    xtype: 'menuitem',
-                    action: 'editRoleGroup',
-                    iconCls: 'icon-edit',
-                    text: 'Edit Role/Group'
+                    text: 'Add/Remove Role to Group'
                 }
             ]
         });
