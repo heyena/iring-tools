@@ -1,9 +1,0 @@
-C:\IRINGTools\Adapter\Libraries\UtilityLibrary\bin\Release\UtilityLibrary.dll
-C:\IRINGTools\Adapter\Libraries\UtilityLibrary\bin\Release\UtilityLibrary.pdb
-C:\IRINGTools\Adapter\Libraries\UtilityLibrary\bin\Release\Ionic.Zip.dll
-C:\IRINGTools\Adapter\Libraries\UtilityLibrary\bin\Release\log4net.dll
-C:\IRINGTools\Adapter\Libraries\UtilityLibrary\bin\Release\Newtonsoft.Json.dll
-C:\IRINGTools\Adapter\Libraries\UtilityLibrary\bin\Release\log4net.xml
-C:\IRINGTools\Adapter\Libraries\UtilityLibrary\obj\Release\ResolveAssemblyReference.cache
-C:\IRINGTools\Adapter\Libraries\UtilityLibrary\obj\Release\UtilityLibrary.dll
-C:\IRINGTools\Adapter\Libraries\UtilityLibrary\obj\Release\UtilityLibrary.pdb
