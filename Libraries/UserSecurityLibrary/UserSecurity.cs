@@ -29,7 +29,7 @@ namespace org.iringtools.UserSecurity
         public string SiteDesc { get; set; }
 
         [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
-        public int Active { get; set; }
+        public Byte Active { get; set; }
 
     }
 
@@ -55,7 +55,7 @@ namespace org.iringtools.UserSecurity
         public string GroupDesc { get; set; }
 
         [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
-        public int Active { get; set; }
+        public Byte Active { get; set; }
 
     }
 
@@ -118,7 +118,7 @@ namespace org.iringtools.UserSecurity
         public string RoleDesc { get; set; }
 
         [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
-        public int Active { get; set; }
+        public Byte Active { get; set; }
     }
 
     [CollectionDataContract(Name = "permissions", Namespace = "http://www.iringtools.org/library", ItemName = "permission")]
@@ -143,7 +143,7 @@ namespace org.iringtools.UserSecurity
         public string PermissionDesc { get; set; }
 
         [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
-        public int Active { get; set; }
+        public Byte Active { get; set; }
     }
 
     [CollectionDataContract(Name = "userGroups", Namespace = "http://www.iringtools.org/library", ItemName = "userGroup")]
@@ -171,7 +171,7 @@ namespace org.iringtools.UserSecurity
         public string UserGroupsDesc { get; set; }
 
         [DataMember(Name = "active", Order = 5, EmitDefaultValue = false)]
-        public int Active { get; set; }
+        public Byte Active { get; set; }
     }
 
     [CollectionDataContract(Name = "groupRoles", Namespace = "http://www.iringtools.org/library", ItemName = "groupRole")]
@@ -199,6 +199,6 @@ namespace org.iringtools.UserSecurity
         public string GroupRolesDesc { get; set; }
 
         [DataMember(Name = "active", Order = 5, EmitDefaultValue = false)]
-        public int Active { get; set; }
+        public Byte Active { get; set; }
     }
 }

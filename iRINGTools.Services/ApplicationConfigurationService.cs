@@ -12,6 +12,7 @@ using org.iringtools.applicationConfig;
 using System.Configuration;
 using System.IO;
 using System.Xml.Linq;
+using System.Net;
 
 namespace org.iringtools.services
 {
@@ -31,7 +32,7 @@ namespace org.iringtools.services
 
         [Description("Gets the scopes available from the data base.")]
         [WebGet(UriTemplate = "/contexts?format={format}")]
-        public void GetContexts(string format)
+        public void GetContexts(string format)  // Completed.
         {
             try
             {
@@ -52,7 +53,7 @@ namespace org.iringtools.services
 
         [Description("Insert contexts to the data base.")]
         [WebInvoke(Method = "POST", UriTemplate = "/contexts?format={format}")]
-        public void InsertContexts(string format, Stream stream)
+        public void InsertContexts(string format, Stream stream) // Completed.
         {
             Response response = new Response();
             try
@@ -65,7 +66,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.Contexts>(stream, format);
-                    response = _applicationConfigurationProvider.InsertContext(format, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.InsertContext(new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -74,6 +75,63 @@ namespace org.iringtools.services
                 _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Update contexts to the data base.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/contexts?format={format}")]
+        public void UpdateContexts(string format, Stream stream) // Completed.
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.Contexts>(stream, format);
+                    response = _applicationConfigurationProvider.UpdateContext(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Update contexts to the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/contexts/{internalName}?format={format}")]
+        public void DeleteContexts(string internalName, string format) // Completed.
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    response = _applicationConfigurationProvider.DeleteContext(internalName);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
         }
 
         [Description("Gets all applications available from the data base.")]
@@ -121,7 +179,7 @@ namespace org.iringtools.services
 
         [Description("Get application collection for user")]
         [WebGet(UriTemplate = "/apps/{user}?format={format}")]
-        public void GetApplicationUser(string user, string format)
+        public void GetApplicationForUser(string user, string format)
         {
             try
             {
@@ -140,8 +198,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert application for user")]
-        [WebInvoke(Method = "POST", UriTemplate = "/addApp/{user}?format={format}")]
-        public void AddApplication(string user, string format, Stream stream)
+        [WebInvoke(Method = "POST", UriTemplate = "/app/{user}?format={format}")]
+        public void AddApplicationForUser(string user, string format, Stream stream)
         {
             Response response = new Response();
             try
@@ -166,8 +224,8 @@ namespace org.iringtools.services
         }
 
         [Description("Update application for user")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateApp/{user}?format={format}")]
-        public void UpdateApplication(string user, string format, Stream stream)
+        [WebInvoke(Method = "PUT", UriTemplate = "/app/{user}?format={format}")]
+        public void UpdateApplicationForUser(string user, string format, Stream stream)
         {
             Response response = new Response();
             try
@@ -192,8 +250,8 @@ namespace org.iringtools.services
         }
 
         [Description("delete application for user")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteApp/{user}")]
-        public void DeleteApplication(string user)
+        [WebInvoke(Method = "DELETE", UriTemplate = "/app/{user}?format={format}")]
+        public void DeleteApplicationForUser(string user)
         {
             Response response = new Response();
             try
@@ -244,6 +302,35 @@ namespace org.iringtools.services
 
             return format;
         }
+
+        private void PrepareResponse(ref Response response)
+        {
+            if (response.Level == StatusLevel.Success)
+            {
+                response.StatusCode = HttpStatusCode.OK;
+            }
+            else
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+            }
+
+            if (response.Messages != null)
+            {
+                foreach (string msg in response.Messages)
+                {
+                    response.StatusText += msg;
+                }
+            }
+
+            foreach (Status status in response.StatusList)
+            {
+                foreach (string msg in status.Messages)
+                {
+                    response.StatusText += msg;
+                }
+            }
+        }
+
         #endregion
 
     }
