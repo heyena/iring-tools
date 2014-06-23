@@ -51,9 +51,6 @@
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ApplicationConfigurationLibrary">
-      <HintPath>..\Libraries\ApplicationConfigurationLibrary\bin\Debug\ApplicationConfigurationLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.Core.dll</HintPath>
@@ -106,9 +103,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="UserSecurityLibrary">
-      <HintPath>..\Libraries\UserSecurityLibrary\bin\Debug\UserSecurityLibrary.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\BindingConfiguration.Adapter.xml">
@@ -215,6 +209,10 @@
       <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
       <Name>AdapterLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Libraries\ApplicationConfigurationLibrary\ApplicationConfigurationLibrary.csproj">
+      <Project>{F9971D9C-4D1E-4E5C-A5D3-E7A2989C42D1}</Project>
+      <Name>ApplicationConfigurationLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary</Name>
@@ -234,6 +232,10 @@
     <ProjectReference Include="..\Libraries\NHibernateExtension\NHibernateExtension.csproj">
       <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
       <Name>NHibernateExtension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\UserSecurityLibrary\UserSecurityLibrary.csproj">
+      <Project>{A68287A0-2739-44D2-9534-CC4D982C67AA}</Project>
+      <Name>UserSecurityLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
