@@ -10,6 +10,9 @@ using org.iringtools.UserSecurity;
 using System.Configuration;
 using System.ServiceModel.Web;
 using System.ComponentModel;
+using System.IO;
+using System.Xml.Linq;
+using System.Net;
 
 namespace org.iringtools.services
 {
@@ -47,12 +50,11 @@ namespace org.iringtools.services
         }
 
         [Description("Get all sites from the database.")]
-        [WebGet(UriTemplate = "/sites")]
-        public void GetSites()
+        [WebGet(UriTemplate = "/sites?format={format}")]
+        public void GetSites(string format)  // Completed.
         {
             try
             {
-                string format = "Json";
                 OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
                 context.ContentType = "application/xml";
 
@@ -68,16 +70,14 @@ namespace org.iringtools.services
         }
 
         [Description("Get site by site ID from the database.")]
-        [WebGet(UriTemplate = "/sites/{iSiteId}")]
-        public void GetSite(int iSiteId)
+        [WebGet(UriTemplate = "/site?siteId={siteId}&format={format}")]
+        public void GetSite(int siteId, string format) // Completed.
         {
             try
             {
-                string format = "Json";
                 OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
                 context.ContentType = "application/xml";
-
-                Site site = _userSecurityProvider.GetSite(iSiteId);
+                Site site = _userSecurityProvider.GetSite(siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Site>(site, format, true);
             }
             catch (Exception ex)
@@ -88,5 +88,270 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Insert sites to the data base.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/sites?format={format}")]
+        public void InsertSites(string format, Stream stream)  // Completed.
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<Sites>(stream, format);
+                    response = _userSecurityProvider.InsertSite(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Update sites to the data base.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/sites?format={format}")]
+        public void UpdateSites(string format, Stream stream) // To do .. test
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<Sites>(stream, format);
+                    response = _userSecurityProvider.UpdateSites(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Update contexts to the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/site?siteId={siteId}&format={format}")]
+        public void DeleteSite(int siteId, string format) // To do ... Test.
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    response = _userSecurityProvider.DeleteSite(siteId);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+
+        [Description("Get all groups from the database.")]
+        [WebGet(UriTemplate = "/groups?format={format}")]
+        public void GetGroups(string format)   // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Groups groups = _userSecurityProvider.GetAllGroups();
+                _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+        	 
+        [Description("Get groups by group id from the database.")]
+        [WebGet(UriTemplate = "/group?groupId={iGroupId}&format={format}")]
+        public void GetGroupById(int iGroupId, string format)  // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Group group = _userSecurityProvider.GetGroupById(iGroupId);
+                _userSecurityProvider.FormatOutgoingMessage<Group>(group, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Get groups by group id from the database.")]
+        [WebGet(UriTemplate = "/user?userId={userId}&format={format}")]
+        public void GetUser(int userId, string format)    // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                User user = _userSecurityProvider.GetUserById(userId);
+                _userSecurityProvider.FormatOutgoingMessage<User>(user, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Get all roles from the database.")]
+        [WebGet(UriTemplate = "/roles?format={format}")]
+        public void GetRoles(string format) // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Roles roles = _userSecurityProvider.GetAllRoles();
+                _userSecurityProvider.FormatOutgoingMessage<Roles>(roles, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Get groups by group id from the database.")]
+        [WebGet(UriTemplate = "/role?roleId={iroleId}&format={format}")]
+        public void GetRoleById(int iroleId, string format)  // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Role role = _userSecurityProvider.GetRoleById(iroleId);
+                _userSecurityProvider.FormatOutgoingMessage<Role>(role, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Get roles by site ID from the database.")]
+        [WebGet(UriTemplate = "/siteRole?siteId={siteId}&format={format}")]
+        public void GetSiteRoles(int siteId, string format) // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Roles roles = _userSecurityProvider.GetSiteRoles(siteId);
+                _userSecurityProvider.FormatOutgoingMessage<Roles>(roles, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+
+        #region Private Methods
+        private string MapContentType(string format)
+        {
+            IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
+            string contentType = request.ContentType;
+
+            // if it's a known format then return it
+            if (format != null && (format.ToLower() == "raw" || format.ToLower() == "dto" || format.ToLower() == "rdf" ||
+              format.ToLower().Contains("xml") || format.ToLower().Contains("json")))
+            {
+                return format;
+            }
+
+            if (string.IsNullOrEmpty(format))
+            {
+                format = "json";
+            }
+
+            if (contentType != null)
+            {
+                if (contentType.ToLower().Contains("application/xml"))
+                {
+                    format = "xml";
+                }
+                else if (contentType.ToLower().Contains("json"))
+                {
+                    format = "json";
+                }
+                else
+                {
+                    format = "raw";
+                }
+            }
+
+            return format;
+        }
+
+        private void PrepareResponse(ref Response response)
+        {
+            if (response.Level == StatusLevel.Success)
+            {
+                response.StatusCode = HttpStatusCode.OK;
+            }
+            else
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+            }
+
+            if (response.Messages != null)
+            {
+                foreach (string msg in response.Messages)
+                {
+                    response.StatusText += msg;
+                }
+            }
+
+            foreach (Status status in response.StatusList)
+            {
+                foreach (string msg in status.Messages)
+                {
+                    response.StatusText += msg;
+                }
+            }
+        }
+
+        #endregion
     }
 }

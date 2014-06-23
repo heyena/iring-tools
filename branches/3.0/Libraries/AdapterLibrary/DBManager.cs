@@ -240,6 +240,42 @@ namespace org.iringtools.adapter
         }
     }
 
+    public DataTable ExecuteStoredProcedure(string connStr, string spName, NameValueList spParamters)
+    {
+        _logger.Debug(spName);
+        SqlConnection _conn = new SqlConnection(connStr);
+
+        try
+        {
+            _conn.Open();
+
+            SqlCommand cmd = new SqlCommand();
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            DataTable datatable = new DataTable();
+            cmd = new SqlCommand(spName, _conn);
+
+            foreach (ListItem item in spParamters)
+            {
+                cmd.Parameters.Add(new SqlParameter(item.Name, item.Value));
+            }
+
+            cmd.CommandType = CommandType.StoredProcedure;
+            adapter.SelectCommand = cmd;
+            adapter.Fill(datatable);
+
+            return datatable;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Error executing stored procedure [" + spName + "]: " + ex.Message);
+            throw ex;
+        }
+        finally
+        {
+            _conn.Close();
+        }
+    }
+
     public DataTable ExecuteStoredProcedure(string connStr, string spName)
     {
         _logger.Debug(spName);
@@ -263,7 +299,6 @@ namespace org.iringtools.adapter
             _conn.Close();
         }
     }
-
     #region helper methods
     private DbConnection OpenConnection(string connStr)
     {

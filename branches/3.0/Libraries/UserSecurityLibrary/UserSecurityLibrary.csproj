@@ -62,6 +62,10 @@
       <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
       <Name>AdapterLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\iRINGLibrary\iRINGLibrary.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

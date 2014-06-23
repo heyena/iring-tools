@@ -15,6 +15,7 @@ using System.ServiceModel.Web;
 using System.Data.Linq;
 using System.Web;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace org.iringtools.applicationConfig
 {
@@ -22,6 +23,7 @@ namespace org.iringtools.applicationConfig
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
         private string _connSecurityDb;
+        private int _siteID;
 
         [Inject]
         public ApplicationConfigurationProvider(NameValueCollection settings)
@@ -31,6 +33,7 @@ namespace org.iringtools.applicationConfig
             {
                 // We have _settings collection available here.
                 _connSecurityDb = settings["SecurityConnection"];
+                _siteID = Convert.ToInt32(settings["SiteId"]);
             }
             catch (Exception e)
             {
@@ -44,12 +47,134 @@ namespace org.iringtools.applicationConfig
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstContext = dc.ExecuteQuery<Context>("spgContext").ToList();
+                lstContext = dc.ExecuteQuery<Context>("spgContext @SiteId = {0}",_siteID).ToList();
             }
 
             Contexts contexts = new Contexts();
             contexts.AddRange(lstContext);
             return contexts;
+        }
+
+        public Response InsertContext(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Contexts contexts = Utility.DeserializeDataContract<Contexts>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Context context in contexts)
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
+                        nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
+                        nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
+                        nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+
+                        DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiContext", nvl);
+                        //object[] myObjArray = { context.DisplayName, context.InternalName, context.Description, context.CacheConnStr,context.SiteId };
+                        //dc.ExecuteQuery<Context>("spiContext", myObjArray).ToList().First();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Contexts added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Contexts: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response UpdateContext(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Contexts contexts = Utility.DeserializeDataContract<Contexts>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Context context in contexts)
+                    {
+                        if (string.IsNullOrEmpty(context.InternalName))
+                        {
+                            throw new Exception("Please provide the internal name of the context in" + 
+                                                 " the payload which you want to update.");
+                        }
+
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
+                        nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
+                        nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
+                        nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+
+                        DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuContext", nvl);
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Contexts updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error updating Contexts: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeleteContext(string internalName)
+        {
+            Response response = new Response();
+
+            try
+            {
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteQuery<Context>("spdContext @InternalName = {0}, @SiteId = {1}", internalName, _siteID);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Context deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting Context: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
         }
 
         public Applications GetAllApplications()
@@ -103,45 +228,6 @@ namespace org.iringtools.applicationConfig
             {
                 Applications applications = Utility.DeserializeDataContract<Applications>(xml.ToString());
                 
-                //To Do: Call your stored procedure to insert the application.
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Application added successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error adding application: " + ex);
-
-                Status status = new Status { Level = StatusLevel.Error };
-                status.Messages = new Messages { ex.Message };
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Error;
-                response.StatusList.Add(status);
-            }
-
-            return response;
-        }
-
-        public Response InsertContext(string format, XDocument xml)
-        {
-            Response response = new Response();
-
-            try
-            {
-                Contexts contexts = Utility.DeserializeDataContract<Contexts>(xml.ToString());
-
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                    foreach (Context context in contexts)
-                    {
-                        object[] myObjArray = { context.DisplayName, context.InternalName, context.Description, context.CacheConnStr,context.SiteId };
-                        dc.ExecuteQuery<Context>("spgSite", myObjArray).ToList().First();
-
-                    }
-                }
-
                 //To Do: Call your stored procedure to insert the application.
 
                 response.DateTimeStamp = DateTime.Now;
