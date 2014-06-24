@@ -44,9 +44,7 @@ namespace org.iringtools.UserSecurity
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstUsers = dc.ExecuteQuery<User>(@"SELECT UserId, UserName, SiteId, 
-                                    UserFirstName, UserLastName, UserEmail, UserPhone, UserDesc, Active
-                                    FROM [Users]").ToList();
+                lstUsers = dc.ExecuteQuery<User>("spgAllUser").ToList();
             }
 
             Users users = new Users();
@@ -211,6 +209,21 @@ namespace org.iringtools.UserSecurity
             Roles roles = new Roles();
             roles.AddRange(lstRoles);
             return roles;
+        }
+
+        public GroupRoles GetGroupRole(int groupId, int roleId)
+        {
+            List<GroupRole> lstgroupRoles = new List<GroupRole>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstgroupRoles = dc.ExecuteQuery<GroupRole>("spgGroupRoles @GroupId = {0}, @RoleId = {1}, @SiteId = {2}",
+                                                  groupId, roleId, _siteID).ToList();
+            }
+
+            GroupRoles groupRoles = new GroupRoles();
+            groupRoles.AddRange(lstgroupRoles);
+            return groupRoles;
         }
 
         public Groups GetAllGroups()

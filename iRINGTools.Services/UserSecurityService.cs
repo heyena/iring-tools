@@ -286,6 +286,25 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Get roles based on groupId and roleId from the database.")]
+        [WebGet(UriTemplate = "/groupRole?groupId={groupId}&roleId={roleId}&format={format}")]
+        public void GetGroupRole(int groupId, int roleId, string format) // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                GroupRoles groupRoles = _userSecurityProvider.GetGroupRole(groupId, roleId);
+                _userSecurityProvider.FormatOutgoingMessage<GroupRoles>(groupRoles, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
 
         #region Private Methods
         private string MapContentType(string format)
