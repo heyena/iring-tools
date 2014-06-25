@@ -32,12 +32,15 @@ namespace org.iringtools.web.controllers
 
         public ActionResult Index()
         {
-            Users user = _repository.GetAllUsers("xml");
-            List<Users> items = new List<Users>();
-            items.Add(user);
-            return Json(items, JsonRequestBehavior.AllowGet);
+            return View();
             
 
+        }
+
+        public JsonResult getUsers()
+        {
+            Users user = _repository.GetAllUsers("json");
+            return Json(user, JsonRequestBehavior.AllowGet);
         }
 
     }
