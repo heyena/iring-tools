@@ -67,7 +67,7 @@ namespace org.iringtools.UserSecurity
                         dc.ExecuteQuery<User>("spiUser @SiteId = {0}, @UserName = {1}, @UserFirstName = {2}, "+
                                               "@UserLastName = {3}, @UserEmail = {4}, @UserPhone = {5}, @UserDesc = {6}",
                                               _siteID, user.UserName, user.UserFirstName, user.UserLastName,
-                                              user.UserEmail, user.userphone, user.UserDesc).ToList();
+                                              user.UserEmail, user.UserPhone, user.UserDesc).ToList();
                     }
                 }
 
