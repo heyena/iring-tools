@@ -53,27 +53,7 @@ namespace iRINGTools.Web.Models
         protected WebHttpClient CreateWebClient(string baseUri)
         {
             WebHttpClient client = null;
-
-            //if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
-            //{
-            //    WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-            //    client = new WebHttpClient(baseUri, null, webProxy);
-            //}
-            //else
-            // {
             client = new WebHttpClient(baseUri);
-            //}
-
-            //if (AuthHeaders != null && AuthHeaders.Count > 0)
-            //{
-            //    _logger.Debug("Injecting authorization [" + AuthHeaders.Count + "] headers.");
-            //    client.Headers = AuthHeaders;
-            //}
-            //else
-            //{
-            //    _logger.Debug("No authorization headers.");
-            //}
-
             return client;
         }
         public Users GetAllUsers(string format)
@@ -97,26 +77,7 @@ namespace iRINGTools.Web.Models
 
         }
 
-        //public List<User> GetAllUsers(string format)
-        //{
-        //    Users items = null;
-        //    _logger.Debug("In AdapterRepository GetScopes");
-        //    try
-        //    {
-        //        WebHttpClient client = CreateWebClient(_adapterServiceUri);
-        //        items = client.Get<Users>("/users?format=?" + format);  ///users?format={format}
-
-        //        _logger.Debug("Successfully called Adapter.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.Error(ex.ToString());
-        //        throw;
-
-        //    }
-        //    return items;
-
-        //}
+       
 
     }
 
