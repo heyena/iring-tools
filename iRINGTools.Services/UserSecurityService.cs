@@ -49,6 +49,34 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Insert users to the database.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/users?format={format}")]
+        public void InsertUsers(string format,Stream stream)
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<Users>(stream, format);
+                    response = _userSecurityProvider.InsertUsers(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
         [Description("Get all sites from the database.")]
         [WebGet(UriTemplate = "/sites?format={format}")]
         public void GetSites(string format)  // Completed.

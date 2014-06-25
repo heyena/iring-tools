@@ -51,6 +51,45 @@ namespace org.iringtools.UserSecurity
             users.AddRange(lstUsers);
             return users;
         }
+        
+        public Response InsertUsers(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Users users = Utility.DeserializeDataContract<Users>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (User user in users)
+                    {
+                        dc.ExecuteQuery<User>("spiUser @SiteId = {0}, @UserName = {1}, @UserFirstName = {2}, "+
+                                              "@UserLastName = {3}, @UserEmail = {4}, @UserPhone = {5}, @UserDesc = {6}",
+                                              _siteID, user.UserName, user.UserFirstName, user.UserLastName,
+                                              user.UserEmail, user.userphone, user.UserDesc).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Users added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Users: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
 
         public User GetUserById(int iUserId)
         {

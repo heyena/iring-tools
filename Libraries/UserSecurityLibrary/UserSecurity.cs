@@ -82,17 +82,20 @@ namespace org.iringtools.UserSecurity
 
         [DataMember(Name = "userLastName", Order = 4, EmitDefaultValue = false)]
         public string UserLastName { get; set; }
-
-        [DataMember(Name = "userEmail", Order = 5, EmitDefaultValue = false)]
+        
+        [DataMember(Name = "userFullName", Order = 5, EmitDefaultValue = false)]
+        public string UserFullName { get; set; }
+        
+        [DataMember(Name = "userEmail", Order = 6, EmitDefaultValue = false)]
         public string UserEmail { get; set; }
 
-        [DataMember(Name = "userPhone", Order = 6, EmitDefaultValue = false)]
-        public string userphone { get; set; }
+        [DataMember(Name = "userPhone", Order = 7, EmitDefaultValue = false)]
+        public string UserPhone { get; set; }
 
-        [DataMember(Name = "userDesc", Order = 7, EmitDefaultValue = false)]
+        [DataMember(Name = "userDesc", Order = 8, EmitDefaultValue = false)]
         public string UserDesc { get; set; }
 
-        [DataMember(Name = "active", Order = 8, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 9, EmitDefaultValue = false)]
         public Byte Active { get; set; }
     }
 
