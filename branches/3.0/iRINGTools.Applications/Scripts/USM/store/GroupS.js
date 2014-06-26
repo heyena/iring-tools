@@ -15,10 +15,10 @@
             autoLoad: true,
             model: 'USM.model.GroupM',
             storeId: 'GroupJsonStore',
-            //data: [{ "groupName": "iRing", "description": "iRing"}]
             proxy: {
                 type: 'ajax',
-                url: '/Scripts/USM/jsonfiles/groups.json',
+                //url: '/Scripts/USM/jsonfiles/groups.json',
+                url : 'usersecuritymanager/getGroups',
                 reader: {
                     type: 'json',
                     root: 'items'

@@ -22,7 +22,7 @@ Ext.define('USM.view.UserSecurityTabPanel', {
                     title: 'Groups',
                     items: [
                         {
-                            xtype : 'groupgrid'
+                            xtype: 'groupgrid'
                         }
                     ]
                 },
@@ -39,7 +39,13 @@ Ext.define('USM.view.UserSecurityTabPanel', {
                         {
                             xtype: 'usergrid'
                         }
-                    ]
+                    ],
+                    listeners: {
+                        activate: {
+                            fn: me.onPanelActivate,
+                            scope: me
+                        }
+                    }
                 },
                 {
                     xtype: 'panel',
@@ -54,7 +60,13 @@ Ext.define('USM.view.UserSecurityTabPanel', {
                         {
                             xtype: 'rolegrid'
                         }
-                    ]
+                    ],
+                    listeners: {
+                        activate: {
+                            fn: me.onPanelActivate,
+                            scope: me
+                        }
+                    }
                 },
                 {
                     xtype: 'panel',
@@ -69,12 +81,36 @@ Ext.define('USM.view.UserSecurityTabPanel', {
                         {
                             xtype: 'permissiongrid'
                         }
-                    ]
+                    ],
+                    listeners: {
+                        activate: {
+                            fn: me.onPanelActivate,
+                            scope: me
+                        }
+                    }
                 }
             ]
         });
 
         me.callParent(arguments);
+    },
+
+    onPanelActivate: function (panel) {
+        var me = this;
+        var store = null;
+        switch (panel.title) {
+            case "Users":
+                panel.down('usergrid').store.reload();
+                break;
+            case "Roles":
+                panel.down('rolegrid').store.reload();
+                break;
+            case "Permissions":
+                panel.down('permissiongrid').store.reload();
+                break;
+            default:
+                panel.down('groupgrid').store.reload();
+        }
     }
 
 });

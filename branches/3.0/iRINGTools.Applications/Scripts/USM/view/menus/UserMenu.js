@@ -1,4 +1,3 @@
-
 Ext.define('USM.view.menus.UserMenu', {
     extend: 'Ext.menu.Menu',
 	alias: 'widget.usermenu',
