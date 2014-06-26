@@ -119,10 +119,12 @@
             }
         });
     },
+
     addPermissionToRole: function (item, e, eOpts) {
         var win = Ext.widget('permissionselectionpanelwindow');
         win.show();
     },
+
     deleteUser: function (item, e, eOpts) {
         Ext.MessageBox.confirm('Delete', 'Are you sure ?', function (btn) {
             if (btn === 'yes') {
@@ -388,12 +390,12 @@
         var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
         var groupId = rec[0].data.GroupId;
         Ext.Ajax.request({
-            //url: 'usersecuritymanager/editUserGroup',
-            url: '/Scripts/USM/jsonfiles/selusers.json',
-            //            method: 'POST',
-            //            params: {
-            //                groupId: groupId
-            //            },
+            url: 'usersecuritymanager/editUserGroup',
+            //url: '/Scripts/USM/jsonfiles/selusers.json',
+            method: 'POST',
+            params: {
+                GroupId: groupId
+            },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
                 var win = new USM.view.ItemSelectorWindow({

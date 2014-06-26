@@ -12,7 +12,7 @@
             actionMethod: {
                 read: 'GET'
             },
-            autoLoad: true,
+            autoLoad: false,
             model: 'USM.model.RoleM',
             storeId: 'RoleJsonStore',
             proxy: {
