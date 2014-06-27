@@ -77,6 +77,61 @@ namespace org.iringtools.services
             _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
         }
 
+        [Description("Insert users to the database.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/users?format={format}")]
+        public void UpdateUsers(string format, Stream stream)
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<Users>(stream, format);
+                    response = _userSecurityProvider.UpdateUsers(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Insert users to the database.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/users?userId={userId}&format={format}")]
+        public void DeleteUser(int userId, string format)
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    response = _userSecurityProvider.DeleteUser(userId);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
         [Description("Get all sites from the database.")]
         [WebGet(UriTemplate = "/sites?format={format}")]
         public void GetSites(string format)  // Completed.
@@ -324,6 +379,25 @@ namespace org.iringtools.services
                 context.ContentType = "application/xml";
                 GroupRoles groupRoles = _userSecurityProvider.GetGroupRole(groupId, roleId);
                 _userSecurityProvider.FormatOutgoingMessage<GroupRoles>(groupRoles, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Return groups based on site from the database.")]
+        [WebGet(UriTemplate = "/groups?siteId={siteId}&format={format}")]
+        public void GetSiteGroups(int siteId, string format) // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Groups groups = _userSecurityProvider.GetSiteGroups(siteId);
+                _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
             }
             catch (Exception ex)
             {

@@ -90,6 +90,77 @@ namespace org.iringtools.UserSecurity
             return response;
         }
 
+        public Response UpdateUsers(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Users users = Utility.DeserializeDataContract<Users>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (User user in users)
+                    {
+                        if (user.UserId == null)
+                            throw new Exception("Please pass the user id in the json body which you want to  update.");
+
+
+                        dc.ExecuteQuery<User>("spuUser @UserId = {0}, @SiteId = {1}, @UserName = {2}, @UserFirstName = {3}, " +
+                                              "@UserLastName = {4}, @UserEmail = {5}, @UserPhone = {6}, @UserDesc = {7}",
+                                              user.UserId, _siteID, user.UserName, user.UserFirstName, user.UserLastName,
+                                              user.UserEmail, user.UserPhone, user.UserDesc).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Users added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Users: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeleteUser(int userId)
+        {
+            Response response = new Response();
+
+            try
+            {
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteQuery<Context>("spdUser @UserId = {0}, @SiteId = {1}", userId, _siteID);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("User deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting User: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
 
         public User GetUserById(int iUserId)
         {
@@ -325,6 +396,21 @@ namespace org.iringtools.UserSecurity
 
             return role;
         }
+
+        public Groups GetSiteGroups(int iSiteId)
+        {
+            List<Group> lstGroup = new List<Group>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstGroup = dc.ExecuteQuery<Group>("spgSiteGroups @SiteId = {0}", _siteID).ToList();
+            }
+
+            Groups groups = new Groups();
+            groups.AddRange(lstGroup);
+            return groups;
+        }
+
 
         public void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
         {

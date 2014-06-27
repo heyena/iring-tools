@@ -75,8 +75,6 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
 
                         DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiContext", nvl);
-                        //object[] myObjArray = { context.DisplayName, context.InternalName, context.Description, context.CacheConnStr,context.SiteId };
-                        //dc.ExecuteQuery<Context>("spiContext", myObjArray).ToList().First();
                     }
                 }
 
@@ -177,18 +175,123 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Applications GetAllApplications()
+        public Applications GetAllApplications(string scopeInternalName)
         {
             List<Application> lstApplication = new List<Application>();
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstApplication = dc.ExecuteQuery<Application>("spgApplication").ToList();
+                lstApplication = dc.ExecuteQuery<Application>("spgApplication @ScopeInternalName = {0}, @SiteId = {1}",
+                                                              scopeInternalName, _siteID).ToList();
             }
 
             Applications applications = new Applications();
             applications.AddRange(lstApplication);
             return applications;
+        }
+
+        public Response InsertApplications(string scopeInternalName, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Applications applications = Utility.DeserializeDataContract<Applications>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Application application in applications)
+                    {
+                        dc.ExecuteQuery<Application>("spiApplication @ScopeInternalName = {0}, @AppDisplayName = {1}, @AppInternalName = {2}, " +
+                                                      "@Description = {3}, @DXFRUrl = {4}, @SiteId = {5}", scopeInternalName, application.DisplayName,
+                                                      application.InternalName, application.Description, application.DXFRUrl, _siteID).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Applications added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Applications: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response UpdateApplications(string scopeInternalName, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Applications applications = Utility.DeserializeDataContract<Applications>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Application application in applications)
+                    {
+                        dc.ExecuteQuery<Application>("spuApplication @ScopeInternalName = {0}, @AppDisplayName = {1}, @AppInternalName = {2}, " +
+                                                      "@Description = {3}, @DXFRUrl = {4}, @SiteId = {5}", scopeInternalName, application.DisplayName,
+                                                      application.InternalName, application.Description, application.DXFRUrl, _siteID).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Applications updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error updating Applications: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeleteApplication(string scopeInternalName, string appInternalName)
+        {
+            Response response = new Response();
+
+            try
+            {
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteQuery<Context>("spdApplication @ScopeInternalName = {0}, @AppInternalName = {1}, @SiteId = {2}", scopeInternalName, appInternalName, _siteID);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Application deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting Application: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
         }
 
         public Graphs GetAllGraphs()
@@ -206,7 +309,7 @@ namespace org.iringtools.applicationConfig
         }
 
 
-        public Applications GetApplications(string user)
+        public Applications GetApplicationsForUser(string user)
         {
             List<Application> lstApplications = new List<Application>();
 
@@ -220,7 +323,7 @@ namespace org.iringtools.applicationConfig
             return applications;
         }
 
-        public Response InsertApplication(string user,string format, XDocument xml)
+        public Response InsertApplicationForUser(string user,string format, XDocument xml)
         {
             Response response = new Response();
 
@@ -249,7 +352,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateApplication(string user, string format, XDocument xml)
+        public Response UpdateApplicationForUser(string user, string format, XDocument xml)
         {
             Response response = new Response();
 
@@ -278,7 +381,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response DeleteApplication(string user, string format)
+        public Response DeleteApplicationForUser(string user, string format)
         {
             Response response = new Response();
 

@@ -135,15 +135,15 @@ namespace org.iringtools.services
         }
 
         [Description("Gets all applications available from the data base.")]
-        [WebGet(UriTemplate = "/apps?format={format}")]
-        public void GetApplications(string format)
+        [WebGet(UriTemplate = "/apps/{scopeInternalName}?format={format}")]
+        public void GetApplications(string scopeInternalName ,string format)
         {
             try
             {
                 OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
                 context.ContentType = "application/xml";
 
-                Applications applications = _applicationConfigurationProvider.GetAllApplications();
+                Applications applications = _applicationConfigurationProvider.GetAllApplications(scopeInternalName);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Applications>(applications, format, true);
             }
 
@@ -153,6 +153,89 @@ namespace org.iringtools.services
                 _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetScope, ex, _logger);
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
+        }
+
+        [Description("Insert applications to the data base.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/apps/{scopeInternalName}?format={format}")]
+        public void InsertApplications(string scopeInternalName, string format, Stream stream) 
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Applications>(stream, format);
+                    response = _applicationConfigurationProvider.InsertApplications(scopeInternalName, new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Update applications to the data base.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/apps/{scopeInternalName}?format={format}")]
+        public void UpdateApplications(string scopeInternalName, string format, Stream stream) // Completed.
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Applications>(stream, format);
+                    response = _applicationConfigurationProvider.UpdateApplications(scopeInternalName, new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Update contexts to the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/apps/{scopeInternalName}/{appInternalName}?format={format}")]
+        public void DeleteApplication(string scopeInternalName, string appInternalName, string format) // Completed.
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    response = _applicationConfigurationProvider.DeleteApplication(scopeInternalName, appInternalName);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
         }
 
         [Description("Gets all graphs available from the data base.")]
@@ -178,7 +261,7 @@ namespace org.iringtools.services
 
 
         [Description("Get application collection for user")]
-        [WebGet(UriTemplate = "/apps/{user}?format={format}")]
+        [WebGet(UriTemplate = "/app/{user}?format={format}")]
         public void GetApplicationForUser(string user, string format)
         {
             try
@@ -186,7 +269,7 @@ namespace org.iringtools.services
                 OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
                 context.ContentType = "application/xml";
 
-                Applications applications = _applicationConfigurationProvider.GetApplications(user);
+                Applications applications = _applicationConfigurationProvider.GetApplicationsForUser(user);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Applications>(applications, format, true);
             }
             catch (Exception ex)
@@ -212,7 +295,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Applications>(stream, format);
-                    response = _applicationConfigurationProvider.InsertApplication(user, format, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.InsertApplicationForUser(user, format, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -238,7 +321,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Application>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateApplication(user, format, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.UpdateApplicationForUser(user, format, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -251,7 +334,7 @@ namespace org.iringtools.services
 
         [Description("delete application for user")]
         [WebInvoke(Method = "DELETE", UriTemplate = "/app/{user}?format={format}")]
-        public void DeleteApplicationForUser(string user)
+        public void DeleteApplicationForUser(string user, string format)
         {
             Response response = new Response();
             try
