@@ -180,7 +180,11 @@ namespace org.iringtools.library
       {".xul", "application/vnd.mozilla.xul+xml"},
       {".xwd", "image/x-xwindowdump"},
       {".xyz", "chemical/x-xyz"},
-      {".zip", "application/zip"}
+      {".zip", "application/zip"},
+      {".xlsx", "application/zip"},
+      {".docx", "application/zip"},
+      {".mpp", "application/zip"},
+      {".vsd", "application/zip"}
     };
   }
 }
