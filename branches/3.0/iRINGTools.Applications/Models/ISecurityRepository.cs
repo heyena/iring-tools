@@ -13,6 +13,9 @@ namespace iRINGTools.Web.Models
     public interface IsecurityRepository
     {
       Users GetAllUsers(string format);
+      Groups GetAllGroups(string format);
+      Permissions GetAllPermissions(string format);
+      Roles GetAllRoles(string format);
 
      //   List<User> GetAllUsers(string format);
 

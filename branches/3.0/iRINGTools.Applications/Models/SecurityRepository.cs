@@ -50,16 +50,38 @@ namespace iRINGTools.Web.Models
 
 
         }
+
         protected WebHttpClient CreateWebClient(string baseUri)
         {
             WebHttpClient client = null;
+
+            //if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
+            //{
+            //    WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
+            //    client = new WebHttpClient(baseUri, null, webProxy);
+            //}
+            //else
+            // {
             client = new WebHttpClient(baseUri);
+            //}
+
+            //if (AuthHeaders != null && AuthHeaders.Count > 0)
+            //{
+            //    _logger.Debug("Injecting authorization [" + AuthHeaders.Count + "] headers.");
+            //    client.Headers = AuthHeaders;
+            //}
+            //else
+            //{
+            //    _logger.Debug("No authorization headers.");
+            //}
+
             return client;
         }
+
         public Users GetAllUsers(string format)
         {
             Users items = null;
-            _logger.Debug("In AdapterRepository GetScopes");
+            _logger.Debug("In SecurityRepository getAllUsers");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
@@ -74,13 +96,87 @@ namespace iRINGTools.Web.Models
 
             }
             return items;
-
         }
 
-       
+        public Groups GetAllGroups(string format)
+        {
+            Groups items = null;
+            _logger.Debug("In SecurityRepository getAllGroups");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                items = client.Get<Groups>("/groups?format=?" + format);  ///users?format={format}
 
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return items;
+        }
+
+        public Permissions GetAllPermissions(string format)
+        {
+            Permissions items = null;
+            _logger.Debug("In SecurityRepository GetAllPermissions");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                items = client.Get<Permissions>("/permissions?format=?" + format);  
+
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return items;
+        }
+
+        public Roles GetAllRoles(string format)
+        {
+            Roles items = null;
+            _logger.Debug("In SecurityRepository GetAllRoles");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                items = client.Get<Roles>("/roles?format=?" + format);
+
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return items;
+        }
+
+        public Group getGroupById(string iGroupId, string format)
+        {
+            Group item = null;
+            _logger.Debug("In SecurityRepository getAllGroups");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                item = client.Get<Group>("/group?groupId=?"+ iGroupId + "&format="+ format);
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+                
+            }
+            return item;
+           
+        }
+        
     }
-
-
-
 }

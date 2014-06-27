@@ -17,7 +17,8 @@
             storeId: 'PermissionJsonStore',
             proxy: {
                 type: 'ajax',
-                url: '/Scripts/USM/jsonfiles/permissions.json',
+                //url: '/Scripts/USM/jsonfiles/permissions.json',
+                url : 'usersecuritymanager/getPermissions',
                 reader: {
                     type: 'json',
                     root: 'items'

@@ -130,6 +130,7 @@
     <Compile Include="Controllers\MappingEditorController.cs" />
     <Compile Include="Controllers\RefDataController.cs" />
     <Compile Include="Controllers\RefDataEditorController.cs" />
+    <Compile Include="Controllers\UserSecurityManagerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -154,9 +155,11 @@
     <Compile Include="Models\IAdapterRepository.cs" />
     <Compile Include="Models\IMappingRepository.cs" />
     <Compile Include="Models\IRefDataRepository.cs" />
+    <Compile Include="Models\IsecurityRepository.cs" />
     <Compile Include="Models\MappingRepository.cs" />
     <Compile Include="Models\NHibernateRepository.cs" />
     <Compile Include="Models\RefDataRepository.cs" />
+    <Compile Include="Models\SecurityRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +173,9 @@
     <Content Include="Content\css\RangeMenu.css" />
     <Content Include="Content\css\reset.css" />
     <Content Include="Content\css\sparql.css" />
+    <Content Include="Content\img\16x16\accept.gif" />
+    <Content Include="Content\img\16x16\add.png" />
+    <Content Include="Content\img\16x16\cross.gif" />
     <Content Include="Content\img\16x16\document-new.png" />
     <Content Include="Content\img\16x16\document-open.png" />
     <Content Include="Content\img\16x16\document-properties.png" />
@@ -182,6 +188,7 @@
     <Content Include="Content\img\16x16\greater_than.png" />
     <Content Include="Content\img\16x16\less_than.png" />
     <Content Include="Content\img\16x16\mapping.png" />
+    <Content Include="Content\img\16x16\page_edit.png" />
     <Content Include="Content\img\16x16\sort_filtered_asc.gif" />
     <Content Include="Content\img\16x16\sort_filtered_desc.gif" />
     <Content Include="Content\img\16x16\view-refresh.png" />
@@ -378,6 +385,42 @@
     <Content Include="Scripts\AM\view\Viewport.js" />
     <Content Include="Scripts\extjs-4.1.1\ext-all-debug.js" />
     <Content Include="Scripts\Silverlight.js" />
+    <Content Include="Scripts\USM\controller\UserSecurity.js" />
+    <Content Include="Scripts\USM\model\GroupM.js" />
+    <Content Include="Scripts\USM\model\PermissionM.js" />
+    <Content Include="Scripts\USM\model\RoleM.js" />
+    <Content Include="Scripts\USM\model\SecurityM.js" />
+    <Content Include="Scripts\USM\model\UserM.js" />
+    <Content Include="Scripts\USM\store\GroupS.js" />
+    <Content Include="Scripts\USM\store\PermissionS.js" />
+    <Content Include="Scripts\USM\store\RoleS.js" />
+    <Content Include="Scripts\USM\store\SecurityS.js" />
+    <Content Include="Scripts\USM\store\UserS.js" />
+    <Content Include="Scripts\USM\USM.js" />
+    <Content Include="Scripts\USM\view\groups\UserGrpSelectionPanel.js" />
+    <Content Include="Scripts\USM\view\groups\GroupForm.js" />
+    <Content Include="Scripts\USM\view\groups\GroupGrid.js" />
+    <Content Include="Scripts\USM\view\groups\GroupWindow.js" />
+    <Content Include="Scripts\USM\view\groups\GrpUserSelectionPanel.js" />
+    <Content Include="Scripts\USM\view\ItemSelectorWindow.js" />
+    <Content Include="Scripts\USM\view\MainPanel.js" />
+    <Content Include="Scripts\USM\view\menus\GroupMenu.js" />
+    <Content Include="Scripts\USM\view\menus\PermissionMenu.js" />
+    <Content Include="Scripts\USM\view\menus\RoleMenu.js" />
+    <Content Include="Scripts\USM\view\menus\SecurityMenu.js" />
+    <Content Include="Scripts\USM\view\menus\UserMenu.js" />
+    <Content Include="Scripts\USM\view\permissions\PermissionForm.js" />
+    <Content Include="Scripts\USM\view\permissions\PermissionWindow.js" />
+    <Content Include="Scripts\USM\view\permissions\PermissionGrid.js" />
+    <Content Include="Scripts\USM\view\roles\RoleGroupSelectionPanel.js" />
+    <Content Include="Scripts\USM\view\roles\RoleForm.js" />
+    <Content Include="Scripts\USM\view\roles\RoleWindow.js" />
+    <Content Include="Scripts\USM\view\roles\RoleGrid.js" />
+    <Content Include="Scripts\USM\view\roles\GroupRoleSelectionPanel.js" />
+    <Content Include="Scripts\USM\view\SecurityGrid.js" />
+    <Content Include="Scripts\USM\view\UserSecurityTabPanel.js" />
+    <Content Include="Scripts\USM\view\users\UserGrid.js" />
+    <Content Include="Scripts\USM\view\Viewport.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Scripts\jquery-1.4.1.js" />
@@ -407,6 +450,10 @@
       <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
       <Name>SpreadsheetDatalayer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Libraries\UserSecurityLibrary\UserSecurityLibrary.csproj">
+      <Project>{A68287A0-2739-44D2-9534-CC4D982C67AA}</Project>
+      <Name>UserSecurityLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary</Name>
@@ -419,6 +466,16 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\USM\jsonfiles\selroles.json" />
+    <None Include="Scripts\USM\jsonfiles\selgroup.json" />
+    <None Include="Scripts\USM\jsonfiles\selusers.json" />
+    <None Include="Scripts\USM\jsonfiles\groups.json" />
+    <None Include="Scripts\USM\jsonfiles\permissions.json" />
+    <None Include="Scripts\USM\jsonfiles\roles.json" />
+    <None Include="Scripts\USM\jsonfiles\security.json" />
+    <None Include="Scripts\USM\jsonfiles\users.json" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -436,9 +493,9 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>52277</DevelopmentServerPort>
+          <DevelopmentServerPort>54690</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:12345</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
