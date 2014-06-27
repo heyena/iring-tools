@@ -18,6 +18,7 @@ using org.iringtools.library;
 using org.iringtools.mapping;
 using org.iringtools.utility;
 using org.iringtools.UserSecurity;
+using System.Web.Mvc;
 namespace iRINGTools.Web.Models
 {
 
@@ -54,27 +55,7 @@ namespace iRINGTools.Web.Models
         protected WebHttpClient CreateWebClient(string baseUri)
         {
             WebHttpClient client = null;
-
-            //if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
-            //{
-            //    WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-            //    client = new WebHttpClient(baseUri, null, webProxy);
-            //}
-            //else
-            // {
             client = new WebHttpClient(baseUri);
-            //}
-
-            //if (AuthHeaders != null && AuthHeaders.Count > 0)
-            //{
-            //    _logger.Debug("Injecting authorization [" + AuthHeaders.Count + "] headers.");
-            //    client.Headers = AuthHeaders;
-            //}
-            //else
-            //{
-            //    _logger.Debug("No authorization headers.");
-            //}
-
             return client;
         }
 
@@ -85,7 +66,7 @@ namespace iRINGTools.Web.Models
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                items = client.Get<Users>("/users?format=?" + format);  ///users?format={format}
+                items = client.Get<Users>("/users?format=?" + format);  
 
                 _logger.Debug("Successfully called Security Service.");
             }
@@ -177,6 +158,35 @@ namespace iRINGTools.Web.Models
             return item;
            
         }
+
+        public void InsertUsers(FormCollection form)
+        {
+
+            _logger.Debug("In Security Repository Insert Users");
+            try
+            {
+                User user = new User { UserName = form["UserName"], UserFirstName = form["UserFirstName"], UserLastName = form["UserLastName"], UserEmail = form["UserEmail"], UserPhone = form["UserPhone"], UserDesc = form["UserDesc"] };
+                Users users = new Users();
+                users.Add(user);
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                // client.Post<Users>("/users?format=xml", users, true,"xml");
+                client.Post<Users>("/users?format=xml", users, true);
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+
+
+
+        }
+
+
         
     }
 }
