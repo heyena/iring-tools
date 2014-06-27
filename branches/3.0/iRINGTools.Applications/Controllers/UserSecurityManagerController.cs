@@ -104,7 +104,13 @@ namespace org.iringtools.web.controllers
             Response response = null;
             return Json(response, JsonRequestBehavior.AllowGet);
         }
-      
+
+        public JsonResult insertUsers(FormCollection form)
+        {
+            _repository.InsertUsers(form);
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+
 
     }
 }
