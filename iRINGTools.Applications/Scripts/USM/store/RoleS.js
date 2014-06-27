@@ -17,7 +17,8 @@
             storeId: 'RoleJsonStore',
             proxy: {
                 type: 'ajax',
-                url: '/Scripts/USM/jsonfiles/roles.json',
+                //url: '/Scripts/USM/jsonfiles/roles.json',
+                url: 'usersecuritymanager/getRoles',
                 reader: {
                     type: 'json',
                     root: 'items'

@@ -10,7 +10,9 @@ using System.Collections.Specialized;
 using org.iringtools.utility;
 using System.Web.Script.Serialization;
 using org.iringtools.UserSecurity;
+
 namespace org.iringtools.web.controllers
+
 {
     public class UserSecurityManagerController : BaseController
     {
@@ -33,8 +35,6 @@ namespace org.iringtools.web.controllers
         public ActionResult Index()
         {
             return View();
-            
-
         }
 
         public JsonResult getUsers()
@@ -42,6 +42,69 @@ namespace org.iringtools.web.controllers
             Users user = _repository.GetAllUsers("json");
             return Json(user, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult getGroups()
+        {
+            Groups groups = _repository.GetAllGroups("json");
+            return Json(groups, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult getPermissions()
+        {
+            Permissions permissions = _repository.GetAllPermissions("json");
+            return Json(permissions, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult getRoles()
+        {
+            Roles roles = _repository.GetAllRoles("json");
+            return Json(roles, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult getGroupById(FormCollection form)
+        {
+            string iGroupId = form["GroupId"];
+            Group group = _repository.getGroupById(iGroupId ,"json");
+            return Json(group, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult saveGroup(FormCollection form)
+        {
+            Response response = null;
+         
+            return Json(new {success = true}, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult deleteGroup(FormCollection form)
+        {
+            Response response = null;
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult saveRole(FormCollection form)
+        {
+            Response response = null;
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult deleteRole(FormCollection form)
+        {
+            Response response = null;
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult savePermission(FormCollection form)
+        {
+            Response response = null;
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult deletePermission(FormCollection form)
+        {
+            Response response = null;
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+      
 
     }
 }
