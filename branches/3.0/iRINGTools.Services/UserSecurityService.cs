@@ -389,7 +389,7 @@ namespace org.iringtools.services
         }
 
         [Description("Return groups based on site from the database.")]
-        [WebGet(UriTemplate = "/groups?siteId={siteId}&format={format}")]
+        [WebGet(UriTemplate = "/siteGroups?siteId={siteId}&format={format}")]
         public void GetSiteGroups(int siteId, string format) // Completed.
         {
             try
@@ -407,6 +407,62 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Return all users for group from the database.")]
+        [WebGet(UriTemplate = "/groupUsers?groupId={groupId}&format={format}")]
+        public void spgGroupUsers(int groupId, string format) // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Users users = _userSecurityProvider.GetGroupUsers(groupId);
+                _userSecurityProvider.FormatOutgoingMessage<Users>(users, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Return all users based on site from the database.")]
+        [WebGet(UriTemplate = "/siteUsers?siteId={siteId}&format={format}")]
+        public void GetSiteUsers(int siteId, string format) // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Users users = _userSecurityProvider.GetSiteUsers(siteId);
+                _userSecurityProvider.FormatOutgoingMessage<Users>(users, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Return all permissions based on site from the database.")]
+        [WebGet(UriTemplate = "/sitePermissions?siteId={siteId}&format={format}")]
+        public void GetSitePermissions(int siteId, string format) // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Permissions permissions = _userSecurityProvider.GetSitePermissions(siteId);
+                _userSecurityProvider.FormatOutgoingMessage<Permissions>(permissions, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
 
         #region Private Methods
         private string MapContentType(string format)

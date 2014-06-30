@@ -411,6 +411,47 @@ namespace org.iringtools.UserSecurity
             return groups;
         }
 
+        public Users GetGroupUsers(int iGroupId)
+        {
+            List<User> lstUser = new List<User>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstUser = dc.ExecuteQuery<User>("spgGroupUsers @GroupId = {0}", iGroupId).ToList();
+            }
+
+            Users users = new Users();
+            users.AddRange(lstUser);
+            return users;
+        }
+
+        public Users GetSiteUsers(int iSiteId)
+        {
+            List<User> lstUser = new List<User>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstUser = dc.ExecuteQuery<User>("spgSiteUsers @SiteId = {0}", _siteID).ToList();
+            }
+
+            Users users = new Users();
+            users.AddRange(lstUser);
+            return users;
+        }
+
+        public Permissions GetSitePermissions(int iSiteId)
+        {
+            List<Permission> lstPermission = new List<Permission>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstPermission = dc.ExecuteQuery<Permission>("spgPermissions @SiteId = {0}", _siteID).ToList();
+            }
+
+            Permissions permissions = new Permissions();
+            permissions.AddRange(lstPermission);
+            return permissions;
+        }
 
         public void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
         {
