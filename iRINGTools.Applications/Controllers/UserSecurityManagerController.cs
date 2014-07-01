@@ -39,32 +39,37 @@ namespace org.iringtools.web.controllers
 
         public JsonResult getUsers()
         {
-            Users user = _repository.GetAllUsers("json");
+         //   Users user = _repository.GetAllUsers("json");
+            Users user = _repository.GetAllUsers("xml");
             return Json(user, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult getGroups()
         {
-            Groups groups = _repository.GetAllGroups("json");
+         //   Groups groups = _repository.GetAllGroups("json");
+            Groups groups = _repository.GetAllGroups("xml");
             return Json(groups, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult getPermissions()
         {
-            Permissions permissions = _repository.GetAllPermissions("json");
+            //Permissions permissions = _repository.GetAllPermissions("json");
+            Permissions permissions = _repository.GetAllPermissions("xml");
             return Json(permissions, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult getRoles()
         {
-            Roles roles = _repository.GetAllRoles("json");
+          //  Roles roles = _repository.GetAllRoles("json");
+            Roles roles = _repository.GetAllRoles("xml");
             return Json(roles, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult getGroupById(FormCollection form)
         {
             string iGroupId = form["GroupId"];
-            Group group = _repository.getGroupById(iGroupId ,"json");
+          //  Group group = _repository.getGroupById(iGroupId ,"json");
+            Group group = _repository.getGroupById(iGroupId, "xml");
             return Json(group, JsonRequestBehavior.AllowGet);
         }
 
