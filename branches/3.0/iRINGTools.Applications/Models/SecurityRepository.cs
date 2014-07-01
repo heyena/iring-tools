@@ -66,7 +66,7 @@ namespace iRINGTools.Web.Models
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                items = client.Get<Users>("/users?format=?" + format);  
+                items = client.Get<Users>("/users?format=" + format);  
 
                 _logger.Debug("Successfully called Security Service.");
             }
@@ -86,7 +86,7 @@ namespace iRINGTools.Web.Models
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                items = client.Get<Groups>("/groups?format=?" + format);  ///users?format={format}
+                items = client.Get<Groups>("/groups?format=" + format);  ///users?format={format}
 
                 _logger.Debug("Successfully called Security Service.");
             }
@@ -106,8 +106,11 @@ namespace iRINGTools.Web.Models
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                items = client.Get<Permissions>("/permissions?format=?" + format);  
+                //sitePermissions?siteId={siteId}&format={format}
 
+                items = client.Get<Permissions>("/permissions?format=" + format);  
+
+               
                 _logger.Debug("Successfully called Security Service.");
             }
             catch (Exception ex)
@@ -126,7 +129,7 @@ namespace iRINGTools.Web.Models
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                items = client.Get<Roles>("/roles?format=?" + format);
+                items = client.Get<Roles>("/roles?format=" + format);
 
                 _logger.Debug("Successfully called Security Service.");
             }
