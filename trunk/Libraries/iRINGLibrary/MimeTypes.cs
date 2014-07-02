@@ -181,10 +181,10 @@ namespace org.iringtools.library
       {".xwd", "image/x-xwindowdump"},
       {".xyz", "chemical/x-xyz"},
       {".zip", "application/zip"},
-      {".xlsx", "application/zip"},
-      {".docx", "application/zip"},
-      {".mpp", "application/zip"},
-      {".vsd", "application/zip"}
+       {".xlsx", "application/vnd.ms-excel"},
+      {".docx", "application/vnd.ms-word"},
+      {".mpp", "application/vnd.ms-project"},
+      {".vsd", "application/vnd.ms-visio"}
     };
   }
 }
