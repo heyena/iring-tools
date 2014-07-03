@@ -201,7 +201,7 @@ namespace org.iringtools.services
 
         [Description("Update sites to the data base.")]
         [WebInvoke(Method = "PUT", UriTemplate = "/sites?format={format}")]
-        public void UpdateSites(string format, Stream stream) // To do .. test
+        public void UpdateSites(string format, Stream stream) 
         {
             Response response = new Response();
             try
@@ -229,7 +229,7 @@ namespace org.iringtools.services
 
         [Description("Update contexts to the data base.")]
         [WebInvoke(Method = "DELETE", UriTemplate = "/site?siteId={siteId}&format={format}")]
-        public void DeleteSite(int siteId, string format) // To do ... Test.
+        public void DeleteSite(int siteId, string format) 
         {
             Response response = new Response();
             try
