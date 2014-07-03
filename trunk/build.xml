@@ -13,16 +13,18 @@
     <ApplicationsDir>$(MSBuildProjectDirectory)\iRINGTools.Applications</ApplicationsDir>
     <LandingPageDir>$(MSBuildProjectDirectory)\iRINGTools.Landing</LandingPageDir>
     <UtilitiesDir>$(MSBuildProjectDirectory)\Utilities</UtilitiesDir>
+    <AgentDir>$(MSBuildProjectDirectory)\Utilities\Agent</AgentDir>
     <RDFImportExportDir>$(UtilitiesDir)\RDFImportExport\RDFImportExport</RDFImportExportDir>
     <QMXFGeneratorDir>$(UtilitiesDir)\QMXFGenerator</QMXFGeneratorDir>
     <FacadeExchangeDir>$(UtilitiesDir)\FacadeExchange</FacadeExchangeDir>
-      <UnitTestsDir>$(MSBuildProjectDirectory)\Tests\NUnit.Tests</UnitTestsDir>  
+    <UnitTestsDir>$(MSBuildProjectDirectory)\Tests\NUnit.Tests</UnitTestsDir>  
     <AdapterServiceTestsDir>$(UnitTestsDir)\AdapterService.Tests</AdapterServiceTestsDir>
     <RefDataServiceTestsDir>$(UnitTestsDir)\ReferenceDataService.Tests</RefDataServiceTestsDir>    
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
     <ServicesDeploymentDir>$(DeploymentDir)\iRINGTools\Services</ServicesDeploymentDir>
     <AppsDeploymentDir>$(DeploymentDir)\iRINGTools\Apps</AppsDeploymentDir>
     <UtilitiesDeploymentDir>$(DeploymentDir)\iRINGTools\Utils</UtilitiesDeploymentDir>
+    <AgentDeploymentDir>$(DeploymentDir)\iRINGTools\Agent</AgentDeploymentDir>
     <LandingDeploymentDir>$(DeploymentDir)\iRINGTools</LandingDeploymentDir>
     <SolutionFile>iring-tools.sln</SolutionFile>
     <DropLocation>\\amers.ibechtel.com\apps\BUILDDROPS\iRINGTools\Trunk\Adapter</DropLocation>
@@ -116,13 +118,20 @@
                Utilities\FacadeExchange\bin\Release\*.xml;
                Utilities\FacadeExchange\App_Default.config;">
     </UtilitiesDeployment>
+    
+    <AgentDeployment
+      Include="Utilities\Agent\iRINGAgent\bin\Release\*.exe;     
+               Utilities\Agent\iRINGAgent\bin\Release\*.dll;
+               Utilities\Agent\iRINGAgent\bin\Release\*.config; 
+               Utilities\Agent\iRINGAgent\bin\Release\*.xml;">
+    </AgentDeployment>
   </ItemGroup>
 
   <ItemGroup>
     <DeploymentPackage Include="*.*" Exclude="*.zip">
       <Options>a -tzip -y -r</Options>
       <OutputDir>$(DeploymentDir)</OutputDir>
-      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
+      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(AgentDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
       <ZipFile>$(DeploymentDir)\iRINGTools-</ZipFile>
     </DeploymentPackage>
   </ItemGroup>
@@ -147,7 +156,11 @@
       <Output TaskParameter="Value" PropertyName="Build" />
     </XmlRead>
 
-   <XmlUpdate XPath="/version/revision" XmlFileName="version.xml" value="$(BUILD_NUMBER)"/>
+    <XmlRead XPath="/version/revision" XmlFileName="version.xml">
+      <Output TaskParameter="Value" PropertyName="revision" />
+     </XmlRead>
+    
+    <!--<XmlUpdate XPath="/version/revision" XmlFileName="version.xml" value="$(BUILD_NUMBER)"/>-->
 
      <XmlRead XPath="/version/revision" XmlFileName="version.xml">
       <Output TaskParameter="Value" PropertyName="revision" />
@@ -156,7 +169,7 @@
    <FileUpdate
       Files="$(AssemblyInfoFile)"
       Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*"
-      ReplacementText="$(Major).$(Minor).$(Build).$(BUILD_NUMBER)"/>
+      ReplacementText="$(Major).$(Minor).$(Build).$(revision)"/>
 
   </Target>
 
@@ -208,7 +221,7 @@
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
-    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
+    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(AgentDeploymentDir); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
     
     <Message Text="Creating Services deployment ..." />
     <Copy SourceFiles="@(ServicesDeployment)"
@@ -231,6 +244,11 @@
     <Exec Command="Move /Y $(UtilitiesDeploymentDir)\QMXFGenerator_Default.config $(UtilitiesDeploymentDir)\QMXFGenerator.exe.config" />
     <Exec Command="Move /Y $(UtilitiesDeploymentDir)\RDFImportExport_Default.config $(UtilitiesDeploymentDir)\RDFImportExport.exe.config" />
 
+    <Message Text="Creating Agent deployment ..." />
+    <Copy SourceFiles="@(AgentDeployment)"
+          DestinationFiles="@(AgentDeployment->'$(AgentDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(AgentDeploymentDir)\App_Default.config $(AgentDeploymentDir)\iRINGAgent.exe.config" />
+    
     <Message Text="Creating landing page deployment ..." />
     <Copy SourceFiles="@(LandingDeployment)"
           DestinationFiles="@(LandingDeployment->'$(LandingDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />

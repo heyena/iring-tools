@@ -11,5 +11,5 @@ svn update
 pause
 
 echo Building C# projects ...
-msbuild build.xml /t:ReBuild,CreatePackages
+msbuild build.xml /t:ReBuild,CreatePackages /p:configuration=Release
 pause
