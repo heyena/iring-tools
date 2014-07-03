@@ -409,7 +409,7 @@ namespace org.iringtools.services
 
         [Description("Return all users for group from the database.")]
         [WebGet(UriTemplate = "/groupUsers?groupId={groupId}&format={format}")]
-        public void spgGroupUsers(int groupId, string format) // Completed.
+        public void GetGroupUsers(int groupId, string format) // Completed.
         {
             try
             {
@@ -463,6 +463,103 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
         }
+
+        [Description("Return all groups that the user belongs to from the database.")]
+        [WebGet(UriTemplate = "/groupsUser?userId={userId}&format={format}")]
+        public void GetGroupsUser(int userId, string format) // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Groups groups = _userSecurityProvider.GetGroupsUser(userId);
+                _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Return all users based on user id and group id from the database.")]
+        [WebGet(UriTemplate = "/groupUser?groupId={groupId}&userId={userId}&format={format}")]
+        public void GetGroupUser(int groupId, int userId, string format) // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Users users = _userSecurityProvider.GetGroupUser(groupId, userId);
+                _userSecurityProvider.FormatOutgoingMessage<Users>(users, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Return all role based on group from the database.")]
+        [WebGet(UriTemplate = "/groupRoles?groupId={groupId}&format={format}")]
+        public void GetGroupRoles(int groupId, string format) // Completed.
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Roles roles = _userSecurityProvider.GetGroupRoles(groupId);
+                _userSecurityProvider.FormatOutgoingMessage<Roles>(roles, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Return permissions based on role from the database.")]
+        [WebGet(UriTemplate = "/rolePermissions?roleId={roleId}&format={format}")]
+        public void GetRolePermissions(int roleId, string format) 
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Permissions permissions = _userSecurityProvider.GetRolePermissions(roleId);
+                _userSecurityProvider.FormatOutgoingMessage<Permissions>(permissions, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Return permissions based on role id and Permission id from the database.")]
+        [WebGet(UriTemplate = "/rolePermission?roleId={roleId}&permissionId={permissionId}&format={format}")]
+        public void GetRolePermission(int roleId, int permissionId, string format)      
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+                Permissions permissions = _userSecurityProvider.GetRolePermission(roleId, permissionId);
+                _userSecurityProvider.FormatOutgoingMessage<Permissions>(permissions, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+
 
         #region Private Methods
         private string MapContentType(string format)
