@@ -81,19 +81,24 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net">
-      <HintPath>..\..\..\..\..\svncorp-dmz\iringtools_datalayers\Aconex_datalayer\trunk\lib\log4net\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ExternalBinaries\dotnetRDF\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject">
+    <Reference Include="Ninject, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject.Extensions.Xml">
+    <Reference Include="Ninject.Extensions.Xml, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ExternalBinaries\Ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
     </Reference>
-    <Reference Include="StaticDust.Configuration">
+    <Reference Include="StaticDust.Configuration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=21c5f8854d868864">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -156,25 +161,25 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\trunk\Libraries\AdapterLibrary\AdapterLibrary.csproj">
-      <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
-      <Name>AdapterLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\trunk\Libraries\iRINGLibrary\iRINGLibrary.csproj">
-      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\trunk\Libraries\UtilityLibrary\UtilityLibrary.csproj">
-      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
-      <Name>UtilityLibrary</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="AgentConfig.xml" />
     <Content Include="App_Data\BindingConfiguration.99999_000.iw.xml" />
     <Content Include="App_Data\Configuration.99999_000.iw.xml" />
     <Content Include="App_Data\IWFilter.99999_000.iw.documents.xml" />
     <Content Include="App_Data\Scopes.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\AdapterLibrary\AdapterLibrary.csproj">
+      <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
+      <Name>AdapterLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
+      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
+      <Name>UtilityLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
