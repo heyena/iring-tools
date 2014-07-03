@@ -453,6 +453,81 @@ namespace org.iringtools.UserSecurity
             return permissions;
         }
 
+        public Groups GetGroupsUser(int iUserId)
+        {
+            List<Group> lstGroup = new List<Group>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstGroup = dc.ExecuteQuery<Group>("spgGroupUser @UserId = {0}, @SiteId = {1}", iUserId, _siteID).ToList();
+            }
+
+            Groups groups = new Groups();
+            groups.AddRange(lstGroup);
+            return groups;
+        }
+
+        public Users GetGroupUser(int iGroupId, int iUserId)
+        {
+            List<User> lstGroup = new List<User>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstGroup = dc.ExecuteQuery<User>("spgGroupUserIdGroupId @UserId = {0}, @GroupId = {1}, @SiteId = {2}",
+                                                   iUserId, iGroupId, _siteID).ToList();
+            }
+
+            Users users = new Users();
+            users.AddRange(lstGroup);
+            return users;
+        }
+
+
+        public Roles GetGroupRoles(int iGroupId)
+        {
+            List<Role> lstRole = new List<Role>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstRole = dc.ExecuteQuery<Role>("spgRolesGroup @GroupId = {0}, @SiteId = {1}",
+                                                                    iGroupId, _siteID).ToList();
+            }
+
+            Roles roles = new Roles();
+            roles.AddRange(lstRole);
+            return roles;
+        }
+
+        public Permissions GetRolePermissions(int iRoleId)
+        {
+            List<Permission> lstPermission = new List<Permission>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstPermission = dc.ExecuteQuery<Permission>("spgRolePermissions @RoleId = {0}, @SiteId = {1}",
+                                                                    iRoleId, _siteID).ToList();
+            }
+
+            Permissions permissions = new Permissions();
+            permissions.AddRange(lstPermission);
+            return permissions;
+        }
+
+        public Permissions GetRolePermission(int iRoleId, int iPermissionId) 
+        {
+            List<Permission> lstPermission = new List<Permission>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstPermission = dc.ExecuteQuery<Permission>("spgPermissionRoles @RoleId = {0}, @PermissionId = {1}, @SiteId = {2}",
+                                                                    iRoleId, iPermissionId, _siteID).ToList();
+            }
+
+            Permissions permissions = new Permissions();
+            permissions.AddRange(lstPermission);
+            return permissions;
+        }
+
         public void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
         {
             if (format.ToUpper() == "JSON")
