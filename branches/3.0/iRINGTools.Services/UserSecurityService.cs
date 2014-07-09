@@ -134,7 +134,7 @@ namespace org.iringtools.services
 
         [Description("Get all sites from the database.")]
         [WebGet(UriTemplate = "/sites?format={format}")]
-        public void GetSites(string format)  // Completed.
+        public void GetSites(string format) 
         {
             try
             {
@@ -154,7 +154,7 @@ namespace org.iringtools.services
 
         [Description("Get site by site ID from the database.")]
         [WebGet(UriTemplate = "/site?siteId={siteId}&format={format}")]
-        public void GetSite(int siteId, string format) // Completed.
+        public void GetSite(int siteId, string format) 
         {
             try
             {
@@ -173,7 +173,7 @@ namespace org.iringtools.services
 
         [Description("Insert sites to the data base.")]
         [WebInvoke(Method = "POST", UriTemplate = "/sites?format={format}")]
-        public void InsertSites(string format, Stream stream)  // Completed.
+        public void InsertSites(string format, Stream stream)  
         {
             Response response = new Response();
             try
@@ -257,7 +257,7 @@ namespace org.iringtools.services
 
         [Description("Get all groups from the database.")]
         [WebGet(UriTemplate = "/groups?format={format}")]
-        public void GetGroups(string format)   // Completed.
+        public void GetGroups(string format)   
         {
             try
             {
@@ -276,7 +276,7 @@ namespace org.iringtools.services
         	 
         [Description("Get groups by group id from the database.")]
         [WebGet(UriTemplate = "/group?groupId={iGroupId}&format={format}")]
-        public void GetGroupById(int iGroupId, string format)  // Completed.
+        public void GetGroupById(int iGroupId, string format)  
         {
             try
             {
@@ -295,7 +295,7 @@ namespace org.iringtools.services
 
         [Description("Get groups by group id from the database.")]
         [WebGet(UriTemplate = "/user?userId={userId}&format={format}")]
-        public void GetUser(int userId, string format)    // Completed.
+        public void GetUser(int userId, string format)    
         {
             try
             {
@@ -314,7 +314,7 @@ namespace org.iringtools.services
 
         [Description("Get all roles from the database.")]
         [WebGet(UriTemplate = "/roles?format={format}")]
-        public void GetRoles(string format) // Completed.
+        public void GetRoles(string format) 
         {
             try
             {
@@ -331,9 +331,205 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Insert roles to the database.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/roles?format={format}")]
+        public void InsertRoles(string format, Stream stream)
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<Roles>(stream, format);
+                    response = _userSecurityProvider.InsertRole(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Update roles in the data base.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/roles?format={format}")]
+        public void UpdateRoles(string format, Stream stream) 
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<Roles>(stream, format);
+                    response = _userSecurityProvider.UpdateRoles(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Delete role from the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/roles?roleId={roleId}&format={format}")]
+        public void DeleteRole(int roleId, string format) 
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    response = _userSecurityProvider.DeleteRole(roleId);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+
+        [Description("Insert permissions to the database.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/permissions?format={format}")]
+        public void InsertPermissions(string format, Stream stream)  
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<Permissions>(stream, format);
+                    response = _userSecurityProvider.InsertPermission(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+
+        [Description("Update permissions in the data base.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/permissions?format={format}")]
+        public void UpdatePermissions(string format, Stream stream) 
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<Permissions>(stream, format);
+                    response = _userSecurityProvider.UpdatePermissions(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Delete permission from the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/permissions?permissionId={permissionId}&format={format}")]
+        public void DeletePermission(int permissionId, string format)
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    response = _userSecurityProvider.DeletePermission(permissionId);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Insert groups to the database.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/groups?format={format}")]
+        public void InsertGroups(string format, Stream stream) 
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<Groups>(stream, format);
+                    response = _userSecurityProvider.InsertGroup(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
         [Description("Get groups by group id from the database.")]
         [WebGet(UriTemplate = "/role?roleId={iroleId}&format={format}")]
-        public void GetRoleById(int iroleId, string format)  // Completed.
+        public void GetRoleById(int iroleId, string format)  
         {
             try
             {
@@ -352,7 +548,7 @@ namespace org.iringtools.services
 
         [Description("Get roles by site ID from the database.")]
         [WebGet(UriTemplate = "/siteRole?siteId={siteId}&format={format}")]
-        public void GetSiteRoles(int siteId, string format) // Completed.
+        public void GetSiteRoles(int siteId, string format)
         {
             try
             {
@@ -371,7 +567,7 @@ namespace org.iringtools.services
 
         [Description("Get roles based on groupId and roleId from the database.")]
         [WebGet(UriTemplate = "/groupRole?groupId={groupId}&roleId={roleId}&format={format}")]
-        public void GetGroupRole(int groupId, int roleId, string format) // Completed.
+        public void GetGroupRole(int groupId, int roleId, string format) 
         {
             try
             {
@@ -390,7 +586,7 @@ namespace org.iringtools.services
 
         [Description("Return groups based on site from the database.")]
         [WebGet(UriTemplate = "/siteGroups?siteId={siteId}&format={format}")]
-        public void GetSiteGroups(int siteId, string format) // Completed.
+        public void GetSiteGroups(int siteId, string format) 
         {
             try
             {
@@ -409,7 +605,7 @@ namespace org.iringtools.services
 
         [Description("Return all users for group from the database.")]
         [WebGet(UriTemplate = "/groupUsers?groupId={groupId}&format={format}")]
-        public void GetGroupUsers(int groupId, string format) // Completed.
+        public void GetGroupUsers(int groupId, string format) 
         {
             try
             {
@@ -428,7 +624,7 @@ namespace org.iringtools.services
 
         [Description("Return all users based on site from the database.")]
         [WebGet(UriTemplate = "/siteUsers?siteId={siteId}&format={format}")]
-        public void GetSiteUsers(int siteId, string format) // Completed.
+        public void GetSiteUsers(int siteId, string format) 
         {
             try
             {
@@ -447,7 +643,7 @@ namespace org.iringtools.services
 
         [Description("Return all permissions based on site from the database.")]
         [WebGet(UriTemplate = "/sitePermissions?siteId={siteId}&format={format}")]
-        public void GetSitePermissions(int siteId, string format) // Completed.
+        public void GetSitePermissions(int siteId, string format) 
         {
             try
             {
@@ -466,7 +662,7 @@ namespace org.iringtools.services
 
         [Description("Return all groups that the user belongs to from the database.")]
         [WebGet(UriTemplate = "/groupsUser?userId={userId}&format={format}")]
-        public void GetGroupsUser(int userId, string format) // Completed.
+        public void GetGroupsUser(int userId, string format) 
         {
             try
             {
@@ -485,7 +681,7 @@ namespace org.iringtools.services
 
         [Description("Return all users based on user id and group id from the database.")]
         [WebGet(UriTemplate = "/groupUser?groupId={groupId}&userId={userId}&format={format}")]
-        public void GetGroupUser(int groupId, int userId, string format) // Completed.
+        public void GetGroupUser(int groupId, int userId, string format)
         {
             try
             {
@@ -504,7 +700,7 @@ namespace org.iringtools.services
 
         [Description("Return all role based on group from the database.")]
         [WebGet(UriTemplate = "/groupRoles?groupId={groupId}&format={format}")]
-        public void GetGroupRoles(int groupId, string format) // Completed.
+        public void GetGroupRoles(int groupId, string format) 
         {
             try
             {
