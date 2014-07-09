@@ -140,7 +140,7 @@ namespace org.iringtools.UserSecurity
             {
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<Context>("spdUser @UserId = {0}, @SiteId = {1}", userId, _siteID);
+                    dc.ExecuteQuery<User>("spdUser @UserId = {0}, @SiteId = {1}", userId, _siteID);
                 }
 
                 response.DateTimeStamp = DateTime.Now;
@@ -205,6 +205,246 @@ namespace org.iringtools.UserSecurity
                 site = lstSite.First();
 
             return site;
+        }
+
+        public Response InsertRole(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Roles roles = Utility.DeserializeDataContract<Roles>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Role role in roles)
+                    {
+                        dc.ExecuteQuery<Role>("spiRole @SiteId = {0}, @RoleName = {1}, @RoleDesc = {2}",
+                                                         _siteID, role.RoleName, role.RoleDesc).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Roles added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Roles: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response UpdateRoles(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Roles roles = Utility.DeserializeDataContract<Roles>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Role role in roles)
+                    {
+                        dc.ExecuteQuery<Role>("spuRoles @RoleId = {0}, @SiteId = {1}, @RoleName = {2}, @RoleDesc = {3}",
+                                                        role.RoleId, _siteID, role.RoleName, role.RoleDesc).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Roles updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error updating Roles: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeleteRole(int roleId)
+        {
+            Response response = new Response();
+
+            try
+            {
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteQuery<Role>("spdRoles @RoleId = {0}, @SiteId = {1}", roleId, _siteID);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Role deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting Role: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response InsertPermission(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Permissions permissions = Utility.DeserializeDataContract<Permissions>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Permission permission in permissions)
+                    {
+                        dc.ExecuteQuery<Permission>("spiPermissions @SiteId = {0}, @PermissionName = {1}, @PermissionDesc = {2}",
+                                                         _siteID, permission.PermissionName, permission.PermissionDesc).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Permissions added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Permissions: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response UpdatePermissions(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Permissions permissions = Utility.DeserializeDataContract<Permissions>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Permission permission in permissions)
+                    {
+                        dc.ExecuteQuery<Permission>("spuPermissions @SiteId = {0}, @PermissionId = {1}, @PermissionName = {2}, @PermissionDesc = {3}",
+                                                        _siteID, permission.PermissionId, permission.PermissionName, permission.PermissionDesc).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Permissions updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error updating Permissions: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeletePermission(int permissionId)
+        {
+            Response response = new Response();
+
+            try
+            {
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteQuery<Permission>("spdPermissions @PermissionId = {0}, @SiteId = {1}", permissionId, _siteID);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Permission deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting Permission: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response InsertGroup(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Groups groups = Utility.DeserializeDataContract<Groups>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Group group in groups)
+                    {
+                        dc.ExecuteQuery<Group>("spiGroups @SiteId = {0}, @GroupName = {1}, @GroupDesc = {2}",
+                                                         _siteID, group.GroupName, group.GroupDesc).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Groups added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Groups: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
         }
 
         public Response InsertSite(XDocument xml)
@@ -285,7 +525,7 @@ namespace org.iringtools.UserSecurity
             {
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<Context>("spdSites @SiteId = {0}", _siteID);
+                    dc.ExecuteQuery<Site>("spdSites @SiteId = {0}", _siteID);
                 }
 
                 response.DateTimeStamp = DateTime.Now;
