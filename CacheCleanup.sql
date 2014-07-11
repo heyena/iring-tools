@@ -48,7 +48,7 @@ BEGIN TRY
 					
 					IF LEN(@tablename) = 0 OR @tablename =''
 					BEGIN
-						select LEN(@tablename)
+						--select LEN(@tablename)
 						SET @Query = 'DROP TABLE ' + @name
 						EXEC (@Query)
 						print @Query
