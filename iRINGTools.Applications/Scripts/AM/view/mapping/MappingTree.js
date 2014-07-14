@@ -153,7 +153,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                     me.setLoading(false);
                 }
             });
-		}/*else if (overModel.data.type == 'RoleMapNode') {
+		}else if (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'ClassNode') {
             reference = data.records[0].data.record.Uri;
             label = data.records[0].data.record.Label;
             roleId = overModel.data.record.id;
@@ -199,7 +199,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                     me.setLoading(false);
                 }
             });
-        }*/
+        }
         else if (modelType == 'TemplateNode') { //(data.records[0].data.type == 'TemplateNode') {
             ntype = overModel.data.type;
             parentid = overModel.data.identifier;
