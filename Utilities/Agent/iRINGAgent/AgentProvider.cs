@@ -69,7 +69,13 @@ namespace org.iringtools.agent
 
                 if (task.TaskType.ToLower().Equals("cache"))
                 {
-                    RefreshCache(task.Project, task.App, false);
+                  if (clientToken != null)
+                  {
+                    _settings["AllowImpersonation"] = "True";
+                    _settings["ImpersonatedUser"] = _clientId;
+                    _settings["ClientToken"] = clientToken;
+                  }
+                  RefreshCache(task.Project, task.App, false);
                 }
                 else if (task.TaskType.ToLower().Equals("exchange"))
                 {
