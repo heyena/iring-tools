@@ -447,6 +447,72 @@ namespace org.iringtools.UserSecurity
             return response;
         }
 
+        public Response UpdateGroups(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Groups groups = Utility.DeserializeDataContract<Groups>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Group group in groups)
+                    {
+                        dc.ExecuteQuery<Group>("spuGroups @SiteId = {0}, @GroupId = {1}, @GroupName = {2}, @GroupDesc = {3}",
+                                                        _siteID, group.GroupId, group.GroupName, group.GroupDesc).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Groups updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error updating Groups: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeleteGroup(int groupId)
+        {
+            Response response = new Response();
+
+            try
+            {
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteQuery<Group>("spdGroups @GroupId = {0}, @SiteId = {1}", groupId, _siteID);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Group deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting Group: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
         public Response InsertSite(XDocument xml)
         {
             Response response = new Response();
