@@ -253,26 +253,6 @@ namespace org.iringtools.services
             PrepareResponse(ref response);
             _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
         }
-
-
-        [Description("Get all groups from the database.")]
-        [WebGet(UriTemplate = "/groups?format={format}")]
-        public void GetGroups(string format)   
-        {
-            try
-            {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
-                Groups groups = _userSecurityProvider.GetAllGroups();
-                _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
-            }
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-        }
         	 
         [Description("Get groups by group id from the database.")]
         [WebGet(UriTemplate = "/group?groupId={iGroupId}&format={format}")]
@@ -499,6 +479,26 @@ namespace org.iringtools.services
             _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
         }
 
+        [Description("Get all groups from the database.")]
+        [WebGet(UriTemplate = "/groups?format={format}")]
+        public void GetGroups(string format)
+        {
+            try
+            {
+                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+                context.ContentType = "application/xml";
+
+                Groups groups = _userSecurityProvider.GetAllGroups();
+                _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
         [Description("Insert groups to the database.")]
         [WebInvoke(Method = "POST", UriTemplate = "/groups?format={format}")]
         public void InsertGroups(string format, Stream stream) 
@@ -515,6 +515,61 @@ namespace org.iringtools.services
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<Groups>(stream, format);
                     response = _userSecurityProvider.InsertGroup(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Update groups in the data base.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/groups?format={format}")]
+        public void UpdateGroups(string format, Stream stream)
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<Groups>(stream, format);
+                    response = _userSecurityProvider.UpdateGroups(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Delete group from the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/groups?groupId={groupId}&format={format}")]
+        public void DeleteGroup(int groupId, string format)
+        {
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    response = _userSecurityProvider.DeleteGroup(groupId);
                 }
             }
             catch (Exception ex)
