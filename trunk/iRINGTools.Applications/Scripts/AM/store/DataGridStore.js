@@ -14,42 +14,76 @@
  */
 
 Ext.define('AM.store.DataGridStore', {
-  extend: 'Ext.data.Store',
+    extend: 'Ext.data.Store',
 
-  requires: [
+    requires: [
     'AM.model.DynamicModel'
   ],
 
-  constructor: function(cfg) {
-    var me = this;
-    cfg = cfg || {};
-    me.callParent([Ext.apply({
-      autoLoad: false,
-      model: 'AM.model.DynamicModel',
-      remoteSort: true,
-      storeId: 'DataGridStore',
-      pageSize: 25,
-	  //buffered: false,
-      proxy: {
-        type: 'ajax',
-        actionMethods: {
-          read: 'POST'
-        },
-        extraParams: {
-          scope: null,
-          start: 0,
-          limit: 25,
-          app: null,
-          graph: null,
-          baseUrl: null
-        },
-        timeout: 1000000,
-        url: 'GridManager/Pages',
-        reader: {
-          type: 'json',
-          root: 'data'
+    constructor: function (cfg) {
+        var me = this;
+        cfg = cfg || {};
+
+
+        if (Ext.getElementById('gridCheckbox').checked == true) {
+            me.callParent([Ext.apply({
+                model: 'EM.model.DynamicModel',
+                remoteSort: true,
+                pageSize: 40,
+                leadingBufferZone: 80,
+                buffered: true,
+                storeId: 'DataGridStore',
+                proxy: {
+                    type: 'ajax',
+                    actionMethods: {
+                        read: 'POST'
+                    },
+                    extraParams: {
+                        scope: null,
+                        app: null,
+                        graph: null,
+                        baseUrl: null
+                    },
+                    url: 'GridManager/Pages',
+                    timeout: 1000000,
+                    reader: {
+                        type: 'json',
+                        root: 'data',
+                        useSimpleAccessors: true
+                    }
+                }
+            }, cfg)]);
         }
-      }
-    }, cfg)]);
-  }
+        else {
+            me.callParent([Ext.apply({
+                autoLoad: false,
+                model: 'AM.model.DynamicModel',
+                remoteSort: true,
+                storeId: 'DataGridStore',
+                pageSize: 25,
+                //buffered: false,
+                proxy: {
+                    type: 'ajax',
+                    actionMethods: {
+                        read: 'POST'
+                    },
+                    extraParams: {
+                        scope: null,
+                        start: 0,
+                        limit: 25,
+                        app: null,
+                        graph: null,
+                        baseUrl: null
+                    },
+                    timeout: 1000000,
+                    url: 'GridManager/Pages',
+                    reader: {
+                        type: 'json',
+                        root: 'data',
+                        useSimpleAccessors: true
+                    }
+                }
+            }, cfg)]);
+        }
+    }
 });
