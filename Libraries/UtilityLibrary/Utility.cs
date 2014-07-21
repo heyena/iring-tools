@@ -926,6 +926,29 @@ namespace org.iringtools.utility
       }
     }
 
+    public static XElement Serialize<T>(this T graph)
+    {
+        try
+        {
+            XDocument doc;
+            using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
+            using (System.Xml.XmlWriter writer = XmlDictionaryWriter.CreateTextWriter(stream))
+            {
+                DataContractSerializer s = new DataContractSerializer(typeof(T));
+                s.WriteObject(writer, graph);
+                writer.Flush();
+                stream.Position = 0;
+                doc = XDocument.Load(stream);
+
+                return doc.Root;
+            }
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error serializing [" + typeof(T).Name + "].", exception);
+        }
+    }
+
     public static string SerializeFromStream(Stream graph)
     {
       try
