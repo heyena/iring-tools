@@ -73,6 +73,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
                         nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(context.FolderId) });
 
                         DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiContext", nvl);
                     }
@@ -121,6 +122,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
                         nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(context.FolderId) });
 
                         DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuContext", nvl);
                     }
@@ -308,6 +310,123 @@ namespace org.iringtools.applicationConfig
             return graphs;
         }
 
+        public Response InsertGraph(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Graphs graphs = Utility.DeserializeDataContract<Graphs>(xml.ToString());
+               
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Graph graph in graphs)
+                    {
+                        //if (graph.graph == null)  ////For testing purpose.
+                        //{
+                        //    string grapthPath = @"C:\Branch3.0\iRINGTools.Services\App_Data\Mapping.1234_000.ABC.xml";
+                        //    byte[] bytes = System.IO.File.ReadAllBytes(grapthPath);
+                        //    graph.graph = bytes;
+                        //}
+
+                        dc.ExecuteQuery<Graph>("spiGraphs @ApplicationId = {0}, @GraphName = {1}, @Graph = {2}, @SiteId = {3}",
+                                                         graph.ApplicationId, graph.GraphName, graph.graph, _siteID).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Graphs added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Graphs: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+
+        public Response UpdateGraphs(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Graphs graphs = Utility.DeserializeDataContract<Graphs>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    foreach (Graph graph in graphs)
+                    {
+                        if (graph.GraphId == Guid.Empty)
+                        {
+                            throw new Exception("Please provide the GraphId of the Graph in" +
+                                                  " the payload which you want to update.");
+                        }
+
+                        dc.ExecuteQuery<Graph>("spuGraphs @GraphId = {0}, @GraphName = {1}, @Graph = {2}, " +
+                                                "@SiteId = {3}", graph.GraphId, graph.GraphName, graph.graph, _siteID).ToList();
+                    }
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Graphs updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error updating Graphs: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeleteGraph(string graphId)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Guid id = new Guid(graphId);
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteQuery<Graph>("spdGraph @GraphId = {0}, @SiteId = {1}", id, _siteID);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Graph deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting Graph: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
 
         public Applications GetApplicationsForUser(string user)
         {
@@ -408,7 +527,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public XElement FormatIncomingMessage<T>(Stream stream, string format)
+        public XElement FormatIncomingMessage<T>(Stream stream, string format, bool isBase64encoded = false)
         {
             XElement xElement = null;
 
@@ -421,11 +540,14 @@ namespace org.iringtools.applicationConfig
             {
                 T dataItems = FormatIncomingMessage<T>(stream);
 
-                xElement = dataItems.ToXElement<T>();
+                if (isBase64encoded)
+                    xElement = dataItems.Serialize<T>();
+                else
+                    xElement = dataItems.ToXElement<T>();
             }
 
             return xElement;
-        }
+        }        
 
         public T FormatIncomingMessage<T>(Stream stream)
         {

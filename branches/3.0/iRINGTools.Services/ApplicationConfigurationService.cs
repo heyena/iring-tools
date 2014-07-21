@@ -36,8 +36,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
 
                 org.iringtools.applicationConfig.Contexts contexts = _applicationConfigurationProvider.GetAllContexts();
                 _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Contexts>(contexts, format, true);
@@ -55,6 +56,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "POST", UriTemplate = "/contexts?format={format}")]
         public void InsertContexts(string format, Stream stream) // Completed.
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -83,6 +87,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "PUT", UriTemplate = "/contexts?format={format}")]
         public void UpdateContexts(string format, Stream stream) // Completed.
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -111,6 +118,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "DELETE", UriTemplate = "/contexts/{internalName}?format={format}")]
         public void DeleteContexts(string internalName, string format) // Completed.
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -140,8 +150,8 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
 
                 Applications applications = _applicationConfigurationProvider.GetAllApplications(scopeInternalName);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Applications>(applications, format, true);
@@ -159,6 +169,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "POST", UriTemplate = "/apps/{scopeInternalName}?format={format}")]
         public void InsertApplications(string scopeInternalName, string format, Stream stream) 
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -187,6 +200,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "PUT", UriTemplate = "/apps/{scopeInternalName}?format={format}")]
         public void UpdateApplications(string scopeInternalName, string format, Stream stream) // Completed.
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -215,6 +231,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "DELETE", UriTemplate = "/apps/{scopeInternalName}/{appInternalName}?format={format}")]
         public void DeleteApplication(string scopeInternalName, string appInternalName, string format) // Completed.
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -244,8 +263,8 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
 
                 Graphs graphs = _applicationConfigurationProvider.GetAllGraphs();
                 _applicationConfigurationProvider.FormatOutgoingMessage<Graphs>(graphs, format, true);
@@ -259,6 +278,97 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Insert graphs to the data base.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/graphs?format={format}")]
+        public void InsertGraphs(string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Graphs>(stream, format, true);
+                    response = _applicationConfigurationProvider.InsertGraph(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Update graphs to the data base.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/graphs?format={format}")]
+        public void UpdateGraphs(string format, Stream stream) // Completed.
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Graphs>(stream, format, true);
+                    response = _applicationConfigurationProvider.UpdateGraphs(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
+
+        [Description("Delete Graphs from the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/graphs/{graphId}?format={format}")]
+        public void DeleteGraph(string graphId, string format) // Completed.
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    response = _applicationConfigurationProvider.DeleteGraph(graphId);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+        }
 
         [Description("Get application collection for user")]
         [WebGet(UriTemplate = "/app/{user}?format={format}")]
@@ -266,8 +376,8 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
 
                 Applications applications = _applicationConfigurationProvider.GetApplicationsForUser(user);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Applications>(applications, format, true);
@@ -284,6 +394,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "POST", UriTemplate = "/app/{user}?format={format}")]
         public void AddApplicationForUser(string user, string format, Stream stream)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -310,6 +423,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "PUT", UriTemplate = "/app/{user}?format={format}")]
         public void UpdateApplicationForUser(string user, string format, Stream stream)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -336,6 +452,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "DELETE", UriTemplate = "/app/{user}?format={format}")]
         public void DeleteApplicationForUser(string user, string format)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
