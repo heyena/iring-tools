@@ -1,0 +1,16 @@
+<agentconfig xmlns="http://www.iringtools.org/library"
+	xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<tasksequence>
+		<name>Sample Cache Update</name>
+		<tasks>
+			<task>
+				<tasktype>cache</tasktype>
+				<project>12345_000</project>
+				<app>abc</app>
+			</task>
+		</tasks>
+	</tasksequence>
+</agentconfig>
+
+
+
