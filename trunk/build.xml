@@ -166,7 +166,7 @@
       <Output TaskParameter="Value" PropertyName="revision" />
      </XmlRead>
     
-     <!--<XmlUpdate XPath="/version/revision" XmlFileName="version.xml" value="$(BUILD_NUMBER)"/>-->
+     <XmlUpdate XPath="/version/revision" XmlFileName="version.xml" value="$(BUILD_NUMBER)"/>
 
      <XmlRead XPath="/version/revision" XmlFileName="version.xml">
       <Output TaskParameter="Value" PropertyName="revision" />
