@@ -1,0 +1,17 @@
+<agentconfig xmlns="http://www.iringtools.org/library"
+	xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<tasksequence>
+		<name>Sample Exchange</name>
+		<tasks>
+			<task>
+				<tasktype>exchange</tasktype>
+				<baseURL>http://irtapp-core-dev.becpsn.com/apps/runUnattendedExchange</baseURL>
+				<scope>12345_000</scope>
+				<exchangeId>1</exchangeId>
+			</task>
+		</tasks>
+	</tasksequence>
+</agentconfig>
+
+
+
