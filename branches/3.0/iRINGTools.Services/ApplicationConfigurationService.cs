@@ -468,6 +468,26 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Get context collection for user")]
+        [WebGet(UriTemplate = "/contexts/{userName}?format={format}")]
+        public void GetContextsForUser(string userName, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
+                org.iringtools.applicationConfig.Contexts contexts = _applicationConfigurationProvider.GetContextsForUser(userName);
+                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Contexts>(contexts, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
         #region Private Methods
         private string MapContentType(string format)
         {

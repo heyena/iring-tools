@@ -35,8 +35,8 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
 
                 Users users = _userSecurityProvider.GetAllUsers();
                 _userSecurityProvider.FormatOutgoingMessage<Users>(users, format, true);
@@ -53,6 +53,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "POST", UriTemplate = "/users?format={format}")]
         public void InsertUsers(string format,Stream stream)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -81,6 +84,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "PUT", UriTemplate = "/users?format={format}")]
         public void UpdateUsers(string format, Stream stream)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -109,6 +115,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "DELETE", UriTemplate = "/users?userId={userId}&format={format}")]
         public void DeleteUser(int userId, string format)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -138,8 +147,8 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
 
                 Sites sites = _userSecurityProvider.GetSites();
                 _userSecurityProvider.FormatOutgoingMessage<Sites>(sites, format, true);
@@ -158,8 +167,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Site site = _userSecurityProvider.GetSite(siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Site>(site, format, true);
             }
@@ -175,6 +185,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "POST", UriTemplate = "/sites?format={format}")]
         public void InsertSites(string format, Stream stream)  
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -201,8 +214,11 @@ namespace org.iringtools.services
 
         [Description("Update sites to the data base.")]
         [WebInvoke(Method = "PUT", UriTemplate = "/sites?format={format}")]
-        public void UpdateSites(string format, Stream stream) 
+        public void UpdateSites(string format, Stream stream)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -231,6 +247,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "DELETE", UriTemplate = "/site?siteId={siteId}&format={format}")]
         public void DeleteSite(int siteId, string format) 
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -260,8 +279,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Group group = _userSecurityProvider.GetGroupById(iGroupId);
                 _userSecurityProvider.FormatOutgoingMessage<Group>(group, format, true);
             }
@@ -279,8 +299,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 User user = _userSecurityProvider.GetUserById(userId);
                 _userSecurityProvider.FormatOutgoingMessage<User>(user, format, true);
             }
@@ -298,8 +319,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Roles roles = _userSecurityProvider.GetAllRoles();
                 _userSecurityProvider.FormatOutgoingMessage<Roles>(roles, format, true);
             }
@@ -315,6 +337,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "POST", UriTemplate = "/roles?format={format}")]
         public void InsertRoles(string format, Stream stream)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -341,8 +366,11 @@ namespace org.iringtools.services
 
         [Description("Update roles in the data base.")]
         [WebInvoke(Method = "PUT", UriTemplate = "/roles?format={format}")]
-        public void UpdateRoles(string format, Stream stream) 
+        public void UpdateRoles(string format, Stream stream)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -371,6 +399,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "DELETE", UriTemplate = "/roles?roleId={roleId}&format={format}")]
         public void DeleteRole(int roleId, string format) 
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -399,6 +430,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "POST", UriTemplate = "/permissions?format={format}")]
         public void InsertPermissions(string format, Stream stream)  
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -426,8 +460,11 @@ namespace org.iringtools.services
 
         [Description("Update permissions in the data base.")]
         [WebInvoke(Method = "PUT", UriTemplate = "/permissions?format={format}")]
-        public void UpdatePermissions(string format, Stream stream) 
+        public void UpdatePermissions(string format, Stream stream)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -456,6 +493,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "DELETE", UriTemplate = "/permissions?permissionId={permissionId}&format={format}")]
         public void DeletePermission(int permissionId, string format)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -485,8 +525,8 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
 
                 Groups groups = _userSecurityProvider.GetAllGroups();
                 _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
@@ -501,8 +541,11 @@ namespace org.iringtools.services
 
         [Description("Insert groups to the database.")]
         [WebInvoke(Method = "POST", UriTemplate = "/groups?format={format}")]
-        public void InsertGroups(string format, Stream stream) 
+        public void InsertGroups(string format, Stream stream)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -531,6 +574,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "PUT", UriTemplate = "/groups?format={format}")]
         public void UpdateGroups(string format, Stream stream)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -559,6 +605,9 @@ namespace org.iringtools.services
         [WebInvoke(Method = "DELETE", UriTemplate = "/groups?groupId={groupId}&format={format}")]
         public void DeleteGroup(int groupId, string format)
         {
+            if (string.IsNullOrEmpty(format))
+            { format = "json"; }
+
             Response response = new Response();
             try
             {
@@ -588,8 +637,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Role role = _userSecurityProvider.GetRoleById(iroleId);
                 _userSecurityProvider.FormatOutgoingMessage<Role>(role, format, true);
             }
@@ -607,8 +657,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Roles roles = _userSecurityProvider.GetSiteRoles(siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Roles>(roles, format, true);
             }
@@ -626,8 +677,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 GroupRoles groupRoles = _userSecurityProvider.GetGroupRole(groupId, roleId);
                 _userSecurityProvider.FormatOutgoingMessage<GroupRoles>(groupRoles, format, true);
             }
@@ -645,8 +697,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Groups groups = _userSecurityProvider.GetSiteGroups(siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
             }
@@ -664,8 +717,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Users users = _userSecurityProvider.GetGroupUsers(groupId);
                 _userSecurityProvider.FormatOutgoingMessage<Users>(users, format, true);
             }
@@ -683,8 +737,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Users users = _userSecurityProvider.GetSiteUsers(siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Users>(users, format, true);
             }
@@ -702,8 +757,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Permissions permissions = _userSecurityProvider.GetSitePermissions(siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Permissions>(permissions, format, true);
             }
@@ -721,8 +777,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Groups groups = _userSecurityProvider.GetGroupsUser(userId);
                 _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
             }
@@ -740,8 +797,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Users users = _userSecurityProvider.GetGroupUser(groupId, userId);
                 _userSecurityProvider.FormatOutgoingMessage<Users>(users, format, true);
             }
@@ -759,8 +817,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Roles roles = _userSecurityProvider.GetGroupRoles(groupId);
                 _userSecurityProvider.FormatOutgoingMessage<Roles>(roles, format, true);
             }
@@ -778,8 +837,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Permissions permissions = _userSecurityProvider.GetRolePermissions(roleId);
                 _userSecurityProvider.FormatOutgoingMessage<Permissions>(permissions, format, true);
             }
@@ -797,8 +857,9 @@ namespace org.iringtools.services
         {
             try
             {
-                OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-                context.ContentType = "application/xml";
+                if (string.IsNullOrEmpty(format))
+                { format = "json"; }
+
                 Permissions permissions = _userSecurityProvider.GetRolePermission(roleId, permissionId);
                 _userSecurityProvider.FormatOutgoingMessage<Permissions>(permissions, format, true);
             }

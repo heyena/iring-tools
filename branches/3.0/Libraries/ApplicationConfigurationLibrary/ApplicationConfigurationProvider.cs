@@ -43,15 +43,22 @@ namespace org.iringtools.applicationConfig
 
         public Contexts GetAllContexts()
         {
-            List<Context> lstContext = new List<Context>();
-
-            using (var dc = new DataContext(_connSecurityDb))
-            {
-                lstContext = dc.ExecuteQuery<Context>("spgContext @SiteId = {0}",_siteID).ToList();
-            }
-
             Contexts contexts = new Contexts();
-            contexts.AddRange(lstContext);
+            try
+            {
+                List<Context> lstContext = new List<Context>();
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    lstContext = dc.ExecuteQuery<Context>("spgContext @SiteId = {0}", _siteID).ToList();
+                }
+
+                contexts.AddRange(lstContext);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Contexts: " + ex);
+            }
             return contexts;
         }
 
@@ -177,18 +184,49 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
+        public Contexts GetContextsForUser(string userName)
+        {
+            Contexts contexts = new Contexts();
+            try
+            {
+                List<Context> lstContext = new List<Context>();
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    lstContext = dc.ExecuteQuery<Context>("spgContextByUser @UserName = {0}, @SiteId = {1}",
+                                                           userName, _siteID).ToList();
+                }
+
+                contexts.AddRange(lstContext);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Contexts: " + ex);
+            }
+            return contexts;
+        }
+
         public Applications GetAllApplications(string scopeInternalName)
         {
-            List<Application> lstApplication = new List<Application>();
+            Applications applications = new Applications();
 
-            using (var dc = new DataContext(_connSecurityDb))
+            try
             {
-                lstApplication = dc.ExecuteQuery<Application>("spgApplication @ScopeInternalName = {0}, @SiteId = {1}",
-                                                              scopeInternalName, _siteID).ToList();
+                List<Application> lstApplication = new List<Application>();
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    lstApplication = dc.ExecuteQuery<Application>("spgApplication @ScopeInternalName = {0}, @SiteId = {1}",
+                                                                  scopeInternalName, _siteID).ToList();
+                }
+   
+                applications.AddRange(lstApplication);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Applications: " + ex);
             }
 
-            Applications applications = new Applications();
-            applications.AddRange(lstApplication);
             return applications;
         }
 
@@ -298,15 +336,22 @@ namespace org.iringtools.applicationConfig
 
         public Graphs GetAllGraphs()
         {
-            List<Graph> lstGraph = new List<Graph>();
-
-            using (var dc = new DataContext(_connSecurityDb))
-            {
-                lstGraph = dc.ExecuteQuery<Graph>("spgGraph").ToList();
-            }
-
             Graphs graphs = new Graphs();
-            graphs.AddRange(lstGraph);
+            try
+            {
+                List<Graph> lstGraph = new List<Graph>();
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    lstGraph = dc.ExecuteQuery<Graph>("spgGraph").ToList();
+                }
+
+                graphs.AddRange(lstGraph);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Graphs: " + ex);
+            }
             return graphs;
         }
 
