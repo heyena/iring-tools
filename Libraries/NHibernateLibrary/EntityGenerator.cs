@@ -585,7 +585,8 @@ namespace org.iringtools.nhibernate
                     if (dataType == DataType.Date || dataType == DataType.DateTime)
                     {
                         _dataObjectWriter.WriteLine(
-                          string.Format("if (value == null || value.ToString() == string.Empty) {0} = null;", dataProperty.propertyName));
+                        //  string.Format("if (value == null || value.ToString() == string.Empty) {0} = null;", dataProperty.propertyName));
+                        string.Format("if (value == null || value.ToString() == string.Empty) {0} = DateTime.Today;", dataProperty.propertyName));
                         _dataObjectWriter.WriteLine("else ");
                     }
 
