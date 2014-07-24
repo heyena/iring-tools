@@ -37,7 +37,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "json"; }
+                { format = "xml"; }
 
 
                 org.iringtools.applicationConfig.Contexts contexts = _applicationConfigurationProvider.GetAllContexts();
@@ -57,7 +57,7 @@ namespace org.iringtools.services
         public void InsertContexts(string format, Stream stream) // Completed.
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -88,7 +88,7 @@ namespace org.iringtools.services
         public void UpdateContexts(string format, Stream stream) // Completed.
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -119,7 +119,7 @@ namespace org.iringtools.services
         public void DeleteContexts(string internalName, string format) // Completed.
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -151,7 +151,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "json"; }
+                { format = "xml"; }
 
                 Applications applications = _applicationConfigurationProvider.GetAllApplications(scopeInternalName);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Applications>(applications, format, true);
@@ -170,7 +170,7 @@ namespace org.iringtools.services
         public void InsertApplications(string scopeInternalName, string format, Stream stream) 
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -201,7 +201,7 @@ namespace org.iringtools.services
         public void UpdateApplications(string scopeInternalName, string format, Stream stream) // Completed.
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -232,7 +232,7 @@ namespace org.iringtools.services
         public void DeleteApplication(string scopeInternalName, string appInternalName, string format) // Completed.
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -264,7 +264,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "json"; }
+                { format = "xml"; }
 
                 Graphs graphs = _applicationConfigurationProvider.GetAllGraphs();
                 _applicationConfigurationProvider.FormatOutgoingMessage<Graphs>(graphs, format, true);
@@ -283,7 +283,7 @@ namespace org.iringtools.services
         public void InsertGraphs(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -314,7 +314,7 @@ namespace org.iringtools.services
         public void UpdateGraphs(string format, Stream stream) // Completed.
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -345,7 +345,7 @@ namespace org.iringtools.services
         public void DeleteGraph(string graphId, string format) // Completed.
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -377,7 +377,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "json"; }
+                { format = "xml"; }
 
                 Applications applications = _applicationConfigurationProvider.GetApplicationsForUser(user);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Applications>(applications, format, true);
@@ -395,7 +395,7 @@ namespace org.iringtools.services
         public void AddApplicationForUser(string user, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -424,7 +424,7 @@ namespace org.iringtools.services
         public void UpdateApplicationForUser(string user, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -453,7 +453,7 @@ namespace org.iringtools.services
         public void DeleteApplicationForUser(string user, string format)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "json"; }
+            { format = "xml"; }
 
             Response response = new Response();
             try
@@ -475,7 +475,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "json"; }
+                { format = "xml"; }
 
                 org.iringtools.applicationConfig.Contexts contexts = _applicationConfigurationProvider.GetContextsForUser(userName);
                 _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Contexts>(contexts, format, true);
