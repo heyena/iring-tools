@@ -834,6 +834,21 @@ namespace org.iringtools.UserSecurity
             return permissions;
         }
 
+        public UserGroups GetUserGroups(string userName)
+        {
+            List<UserGroup> lstUserGroup = new List<UserGroup>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstUserGroup = dc.ExecuteQuery<UserGroup>("spgUserGroups @userName = {0}, @siteId = {1}",
+                                                      userName, _siteID).ToList();
+            }
+
+            UserGroups userGroups = new UserGroups();
+            userGroups.AddRange(lstUserGroup);
+            return userGroups;
+        }
+
         public void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
         {
             if (format.ToUpper() == "JSON")
