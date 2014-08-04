@@ -871,6 +871,25 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Return userGroups based on userName from the database.")]
+        [WebGet(UriTemplate = "/userGroups/{userName}?format={format}")]
+        public void GetUserGroups(string userName, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                UserGroups userGroups = _userSecurityProvider.GetUserGroups(userName);
+                _userSecurityProvider.FormatOutgoingMessage<UserGroups>(userGroups, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
 
 
         #region Private Methods
