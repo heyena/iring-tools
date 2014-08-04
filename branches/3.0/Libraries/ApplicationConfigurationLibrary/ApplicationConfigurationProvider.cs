@@ -206,6 +206,50 @@ namespace org.iringtools.applicationConfig
             return contexts;
         }
 
+        public Applications GetApplicationsForUser(string userName)
+        {
+            Applications applications = new Applications();
+            try
+            {
+                List<Application> lstApplication = new List<Application>();
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    lstApplication = dc.ExecuteQuery<Application>("spgApplicationByUser @UserName = {0}, @SiteId = {1}",
+                                                           userName, _siteID).ToList();
+                }
+
+                applications.AddRange(lstApplication);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Applications: " + ex);
+            }
+            return applications;
+        }
+
+        public Graphs GetGraphsForUser(string userName)
+        {
+            Graphs graphs = new Graphs();
+            try
+            {
+                List<Graph> lstGraph = new List<Graph>();
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    lstGraph = dc.ExecuteQuery<Graph>("spgGraphByUser @UserName = {0}, @SiteId = {1}",
+                                                           userName, _siteID).ToList();
+                }
+
+                graphs.AddRange(lstGraph);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Graphs: " + ex);
+            }
+            return graphs;
+        }
+
         public Applications GetAllApplications(string scopeInternalName)
         {
             Applications applications = new Applications();
@@ -470,21 +514,6 @@ namespace org.iringtools.applicationConfig
             }
 
             return response;
-        }
-
-
-        public Applications GetApplicationsForUser(string user)
-        {
-            List<Application> lstApplications = new List<Application>();
-
-            // Fetch Application from DB as a list of string for that user.
-            Application objApplication = new Application();
-            //Fill object here.
-            lstApplications.Add(objApplication);
-
-            Applications applications = new Applications();
-            applications.AddRange(lstApplications);
-            return applications;
         }
 
         public Response InsertApplicationForUser(string user,string format, XDocument xml)

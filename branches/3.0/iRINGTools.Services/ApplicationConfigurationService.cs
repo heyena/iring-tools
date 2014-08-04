@@ -370,26 +370,6 @@ namespace org.iringtools.services
             _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
         }
 
-        [Description("Get application collection for user")]
-        [WebGet(UriTemplate = "/app/{user}?format={format}")]
-        public void GetApplicationForUser(string user, string format)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
-
-                Applications applications = _applicationConfigurationProvider.GetApplicationsForUser(user);
-                _applicationConfigurationProvider.FormatOutgoingMessage<Applications>(applications, format, true);
-            }
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-        }
-
         [Description("Insert application for user")]
         [WebInvoke(Method = "POST", UriTemplate = "/app/{user}?format={format}")]
         public void AddApplicationForUser(string user, string format, Stream stream)
@@ -479,6 +459,46 @@ namespace org.iringtools.services
 
                 org.iringtools.applicationConfig.Contexts contexts = _applicationConfigurationProvider.GetContextsForUser(userName);
                 _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Contexts>(contexts, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Get application collection for user")]
+        [WebGet(UriTemplate = "/applications/{userName}?format={format}")]
+        public void GetApplicationsForUser(string userName, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                Applications applications = _applicationConfigurationProvider.GetApplicationsForUser(userName);
+                _applicationConfigurationProvider.FormatOutgoingMessage<Applications>(applications, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Get graph collection for user")]
+        [WebGet(UriTemplate = "/graphs/{userName}?format={format}")]
+        public void GetGraphsForUser(string userName, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                Graphs graphs = _applicationConfigurationProvider.GetGraphsForUser(userName);
+                _applicationConfigurationProvider.FormatOutgoingMessage<Graphs>(graphs, format, true);
             }
             catch (Exception ex)
             {
