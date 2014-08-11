@@ -521,6 +521,11 @@ namespace org.iringtools.utility
       return Post<T, R>(relativeUri, requestEntity, true);
     }
 
+    public R Put<T, R>(string relativeUri, T requestEntity)
+    {
+        return Put<T, R>(relativeUri, requestEntity, true);
+    }
+
     public R Post<T, R>(string relativeUri, T requestEntity, bool useDataContractSerializer)
     {
       try
@@ -580,6 +585,67 @@ namespace org.iringtools.utility
         string uri = _baseUri + relativeUri;
         throw new Exception("Error with HTTP POST from URI [" + uri + "]. " + error);
       }
+    }
+
+    public R Put<T, R>(string relativeUri, T requestEntity, bool useDataContractSerializer)
+    {
+        try
+        {
+            string uri = _baseUri + relativeUri;
+            _logger.Debug(string.Format("Performing PUT to URL [{0}]...", uri));
+
+            MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+            PrepareCredentials(request);
+            PrepareHeaders(request);
+
+            request.Timeout = Timeout;
+            request.Method = "PUT";
+            request.ContentType = "text/xml";
+            request.ContentLength = stream.Length;
+
+            // allows for validation of SSL conversations
+            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+              ValidateRemoteCertificate
+            );
+
+            request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream responseStream = response.GetResponseStream();
+
+            if (typeof(R) == typeof(String))
+            {
+                StreamReader reader = new StreamReader(responseStream);
+                string responseStr = reader.ReadToEnd();
+                reader.Close();
+
+                return (R)Convert.ChangeType(responseStr, typeof(R));
+            }
+            else
+            {
+                return Utility.DeserializeFromStream<R>(responseStream.ToMemoryStream(), useDataContractSerializer);
+            }
+        }
+        catch (Exception e)
+        {
+            String error = String.Empty;
+
+            if (e.GetType() == typeof(WebException))
+            {
+                HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
+                Stream responseStream = response.GetResponseStream();
+                error = Utility.SerializeFromStream(responseStream);
+            }
+            else
+            {
+                error = e.ToString();
+            }
+
+            string uri = _baseUri + relativeUri;
+            throw new Exception("Error with HTTP PUT from URI [" + uri + "]. " + error);
+        }
     }
 
     public R Post<T, R>(string relativeUri, T requestEntity, string format, bool useDataContractSerializer)
@@ -666,6 +732,92 @@ namespace org.iringtools.utility
         string uri = _baseUri + relativeUri;
         throw new Exception("Error with HTTP POST from URI [" + uri + "]. " + error);
       }
+    }
+
+    public R Put<T, R>(string relativeUri, T requestEntity, string format, bool useDataContractSerializer)
+    {
+        try
+        {
+            string uri = _baseUri + relativeUri;
+            _logger.Debug(string.Format("Performing PUT to URL [{0}]...", uri));
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+            request.Timeout = Timeout;
+            request.Method = "PUT";
+
+            MemoryStream stream = null;
+
+            if (format == null || format.ToLower() == "xml")
+            {
+                stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
+                request.ContentType = "text/xml";
+                request.ContentLength = stream.Length;
+            }
+            else if (format.ToLower() == "json")
+            {
+                stream = Utility.SerializeToStreamJSON<T>(requestEntity, useDataContractSerializer);
+                request.ContentType = "application/json";
+                request.ContentLength = stream.Length;
+            }
+            else
+            {
+                throw new Exception("Format " + format + " not allowed.");
+            }
+
+            PrepareCredentials(request);
+            PrepareHeaders(request);
+
+            // allows for validation of SSL conversations
+            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+              ValidateRemoteCertificate
+            );
+
+            request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            if (response.StatusCode == HttpStatusCode.Accepted)
+            {
+                string statusUrl = response.Headers["location"];
+                return (R)Convert.ChangeType(statusUrl, typeof(R));
+            }
+            else
+            {
+                Stream responseStream = response.GetResponseStream();
+
+                if (typeof(R) == typeof(String))
+                {
+                    StreamReader reader = new StreamReader(responseStream);
+                    string responseStr = reader.ReadToEnd();
+                    reader.Close();
+
+                    return (R)Convert.ChangeType(responseStr, typeof(R));
+                }
+                else
+                {
+                    return Utility.DeserializeFromStream<R>(responseStream.ToMemoryStream(), useDataContractSerializer);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            String error = String.Empty;
+
+            if (e.GetType() == typeof(WebException))
+            {
+                HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
+                Stream responseStream = response.GetResponseStream();
+                error = Utility.SerializeFromStream(responseStream);
+            }
+            else
+            {
+                error = e.ToString();
+            }
+
+            string uri = _baseUri + relativeUri;
+            throw new Exception("Error with HTTP PUT from URI [" + uri + "]. " + error);
+        }
     }
 
     public T PostMessage<T>(string relativeUri, string requestMessage, bool useDataContractSerializer)
@@ -1274,6 +1426,44 @@ namespace org.iringtools.utility
 
         throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
       }
+    }
+
+    public string Put<T>(string relativeUri, T requestEntity, bool useDataContractSerializer)
+    {
+        try
+        {
+            string uri = _baseUri + relativeUri;
+            _logger.Debug(string.Format("Performing PUT to URL [{0}]...", uri));
+
+            MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+            PrepareCredentials(request);
+            PrepareHeaders(request);
+
+            request.Timeout = Timeout;
+            request.Method = "PUT";
+            request.ContentType = "application/xml";
+            request.ContentLength = stream.Length;
+
+            // allows for validation of SSL conversations
+            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+              ValidateRemoteCertificate
+            );
+
+            request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+            return responseMessage;
+        }
+        catch (Exception exception)
+        {
+            string uri = _baseUri + relativeUri;
+
+            throw new Exception("Error while executing HTTP PUT request on " + uri + ".", exception);
+        }
     }
   }
 }
