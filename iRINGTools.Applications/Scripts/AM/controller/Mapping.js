@@ -777,8 +777,8 @@ Ext.define('AM.controller.Mapping', {
             url: 'mapping/deletegraphmap',
             method: 'POST',
             params: {
-                scope: node.parentNode.parentNode.parentNode.data.text, //node.data.property.context,
-                application: node.parentNode.parentNode.data.text, //node.data.property.endpoint,
+                scope: node.parentNode.parentNode.parentNode.data.property['Internal Name'], //node.data.property.context,
+                application: node.parentNode.parentNode.data.property['Internal Name'], //node.data.property.endpoint,
                 baseUrl: node.data.property.baseUrl,
                 mappingNode: node.id,
                 graphName: getLastXString(node.id, 1)
