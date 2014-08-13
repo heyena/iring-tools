@@ -109,9 +109,9 @@ namespace org.iringtools.nhibernate
                   criterion = NHibernate.Criterion.Expression.Eq(propertyName, value);
                   break;
 
-                //case RelationalOperator.NotEqualTo:
-                //  criterion = NHibernate.Criterion.Expression.NotEqProperty(propertyName, value);
-                //  break;
+                case RelationalOperator.NotEqualTo:
+                  criterion = NHibernate.Criterion.Expression.Not(NHibernate.Criterion.Expression.Eq(propertyName, value));
+                  break;
 
                 case RelationalOperator.LesserThan:
                   criterion = NHibernate.Criterion.Expression.Lt(propertyName, value);
