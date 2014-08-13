@@ -355,6 +355,12 @@ Ext.define('AM.controller.NHConfig', {
         var treePanel = panel.up('mainconfigpanel').down('objectstreepanel');
 
         var values = panel.getForm().getValues();
+
+        if (values.isNullable == "on") {
+            values.isNullable = true;
+        } else {
+            values.isNullable = false;
+        }
         var props = treePanel.getSelectionModel().getLastSelected().raw.properties;
 
         for (var field in values) {
