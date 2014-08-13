@@ -100,7 +100,7 @@ Ext.define('df.view.DataFilterForm', {
                                         	 config.items[1].value = null;
                                         }else{
                                         	 config.items[1].disabled = false;
-                                        	 config.items[1].value = 0;
+                                        	 config.items[1].value = 1;
                                         }
 										
                                         config.items[2].name = 'propertyName_' + rowCount;
@@ -160,11 +160,11 @@ Ext.define('df.view.DataFilterForm', {
 									disabled :true,
                                     store: [
                                         [
-                                            0,
+                                            1,
                                             'And'
                                         ],
                                         [
-                                            1,
+                                            2,
                                             'Or'
                                         ]
                                     ]
