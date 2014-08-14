@@ -13,7 +13,7 @@ Ext.define('USM.view.roles.RoleForm', {
             items: [
                 {
                     xtype: 'hiddenfield',
-                    name: 'actionType',
+                    name: 'ActionType',
                     value : 'ADD'
                 },
                 {
