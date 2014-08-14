@@ -1465,5 +1465,43 @@ namespace org.iringtools.utility
             throw new Exception("Error while executing HTTP PUT request on " + uri + ".", exception);
         }
     }
+	
+	public string Delete<T>(string relativeUri, T requestEntity, bool useDataContractSerializer)
+	{
+		try
+		{
+			string uri = _baseUri + relativeUri;
+			_logger.Debug(string.Format("Performing DELETE to URL [{0}]...", uri));
+
+			MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+			PrepareCredentials(request);
+			PrepareHeaders(request);
+
+			request.Timeout = Timeout;
+			request.Method = "DELETE";
+			request.ContentType = "application/xml";
+			request.ContentLength = stream.Length;
+
+			// allows for validation of SSL conversations
+			ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+			  ValidateRemoteCertificate
+			);
+
+			request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+
+			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+			string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+			return responseMessage;
+		}
+		catch (Exception exception)
+		{
+			string uri = _baseUri + relativeUri;
+
+			throw new Exception("Error while executing HTTP DELETE request on " + uri + ".", exception);
+		}
+	}
   }
 }
