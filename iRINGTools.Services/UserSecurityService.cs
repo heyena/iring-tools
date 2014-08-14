@@ -143,7 +143,7 @@ namespace org.iringtools.services
 
         [Description("Get all sites from the database.")]
         [WebGet(UriTemplate = "/sites?format={format}")]
-        public void GetSites(string format) 
+        public void GetSites(string format)
         {
             try
             {
@@ -163,7 +163,7 @@ namespace org.iringtools.services
 
         [Description("Get site by site ID from the database.")]
         [WebGet(UriTemplate = "/site?siteId={siteId}&format={format}")]
-        public void GetSite(int siteId, string format) 
+        public void GetSite(int siteId, string format)
         {
             try
             {
@@ -183,7 +183,7 @@ namespace org.iringtools.services
 
         [Description("Insert sites to the data base.")]
         [WebInvoke(Method = "POST", UriTemplate = "/sites?format={format}")]
-        public void InsertSites(string format, Stream stream)  
+        public void InsertSites(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -245,7 +245,7 @@ namespace org.iringtools.services
 
         [Description("Update contexts to the data base.")]
         [WebInvoke(Method = "DELETE", UriTemplate = "/site?siteId={siteId}&format={format}")]
-        public void DeleteSite(int siteId, string format) 
+        public void DeleteSite(int siteId, string format)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -272,10 +272,10 @@ namespace org.iringtools.services
             PrepareResponse(ref response);
             _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
         }
-        	 
+
         [Description("Get groups by group id from the database.")]
         [WebGet(UriTemplate = "/group?groupId={iGroupId}&format={format}")]
-        public void GetGroupById(int iGroupId, string format)  
+        public void GetGroupById(int iGroupId, string format)
         {
             try
             {
@@ -295,7 +295,7 @@ namespace org.iringtools.services
 
         [Description("Get groups by group id from the database.")]
         [WebGet(UriTemplate = "/user?userId={userId}&format={format}")]
-        public void GetUser(int userId, string format)    
+        public void GetUser(int userId, string format)
         {
             try
             {
@@ -315,7 +315,7 @@ namespace org.iringtools.services
 
         [Description("Get all roles from the database.")]
         [WebGet(UriTemplate = "/roles?format={format}")]
-        public void GetRoles(string format) 
+        public void GetRoles(string format)
         {
             try
             {
@@ -397,7 +397,7 @@ namespace org.iringtools.services
 
         [Description("Delete role from the data base.")]
         [WebInvoke(Method = "DELETE", UriTemplate = "/roles?roleId={roleId}&format={format}")]
-        public void DeleteRole(int roleId, string format) 
+        public void DeleteRole(int roleId, string format)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -428,7 +428,7 @@ namespace org.iringtools.services
 
         [Description("Insert permissions to the database.")]
         [WebInvoke(Method = "POST", UriTemplate = "/permissions?format={format}")]
-        public void InsertPermissions(string format, Stream stream)  
+        public void InsertPermissions(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -567,7 +567,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Update groups in the data base.")]
@@ -598,7 +598,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Delete group from the data base.")]
@@ -628,12 +628,12 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Get groups by group id from the database.")]
         [WebGet(UriTemplate = "/role?roleId={iroleId}&format={format}")]
-        public void GetRoleById(int iroleId, string format)  
+        public void GetRoleById(int iroleId, string format)
         {
             try
             {
@@ -673,7 +673,7 @@ namespace org.iringtools.services
 
         [Description("Get roles based on groupId and roleId from the database.")]
         [WebGet(UriTemplate = "/groupRole?groupId={groupId}&roleId={roleId}&format={format}")]
-        public void GetGroupRole(int groupId, int roleId, string format) 
+        public void GetGroupRole(int groupId, int roleId, string format)
         {
             try
             {
@@ -693,7 +693,7 @@ namespace org.iringtools.services
 
         [Description("Return groups based on site from the database.")]
         [WebGet(UriTemplate = "/siteGroups?siteId={siteId}&format={format}")]
-        public void GetSiteGroups(int siteId, string format) 
+        public void GetSiteGroups(int siteId, string format)
         {
             try
             {
@@ -713,7 +713,7 @@ namespace org.iringtools.services
 
         [Description("Return all users for group from the database.")]
         [WebGet(UriTemplate = "/groupUsers?groupId={groupId}&format={format}")]
-        public void GetGroupUsers(int groupId, string format) 
+        public void GetGroupUsers(int groupId, string format)
         {
             try
             {
@@ -733,7 +733,7 @@ namespace org.iringtools.services
 
         [Description("Return all users based on site from the database.")]
         [WebGet(UriTemplate = "/siteUsers?siteId={siteId}&format={format}")]
-        public void GetSiteUsers(int siteId, string format) 
+        public void GetSiteUsers(int siteId, string format)
         {
             try
             {
@@ -753,7 +753,7 @@ namespace org.iringtools.services
 
         [Description("Return all permissions based on site from the database.")]
         [WebGet(UriTemplate = "/sitePermissions?siteId={siteId}&format={format}")]
-        public void GetSitePermissions(int siteId, string format) 
+        public void GetSitePermissions(int siteId, string format)
         {
             try
             {
@@ -773,7 +773,7 @@ namespace org.iringtools.services
 
         [Description("Return all groups that the user belongs to from the database.")]
         [WebGet(UriTemplate = "/groupsUser?userId={userId}&format={format}")]
-        public void GetGroupsUser(int userId, string format) 
+        public void GetGroupsUser(int userId, string format)
         {
             try
             {
@@ -813,7 +813,7 @@ namespace org.iringtools.services
 
         [Description("Return all role based on group from the database.")]
         [WebGet(UriTemplate = "/groupRoles?groupId={groupId}&format={format}")]
-        public void GetGroupRoles(int groupId, string format) 
+        public void GetGroupRoles(int groupId, string format)
         {
             try
             {
@@ -833,7 +833,7 @@ namespace org.iringtools.services
 
         [Description("Return permissions based on role from the database.")]
         [WebGet(UriTemplate = "/rolePermissions?roleId={roleId}&format={format}")]
-        public void GetRolePermissions(int roleId, string format) 
+        public void GetRolePermissions(int roleId, string format)
         {
             try
             {
@@ -853,7 +853,7 @@ namespace org.iringtools.services
 
         [Description("Return permissions based on role id and Permission id from the database.")]
         [WebGet(UriTemplate = "/rolePermission?roleId={roleId}&permissionId={permissionId}&format={format}")]
-        public void GetRolePermission(int roleId, int permissionId, string format)      
+        public void GetRolePermission(int roleId, int permissionId, string format)
         {
             try
             {
