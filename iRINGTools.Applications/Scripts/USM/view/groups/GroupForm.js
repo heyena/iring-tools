@@ -13,7 +13,7 @@ Ext.define('USM.view.groups.GroupForm', {
             items: [
                 {
                     xtype: 'hiddenfield',
-                    name: 'actionType',
+                    name: 'ActionType',
                     value : 'ADD'
                 },
                 {

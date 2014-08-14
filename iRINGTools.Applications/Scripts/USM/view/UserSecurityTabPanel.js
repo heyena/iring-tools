@@ -24,7 +24,13 @@ Ext.define('USM.view.UserSecurityTabPanel', {
                         {
                             xtype: 'groupgrid'
                         }
-                    ]
+                    ],
+                    listeners: {
+                        activate: {
+                            fn: me.onPanelActivate,
+                            scope: me
+                        }
+                    }
                 },
                 {
                     xtype: 'panel',

@@ -227,7 +227,7 @@
         var win = Ext.widget('groupwindow');
         var form = win.down('groupform');
         form.getForm().setValues(rec[0].data);
-        form.getForm().findField('actionType').setValue('EDIT');
+        form.getForm().findField('ActionType').setValue('EDIT');
         win.show();
         //        Ext.Ajax.request({
         //            url: 'usersecuritymanager/editGroup',
@@ -256,7 +256,7 @@
             url: 'usersecuritymanager/deleteGroup',
             method: 'POST',
             params: {
-                groupId: groupId
+                GroupId: groupId
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
@@ -280,7 +280,7 @@
         var win = Ext.widget('rolewindow');
         var form = win.down('roleform');
         form.getForm().setValues(rec[0].data);
-        form.getForm().findField('actionType').setValue('EDIT');
+        form.getForm().findField('ActionType').setValue('EDIT');
         win.show();
         //        Ext.Ajax.request({
         //            url: 'usersecuritymanager/editRole',
@@ -390,9 +390,9 @@
         var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
         var groupId = rec[0].data.GroupId;
         Ext.Ajax.request({
-            url: 'usersecuritymanager/editUserGroup',
-            //url: '/Scripts/USM/jsonfiles/selusers.json',
-            method: 'POST',
+            //url: 'usersecuritymanager/editUserGroup',
+            url: '/Scripts/USM/jsonfiles/selusers.json',
+            method: 'GET',
             params: {
                 GroupId: groupId
             },
