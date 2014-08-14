@@ -9,7 +9,7 @@ Ext.define('USM.view.groups.GroupWindow', {
 
     floating: 'true',
     border: false,
-    resizable : false,
+    resizable: false,
     modal: true,
     layout: {
         type: 'fit'
@@ -80,6 +80,7 @@ Ext.define('USM.view.groups.GroupWindow', {
                     me.destroy();
                     var message = 'Group saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
+                    Ext.getCmp('idgroup').store.reload();
                     return;
                 },
                 failure: function (f, a) {

@@ -3,6 +3,7 @@
     alias: 'widget.groupgrid',
     resizable: true,
     store: 'GroupS',
+    id: 'idgroup',
     resizable: false,
     initComponent: function () {
         var me = this;
