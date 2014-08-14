@@ -149,7 +149,7 @@ namespace iRINGTools.Web.Models
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                item = client.Get<Group>("/group?groupId=?"+ iGroupId + "&format="+ format);
+                item = client.Get<Group>("/group?groupId="+ iGroupId + "&format="+ format);
                 _logger.Debug("Successfully called Security Service.");
             }
             catch (Exception ex)
@@ -184,12 +184,82 @@ namespace iRINGTools.Web.Models
 
             }
 
+        }
 
+        public void InsertGroup(FormCollection form)
+        {
 
+            _logger.Debug("In Security Repository Insert Group");
+            try
+            {
+                Group group = new Group { GroupName = form["GroupName"], GroupDesc = form["GroupDesc"]};
+                Groups groups = new Groups();
+                groups.Add(group);
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                // client.Post<Users>("/users?format=xml", users, true,"xml");
+                client.Post<Groups>("/groups?format=xml", groups, true);
+                _logger.Debug("Successfully called Security Service.");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
 
         }
 
+        public void UpdateGroup(FormCollection form)
+        {
 
-        
-    }
+            _logger.Debug("In Security Repository Update Group");
+            try
+            {
+                Group group = new Group { GroupId = Convert.ToInt32(form["GroupId"]), GroupName = form["GroupName"], GroupDesc = form["GroupDesc"] };
+                Groups groups = new Groups();
+                groups.Add(group);
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                // client.Post<Users>("/users?format=xml", users, true,"xml");
+                client.Put<Groups>("/groups?format=xml", groups, true);
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+        }
+
+        public Group deleteGroup(string groupId, string format)
+        {
+            Group group = null;
+            Group group1 = new Group { GroupId = Convert.ToInt32(groupId) };
+            Groups groups = new Groups();
+            groups.Add(group1);
+
+            _logger.Debug("In SecurityRepository getAllGroups");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                //client.Delete<Groups>("/groups?format=xml", groups, true);
+                client.Delete<Groups>("/groups?groupId=" + groupId + "&format=" + format, groups, true);
+                
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return group;
+
+        }
+
+     }
 }

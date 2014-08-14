@@ -10,7 +10,8 @@ using System.Collections.Specialized;
 using org.iringtools.utility;
 using System.Web.Script.Serialization;
 using org.iringtools.UserSecurity;
-
+using System.Net;
+using System.IO;
 namespace org.iringtools.web.controllers
 
 {
@@ -34,12 +35,14 @@ namespace org.iringtools.web.controllers
 
         public ActionResult Index()
         {
+            ServiceSettings _settings = new ServiceSettings();
+            _settings.Get("UserName");
             return View();
         }
 
         public JsonResult getUsers()
         {
-         //   Users user = _repository.GetAllUsers("json");
+         //Users user = _repository.GetAllUsers("json");
             Users user = _repository.GetAllUsers("xml");
             return Json(user, JsonRequestBehavior.AllowGet);
         }
@@ -76,14 +79,23 @@ namespace org.iringtools.web.controllers
         public JsonResult saveGroup(FormCollection form)
         {
             Response response = null;
+            var actionType = form["ActionType"];
+            if (actionType == "ADD") {
+                _repository.InsertGroup(form);
+            }
+            else{
+                _repository.UpdateGroup(form);
+            }
          
             return Json(new {success = true}, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult deleteGroup(FormCollection form)
         {
-            Response response = null;
-            return Json(response, JsonRequestBehavior.AllowGet);
+            string iGroupId = form["GroupId"];
+            //  Group group = _repository.getGroupById(iGroupId ,"json");
+            Group group = _repository.deleteGroup(iGroupId, "xml");
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult saveRole(FormCollection form)
