@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using org.iringtools.UserSecurity;
 
 namespace org.iringtools.applicationConfig
 {
@@ -19,6 +20,11 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "context", Namespace = "http://www.iringtools.org/library")]
     public class Context
     {
+        Context()
+        {
+            permissions = new Permissions();
+        }
+
         [DataMember(Name = "contextId", Order = 0)]
         public Guid ContextId { get; set; }
 
@@ -42,6 +48,9 @@ namespace org.iringtools.applicationConfig
 
         [DataMember(Name = "folderId", Order = 7, EmitDefaultValue = false)]
         public Guid FolderId { get; set; }
+
+        [DataMember(Name = "permissions", Order = 8, EmitDefaultValue = false)]
+        public Permissions permissions { get; set; }
     }
 
 

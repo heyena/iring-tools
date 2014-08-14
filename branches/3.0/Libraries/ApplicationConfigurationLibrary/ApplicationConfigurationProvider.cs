@@ -16,6 +16,8 @@ using System.Data.Linq;
 using System.Web;
 using System.Data;
 using System.Data.SqlClient;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace org.iringtools.applicationConfig
 {
@@ -184,20 +186,29 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Contexts GetContextsForUser(string userName)
+        public Contexts GetContextsForUser(string userName, int siteId, Guid folderId)
         {
             Contexts contexts = new Contexts();
             try
             {
-                List<Context> lstContext = new List<Context>();
+                SqlConnection conn = new SqlConnection(_connSecurityDb);
+                conn.Open();
 
-                using (var dc = new DataContext(_connSecurityDb))
+                SqlCommand cmd = new SqlCommand("spgContextByUser", conn);
+                cmd.Parameters.AddWithValue("@UserName", userName);
+                cmd.Parameters.AddWithValue("@SiteId", _siteID);
+                cmd.Parameters.AddWithValue("@FolderId", folderId);
+
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                using (XmlReader reader = cmd.ExecuteXmlReader())
                 {
-                    lstContext = dc.ExecuteQuery<Context>("spgContextByUser @UserName = {0}, @SiteId = {1}",
-                                                           userName, _siteID).ToList();
+                    while (reader.Read())
+                    {
+                        string xmlString = reader.ReadOuterXml(); // XML returned from SP.
+                        contexts = utility.Utility.Deserialize<org.iringtools.applicationConfig.Contexts>(xmlString, true);
+                    }
                 }
-
-                contexts.AddRange(lstContext);
             }
             catch (Exception ex)
             {

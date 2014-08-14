@@ -449,15 +449,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get context collection for user")]
-        [WebGet(UriTemplate = "/contexts/{userName}?format={format}")]
-        public void GetContextsForUser(string userName, string format)
+        [WebGet(UriTemplate = "/contexts/{userName}?siteId={siteId}&folderId={folderId}&format={format}")]
+        public void GetContextsForUser(string userName, int siteId, Guid folderId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                org.iringtools.applicationConfig.Contexts contexts = _applicationConfigurationProvider.GetContextsForUser(userName);
+                org.iringtools.applicationConfig.Contexts contexts = _applicationConfigurationProvider.GetContextsForUser(userName, siteId, folderId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Contexts>(contexts, format, true);
             }
             catch (Exception ex)
