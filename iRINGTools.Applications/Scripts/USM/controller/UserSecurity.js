@@ -339,7 +339,7 @@
         var win = Ext.widget('permissionwindow');
         var form = win.down('permissionform');
         form.getForm().setValues(rec[0].data);
-        form.getForm().findField('actionType').setValue('EDIT');
+        form.getForm().findField('ActionType').setValue('EDIT');
         win.show();
         //        Ext.Ajax.request({
         //            url: 'usersecuritymanager/editPermission',
