@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using log4net;
 using org.iringtools.library;
+using System.Xml;
 
 namespace org.iringtools.adapter
 {
@@ -237,6 +238,53 @@ namespace org.iringtools.adapter
         finally
         {
             CloseConnection(dbConn);
+        }
+    }
+
+    public string ExecuteXmlQuery(string connStr, string spName, NameValueList spParamters)
+    {
+        _logger.Debug(spName);
+
+        SqlConnection conn = null;
+        SqlCommand dbCmd = null;
+        string xmlString = string.Empty;
+
+        try
+        {
+            conn = new SqlConnection(connStr);
+            conn.Open();
+
+            dbCmd = new SqlCommand();
+            dbCmd.CommandType = System.Data.CommandType.StoredProcedure;
+            dbCmd.CommandText = spName;
+            dbCmd.Connection = conn;
+
+
+            foreach (ListItem item in spParamters)
+            {
+                dbCmd.Parameters.Add(new SqlParameter(item.Name, item.Value));
+            }
+
+            dbCmd.CommandTimeout = 0;
+            using (XmlReader reader = dbCmd.ExecuteXmlReader())
+            {
+                while (reader.Read())
+                {
+                    xmlString = reader.ReadOuterXml(); // XML returned from SP.                    
+                }
+            }
+
+
+            return xmlString;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Error executing stored procedure [" + spName + "]: " + ex.Message);
+            throw ex;
+        }
+        finally
+        {
+            CloseConnection(conn);
         }
     }
 
