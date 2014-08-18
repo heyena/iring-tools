@@ -100,31 +100,67 @@ namespace org.iringtools.web.controllers
 
         public JsonResult saveRole(FormCollection form)
         {
-            Response response = null;
-            return Json(response, JsonRequestBehavior.AllowGet);
+            var actionType = form["ActionType"];
+            if (actionType == "ADD")
+            {
+                _repository.InsertRole(form);
+            }
+            else
+            {
+                _repository.UpdateRole(form);
+            }
+
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult deleteRole(FormCollection form)
         {
-            Response response = null;
-            return Json(response, JsonRequestBehavior.AllowGet);
+            string iRoleId = form["RoleId"];
+            Role role = _repository.DeleteRole(iRoleId, "xml");
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult savePermission(FormCollection form)
         {
-            Response response = null;
-            return Json(response, JsonRequestBehavior.AllowGet);
+            var actionType = form["ActionType"];
+            if (actionType == "ADD")
+            {
+                _repository.InsertPermission(form);
+            }
+            else
+            {
+                _repository.UpdatePermission(form);
+            }
+
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult deletePermission(FormCollection form)
         {
-            Response response = null;
-            return Json(response, JsonRequestBehavior.AllowGet);
+            string iPermissionId = form["PermissionId"];
+            Permission permission = _repository.DeletePermission(iPermissionId, "xml");
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult insertUsers(FormCollection form)
+        public JsonResult saveUser(FormCollection form)
         {
-            _repository.InsertUsers(form);
+            var actionType = form["ActionType"];
+            if (actionType == "ADD")
+            {
+                _repository.InsertUsers(form);
+            }
+            else
+            {
+                _repository.UpdateUsers(form);
+            }
+
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult deleteUser(FormCollection form)
+        {
+            string iUserId = form["UserId"];
+            User user = _repository.DeleteUser(iUserId, "xml");
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
