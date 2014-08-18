@@ -48,9 +48,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UserSecurityLibrary">
-      <HintPath>..\UserSecurityLibrary\bin\Debug\UserSecurityLibrary.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationConfigurationProvider.cs" />
@@ -65,6 +62,10 @@
     <ProjectReference Include="..\iRINGLibrary\iRINGLibrary.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UserSecurityLibrary\UserSecurityLibrary.csproj">
+      <Project>{A68287A0-2739-44D2-9534-CC4D982C67AA}</Project>
+      <Name>UserSecurityLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\UtilityLibrary\UtilityLibrary.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
