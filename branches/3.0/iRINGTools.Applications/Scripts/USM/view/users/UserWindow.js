@@ -73,7 +73,7 @@ Ext.define('USM.view.users.UserWindow', {
             msg = new Ext.window.MessageBox();
             msg.wait('Saving User ....');
             form.submit({
-                url: 'usersecuritymanager/insertUsers',
+                url: 'usersecuritymanager/saveUser',
                 success: function (f, a) {
                     msg.close();
                     me.destroy();
