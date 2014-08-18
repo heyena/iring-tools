@@ -108,8 +108,8 @@ namespace iRINGTools.Web.Models
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 //sitePermissions?siteId={siteId}&format={format}
 
-                items = client.Get<Permissions>("/permissions?format=" + format);  
-
+                //items = client.Get<Permissions>("/permissions?format=" + format);
+                items = client.Get<Permissions>("/sitePermissions?siteId=1&format="+ format);  
                
                 _logger.Debug("Successfully called Security Service.");
             }
@@ -183,6 +183,56 @@ namespace iRINGTools.Web.Models
                 throw;
 
             }
+
+        }
+
+        public void UpdateUsers(FormCollection form)
+        {
+
+            _logger.Debug("In Security Repository Insert Users");
+            try
+            {
+                User user = new User {UserId = Convert.ToInt32(form["UserId"]),UserName = form["UserName"], UserFirstName = form["UserFirstName"], UserLastName = form["UserLastName"], UserEmail = form["UserEmail"], UserPhone = form["UserPhone"], UserDesc = form["UserDesc"] };
+                Users users = new Users();
+                users.Add(user);
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                // client.Post<Users>("/users?format=xml", users, true,"xml");
+                client.Put<Users>("/users?format=xml", users, true);
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+        }
+
+        public User DeleteUser(string userId, string format)
+        {
+            User user = null;
+            User user1 = new User { UserId = Convert.ToInt32(userId) };
+            Users users = new Users();
+            users.Add(user1);
+
+            _logger.Debug("In SecurityRepository getAllGroups");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                //client.Delete<Groups>("/groups?format=xml", groups, true);
+                client.Delete<Users>("/users?userId=" + userId + "&format=" + format, users, true);
+
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return user;
 
         }
 
@@ -261,5 +311,156 @@ namespace iRINGTools.Web.Models
 
         }
 
-     }
+        public void InsertRole(FormCollection form)
+        {
+
+            _logger.Debug("In Security Repository Insert Role");
+            try
+            {
+                Role role = new Role { RoleName = form["RoleName"], RoleDesc = form["RoleDesc"] };
+                Roles roles = new Roles();
+                roles.Add(role);
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                // client.Post<Users>("/users?format=xml", users, true,"xml");
+                client.Post<Roles>("/roles?format=xml", roles, true);
+                _logger.Debug("Successfully called Security Service.");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+        }
+
+        public void UpdateRole(FormCollection form)
+        {
+
+            _logger.Debug("In Security Repository Update Group");
+            try
+            {
+                Role role = new Role { RoleId = Convert.ToInt32(form["RoleId"]), RoleName = form["RoleName"], RoleDesc = form["RoleDesc"] };
+                Roles roles = new Roles();
+                roles.Add(role);
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                // client.Post<Users>("/users?format=xml", users, true,"xml");
+                client.Put<Roles>("/roles?format=xml", roles, true);
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+        }
+
+        public Role DeleteRole(string roleId, string format)
+        {
+            Role role = null;
+            Role role1 = new Role { RoleId = Convert.ToInt32(roleId) };
+            Roles roles = new Roles();
+            roles.Add(role1);
+
+            _logger.Debug("In SecurityRepository getAllGroups");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                //client.Delete<Groups>("/groups?format=xml", groups, true);
+                client.Delete<Roles>("/roles?roleId=" + roleId + "&format=" + format, roles, true);
+
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return role;
+
+        }
+
+        public void InsertPermission(FormCollection form)
+        {
+
+            _logger.Debug("In Security Repository Insert Role");
+            try
+            {
+                Permission premission = new Permission { PermissionName = form["PermissionName"], PermissionDesc = form["PermissionDesc"] };
+                Permissions permissions = new Permissions();
+                permissions.Add(premission);
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                // client.Post<Users>("/users?format=xml", users, true,"xml");
+                client.Post<Permissions>("/permissions?format=xml", permissions, true);
+                _logger.Debug("Successfully called Security Service.");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+        }
+
+        public void UpdatePermission(FormCollection form)
+        {
+
+            _logger.Debug("In Security Repository Update Group");
+            try
+            {
+                Permission permission = new Permission { PermissionId = Convert.ToInt32(form["PermissionId"]), PermissionName = form["PermissionName"], PermissionDesc = form["PermissionDesc"] };
+                Permissions permissions = new Permissions();
+                permissions.Add(permission);
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                // client.Post<Users>("/users?format=xml", users, true,"xml");
+                client.Put<Permissions>("/permissions?format=xml", permissions, true);
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+        }
+
+        public Permission DeletePermission(string permissionId, string format)
+        {
+            Permission permission = null;
+            Permission permission1 = new Permission { PermissionId = Convert.ToInt32(permissionId) };
+            Permissions permissions = new Permissions();
+            permissions.Add(permission1);
+
+            _logger.Debug("In SecurityRepository getAllGroups");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                //client.Delete<Groups>("/groups?format=xml", groups, true);
+                client.Delete<Permissions>("/permissions?permissionId=" + permissionId + "&format=" + format, permissions, true);
+
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return permission;
+
+        }
+
+
+    }
 }
