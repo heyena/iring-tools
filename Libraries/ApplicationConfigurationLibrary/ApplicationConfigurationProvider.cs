@@ -15,9 +15,7 @@ using System.ServiceModel.Web;
 using System.Data.Linq;
 using System.Web;
 using System.Data;
-using System.Data.SqlClient;
-using System.Xml;
-using System.Xml.Serialization;
+
 
 namespace org.iringtools.applicationConfig
 {
@@ -191,24 +189,13 @@ namespace org.iringtools.applicationConfig
             Contexts contexts = new Contexts();
             try
             {
-                SqlConnection conn = new SqlConnection(_connSecurityDb);
-                conn.Open();
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId)});
+                nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(folderId)});
 
-                SqlCommand cmd = new SqlCommand("spgContextByUser", conn);
-                cmd.Parameters.AddWithValue("@UserName", userName);
-                cmd.Parameters.AddWithValue("@SiteId", _siteID);
-                cmd.Parameters.AddWithValue("@FolderId", folderId);
-
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                using (XmlReader reader = cmd.ExecuteXmlReader())
-                {
-                    while (reader.Read())
-                    {
-                        string xmlString = reader.ReadOuterXml(); // XML returned from SP.
-                        contexts = utility.Utility.Deserialize<org.iringtools.applicationConfig.Contexts>(xmlString, true);
-                    }
-                }
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgContextByUser", nvl);
+                contexts = utility.Utility.Deserialize<org.iringtools.applicationConfig.Contexts>(xmlString, true);    
             }
             catch (Exception ex)
             {
