@@ -8,13 +8,14 @@
     constructor: function (cfg) {
         var me = this;
         cfg = cfg || {};
+        var storeId = Ext.data.IdGenerator.get("uuid").generate();
         me.callParent([Ext.apply({
             actionMethod: {
                 read: 'GET'
             },
             autoLoad: true,
             model: 'USM.model.SecurityM',
-            storeId: 'SecurityJsonStore',
+            storeId: storeId,
 			//data: [{"name": "Groups"},{"name": "Users"},{"name": "Roles"},{"name": "Permissions"}] 
             proxy: {
                 type: 'ajax',

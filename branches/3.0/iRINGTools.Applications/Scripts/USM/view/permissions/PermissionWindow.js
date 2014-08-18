@@ -80,6 +80,7 @@ Ext.define('USM.view.permissions.PermissionWindow', {
                     me.destroy();
                     var message = 'Permission saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
+                    Ext.getCmp('idpermission').store.reload();
                     return;
                 },
                 failure: function (f, a) {

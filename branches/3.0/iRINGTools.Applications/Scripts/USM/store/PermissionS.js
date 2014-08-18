@@ -8,13 +8,14 @@
     constructor: function (cfg) {
         var me = this;
         cfg = cfg || {};
+        var storeId = Ext.data.IdGenerator.get("uuid").generate();
         me.callParent([Ext.apply({
             actionMethod: {
                 read: 'GET'
             },
             autoLoad: false,
             model: 'USM.model.PermissionM',
-            storeId: 'PermissionJsonStore',
+            storeId: storeId,
 //            data: [
 //				{ "PermissionName": "Full Control", "PermissionDesc": "iRing"},
 //				{ "PermissionName": "Modify", "PermissionDesc": "iRing"},

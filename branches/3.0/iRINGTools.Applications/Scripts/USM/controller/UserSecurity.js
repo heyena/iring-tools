@@ -13,6 +13,8 @@
         'menus.SecurityMenu',
         'menus.UserMenu',
 	    'users.UserGrid',
+        'users.UserForm',
+        'users.UserWindow',
         'menus.RoleMenu',
         'roles.RoleForm',
         'roles.RoleWindow',
@@ -108,8 +110,11 @@
             "usergrid": {
                 itemcontextmenu: me.onUserGridClick
             },
-            "menuitem[action=addEditUser]": {
-                click: this.addOrEditUsers
+            "menuitem[action=addUser]": {
+                click: this.addUsers
+            },
+            "menuitem[action=editUser]": {
+                click: this.editUsers
             },
             "menuitem[action=deleteUser]": {
                 click: this.deleteUser
@@ -125,57 +130,47 @@
         win.show();
     },
 
-    deleteUser: function (item, e, eOpts) {
-        Ext.MessageBox.confirm('Delete', 'Are you sure ?', function (btn) {
-            if (btn === 'yes') {
-                //some code
-            }
-            else {
-                //some code
-            }
-        });
+    addUsers: function (item, e, eOpts) {
+        var me = this;
+        var win = Ext.widget('userwindow');
+        win.show();
     },
 
-    addOrEditUsers: function (item, e, eOpts) {
+    editUsers: function (btn) {
         var me = this;
-        var conf = {
-            title: '',
-            iconCls: 'tabsApplication'
-        };
-        var UserName, UserFirstName, UserLastName, UserEmail, UserPhone, UserDesc;
-        var win = Ext.widget('addUserformwindow', conf);
-        var form = win.down('form');
-        if (item.itemId == 'editUser') {
-            win.setTitle('Edit User');
-            var selectedRecord = me.getUserGrid().getSelectionModel().getSelection()[0];
-            UserName = selectedRecord.data.UserName;
-            UserFirstName = selectedRecord.data.UserFirstName;
-            UserLastName = selectedRecord.data.UserLastName;
-            UserEmail = selectedRecord.data.UserEmail;
-            UserPhone = selectedRecord.data.UserPhone;
-            UserDesc = selectedRecord.data.UserDesc;
-        } else if (item.itemId == 'addUser') {
-            win.setTitle('Add User');
-        }
-        /*win.on('save', function () {
-        win.destroy();
-        tree.view.refresh();
-        tree.expandPath(tree.getRootNode().getPath());
-        var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
-        detailGrid.setSource({});
-        }, me);*/
+        var rec = Ext.getCmp('viewportid').down('usergrid').getSelectionModel().getSelection();
+        var userId = rec[0].data.UserId;
+        var win = Ext.widget('userwindow');
+        var form = win.down('userform');
+        form.getForm().setValues(rec[0].data);
+        form.getForm().findField('ActionType').setValue('EDIT');
+        win.show();
 
-        win.on('Cancel', function () {
-            win.destroy();
-        }, me);
-        win.show();
-        form.getForm().findField('UserName').setValue(UserName);
-        form.getForm().findField('UserFirstName').setValue(UserFirstName);
-        form.getForm().findField('UserLastName').setValue(UserLastName);
-        form.getForm().findField('UserEmail').setValue(UserEmail);
-        form.getForm().findField('UserPhone').setValue(UserPhone);
-        form.getForm().findField('UserDesc').setValue(UserDesc);
-        win.show();
+    },
+
+    deleteUser: function (item, e, eOpts) {
+        var me = this;
+        var rec = Ext.getCmp('viewportid').down('usergrid').getSelectionModel().getSelection();
+        var userId = rec[0].data.UserId;
+
+        Ext.MessageBox.confirm('Delete', 'Are you sure to delete this user?', function (btn) {
+            if (btn === 'yes') {
+                Ext.Ajax.request({
+                    url: 'usersecuritymanager/deleteUser',
+                    method: 'POST',
+                    params: {
+                        UserId: userId
+                    },
+                    success: function (response, options) {
+                        var responseObj = Ext.JSON.decode(response.responseText);
+                        Ext.getCmp('viewportid').down('usergrid').store.reload();
+                    },
+
+                    failure: function (response, options) {
+                    }
+                });
+            }
+        });
     },
 
     onUserGridClick: function (dataview, record, item, index, e, eOpts) {
@@ -252,17 +247,23 @@
         var me = this;
         var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
         var groupId = rec[0].data.GroupId;
-        Ext.Ajax.request({
-            url: 'usersecuritymanager/deleteGroup',
-            method: 'POST',
-            params: {
-                GroupId: groupId
-            },
-            success: function (response, options) {
-                var responseObj = Ext.JSON.decode(response.responseText);
-            },
+        Ext.MessageBox.confirm('Delete', 'Are you sure to delete this group?', function (btn) {
+            if (btn === 'yes') {
+                Ext.Ajax.request({
+                    url: 'usersecuritymanager/deleteGroup',
+                    method: 'POST',
+                    params: {
+                        GroupId: groupId
+                    },
+                    success: function (response, options) {
+                        var responseObj = Ext.JSON.decode(response.responseText);
+                        Ext.getCmp('viewportid').down('groupgrid').store.reload();
 
-            failure: function (response, options) {
+                    },
+
+                    failure: function (response, options) {
+                    }
+                });
             }
         });
     },
@@ -305,17 +306,22 @@
         var me = this;
         var rec = Ext.getCmp('viewportid').down('rolegrid').getSelectionModel().getSelection();
         var roleId = rec[0].data.RoleId;
-        Ext.Ajax.request({
-            url: 'usersecuritymanager/deleteRole',
-            method: 'POST',
-            params: {
-                RoleId: roleId
-            },
-            success: function (response, options) {
-                var responseObj = Ext.JSON.decode(response.responseText);
-            },
+        Ext.MessageBox.confirm('Delete', 'Are you sure to delete this role?', function (btn) {
+            if (btn === 'yes') {
+                Ext.Ajax.request({
+                    url: 'usersecuritymanager/deleteRole',
+                    method: 'POST',
+                    params: {
+                        RoleId: roleId
+                    },
+                    success: function (response, options) {
+                        var responseObj = Ext.JSON.decode(response.responseText);
+                        Ext.getCmp('viewportid').down('rolegrid').store.reload();
+                    },
 
-            failure: function (response, options) {
+                    failure: function (response, options) {
+                    }
+                });
             }
         });
     },
@@ -358,17 +364,22 @@
         var me = this;
         var rec = Ext.getCmp('viewportid').down('permissiongrid').getSelectionModel().getSelection();
         var permissionId = rec[0].data.PermissionId;
-        Ext.Ajax.request({
-            url: 'usersecuritymanager/deletePermission',
-            method: 'POST',
-            params: {
-                PermissionId: permissionId
-            },
-            success: function (response, options) {
-                var responseObj = Ext.JSON.decode(response.responseText);
-            },
+        Ext.MessageBox.confirm('Delete', 'Are you sure to delete this permission?', function (btn) {
+            if (btn === 'yes') {
+                Ext.Ajax.request({
+                    url: 'usersecuritymanager/deletePermission',
+                    method: 'POST',
+                    params: {
+                        PermissionId: permissionId
+                    },
+                    success: function (response, options) {
+                        var responseObj = Ext.JSON.decode(response.responseText);
+                        Ext.getCmp('viewportid').down('permissiongrid').store.reload();
+                    },
 
-            failure: function (response, options) {
+                    failure: function (response, options) {
+                    }
+                });
             }
         });
     },

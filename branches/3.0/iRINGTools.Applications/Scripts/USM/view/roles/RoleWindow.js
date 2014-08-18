@@ -79,6 +79,7 @@ Ext.define('USM.view.roles.RoleWindow', {
                     me.destroy();
                     var message = 'Role saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
+                    Ext.getCmp('idrole').store.reload();
                     return;
                 },
                 failure: function (f, a) {
