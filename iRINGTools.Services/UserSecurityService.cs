@@ -77,7 +77,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Insert users to the database.")]
@@ -108,7 +108,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Insert users to the database.")]
@@ -138,7 +138,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Get all sites from the database.")]
@@ -392,7 +392,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Delete role from the data base.")]
@@ -422,7 +422,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
 
@@ -454,7 +454,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
 
@@ -486,7 +486,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Delete permission from the data base.")]
@@ -516,7 +516,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Get all groups from the database.")]
