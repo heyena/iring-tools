@@ -361,7 +361,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Update roles in the data base.")]
