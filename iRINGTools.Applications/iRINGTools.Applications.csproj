@@ -460,6 +460,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Views\UserSecurityManager\Index.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
