@@ -18,11 +18,7 @@ Ext.application({
         'groups.GroupGrid',
         'users.UserGrid',
         'permissions.PermissionGrid',
-        'roles.RoleGrid',
-		'users.AddUserForm',
-		'users.AddUserFormWindow'
-		//'permissions.PermissionsSelectionPanel',
-		//'permissions.PermissionSelectionPanelWindow'
+        'roles.RoleGrid'
   ],
   
   name: 'USM',

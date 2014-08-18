@@ -5,6 +5,7 @@ Ext.define('USM.view.roles.RoleGrid', {
     resizable: true,
     store: 'RoleS',
     resizable: false,
+    id: 'idrole',
     initComponent: function () {
         var me = this;
 

@@ -8,14 +8,14 @@ Ext.define('USM.view.menus.UserMenu', {
             items: [
                 {
                     xtype: 'menuitem',
-                    action: 'addEditUser',
+                    action: 'addUser',
 					itemId:'addUser',
 					iconCls: 'icon-add',
                     text: 'Add User'
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'addEditUser',
+                    action: 'editUser',
 					itemId:'editUser',
 					iconCls: 'icon-edit',
                     text: 'Edit User'

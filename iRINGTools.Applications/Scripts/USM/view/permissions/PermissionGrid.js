@@ -5,6 +5,7 @@ Ext.define('USM.view.permissions.PermissionGrid', {
     resizable: true,
     store: 'PermissionS',
     resizable: false,
+    id: 'idpermission',
     initComponent: function () {
         var me = this;
 
