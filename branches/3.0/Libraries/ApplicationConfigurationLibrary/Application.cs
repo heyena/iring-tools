@@ -63,6 +63,12 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "application", Namespace = "http://www.iringtools.org/library")]
     public class Application
     {
+        Application()
+        {
+            permissions = new Permissions();
+            applicationSettings = new ApplicationSettings();
+        }
+
         [DataMember(Name = "contextId", Order = 0)]
         public Guid ContextId { get; set; }
 
@@ -86,6 +92,15 @@ namespace org.iringtools.applicationConfig
         
         [DataMember(Name = "active", Order = 7, EmitDefaultValue = false)]
         public Byte Active { get; set; }
+
+        [DataMember(Name = "assembly", Order = 8, EmitDefaultValue = false)]
+        public string Assembly { get; set; }
+
+        [DataMember(Name = "permissions", Order = 9, EmitDefaultValue = false)]
+        public Permissions permissions { get; set; }
+
+        [DataMember(Name = "applicationSettings", Order = 10, EmitDefaultValue = false)]
+        public ApplicationSettings applicationSettings { get; set; }
     }
 
 
@@ -236,5 +251,21 @@ namespace org.iringtools.applicationConfig
 
         [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
         public Byte Active { get; set; }
+    }
+
+    [CollectionDataContract(Name = "applicationSettings", Namespace = "http://www.iringtools.org/library", ItemName = "applicationSetting")]
+    public class ApplicationSettings : List<ApplicationSetting>
+    {
+
+    }
+
+    [DataContract(Name = "applicationSetting", Namespace = "http://www.iringtools.org/library")]
+    public class ApplicationSetting
+    {
+        [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
+        public string Name { get; set; }
+
+        [DataMember(Name = "value", Order = 1, EmitDefaultValue = false)]
+        public string Value { get; set; }
     }
 }
