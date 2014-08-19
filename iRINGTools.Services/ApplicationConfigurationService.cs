@@ -31,8 +31,8 @@ namespace org.iringtools.services
 
 
         [Description("Gets the scopes available from the data base.")]
-        [WebGet(UriTemplate = "/contexts?format={format}")]
-        public void GetContexts(string format)  // Completed.
+        [WebGet(UriTemplate = "/contexts?siteId={siteId}&format={format}")]
+        public void GetContexts(int siteId, string format)  // Completed.
         {
             try
             {
@@ -40,7 +40,7 @@ namespace org.iringtools.services
                 { format = "xml"; }
 
 
-                org.iringtools.applicationConfig.Contexts contexts = _applicationConfigurationProvider.GetAllContexts();
+                org.iringtools.applicationConfig.Contexts contexts = _applicationConfigurationProvider.GetAllContexts(siteId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Contexts>(contexts, format, true);
             }
 
@@ -115,8 +115,8 @@ namespace org.iringtools.services
         }
 
         [Description("Update contexts to the data base.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/contexts/{internalName}?format={format}")]
-        public void DeleteContexts(string internalName, string format) // Completed.
+        [WebInvoke(Method = "DELETE", UriTemplate = "/contexts/{internalName}?siteId={siteId}&format={format}")]
+        public void DeleteContexts(string internalName, int siteId, string format) // Completed.
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -131,7 +131,7 @@ namespace org.iringtools.services
                 }
                 else
                 {
-                    response = _applicationConfigurationProvider.DeleteContext(internalName);
+                    response = _applicationConfigurationProvider.DeleteContext(internalName, siteId);
                 }
             }
             catch (Exception ex)
@@ -469,15 +469,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get application collection for user")]
-        [WebGet(UriTemplate = "/applications/{userName}?format={format}")]
-        public void GetApplicationsForUser(string userName, string format)
+        [WebGet(UriTemplate = "/applications/{userName}?siteId={siteId}&contextId={contextId}&format={format}")]
+        public void GetApplicationsForUser(string userName, int siteId, Guid contextId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                Applications applications = _applicationConfigurationProvider.GetApplicationsForUser(userName);
+                Applications applications = _applicationConfigurationProvider.GetApplicationsForUser(userName, siteId, contextId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Applications>(applications, format, true);
             }
             catch (Exception ex)

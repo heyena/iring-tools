@@ -41,16 +41,21 @@ namespace org.iringtools.applicationConfig
             }
         }
 
-        public Contexts GetAllContexts()
+        public Contexts GetAllContexts(int siteId)
         {
             Contexts contexts = new Contexts();
             try
             {
+                if (siteId == 0)
+                {
+                    siteId = _siteID;
+                }
+
                 List<Context> lstContext = new List<Context>();
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    lstContext = dc.ExecuteQuery<Context>("spgContext @SiteId = {0}", _siteID).ToList();
+                    lstContext = dc.ExecuteQuery<Context>("spgContext @SiteId = {0}", siteId).ToList();
                 }
 
                 contexts.AddRange(lstContext);
@@ -74,12 +79,17 @@ namespace org.iringtools.applicationConfig
                 {
                     foreach (Context context in contexts)
                     {
+                        int siteId = _siteID;
+                        if (context.SiteId != 0)
+                        {
+                            siteId = context.SiteId;
+                        }
                         NameValueList nvl = new NameValueList();
                         nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
                         nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
                         nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(context.FolderId) });
 
                         DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiContext", nvl);
@@ -123,12 +133,18 @@ namespace org.iringtools.applicationConfig
                                                  " the payload which you want to update.");
                         }
 
+                        int siteId = _siteID;
+                        if (context.SiteId != 0)
+                        {
+                            siteId = context.SiteId;
+                        }
+
                         NameValueList nvl = new NameValueList();
                         nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
                         nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
                         nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(context.FolderId) });
 
                         DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuContext", nvl);
@@ -154,15 +170,20 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response DeleteContext(string internalName)
+        public Response DeleteContext(string internalName, int siteId)
         {
             Response response = new Response();
 
             try
             {
+                if (siteId == 0)
+                {
+                    siteId = _siteID;
+                }
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<Context>("spdContext @InternalName = {0}, @SiteId = {1}", internalName, _siteID);
+                    dc.ExecuteQuery<Context>("spdContext @InternalName = {0}, @SiteId = {1}", internalName, siteId);
                 }
 
                 response.DateTimeStamp = DateTime.Now;
@@ -204,20 +225,18 @@ namespace org.iringtools.applicationConfig
             return contexts;
         }
 
-        public Applications GetApplicationsForUser(string userName)
+        public Applications GetApplicationsForUser(string userName, int siteId, Guid contextId)
         {
             Applications applications = new Applications();
             try
             {
-                List<Application> lstApplication = new List<Application>();
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(contextId) });
 
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                    lstApplication = dc.ExecuteQuery<Application>("spgApplicationByUser @UserName = {0}, @SiteId = {1}",
-                                                           userName, _siteID).ToList();
-                }
-
-                applications.AddRange(lstApplication);
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgApplicationByUser", nvl);
+                applications = utility.Utility.Deserialize<Applications>(xmlString, true);    
             }
             catch (Exception ex)
             {
