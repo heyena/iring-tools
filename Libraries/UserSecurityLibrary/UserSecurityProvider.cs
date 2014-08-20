@@ -909,7 +909,7 @@ namespace org.iringtools.UserSecurity
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteCommand("spiGroupUsers @rawXML = {0}", rawXml);
+                    dc.ExecuteCommand("spiGroupUsers @rawXML = {0},@SiteId = {1}", rawXml,_siteID);
                 }
 
                 response.DateTimeStamp = DateTime.Now;
