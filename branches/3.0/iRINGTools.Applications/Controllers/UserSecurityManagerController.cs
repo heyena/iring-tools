@@ -68,6 +68,13 @@ namespace org.iringtools.web.controllers
             return Json(roles, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult getGroupUsers(FormCollection form)
+        {
+            string iGroupId = form["GroupId"];
+            UserGroups userGroups = _repository.GetGroupUsers(iGroupId,"xml");
+            return Json(userGroups, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult getGroupById(FormCollection form)
         {
             string iGroupId = form["GroupId"];
@@ -164,6 +171,10 @@ namespace org.iringtools.web.controllers
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
-
+        public JsonResult saveGroupUsers(FormCollection form)
+        {
+            _repository.InsertGroupUsers(form);
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
     }
 }
