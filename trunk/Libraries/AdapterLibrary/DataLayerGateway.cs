@@ -388,7 +388,7 @@ namespace org.iringtools.adapter
 
           while (start < objCount)
           {
-            limit = (start + page < objCount) ? page : start + page - objCount;
+            limit = (start + page < objCount) ? page : objCount - start;
             IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
 
             if (dataObjects != null && dataObjects.Count > 0)
