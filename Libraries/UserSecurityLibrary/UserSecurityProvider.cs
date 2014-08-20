@@ -717,18 +717,18 @@ namespace org.iringtools.UserSecurity
             return groups;
         }
 
-        public Users GetGroupUsers(int iGroupId)
+        public UserGroups GetGroupUsers(int iGroupId)
         {
-            List<User> lstUser = new List<User>();
+            List<UserGroup> lstUser = new List<UserGroup>();
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstUser = dc.ExecuteQuery<User>("spgGroupUsers @GroupId = {0}", iGroupId).ToList();
+                lstUser = dc.ExecuteQuery<UserGroup>("spgGroupUsers @GroupId = {0}", iGroupId).ToList();
             }
 
-            Users users = new Users();
-            users.AddRange(lstUser);
-            return users;
+            UserGroups usersG = new UserGroups();
+            usersG.AddRange(lstUser);
+            return usersG;
         }
 
         public Users GetSiteUsers(int iSiteId)
