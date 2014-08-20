@@ -898,5 +898,37 @@ namespace org.iringtools.UserSecurity
 
             return xElement;
         }
+
+        public Response InsertGroupUsers(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteCommand("spiGroupUsers @rawXML = {0}", rawXml);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Users added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Users: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
     }
 }
