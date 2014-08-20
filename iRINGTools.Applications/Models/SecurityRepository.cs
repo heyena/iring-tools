@@ -487,9 +487,17 @@ namespace iRINGTools.Web.Models
             _logger.Debug("In Security Repository Insert group users");
             try
             {
-                UserGroup userGroup = new UserGroup { GroupId = Convert.ToInt32(form["GroupId"]), UserId = Convert.ToInt32(form["UserId"]), UserGroupsDesc = form["UserGroupsDesc"] };
+                int groupId = Convert.ToInt32(form["GroupId"]);
+                string[] userIds =  form["SelectedUsers"].Split(new string[]{","},StringSplitOptions.RemoveEmptyEntries);
+
                 UserGroups userGroups = new UserGroups();
-                userGroups.Add(userGroup);
+                
+                foreach (string item in userIds)
+                {
+                    UserGroup userGroup = new UserGroup { GroupId = groupId, UserId = Convert.ToInt32(item) };
+                    userGroups.Add(userGroup);
+                }
+
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
 
                 client.Post<UserGroups>("/insertGroupUsers?format=xml", userGroups, true);
