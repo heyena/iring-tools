@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Xml.Linq;
 using System.Net;
+using System.Text;
 
 namespace org.iringtools.services
 {
@@ -889,6 +890,38 @@ namespace org.iringtools.services
                 _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
+        }
+
+
+        [Description("Link users with group to the database.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/insertGroupUsers?format={format}")]
+        public void InsertGroupUsers(string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<UserGroups>(stream, format);
+                    response = _userSecurityProvider.InsertGroupUsers(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
 
