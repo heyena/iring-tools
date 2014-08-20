@@ -13,7 +13,7 @@
             actionMethod: {
                 read: 'GET'
             },
-            autoLoad: false,
+            autoLoad: true,
             model: 'USM.model.UserM',
             storeId: storeId,
             //data: [{ "UserName": "prashant", "UserFirstName": "Prashant", "UserLastName": "Dubey", "UserEmail": "pdubey@bechtel.com", "UserPhone": "8992", "UserDesc": "pdubey@bechtel.com"}] 
