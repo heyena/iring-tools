@@ -721,8 +721,8 @@ namespace org.iringtools.services
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                Users users = _userSecurityProvider.GetGroupUsers(groupId);
-                _userSecurityProvider.FormatOutgoingMessage<Users>(users, format, true);
+                UserGroups users = _userSecurityProvider.GetGroupUsers(groupId);
+                _userSecurityProvider.FormatOutgoingMessage<UserGroups>(users, format, true);
             }
             catch (Exception ex)
             {
