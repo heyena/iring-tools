@@ -43,7 +43,7 @@ namespace org.iringtools.adapter
       _settings = kernel.Get<AdapterSettings>();
       _scope = _settings["ProjectName"].ToLower();
       _app = _settings["ApplicationName"].ToLower();
-      _dataPath = _settings["AppDataPath"];
+      _dataPath = Path.Combine(_settings["BaseDirectoryPath"], _settings["AppDataPath"]);
       _cacheConnStr = _settings[BaseProvider.CACHE_CONNSTR];
 
       string loadingType = _settings["http-header-LoadingType"];
@@ -388,7 +388,7 @@ namespace org.iringtools.adapter
 
           while (start < objCount)
           {
-            limit = (start + page < objCount) ? page : start + page - objCount;
+            limit = (start + page < objCount) ? page : objCount - start;
             IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
 
             if (dataObjects != null && dataObjects.Count > 0)
