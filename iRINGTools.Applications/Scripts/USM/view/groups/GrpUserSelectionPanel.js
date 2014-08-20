@@ -21,7 +21,7 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
                 items: [{
                     xtype: 'combobox',
                     disabled: false,
-                    name: 'groupName',
+                    name: 'groupId',
                     allowBlank: false,
                     fieldLabel: 'Group',
                     emptyText: 'Select Group',
@@ -83,7 +83,7 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
                         {
                             xtype: 'button',
                             handler: function (button, event) {
-                                me.onSave();
+                                me.onSave(button);
                             },
                             iconCls: 'icon-accept',
                             text: 'Save'
@@ -111,7 +111,7 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
         win.destroy();
     },
 
-    onSave: function () {
+    onSave: function (btn) {
         var me = this;
         var message;
         var msg;
@@ -120,7 +120,7 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
             msg = new Ext.window.MessageBox();
             msg.wait('Saving Group ....');
             form.submit({
-                url: 'usersecuritymanager/saveSelUser',
+                url: 'usersecuritymanager/saveGroupUsers',
                 success: function (f, a) {
                     msg.close();
                     me.getForm().reset();
