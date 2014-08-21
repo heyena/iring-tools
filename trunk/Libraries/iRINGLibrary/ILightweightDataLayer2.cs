@@ -9,10 +9,10 @@ using org.iringtools.adapter;
 using org.iringtools.utility;
 namespace org.iringtools.library
 {
-    interface ILightweightDataLayer2 : ILightweightDataLayer
+    public interface ILightweightDataLayer2 : ILightweightDataLayer
     {
         List<SerializableDataObject> GetIndex(DataObject objectType);
-        List<SerializableDataObject> GetPage(DataObject objectType, List<string> identifiers);
+        List<SerializableDataObject> GetPage(DataObject objectType, List<SerializableDataObject> identifiers);
     }
 
     public abstract class BaseLightweightDataLayer2 : BaseLightweightDataLayer, ILightweightDataLayer2
@@ -24,6 +24,6 @@ namespace org.iringtools.library
         }
 
         public abstract List<SerializableDataObject> GetIndex(DataObject objectType);
-        public abstract List<SerializableDataObject> GetPage(DataObject objectType, List<string> identifiers);
+        public abstract List<SerializableDataObject> GetPage(DataObject objectType, List<SerializableDataObject> identifiers);
     }
 }
