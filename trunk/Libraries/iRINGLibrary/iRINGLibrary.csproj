@@ -138,6 +138,7 @@
     <Compile Include="IAuthorization.cs" />
     <Compile Include="IAuthHeaders.cs" />
     <Compile Include="ILightweightDataLayer.cs" />
+    <Compile Include="ILightweightDataLayer2.cs" />
     <Compile Include="Locator.cs" />
     <Compile Include="Mapping.cs" />
     <Compile Include="MappingExtensions.cs" />
