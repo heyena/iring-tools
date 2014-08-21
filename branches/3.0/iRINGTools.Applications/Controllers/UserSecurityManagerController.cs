@@ -176,5 +176,18 @@ namespace org.iringtools.web.controllers
             _repository.InsertGroupUsers(form);
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult saveUserGroups(FormCollection form)
+        {
+            _repository.InsertUserGroups(form);
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult getUserGroups(FormCollection form)
+        {
+            string iUserId = form["UserId"];
+            Groups userGroups = _repository.GetUserGroups(iUserId, "xml");
+            return Json(userGroups, JsonRequestBehavior.AllowGet);
+        }
     }
 }
