@@ -90,10 +90,10 @@
                 click: this.editGroupUser
             },
             "menuitem[action=addRemRoletoGroup]": {
-                click: this.addRemRoletoGroup
+                click: this.addRemGroupToRole
             },
             "menuitem[action=addRemGroupToRole]": {
-                click: this.addRemGroupToRole
+                click: this.addRemRoleGroups
             },
             "viewport securitygrid": {
                 itemcontextmenu: me.onSecItemClick
@@ -460,10 +460,10 @@ editGroupUser: function (btn) {
     Ext.Ajax.request({
         url: 'usersecuritymanager/getUserGroups',
         //url: '/Scripts/USM/jsonfiles/selgroup.json',
-        //            method: 'POST',
-        //            params: {
-        //                userId: userId
-        //            },
+        method: 'POST',
+        params: {
+            userId: userId
+        },
         success: function (response, options) {
             var responseObj = Ext.JSON.decode(response.responseText);
             var win = new USM.view.ItemSelectorWindow({
@@ -480,12 +480,9 @@ editGroupUser: function (btn) {
                     }
                     form.getForm().findField('selectedGroups').setValue(selArr);
                 }
-                //var itemSel = Ext.ComponentQuery.query("#userselector", form);
-                //var itemSel = Ext.ComponentQuery.query("itemselector", form);
-                //var butt = Ext.ComponentQuery.query("button", itemSel);
-                //Ext.Array.remove(butons,)
+                
             }, me);
-            form.getForm().findField('userName').setValue(userId);
+            form.getForm().findField('userId').setValue(userId);
             win.show();
         },
         failure: function (response, options) {
@@ -493,17 +490,17 @@ editGroupUser: function (btn) {
     });
 },
 
-addRemRoletoGroup: function (btn) {
+addRemGroupToRole: function (btn) {
     var me = this;
     var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
     var groupId = rec[0].data.GroupId;
     Ext.Ajax.request({
-        //url: 'usersecuritymanager/editUserGroup',
+        //url: 'usersecuritymanager/getGroupRoles',
         url: '/Scripts/USM/jsonfiles/selroles.json',
-        //            method: 'POST',
-        //            params: {
-        //                groupId: groupId
-        //            },
+//        method: 'POST',
+//        params: {
+//            groupId: groupId
+//        },
         success: function (response, options) {
             var responseObj = Ext.JSON.decode(response.responseText);
             var win = new USM.view.ItemSelectorWindow({
@@ -529,7 +526,7 @@ addRemRoletoGroup: function (btn) {
     });
 },
 
-addRemGroupToRole: function (btn) {
+addRemRoleGroups: function (btn) {
     var me = this;
     var rec = Ext.getCmp('viewportid').down('rolegrid').getSelectionModel().getSelection();
     var roleId = rec[0].data.RoleId;
@@ -557,7 +554,7 @@ addRemGroupToRole: function (btn) {
                     form.getForm().findField('selectedGroups').setValue(selArr);
                 }
             }, me);
-            form.getForm().findField('roleName').setValue(roleId);
+            form.getForm().findField('roleId').setValue(roleId);
             win.show();
         },
         failure: function (response, options) {

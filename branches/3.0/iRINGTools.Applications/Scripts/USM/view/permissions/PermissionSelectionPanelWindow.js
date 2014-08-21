@@ -6,12 +6,11 @@ Ext.define('USM.view.permissions.PermissionSelectionPanelWindow', {
    'USM.view.permissions.PermissionSelectionPanel'
   ],
   border: false,
-  modal: true,
+  //modal: true,
   height: 310,
-  width: 600,
-  minHeight:260,
-  minWidth:400,
+  width: 700,
   buttonType: '',
+  autoScroll: false,
   layout: {
     type: 'fit'
   },
@@ -24,9 +23,10 @@ Ext.define('USM.view.permissions.PermissionSelectionPanelWindow', {
       'reset'
     );
     Ext.applyIf(me, {
+	  
       items: [
         {
-          xtype: 'permissionselectionpanel'
+		   xtype: 'permissionselectionpanel'
         }
       ],
 	  dockedItems: [
