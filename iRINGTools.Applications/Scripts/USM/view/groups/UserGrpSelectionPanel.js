@@ -21,7 +21,7 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
                 items: [{
                     xtype: 'combobox',
                     disabled: false,
-                    name: 'userName',
+                    name: 'userId',
                     allowBlank: false,
                     fieldLabel: 'User',
                     emptyText: 'Select User',
@@ -120,7 +120,7 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
             msg = new Ext.window.MessageBox();
             msg.wait('Saving Group ....');
             form.submit({
-                url: 'usersecuritymanager/saveSelGroup',
+                url: 'usersecuritymanager/saveUserGroups',
                 success: function (f, a) {
                     msg.close();
                     me.getForm().reset();
