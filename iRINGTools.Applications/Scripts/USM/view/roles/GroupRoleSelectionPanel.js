@@ -21,7 +21,7 @@ Ext.define('USM.view.roles.GroupRoleSelectionPanel', {
                 items: [{
                     xtype: 'combobox',
                     disabled: false,
-                    name: 'roleName',
+                    name: 'roleId',
                     allowBlank: false,
                     fieldLabel: 'Role',
                     emptyText: 'Select Role',
@@ -120,7 +120,7 @@ Ext.define('USM.view.roles.GroupRoleSelectionPanel', {
             msg = new Ext.window.MessageBox();
             msg.wait('Saving Groups ....');
             form.submit({
-                url: 'usersecuritymanager/saveSelGroup',
+                url: 'usersecuritymanager/saveRoleGroups',
                 success: function (f, a) {
                     msg.close();
                     me.getForm().reset();
