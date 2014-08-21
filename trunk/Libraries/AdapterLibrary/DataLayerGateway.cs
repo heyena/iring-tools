@@ -1745,20 +1745,21 @@ namespace org.iringtools.adapter
                             table.Rows.Add(newRow);
                         }
 
-                        //SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
-                        //bulkCopy.DestinationTableName = tableName;
-                        //bulkCopy.WriteToServer(table);
+                        SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
+                        bulkCopy.DestinationTableName = tableName;
+                        bulkCopy.WriteToServer(table);
 
                         string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
                         status.Messages.Add(msg);
                         response.Messages.Add(msg);
                         start += CachePageSize;
                         pageIndex = pageIndex + 1;
+                        table.Clear();
                     }
 
-                    SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
-                    bulkCopy.DestinationTableName = tableName;
-                    bulkCopy.WriteToServer(table);
+                    //SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
+                    //bulkCopy.DestinationTableName = tableName;
+                    //bulkCopy.WriteToServer(table);
 
 
                 }
