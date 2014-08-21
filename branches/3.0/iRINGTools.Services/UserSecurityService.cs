@@ -924,6 +924,37 @@ namespace org.iringtools.services
             _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
+        [Description("Link groups with user to the database.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/insertUserGroups?format={format}")]
+        public void InsertUserGroups(string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _userSecurityProvider.FormatIncomingMessage<UserGroups>(stream, format);
+                    response = _userSecurityProvider.InsertUserGroups(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
 
         #region Private Methods
         private string MapContentType(string format)
