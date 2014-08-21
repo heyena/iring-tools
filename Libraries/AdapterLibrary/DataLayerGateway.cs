@@ -36,6 +36,7 @@ namespace org.iringtools.adapter
     private string _cacheConnStr;
     private IDataLayer _dataLayer;
     private ILightweightDataLayer _lwDataLayer;
+    public ILightweightDataLayer2 _lwDataLayer2;
     private LoadingType  _loadingType = LoadingType.Lazy;
 
     public DataLayerGateway(IKernel kernel)
@@ -83,7 +84,16 @@ namespace org.iringtools.adapter
       }
       else
       {
-        _lwDataLayer = kernel.Get<ILightweightDataLayer>();
+////  //if (System.Configuration.ConfigurationManager.AppSettings["CachePageSize"] == null)
+                if (dlBinding.Element("bind").Attribute("service").Value == "org.iringtools.library.ILightweightDataLayer, iRINGLibrary")
+                {
+                    _lwDataLayer = kernel.Get<ILightweightDataLayer>();
+                }
+                else if (dlBinding.Element("bind").Attribute("service").Value == "org.iringtools.library.ILightweightDataLayer2, iRINGLibrary")
+                {
+
+                    _lwDataLayer2 = kernel.Get<ILightweightDataLayer2>();
+                }
       }
     }
 
@@ -138,6 +148,10 @@ namespace org.iringtools.adapter
         {
           dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
         }
+ if (_lwDataLayer2 != null)
+                {
+                    dictionary = _lwDataLayer2.Dictionary(refresh, objectType, out filter);
+                }
         else if (_dataLayer != null)
         {
           if (refresh)
@@ -280,7 +294,19 @@ namespace org.iringtools.adapter
 
     protected Response RefreshCache(string cacheId, DataObject objectType, bool includeRelated)
     {
-      Response response = DoRefreshCache(cacheId, objectType);
+ var cacheSize = System.Configuration.ConfigurationManager.AppSettings["CachePageSize"];
+            Response response = null;
+
+            if(_lwDataLayer !=null)
+           // //if (cacheSize == null)
+            {
+
+                response = DoRefreshCache(cacheId, objectType);
+            }
+            else
+            {
+                response = DoRefreshCacheWithIdentifier(cacheId, objectType, int.Parse(cacheSize));
+            }
 
       try
       {
@@ -770,7 +796,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
+       if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null || _lwDataLayer2 != null)
         {
           cacheId = CheckCache();
 
@@ -824,7 +850,10 @@ namespace org.iringtools.adapter
       {
         string cacheId = string.Empty;
 
-        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
+
+            //    if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
+                if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null || _lwDataLayer2 != null)
+
         {
           cacheId = CheckCache();
 
@@ -1657,8 +1686,104 @@ namespace org.iringtools.adapter
           return "nvarchar(MAX)";
       }
     }
- 
-  }
+        protected Response DoRefreshCacheWithIdentifier(string cacheId, DataObject objectType, int CachePageSize)
+        {
+            Response response = new Response();
+            response.Level = StatusLevel.Success;
 
-  public enum CacheState { Dirty, Busy, Ready }
+            try
+            {
+                //
+                // create new cache table
+                //
+                DeleteCacheTable(cacheId, objectType);
+                CreateCacheTable(cacheId, objectType);
+
+                Status status = new Status()
+                {
+                    Identifier = objectType.tableName,
+                    Level = StatusLevel.Success,
+                    Messages = new Messages() { "Cache table " + objectType.tableName + " created successfully." }
+                };
+
+                response.Append(status);
+
+                //
+                // populate cache data
+                //
+                string tableName = GetCacheTableName(cacheId, objectType.objectName);
+                string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
+                DataTable table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
+                //   int dataCount = CachePageSize;
+                int pageIndex = 0;
+                int start = 0;
+               if (_lwDataLayer2 != null)
+                {
+                    //get all identifier from datalayer   for idatalayer2 interface
+                    List<SerializableDataObject> dataObjects2 = _lwDataLayer2.GetIndex(objectType);
+                    while (start < dataObjects2.Count)
+                    {
+                        List<SerializableDataObject> data = dataObjects2.Skip(CachePageSize * pageIndex).Take(CachePageSize).ToList();
+                        List<SerializableDataObject> getdataObjects2 = _lwDataLayer2.GetPage(objectType, data);
+                        foreach (SerializableDataObject dataObj in getdataObjects2)
+                        {
+                            DataRow newRow = table.NewRow();
+
+                            foreach (var pair in dataObj.Dictionary)
+                            {
+                                if (pair.Value == null)
+                                    newRow[pair.Key] = DBNull.Value;
+                                else
+                                    newRow[pair.Key] = pair.Value;
+                            }
+
+                            if (dataObj.HasContent)
+                            {
+                                newRow[BaseLightweightDataLayer.HAS_CONTENT] = true;
+                            }
+
+                            table.Rows.Add(newRow);
+                        }
+
+                        //SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
+                        //bulkCopy.DestinationTableName = tableName;
+                        //bulkCopy.WriteToServer(table);
+
+                        string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
+                        status.Messages.Add(msg);
+                        response.Messages.Add(msg);
+                        start += CachePageSize;
+                        pageIndex = pageIndex + 1;
+                    }
+
+                    SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
+                    bulkCopy.DestinationTableName = tableName;
+                    bulkCopy.WriteToServer(table);
+
+
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                response.Level = StatusLevel.Error;
+
+                string error = "Error refreshing cache [" + objectType.objectName + "]: " + e.Message;
+                _logger.Error(error);
+                response.Messages.Add(error);
+            }
+
+            return response;
+        }
+
+    }
+
+
+
+    public enum CacheState { Dirty, Busy, Ready }
 }
+ 
+ 
+
+
