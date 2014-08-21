@@ -458,8 +458,8 @@ editGroupUser: function (btn) {
     var rec = Ext.getCmp('viewportid').down('usergrid').getSelectionModel().getSelection();
     var userId = rec[0].data.UserId;
     Ext.Ajax.request({
-        //url: 'usersecuritymanager/editUserGroup',
-        url: '/Scripts/USM/jsonfiles/selgroup.json',
+        url: 'usersecuritymanager/getUserGroups',
+        //url: '/Scripts/USM/jsonfiles/selgroup.json',
         //            method: 'POST',
         //            params: {
         //                userId: userId
@@ -475,8 +475,8 @@ editGroupUser: function (btn) {
 
             form.on('beforerender', function (form, ept) {
                 if (responseObj != null) {
-                    for (var i = 0; i < responseObj.items.length; i++) {
-                        selArr.push(responseObj.items[i].GroupId);
+                    for (var i = 0; i < responseObj.length; i++) {
+                        selArr.push(responseObj[i].GroupId);
                     }
                     form.getForm().findField('selectedGroups').setValue(selArr);
                 }
