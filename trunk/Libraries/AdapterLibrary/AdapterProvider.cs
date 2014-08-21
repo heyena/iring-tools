@@ -368,9 +368,17 @@ namespace org.iringtools.adapter
                     if (!string.IsNullOrEmpty(application.Assembly))
                     {
                         string service = "org.iringtools.library.IDataLayer, iRINGLibrary";
-                        if (typeof(ILightweightDataLayer).IsAssignableFrom(Type.GetType(application.Assembly)))
+                        if (Type.GetType(application.Assembly).BaseType.ToString() == "org.iringtools.library.BaseLightweightDataLayer") //added for ilightweight2 datalayer
                         {
-                            service = "org.iringtools.library.ILightweightDataLayer, iRINGLibrary";
+                            if (typeof(ILightweightDataLayer).IsAssignableFrom(Type.GetType(application.Assembly)))
+                            {
+                                service = "org.iringtools.library.ILightweightDataLayer, iRINGLibrary";
+                            }
+                        }
+                        //ilightweightdatalayre2
+                        else if (typeof(ILightweightDataLayer2).IsAssignableFrom(Type.GetType(application.Assembly)))
+                        {
+                            service = "org.iringtools.library.ILightweightDataLayer2, iRINGLibrary";
                         }
 
                         XElement dataLayerBinding = new XElement("module",
