@@ -513,6 +513,56 @@ namespace iRINGTools.Web.Models
 
         }
 
+        public void InsertUserGroups(FormCollection form)
+        {
 
+            _logger.Debug("In Security Repository Insert user groups");
+            try
+            {
+                int userId = Convert.ToInt32(form["UserId"]);
+                string[] groupIds = form["SelectedGroups"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                UserGroups userGroups = new UserGroups();
+
+                foreach (string item in groupIds)
+                {
+                    UserGroup userGroup = new UserGroup { GroupId = Convert.ToInt32(item), UserId = userId };
+                    userGroups.Add(userGroup);
+                }
+
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                client.Post<UserGroups>("/insertUserGroups?format=xml", userGroups, true);
+                _logger.Debug("Successfully called Security Service.");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+        }
+
+        public Groups GetUserGroups(string userId, string format)
+        {
+            Groups items = null;
+            _logger.Debug("In SecurityRepository GetUserGroups");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                items = client.Get<Groups>("/groupsUser?userId=" + userId + "&format=" + format);
+
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return items;
+        }
     }
 }
