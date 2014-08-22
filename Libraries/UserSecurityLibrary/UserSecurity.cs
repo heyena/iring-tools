@@ -186,22 +186,22 @@ namespace org.iringtools.UserSecurity
     [DataContract(Name = "groupRole", Namespace = "http://www.iringtools.org/library")]
     public class GroupRole
     {
-        [DataMember(Name = "groupRoleId", Order = 0)]
-        public int GroupRoleId { get; set; }
+        //[DataMember(Name = "groupRoleId", Order = 0)]
+        //public int GroupRoleId { get; set; }
 
-        [DataMember(Name = "groupId", Order = 1, EmitDefaultValue = false)]
+        [DataMember(Name = "groupId", Order = 0, EmitDefaultValue = false)]
         public int GroupId { get; set; }
 
-        [DataMember(Name = "roleId", Order = 2, EmitDefaultValue = false)]
+        [DataMember(Name = "roleId", Order = 1, EmitDefaultValue = false)]
         public int RoleId { get; set; }
 
-        [DataMember(Name = "siteId", Order = 3, EmitDefaultValue = false)]
+        [DataMember(Name = "siteId", Order = 2, EmitDefaultValue = false)]
         public int SiteId { get; set; }
 
-        [DataMember(Name = "groupRolesDesc", Order = 4, EmitDefaultValue = false)]
-        public string GroupRolesDesc { get; set; }
+        //[DataMember(Name = "groupRolesDesc", Order = 4, EmitDefaultValue = false)]
+        //public string GroupRolesDesc { get; set; }
 
-        [DataMember(Name = "active", Order = 5, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
         public Byte Active { get; set; }
     }
 }
