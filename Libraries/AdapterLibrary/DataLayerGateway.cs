@@ -297,7 +297,7 @@ namespace org.iringtools.adapter
 
             Response response = null;
 
-            if (_lwDataLayer != null)
+            if (_lwDataLayer != null || _dataLayer != null)
             // //if (cacheSize == null)
             {
 
@@ -418,7 +418,7 @@ namespace org.iringtools.adapter
 
                     while (start < objCount)
                     {
-                        limit = (start + page < objCount) ? page : objCount - start;
+                        limit = page;// (start + page < objCount) ? page : objCount - start;
                         IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
 
                         if (dataObjects != null && dataObjects.Count > 0)
