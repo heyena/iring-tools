@@ -484,7 +484,7 @@ namespace iRINGTools.Web.Models
         public void InsertGroupUsers(FormCollection form)
         {
 
-            _logger.Debug("In Security Repository Insert group users");
+            _logger.Debug("In Security Repository map users with group");
             try
             {
                 int groupId = Convert.ToInt32(form["GroupId"]);
@@ -516,7 +516,7 @@ namespace iRINGTools.Web.Models
         public void InsertUserGroups(FormCollection form)
         {
 
-            _logger.Debug("In Security Repository Insert user groups");
+            _logger.Debug("In Security Repository map groups with user");
             try
             {
                 int userId = Convert.ToInt32(form["UserId"]);
@@ -553,6 +553,57 @@ namespace iRINGTools.Web.Models
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 items = client.Get<Groups>("/groupsUser?userId=" + userId + "&format=" + format);
+
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return items;
+        }
+
+        public void InsertRoleGroups(FormCollection form)
+        {
+
+            _logger.Debug("In Security Repository map groups with role");
+            try
+            {
+                int roleId = Convert.ToInt32(form["RoleId"]);
+                string[] groupIds = form["SelectedGroups"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                GroupRoles userGroups = new GroupRoles();
+
+                foreach (string item in groupIds)
+                {
+                    GroupRole userGroup = new GroupRole { GroupId = Convert.ToInt32(item), RoleId = roleId };
+                    userGroups.Add(userGroup);
+                }
+
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                client.Post<GroupRoles>("/insertRoleGroups?format=xml", userGroups, true);
+                _logger.Debug("Successfully called Security Service.");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+        }
+        public Groups GetRoleGroups(string roleId, string format)
+        {
+            Groups items = null;
+            _logger.Debug("In SecurityRepository GetUserGroups");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                items = client.Get<Groups>("/roleGroups?roleId=" + roleId + "&format=" + format);
 
                 _logger.Debug("Successfully called Security Service.");
             }
