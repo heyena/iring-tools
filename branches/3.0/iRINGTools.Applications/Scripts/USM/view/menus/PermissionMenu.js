@@ -27,19 +27,22 @@ Ext.define('USM.view.menus.PermissionMenu', {
                     text: 'Delete Permission'
                 },
                 {
-                    xtype: 'menuseparator'
+                    xtype: 'menuseparator',
+                    hidden: true
                 },
                 {
                     xtype: 'menuitem',
                     action: 'addPermissionToRole',
                     iconCls: 'icon-add',
-                    text: 'Add Permission to Role'
+                    text: 'Add Permission to Role',
+                    hidden : true
                 },
                 {
                     xtype: 'menuitem',
                     action: 'editPermissionRole',
                     iconCls: 'icon-edit',
-                    text: 'Edit Role/Permission'
+                    text: 'Edit Role/Permission',
+                    hidden: true
                 }
             ]
         });

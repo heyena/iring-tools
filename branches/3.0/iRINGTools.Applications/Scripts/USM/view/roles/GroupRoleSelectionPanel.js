@@ -21,7 +21,7 @@ Ext.define('USM.view.roles.GroupRoleSelectionPanel', {
                 items: [{
                     xtype: 'combobox',
                     disabled: false,
-                    name: 'roleId',
+                    name: 'RoleId',
                     allowBlank: false,
                     fieldLabel: 'Role',
                     emptyText: 'Select Role',
@@ -47,7 +47,7 @@ Ext.define('USM.view.roles.GroupRoleSelectionPanel', {
                 items: [{
                     xtype: 'itemselector',
                     itemId: 'groupselector',
-                    name: 'selectedGroups',
+                    name: 'SelectedGroups',
                     anchor: '100%',
                     imagePath: '../ux/images/',
                     store: 'GroupS',

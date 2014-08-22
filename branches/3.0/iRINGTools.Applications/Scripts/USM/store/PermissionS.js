@@ -13,7 +13,7 @@
             actionMethod: {
                 read: 'GET'
             },
-            autoLoad: false,
+            autoLoad: true,
             model: 'USM.model.PermissionM',
             storeId: storeId,
 //            data: [

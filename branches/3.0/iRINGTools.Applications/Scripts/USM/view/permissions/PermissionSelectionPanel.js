@@ -21,7 +21,7 @@ Ext.define('USM.view.permissions.PermissionSelectionPanel', {
                 items: [{
                     xtype: 'combobox',
                     disabled: false,
-                    name: 'roleId',
+                    name: 'RoleId',
                     allowBlank: false,
                     fieldLabel: 'Role',
                     emptyText: 'Select Role',
@@ -34,28 +34,41 @@ Ext.define('USM.view.permissions.PermissionSelectionPanel', {
                 }]
             },
 			{
-				xtype: 'panel',
+				xtype: 'container',
 				autoScroll: true,
 				items: [{
-					xtype: 'grid',
+					xtype: 'gridpanel',
+					itemId: 'permgridid',
 					autoScroll : true,
+					height: 200,
 					store: 'PermissionS',
 					columns: [
 						{
 							xtype: 'gridcolumn',
 							dataIndex: 'PermissionName',
 							text: 'Permission',
-							flex: 2
+							flex: 3
 							//menuDisabled: true
-						}, 
+						},
+{
+							xtype: 'gridcolumn',
+							dataIndex: 'PermissionId',
+							text: 'Permission',
+							hidden: true,
+							flex: 3
+							//menuDisabled: true
+						},						
 						{
 							xtype: 'checkcolumn',
 							header: 'Select',
-							dataIndex: '',
-							flex: 2
+							dataIndex: 'chk',
+							flex: 1
 						}
 					]
 				}]
+			},{
+				xtype: 'hiddenfield',
+				name: 'SelectedPermissions'
 			}]
         });
 
