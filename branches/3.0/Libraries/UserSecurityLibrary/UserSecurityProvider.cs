@@ -918,7 +918,7 @@ namespace org.iringtools.UserSecurity
             }
             catch (Exception ex)
             {
-                _logger.Error("Error adding Users: " + ex);
+                _logger.Error("Error adding Users to Group: " + ex);
 
                 Status status = new Status { Level = StatusLevel.Error };
                 status.Messages = new Messages { ex.Message };
@@ -950,7 +950,53 @@ namespace org.iringtools.UserSecurity
             }
             catch (Exception ex)
             {
-                _logger.Error("Error adding Users: " + ex);
+                _logger.Error("Error adding Groups to User: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Groups GetRoleGroups(int iRoleId)
+        {
+            List<Group> lstGroup = new List<Group>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstGroup = dc.ExecuteQuery<Group>("spgRoleGroups @RoleId = {0}, @SiteId = {1}", iRoleId, _siteID).ToList();
+            }
+
+            Groups groups = new Groups();
+            groups.AddRange(lstGroup);
+            return groups;
+        }
+
+        public Response InsertRoleGroups(XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteCommand("spiRoleGroups @rawXML = {0},@SiteId = {1}", rawXml, _siteID);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Groups added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Groups to Role: " + ex);
 
                 Status status = new Status { Level = StatusLevel.Error };
                 status.Messages = new Messages { ex.Message };
