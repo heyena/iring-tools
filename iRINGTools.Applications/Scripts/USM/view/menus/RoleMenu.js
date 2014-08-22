@@ -32,12 +32,13 @@ Ext.define('USM.view.menus.RoleMenu', {
                     xtype: 'menuitem',
                     action: 'addPermissionToRole',
                     iconCls: 'icon-add',
-                    text: 'Add Permission to Role'
+                    text: 'Add/Remove Permission to Role'
                 },
                 {
                     xtype: 'menuitem',
                     action: 'editPermissionRole',
                     iconCls: 'icon-edit',
+                    hidden : true,
                     text: 'Edit Permission/Role'
                 },
                 {

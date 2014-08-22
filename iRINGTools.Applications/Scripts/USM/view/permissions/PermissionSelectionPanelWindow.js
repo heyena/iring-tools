@@ -8,7 +8,7 @@ Ext.define('USM.view.permissions.PermissionSelectionPanelWindow', {
   border: false,
   //modal: true,
   height: 310,
-  width: 700,
+  width: 500,
   buttonType: '',
   autoScroll: false,
   layout: {
@@ -84,12 +84,24 @@ Ext.define('USM.view.permissions.PermissionSelectionPanelWindow', {
         var message;
         var msg;
         var form = me.down('permissionselectionpanel');
+		var permGrid = Ext.ComponentQuery.query("#permgridid");
+		var val = '';
+		var checkval = '';
+		for ( var j = 0; j < permGrid[0].store.getCount(); j++) {
+			var val = permGrid[0].store.getAt(j).get('chk');
+			if (val == true) {
+				var commId = permGrid[0].store.getAt(j).get('PermissionId');
+				checkval = checkval + commId + ',';
+			}
+			val = checkval.slice(0, -1);
+		}
+		form.getForm().findField('SelectedPermissions').setValue(val);
         if (form.getForm().isValid()) {
             msg = new Ext.window.MessageBox();
             msg.wait('Saving Permissions ....');
             form.submit({
-                url: '',
-                success: function (f, a) {
+                url: 'usersecuritymanager/saveRolePermissions',
+				success: function (f, a) {
                     msg.close();
                     if(me.buttonType == 'save')
 						me.destroy();
