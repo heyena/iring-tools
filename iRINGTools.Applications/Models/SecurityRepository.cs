@@ -615,5 +615,56 @@ namespace iRINGTools.Web.Models
             }
             return items;
         }
+
+        public void InsertGroupRoles(FormCollection form)
+        {
+
+            _logger.Debug("In Security Repository map roles with group");
+            try
+            {
+                int groupId = Convert.ToInt32(form["GroupId"]);
+                string[] roleIds = form["SelectedRoles"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                GroupRoles userGroups = new GroupRoles();
+
+                foreach (string item in roleIds)
+                {
+                    GroupRole userGroup = new GroupRole { GroupId = groupId, RoleId = Convert.ToInt32(item) };
+                    userGroups.Add(userGroup);
+                }
+
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                client.Post<GroupRoles>("/insertGroupRoles?format=xml", userGroups, true);
+                _logger.Debug("Successfully called Security Service.");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+        }
+        public Roles GetGroupRoles(string groupId, string format)
+        {
+            Roles items = null;
+            _logger.Debug("In SecurityRepository GetGroupRoles");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                items = client.Get<Roles>("/groupRoles?groupId=" + groupId + "&format=" + format);
+
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return items;
+        }
     }
 }

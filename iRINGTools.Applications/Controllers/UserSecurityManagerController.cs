@@ -202,5 +202,18 @@ namespace org.iringtools.web.controllers
             Groups userGroups = _repository.GetRoleGroups(iRoleId, "xml");
             return Json(userGroups, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult getGroupRoles(FormCollection form)
+        {
+            string iGroupId = form["GroupId"];
+            Roles userGroups = _repository.GetGroupRoles(iGroupId, "xml");
+            return Json(userGroups, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult saveGroupRoles(FormCollection form)
+        {
+            _repository.InsertGroupRoles(form);
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
     }
 }
