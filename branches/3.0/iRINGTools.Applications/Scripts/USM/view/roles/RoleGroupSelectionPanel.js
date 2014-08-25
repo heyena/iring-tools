@@ -75,7 +75,7 @@ Ext.define('USM.view.roles.RoleGroupSelectionPanel', {
                         {
                             xtype: 'button',
                             handler: function (button, event) {
-                                me.onSave();
+                                me.onSave(button);
                             },
                             iconCls: 'icon-accept',
                             text: 'Apply'
@@ -83,7 +83,7 @@ Ext.define('USM.view.roles.RoleGroupSelectionPanel', {
                         {
                             xtype: 'button',
                             handler: function (button, event) {
-                                me.onSave();
+                                me.onSave(button);
                             },
                             iconCls: 'icon-accept',
                             text: 'Save'
@@ -111,7 +111,7 @@ Ext.define('USM.view.roles.RoleGroupSelectionPanel', {
         win.destroy();
     },
 
-    onSave: function () {
+    onSave: function (btn) {
         var me = this;
         var message;
         var msg;
@@ -120,7 +120,7 @@ Ext.define('USM.view.roles.RoleGroupSelectionPanel', {
             msg = new Ext.window.MessageBox();
             msg.wait('Saving Roles to Group ....');
             form.submit({
-                url: 'usersecuritymanager/saveSelRoles',
+                url: 'usersecuritymanager/saveGroupRoles',
                 success: function (f, a) {
                     msg.close();
                     me.getForm().reset();
