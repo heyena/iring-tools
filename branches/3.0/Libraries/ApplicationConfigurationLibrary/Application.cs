@@ -142,17 +142,28 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "folder", Namespace = "http://www.iringtools.org/library")]
     public class Folder
     {
+        Folder()
+        {
+            permissions = new Permissions();
+        }
+
         [DataMember(Name = "folderId", Order = 0)]
         public Guid FolderId { get; set; }
 
         [DataMember(Name = "parentFolderId", Order = 1, EmitDefaultValue = false)]
         public Guid ParentFolderId { get; set; }
 
-        [DataMember(Name = "siteId", Order = 2, EmitDefaultValue = false)]
+        [DataMember(Name = "folderName", Order = 2, EmitDefaultValue = false)]
+        public string FolderName { get; set; }
+
+        [DataMember(Name = "siteId", Order = 3, EmitDefaultValue = false)]
         public int SiteId { get; set; }
 
-        [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
         public Byte Active { get; set; }
+
+        [DataMember(Name = "permissions", Order = 5, EmitDefaultValue = false)]
+        public Permissions permissions { get; set; }
     }
 
 

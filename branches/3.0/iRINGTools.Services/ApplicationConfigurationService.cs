@@ -508,6 +508,26 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Get application collection for user")]
+        [WebGet(UriTemplate = "/folders/{userName}?siteId={siteId}&parentFolderId={parentFolderId}&format={format}")]
+        public void GetFoldersForUser(string userName, int siteId, Guid parentFolderId, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                Folders folders = _applicationConfigurationProvider.GetFoldersForUser(userName, siteId, parentFolderId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<Folders>(folders, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
         #region Private Methods
         private string MapContentType(string format)
         {
