@@ -666,5 +666,37 @@ namespace iRINGTools.Web.Models
             }
             return items;
         }
+
+        public void InsertRolePermissions(FormCollection form)
+        {
+
+            _logger.Debug("In Security Repository map permissions with role");
+            try
+            {
+                int roleId = Convert.ToInt32(form["RoleId"]);
+                string[] permissionIds = form["SelectedPermissions"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                RolePermissions userGroups = new RolePermissions();
+
+                foreach (string item in permissionIds)
+                {
+                    RolePermission userGroup = new RolePermission { RoleId = roleId, PermissionId = Convert.ToInt32(item) };
+                    userGroups.Add(userGroup);
+                }
+
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+
+                client.Post<RolePermissions>("/insertRolePermission?format=xml", userGroups, true);
+                _logger.Debug("Successfully called Security Service.");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+        }
     }
 }

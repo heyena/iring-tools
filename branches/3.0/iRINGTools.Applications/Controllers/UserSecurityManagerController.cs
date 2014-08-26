@@ -215,5 +215,12 @@ namespace org.iringtools.web.controllers
             _repository.InsertGroupRoles(form);
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult saveRolePermissions(FormCollection form)
+        {
+            _repository.InsertRolePermissions(form);
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }
