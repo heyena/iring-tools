@@ -250,6 +250,11 @@ namespace org.iringtools.applicationConfig
             Folders folders = new Folders();
             try
             {
+                if (parentFolderId == Guid.Empty)
+                {
+                    parentFolderId = new Guid("00000000-1111-2222-3333-444444444444");
+                }
+
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                 nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
@@ -265,20 +270,18 @@ namespace org.iringtools.applicationConfig
             return folders;
         }
 
-        public Graphs GetGraphsForUser(string userName)
+        public Graphs GetGraphsForUser(string userName, int siteId, Guid applicationId)
         {
             Graphs graphs = new Graphs();
             try
             {
-                List<Graph> lstGraph = new List<Graph>();
+                //NameValueList nvl = new NameValueList();
+                //nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                //nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                //nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationId) });
 
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                    lstGraph = dc.ExecuteQuery<Graph>("spgGraphByUser @UserName = {0}, @SiteId = {1}",
-                                                           userName, _siteID).ToList();
-                }
-
-                graphs.AddRange(lstGraph);
+                //string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphByUser", nvl);
+                //graphs = utility.Utility.Deserialize<Graphs>(xmlString, true);
             }
             catch (Exception ex)
             {
