@@ -270,7 +270,8 @@ namespace org.iringtools.applicationConfig
             return folders;
         }
 
-        public Graphs GetGraphsForUser(string userName, int siteId, Guid applicationId)
+        public Graphs GetGraphsForUser(string userName)
+        //public Graphs GetGraphsForUser(string userName, int siteId, Guid applicationId)
         {
             Graphs graphs = new Graphs();
             try
