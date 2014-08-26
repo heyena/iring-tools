@@ -245,6 +245,26 @@ namespace org.iringtools.applicationConfig
             return applications;
         }
 
+        public Folders GetFoldersForUser(string userName, int siteId, Guid parentFolderId)
+        {
+            Folders folders = new Folders();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(parentFolderId) });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgFolderByUser", nvl);
+                folders = utility.Utility.Deserialize<Folders>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Folders: " + ex);
+            }
+            return folders;
+        }
+
         public Graphs GetGraphsForUser(string userName)
         {
             Graphs graphs = new Graphs();
