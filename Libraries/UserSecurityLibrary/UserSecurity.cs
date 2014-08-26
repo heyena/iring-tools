@@ -204,4 +204,27 @@ namespace org.iringtools.UserSecurity
         [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
         public Byte Active { get; set; }
     }
+
+
+    [CollectionDataContract(Name = "rolePermissions", Namespace = "http://www.iringtools.org/library", ItemName = "rolePermission")]
+    public class RolePermissions : List<RolePermission>
+    {
+
+    }
+
+    [DataContract(Name = "rolePermission", Namespace = "http://www.iringtools.org/library")]
+    public class RolePermission
+    {
+        [DataMember(Name = "roleId", Order = 0)]
+        public int RoleId { get; set; }
+
+        [DataMember(Name = "siteId", Order = 1, EmitDefaultValue = false)]
+        public int SiteId { get; set; }
+
+        [DataMember(Name = "permissionId", Order = 2, EmitDefaultValue = false)]
+        public int PermissionId { get; set; }
+
+        [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
+        public Byte Active { get; set; }
+    }
 }
