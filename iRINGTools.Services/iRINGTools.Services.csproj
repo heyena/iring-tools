@@ -85,6 +85,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
+    <Reference Include="SSOIdentityProvider">
+      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\security\csharp\SSOIdentityProvider\bin\Debug\SSOIdentityProvider.dll</HintPath>
+    </Reference>
     <Reference Include="StaticDust.Configuration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=21c5f8854d868864">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
