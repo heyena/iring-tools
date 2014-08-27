@@ -695,5 +695,25 @@ namespace org.iringtools.applicationConfig
             }
         }
 
+        public DataFilters GetDataFiltersForUser(string userName, int siteId, Guid resourceId)
+        {
+            DataFilters datafilters = new DataFilters();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@ResourceId", Value = Convert.ToString(resourceId) });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDataFilterByUser", nvl);
+                datafilters = utility.Utility.Deserialize<org.iringtools.applicationConfig.DataFilters>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Contexts: " + ex);
+            }
+            return datafilters;
+        }
+
     }
 }
