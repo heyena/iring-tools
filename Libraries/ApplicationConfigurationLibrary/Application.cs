@@ -113,6 +113,11 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "graph", Namespace = "http://www.iringtools.org/library")]
     public class Graph
     {
+        Graph()
+        {
+            permissions = new Permissions();
+        }
+
         [DataMember(Name = "applicationId", Order = 0)]
         public Guid ApplicationId { get; set; }
 
@@ -130,6 +135,9 @@ namespace org.iringtools.applicationConfig
 
         [DataMember(Name = "active", Order = 5, EmitDefaultValue = false)]
         public Byte Active { get; set; }
+
+        [DataMember(Name = "permissions", Order = 6, EmitDefaultValue = false)]
+        public Permissions permissions { get; set; }
     }
 
 

@@ -489,15 +489,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get graph collection for user")]
-        [WebGet(UriTemplate = "/graphs/{userName}?format={format}")]
-        public void GetGraphsForUser(string userName, string format)
+        [WebGet(UriTemplate = "/graphs/{userName}?siteId={siteId}&applicationId={applicationId}&format={format}")]
+        public void GetGraphsForUser(string userName, int siteId, Guid applicationId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                Graphs graphs = _applicationConfigurationProvider.GetGraphsForUser(userName);
+                Graphs graphs = _applicationConfigurationProvider.GetGraphsForUser(userName, siteId, applicationId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Graphs>(graphs, format, true);
             }
             catch (Exception ex)
