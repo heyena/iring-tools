@@ -270,19 +270,19 @@ namespace org.iringtools.applicationConfig
             return folders;
         }
 
-        public Graphs GetGraphsForUser(string userName)
-        //public Graphs GetGraphsForUser(string userName, int siteId, Guid applicationId)
+        
+        public Graphs GetGraphsForUser(string userName, int siteId, Guid applicationId)
         {
             Graphs graphs = new Graphs();
             try
             {
-                //NameValueList nvl = new NameValueList();
-                //nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                //nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
-                //nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationId) });
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationId) });
 
-                //string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphByUser", nvl);
-                //graphs = utility.Utility.Deserialize<Graphs>(xmlString, true);
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphByUser", nvl);
+                graphs = utility.Utility.Deserialize<Graphs>(xmlString, true);
             }
             catch (Exception ex)
             {
