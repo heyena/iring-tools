@@ -528,6 +528,27 @@ namespace org.iringtools.services
             }
         }
 
+
+        [Description("Get context collection for user")]
+        [WebGet(UriTemplate = "/datafilters/{userName}?siteId={siteId}&resourceId={resourceId}&format={format}")]
+        public void GetDataFiltersForUser(string userName, int siteId, Guid resourceId, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                org.iringtools.applicationConfig.DataFilters contexts = _applicationConfigurationProvider.GetDataFiltersForUser(userName, siteId, resourceId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.DataFilters>(contexts, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
         #region Private Methods
         private string MapContentType(string format)
         {
