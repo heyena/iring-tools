@@ -549,7 +549,7 @@ namespace org.iringtools.services
         }
 
 
-        [Description("Get context collection for user")]
+        [Description("Get datafilter collection for user")]
         [WebGet(UriTemplate = "/datafilters/{userName}?siteId={siteId}&resourceId={resourceId}&format={format}")]
         public void GetDataFiltersForUser(string userName, int siteId, Guid resourceId, string format)
         {
@@ -558,8 +558,28 @@ namespace org.iringtools.services
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                org.iringtools.applicationConfig.DataFilters contexts = _applicationConfigurationProvider.GetDataFiltersForUser(userName, siteId, resourceId);
-                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.DataFilters>(contexts, format, true);
+                org.iringtools.applicationConfig.DataFilters dataFilters = _applicationConfigurationProvider.GetDataFiltersForUser(userName, siteId, resourceId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.DataFilters>(dataFilters, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+        [Description("Get exchange collection for user")]
+        [WebGet(UriTemplate = "/exchanges/{userName}?siteId={siteId}&commodityId={commodityId}&format={format}")]
+        public void GetExchangesForUser(string userName, int siteId, Guid commodityId, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                org.iringtools.applicationConfig.Exchanges exchanges = _applicationConfigurationProvider.GetExchangesForUser(userName, siteId, commodityId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Exchanges>(exchanges, format, true);
             }
             catch (Exception ex)
             {
