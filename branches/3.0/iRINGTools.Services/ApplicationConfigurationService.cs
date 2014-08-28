@@ -508,6 +508,26 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Get graph collection for user")]
+        [WebGet(UriTemplate = "/graphMapping/{userName}?siteId={siteId}&graphId={graphId}&format={format}")]
+        public void GetGraphMappingForUser(string userName, int siteId, Guid graphId, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                Graphs graphs = _applicationConfigurationProvider.GetGraphMappingForUser(userName, siteId, graphId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<Graphs>(graphs, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
         [Description("Get application collection for user")]
         [WebGet(UriTemplate = "/folders/{userName}?siteId={siteId}&parentFolderId={parentFolderId}&format={format}")]
         public void GetFoldersForUser(string userName, int siteId, Guid parentFolderId, string format)
