@@ -184,45 +184,55 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "exchange", Namespace = "http://www.iringtools.org/library")]
     public class Exchange
     {
+        Exchange()
+        {
+            permissions = new Permissions();
+        }
 
         [DataMember(Name = "exchangeId", Order = 0)]
         public Guid ExchangeId { get; set; }
 
-        [DataMember(Name = "sourceGraphId", Order = 1, EmitDefaultValue = false)]
+        [DataMember(Name = "commodityId", Order = 1)]
+        public Guid CommodityId { get; set; }
+
+        [DataMember(Name = "sourceGraphId", Order = 2, EmitDefaultValue = false)]
         public Guid SourceGraphId { get; set; }
 
-        [DataMember(Name = "destinationGraphId", Order = 2, EmitDefaultValue = false)]
+        [DataMember(Name = "destinationGraphId", Order = 3, EmitDefaultValue = false)]
         public Guid DestinationGraphId { get; set; }
 
-        [DataMember(Name = "description", Order = 3, EmitDefaultValue = false)]
+        [DataMember(Name = "name", Order = 4, EmitDefaultValue = false)]
+        public string Name { get; set; }
+
+        [DataMember(Name = "description", Order = 5, EmitDefaultValue = false)]
         public string Description { get; set; }
 
-        [DataMember(Name = "poolSize", Order = 4, EmitDefaultValue = false)]
+        [DataMember(Name = "poolSize", Order = 6, EmitDefaultValue = false)]
         public int PoolSize { get; set; }
 
-        [DataMember(Name = "add", Order = 5, EmitDefaultValue = false)]
-        public Byte Add { get; set; }
+        [DataMember(Name = "xtypeAdd", Order = 7, EmitDefaultValue = false)]
+        public string XTypeAdd { get; set; }
 
-        [DataMember(Name = "change", Order = 6, EmitDefaultValue = false)]
-        public Byte Change { get; set; }
+        [DataMember(Name = "xtypeChange", Order = 8, EmitDefaultValue = false)]
+        public string XTypeChange { get; set; }
 
-        [DataMember(Name = "sync", Order = 7, EmitDefaultValue = false)]
-        public Byte Sync { get; set; }
+        [DataMember(Name = "xtypeSync", Order = 9, EmitDefaultValue = false)]
+        public string XTypeSync { get; set; }
 
-        [DataMember(Name = "delete", Order = 8, EmitDefaultValue = false)]
-        public Byte Delete { get; set; }
+        [DataMember(Name = "xtypeDelete", Order = 10, EmitDefaultValue = false)]
+        public string XTypeDelete { get; set; }
 
-        [DataMember(Name = "setNull", Order = 9, EmitDefaultValue = false)]
-        public Byte SetNull { get; set; }
+        [DataMember(Name = "xtypeSetNull", Order = 11, EmitDefaultValue = false)]
+        public string XTypeSetNull { get; set; }
 
-        [DataMember(Name = "siteId", Order = 10, EmitDefaultValue = false)]
+        [DataMember(Name = "siteId", Order = 12, EmitDefaultValue = false)]
         public int SiteId { get; set; }
 
-        [DataMember(Name = "active", Order = 11, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 13, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "name", Order = 12, EmitDefaultValue = false)]
-        public Byte Name { get; set; }
+        [DataMember(Name = "permissions", Order = 14, EmitDefaultValue = false)]
+        public Permissions permissions { get; set; }
     }
 
 
