@@ -291,6 +291,26 @@ namespace org.iringtools.applicationConfig
             return graphs;
         }
 
+        public Graphs GetGraphMappingForUser(string userName, int siteId, Guid graphId)
+        {
+            Graphs graphs = new Graphs();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphMappingByUser", nvl);
+                graphs = utility.Utility.Deserialize<Graphs>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Graphs: " + ex);
+            }
+            return graphs;
+        }
+
         public Applications GetAllApplications(string scopeInternalName)
         {
             Applications applications = new Applications();
