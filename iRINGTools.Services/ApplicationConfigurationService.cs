@@ -589,6 +589,26 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Get Commodities collection for user")]
+        [WebGet(UriTemplate = "/commodities/{userName}?siteId={siteId}&contextId={contextId}&format={format}")]
+        public void GetCommoditiesForUser(string userName, int siteId, Guid contextId, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                org.iringtools.applicationConfig.Commodities exchanges = _applicationConfigurationProvider.GetCommoditiesForUser(userName, siteId, contextId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Commodities>(exchanges, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
         #region Private Methods
         private string MapContentType(string format)
         {
