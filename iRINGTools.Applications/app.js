@@ -102,7 +102,8 @@ Ext.application({
 });
 
 Ext.Ajax.on('requestexception', function (conn, response, options) {
-  if (response.status == 408) {
-      location.reload(true);
-  }
+    if (response.status == 0 || response.status == 408) {
+        //alert("Your session expired.");
+        location.reload(true);
+    }
 });
