@@ -755,5 +755,25 @@ namespace org.iringtools.applicationConfig
             return exchanges;
         }
 
+        public Commodities GetCommoditiesForUser(string userName, int siteId, Guid contextId)
+        {
+            Commodities commodities = new Commodities();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(contextId) });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgCommoditiesByUser", nvl);
+                commodities = utility.Utility.Deserialize<org.iringtools.applicationConfig.Commodities>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Contexts: " + ex);
+            }
+            return commodities;
+        }
+
     }
 }
