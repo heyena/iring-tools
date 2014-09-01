@@ -263,6 +263,12 @@ namespace org.iringtools.applicationConfig
     }
 
 
+    [CollectionDataContract(Name = "commodities", Namespace = "http://www.iringtools.org/library", ItemName = "commodity")]
+    public class Commodities : List<Commodity>
+    {
+
+    }
+
     [DataContract(Name = "commodity", Namespace = "http://www.iringtools.org/library")]
     public class Commodity
     {
@@ -280,6 +286,9 @@ namespace org.iringtools.applicationConfig
 
         [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
         public Byte Active { get; set; }
+
+        [DataMember(Name = "permissions", Order = 5, EmitDefaultValue = false)]
+        public Permissions permissions { get; set; }
     }
 
     [CollectionDataContract(Name = "applicationSettings", Namespace = "http://www.iringtools.org/library", ItemName = "applicationSetting")]
