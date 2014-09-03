@@ -9,10 +9,10 @@ using org.iringtools.adapter;
 using org.iringtools.utility;
 namespace org.iringtools.library
 {
-    interface ILightweightDataLayer2 : ILightweightDataLayer
+    public interface ILightweightDataLayer2 : ILightweightDataLayer
     {
-        IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex);
-        IList<IDataObject> Search(string objectType, string query, DataFilter filter, int pageSize, int startIndex);
+        List<SerializableDataObject> GetIndex(DataObject objectType);
+        List<SerializableDataObject> GetPage(DataObject objectType, List<SerializableDataObject> identifiers);
     }
 
     public abstract class BaseLightweightDataLayer2 : BaseLightweightDataLayer, ILightweightDataLayer2
@@ -23,7 +23,7 @@ namespace org.iringtools.library
             _settings = settings;
         }
 
-        public abstract IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex);
-        public abstract IList<IDataObject> Search(string objectType, string query, DataFilter filter, int pageSize, int startIndex);
+        public abstract List<SerializableDataObject> GetIndex(DataObject objectType);
+        public abstract List<SerializableDataObject> GetPage(DataObject objectType, List<SerializableDataObject> identifiers);
     }
 }
