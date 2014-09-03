@@ -120,6 +120,7 @@ namespace org.iringtools.web.controllers
                     string conStr = Utility.DecodeFrom64(dictionary.ConnectionString);
 
                     conElts = GetConnectionElements(dbProvider, conStr);
+                    conElts["dbSchema"] = dictionary.SchemaName;
                     root.properties.Add("connectionInfo", conElts);
                 }
                 else
