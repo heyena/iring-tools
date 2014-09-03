@@ -17,26 +17,27 @@ using org.iringtools.utility;
 
 namespace org.iringtools.adapter
 {
-  //
-  // this class determines the appropriate data layer (cache, actual, or both) to call
-  //
-  public class DataLayerGateway
-  {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DataLayerGateway));
+    //
+    // this class determines the appropriate data layer (cache, actual, or both) to call
+    //
+    public class DataLayerGateway
+    {
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(DataLayerGateway));
 
-    private const string NO_CACHE_ERROR = "Cache entry has not been created. You need to refresh or import cache files.";
-    private const string PROP_SEPARATOR = ", ";
-    private const string CACHE_ID_PREFIX = "c";
+        private const string NO_CACHE_ERROR = "Cache entry has not been created. You need to refresh or import cache files.";
+        private const string PROP_SEPARATOR = ", ";
+        private const string CACHE_ID_PREFIX = "c";
 
-    private AdapterSettings _settings;
-    private string _scope;
-    private string _app;
-    private DataDictionary _dictionary;
-    private string _dataPath;
-    private string _cacheConnStr;
-    private IDataLayer _dataLayer;
-    private ILightweightDataLayer _lwDataLayer;
-    private LoadingType  _loadingType = LoadingType.Lazy;
+        private AdapterSettings _settings;
+        private string _scope;
+        private string _app;
+        private DataDictionary _dictionary;
+        private string _dataPath;
+        private string _cacheConnStr;
+        private IDataLayer _dataLayer;
+        private ILightweightDataLayer _lwDataLayer;
+        public ILightweightDataLayer2 _lwDataLayer2;
+        private LoadingType _loadingType = LoadingType.Lazy;
 
     public DataLayerGateway(IKernel kernel)
     {
@@ -76,16 +77,25 @@ namespace org.iringtools.adapter
         kernel.Load(tempPath);
       }
 
-      if (dlBinding.Element("bind").Attribute("service").Value.Replace(" ", "").ToLower()
-        == (typeof(IDataLayer).FullName + "," + typeof(IDataLayer).Assembly.GetName().Name).ToLower())
-      {
-        _dataLayer = kernel.Get<IDataLayer>();
-      }
-      else
-      {
-        _lwDataLayer = kernel.Get<ILightweightDataLayer>();
-      }
-    }
+            if (dlBinding.Element("bind").Attribute("service").Value.Replace(" ", "").ToLower()
+              == (typeof(IDataLayer).FullName + "," + typeof(IDataLayer).Assembly.GetName().Name).ToLower())
+            {
+                _dataLayer = kernel.Get<IDataLayer>();
+            }
+            else
+            {
+                ////  //if (System.Configuration.ConfigurationManager.AppSettings["CachePageSize"] == null)
+                if (dlBinding.Element("bind").Attribute("service").Value == "org.iringtools.library.ILightweightDataLayer, iRINGLibrary")
+                {
+                    _lwDataLayer = kernel.Get<ILightweightDataLayer>();
+                }
+                else if (dlBinding.Element("bind").Attribute("service").Value == "org.iringtools.library.ILightweightDataLayer2, iRINGLibrary")
+                {
+
+                    _lwDataLayer2 = kernel.Get<ILightweightDataLayer2>();
+                }
+            }
+        }
 
     public DataDictionary GetDictionary()
     {
@@ -132,19 +142,23 @@ namespace org.iringtools.adapter
       DataDictionary dictionary = null;
       filter = null;
 
-      try
-      {
-        if (_lwDataLayer != null)
-        {
-          dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
-        }
-        else if (_dataLayer != null)
-        {
-          if (refresh)
-          {
-            if (!string.IsNullOrEmpty(objectType))
+            try
             {
-              Response response = ((IDataLayer2)_dataLayer).Refresh(objectType);
+                if (_lwDataLayer != null)
+                {
+                    dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
+                }
+                if (_lwDataLayer2 != null)
+                {
+                    dictionary = _lwDataLayer2.Dictionary(refresh, objectType, out filter);
+                }
+                else if (_dataLayer != null)
+                {
+                    if (refresh)
+                    {
+                        if (!string.IsNullOrEmpty(objectType))
+                        {
+                            Response response = ((IDataLayer2)_dataLayer).Refresh(objectType);
 
               if (response.Level != StatusLevel.Success)
               {
@@ -278,9 +292,25 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    protected Response RefreshCache(string cacheId, DataObject objectType, bool includeRelated)
-    {
-      Response response = DoRefreshCache(cacheId, objectType);
+        protected Response RefreshCache(string cacheId, DataObject objectType, bool includeRelated)
+        {
+
+            Response response = null;
+
+            if (_lwDataLayer != null || _dataLayer != null)
+            // //if (cacheSize == null)
+            {
+
+                response = DoRefreshCache(cacheId, objectType);
+            }
+            else
+            {
+                int cacheSize = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["CachePageSize"]);
+                if (cacheSize != 0)
+                {
+                    response = DoRefreshCacheWithIdentifier(cacheId, objectType, cacheSize);
+                }
+            }
 
       try
       {
@@ -386,10 +416,10 @@ namespace org.iringtools.adapter
           int start = 0;
           long limit = 0;
 
-          while (start < objCount)
-          {
-            limit = (start + page < objCount) ? page : objCount - start;
-            IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
+                    while (start < objCount)
+                    {
+                        limit = page;// (start + page < objCount) ? page : objCount - start;
+                        IList<IDataObject> dataObjects = _dataLayer.Get(objectType.objectName, null, (int)limit, start);
 
             if (dataObjects != null && dataObjects.Count > 0)
             {
@@ -768,11 +798,11 @@ namespace org.iringtools.adapter
       long count = 0;
       string cacheId = string.Empty;
 
-      try
-      {
-        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
-        {
-          cacheId = CheckCache();
+            try
+            {
+                if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null || _lwDataLayer2 != null)
+                {
+                    cacheId = CheckCache();
 
           if (string.IsNullOrEmpty(cacheId))
           {
@@ -824,9 +854,11 @@ namespace org.iringtools.adapter
       {
         string cacheId = string.Empty;
 
-        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
-        {
-          cacheId = CheckCache();
+
+                //    if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
+                if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null || _lwDataLayer2 != null)
+                {
+                    cacheId = CheckCache();
 
           if (string.IsNullOrEmpty(cacheId))
           {
@@ -1653,12 +1685,102 @@ namespace org.iringtools.adapter
         case DataType.TimeStamp:
           return "timestamp";
 
-        default:
-          return "nvarchar(MAX)";
-      }
-    }
- 
-  }
+                default:
+                    return "nvarchar(MAX)";
+            }
+        }
+        protected Response DoRefreshCacheWithIdentifier(string cacheId, DataObject objectType, int CachePageSize)
+        {
+            Response response = new Response();
+            response.Level = StatusLevel.Success;
 
-  public enum CacheState { Dirty, Busy, Ready }
+            try
+            {
+                //
+                // create new cache table
+                //
+                DeleteCacheTable(cacheId, objectType);
+                CreateCacheTable(cacheId, objectType);
+
+                Status status = new Status()
+                {
+                    Identifier = objectType.tableName,
+                    Level = StatusLevel.Success,
+                    Messages = new Messages() { "Cache table " + objectType.tableName + " created successfully." }
+                };
+
+                response.Append(status);
+
+                //
+                // populate cache data
+                //
+                string tableName = GetCacheTableName(cacheId, objectType.objectName);
+                string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
+                DataTable table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
+                //   int dataCount = CachePageSize;
+                int pageIndex = 0;
+                int start = 0;
+                if (_lwDataLayer2 != null)
+                {
+                    //get all identifier from datalayer   for idatalayer2 interface
+                    List<SerializableDataObject> dataObjects2 = _lwDataLayer2.GetIndex(objectType);
+                    while (start < dataObjects2.Count)
+                    {
+                        List<SerializableDataObject> data = dataObjects2.Skip(CachePageSize * pageIndex).Take(CachePageSize).ToList();
+                        List<SerializableDataObject> getdataObjects2 = _lwDataLayer2.GetPage(objectType, data);
+                        foreach (SerializableDataObject dataObj in getdataObjects2)
+                        {
+                            DataRow newRow = table.NewRow();
+
+                            foreach (var pair in dataObj.Dictionary)
+                            {
+                                if (pair.Value == null)
+                                    newRow[pair.Key] = DBNull.Value;
+                                else
+                                    newRow[pair.Key] = pair.Value;
+                            }
+
+                            if (dataObj.HasContent)
+                            {
+                                newRow[BaseLightweightDataLayer.HAS_CONTENT] = true;
+                            }
+                            table.Rows.Add(newRow);
+                        }
+
+                        SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
+                        bulkCopy.DestinationTableName = tableName;
+                        bulkCopy.WriteToServer(table);
+                        start += CachePageSize;
+                        pageIndex = pageIndex + 1;
+                        table.Clear();
+                    }
+                    string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
+                    status.Messages.Add(msg);
+                    response.Messages.Add(msg);
+
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                response.Level = StatusLevel.Error;
+
+                string error = "Error refreshing cache [" + objectType.objectName + "]: " + e.Message;
+                _logger.Error(error);
+                response.Messages.Add(error);
+            }
+
+            return response;
+        }
+
+    }
+
+
+
+    public enum CacheState { Dirty, Busy, Ready }
 }
+
+
+
+
