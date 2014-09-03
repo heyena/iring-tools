@@ -48,6 +48,8 @@ namespace org.iringtools.nhibernate
         private IKernel _kernel = null;
         private NHibernateSettings _settings = null;
 
+        public NHibernateProvider()
+        { }
         [Inject]
         public NHibernateProvider(NameValueCollection settings)
         {
@@ -722,12 +724,12 @@ namespace org.iringtools.nhibernate
         }
 
         //provides NHibernate Dialect for respective DB.
-        private string GetDatabaseDialect(string dbProvider)
+        internal string GetDatabaseDialect(string dbProvider)
         {
             switch (dbProvider.ToUpper())
             {
                 case "MSSQL2012":
-                    return "NHibernate.Dialect.MsSql2012Dialect";
+                    return "NHibernate.Dialect.MsSql2008Dialect";
 
                 case "MSSQL2008":
                     return "NHibernate.Dialect.MsSql2008Dialect";
@@ -766,7 +768,7 @@ namespace org.iringtools.nhibernate
             }
         }
 
-        private string GetConnectionDriver(string dbProvider)
+        internal string GetConnectionDriver(string dbProvider)
         {
             if (dbProvider.ToUpper().Contains("MSSQL"))
             {
