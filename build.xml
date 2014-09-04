@@ -5,7 +5,8 @@
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
   </PropertyGroup>
 
-  <PropertyGroup>
+<PropertyGroup>
+    <SvnPath>https://iring-tools.googlecode.com/svn/branches/3.0</SvnPath>
     <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
     <ZipCmd>"$(MSBuildProjectDirectory)\ExternalBinaries\7-Zip\7z.exe"</ZipCmd>
     <NUnit-ToolPath>$(MSBuildProjectDirectory)\ExternalBinaries\Nunit</NUnit-ToolPath>
@@ -125,8 +126,12 @@
       <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
       <ZipFile>$(DeploymentDir)\iRINGTools-</ZipFile>
     </DeploymentPackage>
-  </ItemGroup>
-  
+    </ItemGroup>
+
+  <Target Name="Checkout">
+  <Exec command="svn checkout $(SvnPath) $(MSBuildProjectDirectory)"/>
+  </Target>
+
   <Target Name="Versioning">
     <Message Text="Updating assembly info ..." />
     <XmlRead
@@ -257,5 +262,5 @@
   <Target Name="Build" DependsOnTargets="CoreBuild"/>
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild"/>
   
-  <Target Name="All" DependsOnTargets="Rebuild; CreatePackages; Drop; Commit"/>
+  <Target Name="All" DependsOnTargets="Checkout; Rebuild; CreatePackages; Drop"/>
 </Project>
