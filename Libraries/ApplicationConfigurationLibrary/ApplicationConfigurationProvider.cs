@@ -775,5 +775,64 @@ namespace org.iringtools.applicationConfig
             return commodities;
         }
 
+        public ValueListMaps GetValueListForUser(string userName, int siteId, Guid applicationId)
+        {
+            ValueListMaps valueListMaps = new ValueListMaps();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationId) });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgValuelist", nvl);
+                valueListMaps = utility.Utility.Deserialize<ValueListMaps>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  valueListMaps: " + ex);
+            }
+            return valueListMaps;
+        }
+
+        public Manifest GetManifestForUser(string userName, int siteId, Guid graphId, Guid applicationId)
+        {
+            Manifest manifest = new Manifest();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationId) });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgValuelist", nvl);
+                ValueListMaps valueListMaps = utility.Utility.Deserialize<ValueListMaps>(xmlString, true);
+
+                nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
+
+                xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphMappingByUser", nvl);
+                Graphs graphs = utility.Utility.Deserialize<Graphs>(xmlString, true);
+
+                manifest.graphs = graphs;
+                manifest.valueListMaps = valueListMaps;
+
+                //foreach(Graph g in graphs )
+                //{
+                //    MemoryStream ms = new MemoryStream(g.graph, 0, g.graph.Length);
+                //    ms.Write(g.graph, 0, g.graph.Length);
+                //    System.Xml.XmlDocument xDocument = new System.Xml.XmlDocument();
+                //    xDocument.Load(ms);
+                //}
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  valueListMaps: " + ex);
+            }
+            return manifest;
+        }
     }
 }

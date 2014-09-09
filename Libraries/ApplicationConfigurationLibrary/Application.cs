@@ -395,5 +395,61 @@ namespace org.iringtools.applicationConfig
 
     }
 
+    [CollectionDataContract(Name = "valueMaps", Namespace = "http://www.iringtools.org/library", ItemName = "valueMap")]
+    public class ValueMaps : List<ValueMap>
+    {
 
+    }
+
+    [DataContract(Name = "valueMap", Namespace = "http://www.iringtools.org/library")]
+    public class ValueMap
+    {
+        [DataMember(Name = "label", Order = 0, EmitDefaultValue = false)]
+        public string Label { get; set; }
+
+        [DataMember(Name = "internalValue", Order = 1, EmitDefaultValue = false)]
+        public string InternalValue { get; set; }
+
+        [DataMember(Name = "uri", Order = 2, EmitDefaultValue = false)]
+        public string Uri { get; set; }
+
+    }
+
+    [CollectionDataContract(Name = "valueListMaps", Namespace = "http://www.iringtools.org/library", ItemName = "valueListMap")]
+    public class ValueListMaps : List<ValueListMap>
+    {
+
+    }
+
+    [DataContract(Name = "valueListMap", Namespace = "http://www.iringtools.org/library")]
+    public class ValueListMap
+    {
+        ValueListMap()
+        {
+            valueMaps = new ValueMaps();
+        }
+
+        [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
+        public string Name { get; set; }
+
+        [DataMember(Name = "valueMaps", Order = 1, EmitDefaultValue = false)]
+        public ValueMaps valueMaps { get; set; }
+
+    }
+
+    [DataContract(Name = "manifest", Namespace = "http://www.iringtools.org/library")]
+    public class Manifest
+    {
+        public Manifest()
+        {
+            graphs = new Graphs();
+            valueListMaps = new ValueListMaps();
+        }
+
+        [DataMember(Name = "graphs", Order = 0, EmitDefaultValue = false)]
+        public Graphs graphs { get; set; }
+
+        [DataMember(Name = "valueListMaps", Order = 1, EmitDefaultValue = false)]
+        public ValueListMaps valueListMaps { get; set; }
+    }
 }
