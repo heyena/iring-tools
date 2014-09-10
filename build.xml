@@ -24,7 +24,8 @@
     <ServicesDeploymentDir>$(DeploymentDir)\iRINGTools\Services</ServicesDeploymentDir>
     <AppsDeploymentDir>$(DeploymentDir)\iRINGTools\Apps</AppsDeploymentDir>
     <UtilitiesDeploymentDir>$(DeploymentDir)\iRINGTools\Utils</UtilitiesDeploymentDir>
-    <AgentDeploymentDir>$(DeploymentDir)\iRINGTools\Agent</AgentDeploymentDir>
+		<AgentDeploymentRoot>$(DeploymentDir)\iRINGTools\Agent</AgentDeploymentRoot>
+    <AgentDeploymentDir>$(DeploymentDir)\iRINGTools\Agent\bin</AgentDeploymentDir>
     <LandingDeploymentDir>$(DeploymentDir)\iRINGTools</LandingDeploymentDir>
     <SolutionFile>iring-tools.sln</SolutionFile>
     <DropLocation>\\amers.ibechtel.com\apps\BUILDDROPS\iRINGTools\Trunk\Adapter</DropLocation>
@@ -226,7 +227,7 @@
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
-    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(AgentDeploymentDir); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
+    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(AgentDeploymentRoot); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
     
     <Message Text="Creating Services deployment ..." />
     <Copy SourceFiles="@(ServicesDeployment)"
@@ -251,7 +252,7 @@
 
     <Message Text="Creating Agent deployment ..." />
 		<Copy SourceFiles="@(AgentSamples)"
-          DestinationFiles="@(AgentSamples->'$(AgentDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+          DestinationFiles="@(AgentSamples->'$(AgentDeploymentRoot)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(AgentDeployment)"
           DestinationFiles="@(AgentDeployment->'$(AgentDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(AgentDeploymentDir)\App_Default.config $(AgentDeploymentDir)\iRINGAgent.exe.config" />
