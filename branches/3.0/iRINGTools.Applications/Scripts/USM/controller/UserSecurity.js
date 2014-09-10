@@ -89,11 +89,11 @@
             "menuitem[action=editGroupUser]": {
                 click: this.editGroupUser
             },
-            "menuitem[action=addRemRoletoGroup]": {
-                click: this.addRemGroupToRole
+            "menuitem[action=addRemRolestoGroup]": {
+                click: this.addRemRolestoGroup
             },
-            "menuitem[action=addRemGroupToRole]": {
-                click: this.addRemRoleGroups
+            "menuitem[action=addRemGroupsToRole]": {
+                click: this.addRemGroupsToRole
             },
             "viewport securitygrid": {
                 itemcontextmenu: me.onSecItemClick
@@ -119,20 +119,52 @@
             "menuitem[action=deleteUser]": {
                 click: this.deleteUser
             },
-            "menuitem[action=addPermissionToRole]": {
-                click: this.addPermissionToRole
+            "menuitem[action=addRemPermissionToRole]": {
+                click: this.addRemPermissionToRole
             }
         });
     },
 
-    addPermissionToRole: function (item, e, eOpts) {
+    addRemPermissionToRole: function (item, e, eOpts) {
+        
         var me = this;
-        var win = Ext.widget('permissionselectionpanelwindow');
         var rec = Ext.getCmp('viewportid').down('rolegrid').getSelectionModel().getSelection();
         var roleId = rec[0].data.RoleId;
-        var form = win.down('permissionselectionpanel');
-        form.getForm().findField('RoleId').setValue(roleId);
-        win.show();
+        Ext.Ajax.request({
+            url: 'usersecuritymanager/getRolePermissions',
+            method: 'POST',
+            params: {
+                RoleId: roleId
+            },
+            success: function (response, options) {
+                var responseObj = Ext.JSON.decode(response.responseText);
+                var win = new USM.view.permissions.PermissionSelectionPanelWindow({
+                    title: 'Add/Remove Permission to Role'
+                });
+                var form = win.down('permissionselectionpanel');
+                var grid = form.down("gridpanel");
+                var selArr = [];
+                form.getForm().findField('RoleId').setValue(roleId);
+                win.show();
+
+                //win.on('afterrender', function (form, ept) {
+//                    if (responseObj != null || responseObj != "") {
+//                        for (var j = 0; j < grid.store.getCount(); i++) {
+//                            var gPrmId = grid.store.getAt(j).get("PermissionId");
+//                            for (var i = 0; i < responseObj.length; i++) {
+//                                var permId = responseObj[i].PermissionId;
+//                                            
+//                                if (permId === gPrmId) {
+//                                    grid.store.getAt(j).set("chk", true);
+//                                }
+//                            }
+//                        }
+//                    }
+                //}, me);
+            },
+            failure: function (response, options) {
+            }
+        });
     },
 
     addUsers: function (item, e, eOpts) {
@@ -252,25 +284,26 @@
         var me = this;
         var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
         var groupId = rec[0].data.GroupId;
-        Ext.MessageBox.confirm('Delete', 'Are you sure to delete this group?', function (btn) {
-            if (btn === 'yes') {
-                Ext.Ajax.request({
-                    url: 'usersecuritymanager/deleteGroup',
-                    method: 'POST',
-                    params: {
-                        GroupId: groupId
-                    },
-                    success: function (response, options) {
-                        var responseObj = Ext.JSON.decode(response.responseText);
-                        Ext.getCmp('viewportid').down('groupgrid').store.reload();
+        Ext.MessageBox.alert('Status', 'Changes saved successfully.', function (btn) { if (btn == "ok") { alert(btn) } });
+        //        Ext.MessageBox.confirm('Delete', 'Are you sure to delete this group?', function (btn) {
+        //            if (btn === 'yes') {
+        //                Ext.Ajax.request({
+        //                    url: 'usersecuritymanager/deleteGroup',
+        //                    method: 'POST',
+        //                    params: {
+        //                        GroupId: groupId
+        //                    },
+        //                    success: function (response, options) {
+        //                        var responseObj = Ext.JSON.decode(response.responseText);
+        //                        Ext.getCmp('viewportid').down('groupgrid').store.reload();
 
-                    },
+        //                    },
 
-                    failure: function (response, options) {
-                    }
-                });
-            }
-        });
+        //                    failure: function (response, options) {
+        //                    }
+        //                });
+        //            }
+        //        });
     },
 
     addRole: function (btn) {
@@ -428,8 +461,8 @@
                         }
                         form.getForm().findField('selectedUsers').setValue(selArr);
                     }
-                    var itemSel = Ext.ComponentQuery.query("#userselector", form);
-                    var cont = Ext.ComponentQuery.query("container", itemSel[0]);
+                    //var itemSel = Ext.ComponentQuery.query("#userselector", form);
+                    //var cont = Ext.ComponentQuery.query("container", itemSel[0]);
                     //var butt = Ext.ComponentQuery.query("button", itemSel[0]);
                     //var cpy = Ext.Array.slice(butt, 2, 4);
                     //itemSel[0].items.items[1].items.items = [];
@@ -444,6 +477,8 @@
             }
         });
     },
+
+
 
     addGroupToUser: function (btn) {
         var me = this;
@@ -495,7 +530,7 @@
         });
     },
 
-    addRemGroupToRole: function (btn) {
+    addRemRolestoGroup: function (btn) {
         var me = this;
         var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
         var groupId = rec[0].data.GroupId;
@@ -531,7 +566,7 @@
         });
     },
 
-    addRemRoleGroups: function (btn) {
+    addRemGroupsToRole: function (btn) {
         var me = this;
         var rec = Ext.getCmp('viewportid').down('rolegrid').getSelectionModel().getSelection();
         var roleId = rec[0].data.RoleId;

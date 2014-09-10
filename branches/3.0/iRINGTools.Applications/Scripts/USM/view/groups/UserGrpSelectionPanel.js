@@ -33,7 +33,7 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
                     valueField: 'UserId',
                     listeners: {
                         select: {
-                            fn: me.onSelectGroup,
+                            fn: me.onSelectUser,
                             scope: me
                         }
                     }
@@ -123,10 +123,11 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
                 url: 'usersecuritymanager/saveUserGroups',
                 success: function (f, a) {
                     msg.close();
-                    me.getForm().reset();
                     if (btn.text == "Save") {
+                        me.getForm().reset();
                         me.up('window').destroy();
                     }
+                    Ext.getCmp('usergridid').store.reload();
                     var message = 'Selected Groups saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     return;
@@ -147,35 +148,45 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
         this.loadValues();
     },
 
-    onSelectGroup: function (combo, records, eOpts) {
+    onSelectUser: function (combo, records, eOpts) {
         var me = this;
-        var grpName = records[0].data.UserFirstName;
-        //utilsObj.grpUser = grpName + " Users";
-        //me.down('itemselector').updateLayout();
-        //me.updateLayout();
+        var userId = records[0].data.UserId;
+        me.getUsersGroup(userId, me);
+    },
+
+    getUsersGroup: function (userId, scope) {
+        var me = this;
+        Ext.Ajax.request({
+            url: 'usersecuritymanager/getUserGroups',
+            //url: '/Scripts/USM/jsonfiles/selgroup.json',
+            method: 'POST',
+            params: {
+                userId: userId
+            },
+            success: function (response, options) {
+                var responseObj = Ext.JSON.decode(response.responseText);
+
+                var form = scope.up("itemselectorwindow").down('usergrpselectionpanel');
+
+                var selArr = [];
+
+                if (responseObj != null) {
+                    for (var i = 0; i < responseObj.length; i++) {
+                        selArr.push(responseObj[i].GroupId);
+                    }
+                    form.getForm().findField('selectedGroups').setValue(selArr);
+                }
+                
+                form.getForm().findField('userId').setValue(userId);
+                
+            },
+            failure: function (response, options) {
+            }
+        });
     },
 
     loadValues: function () {
         var me = this;
-
-        //        if (me.record != null) {
-        //            var selector = me.down('#keyselector');
-        //            var itemList = me.record.parentNode.raw.properties.dataProperties;
-
-        //            var availItems = [];
-        //            Ext.each(itemList, function (item) {
-        //                availItems.push({ name: item.columnName });
-        //            });
-
-        //            selector.store.loadData(availItems);
-        //            selector.reset();
-
-        //            var selectedItems = [];
-        //            Ext.each(me.record.childNodes, function (child) {
-        //                selectedItems.push(child.raw.properties.columnName);
-        //            });
-
-        //            selector.setValue(selectedItems);
-        //        }
     }
+
 });

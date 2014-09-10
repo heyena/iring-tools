@@ -28,6 +28,10 @@ Ext.application({
 
 Ext.Ajax.on('requestexception', function (conn, response, options) {
   if (response.status == 0 || response.status == 408) {
-      location.reload(true);
+      Ext.MessageBox.alert('Status', 'Your session expired.', function (btn) {
+          if (btn == "ok") {
+              location.reload(true);
+          }
+      });
   }
 });

@@ -79,7 +79,7 @@ Ext.define('USM.view.users.UserWindow', {
                     me.destroy();
                     var message = 'User saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
-                    Ext.getCmp('iduser').store.reload();
+                    Ext.getCmp('usergridid').store.reload();
                     return;
                 },
                 failure: function (f, a) {

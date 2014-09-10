@@ -80,7 +80,7 @@ Ext.define('USM.view.groups.GroupWindow', {
                     me.destroy();
                     var message = 'Group saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
-                    Ext.getCmp('idgroup').store.reload();
+                    Ext.getCmp('groupgridid').store.reload();
                     return;
                 },
                 failure: function (f, a) {

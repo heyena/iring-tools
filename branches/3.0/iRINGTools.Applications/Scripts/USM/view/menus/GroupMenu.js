@@ -46,7 +46,7 @@ Ext.define('USM.view.menus.GroupMenu', {
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'addRemRoletoGroup',
+                    action: 'addRemRolestoGroup',
                     iconCls: 'icon-add',
                     text: 'Add/Remove Role to Group'
                 }
