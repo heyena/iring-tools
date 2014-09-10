@@ -137,7 +137,7 @@
     <DeploymentPackage Include="*.*" Exclude="*.zip">
       <Options>a -tzip -y -r</Options>
       <OutputDir>$(DeploymentDir)</OutputDir>
-      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(AgentDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
+      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(AgentDeploymentRoot) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
       <ZipFile>$(DeploymentDir)\iRINGTools-</ZipFile>
     </DeploymentPackage>
   </ItemGroup>
