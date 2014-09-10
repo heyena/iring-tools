@@ -30,7 +30,7 @@ Ext.define('USM.view.menus.RoleMenu', {
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'addPermissionToRole',
+                    action: 'addRemPermissionToRole',
                     iconCls: 'icon-add',
                     text: 'Add/Remove Permission to Role'
                 },
@@ -46,7 +46,7 @@ Ext.define('USM.view.menus.RoleMenu', {
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'addRemGroupToRole',
+                    action: 'addRemGroupsToRole',
                     iconCls: 'icon-add',
                     text: 'Add/Remove Group to Role'
                 }

@@ -4,97 +4,101 @@ Ext.define('USM.view.UserSecurityTabPanel', {
     alias: 'widget.usersecuritytabpanel',
     frame: false,
     border: false,
-    id: 'tiptabpanelid',
+    //id: 'usmtabpanel',
     activeTab: 0,
 
     initComponent: function () {
         var me = this;
         Ext.applyIf(me, {
             items: [
-                {
-                    xtype: 'panel',
-                    border: false,
-                    layout: {
-                        type: 'fit'
-                    },
-                    animCollapse: false,
-                    collapseFirst: false,
-                    title: 'Groups',
-                    items: [
-                        {
-                            xtype: 'groupgrid'
-                        }
-                    ],
-                    listeners: {
-                        activate: {
-                            fn: me.onPanelActivate,
-                            scope: me
-                        }
-                    }
-                },
-                {
-                    xtype: 'panel',
-                    border: false,
-                    layout: {
-                        type: 'fit'
-                    },
-                    animCollapse: false,
-                    collapseFirst: false,
-                    title: 'Users',
-                    items: [
-                        {
-                            xtype: 'usergrid'
-                        }
-                    ],
-                    listeners: {
-                        activate: {
-                            fn: me.onPanelActivate,
-                            scope: me
-                        }
-                    }
-                },
-                {
-                    xtype: 'panel',
-                    border: false,
-                    layout: {
-                        type: 'fit'
-                    },
-                    animCollapse: false,
-                    collapseFirst: false,
-                    title: 'Roles',
-                    items: [
-                        {
-                            xtype: 'rolegrid'
-                        }
-                    ],
-                    listeners: {
-                        activate: {
-                            fn: me.onPanelActivate,
-                            scope: me
-                        }
-                    }
-                },
-                {
-                    xtype: 'panel',
-                    border: false,
-                    layout: {
-                        type: 'fit'
-                    },
-                    animCollapse: false,
-                    collapseFirst: false,
-                    title: 'Permissions',
-                    items: [
-                        {
-                            xtype: 'permissiongrid'
-                        }
-                    ],
-                    listeners: {
-                        activate: {
-                            fn: me.onPanelActivate,
-                            scope: me
-                        }
-                    }
-                }
+//                {
+//                    xtype: 'panel',
+//                    border: false,
+//                    layout: {
+//                        type: 'fit'
+//                    },
+//                    animCollapse: false,
+//                    collapseFirst: false,
+//                    closable: true,
+//                    title: 'Groups',
+//                    items: [
+//                        {
+//                            xtype: 'groupgrid'
+//                        }
+//                    ],
+//                    listeners: {
+//                        activate: {
+//                            fn: me.onPanelActivate,
+//                            scope: me
+//                        }
+//                    }
+//                },
+//                {
+//                    xtype: 'panel',
+//                    border: false,
+//                    layout: {
+//                        type: 'fit'
+//                    },
+//                    animCollapse: false,
+//                    closable: true,
+//                    collapseFirst: false,
+//                    title: 'Users',
+//                    items: [
+//                        {
+//                            xtype: 'usergrid'
+//                        }
+//                    ],
+//                    listeners: {
+//                        activate: {
+//                            fn: me.onPanelActivate,
+//                            scope: me
+//                        }
+//                    }
+//                },
+//                {
+//                    xtype: 'panel',
+//                    border: false,
+//                    layout: {
+//                        type: 'fit'
+//                    },
+//                    animCollapse: false,
+//                    closable: true,
+//                    collapseFirst: false,
+//                    title: 'Roles',
+//                    items: [
+//                        {
+//                            xtype: 'rolegrid'
+//                        }
+//                    ],
+//                    listeners: {
+//                        activate: {
+//                            fn: me.onPanelActivate,
+//                            scope: me
+//                        }
+//                    }
+//                },
+//                {
+//                    xtype: 'panel',
+//                    border: false,
+//                    layout: {
+//                        type: 'fit'
+//                    },
+//                    animCollapse: false,
+//                    closable: true,
+//                    collapseFirst: false,
+//                    title: 'Permissions',
+//                    items: [
+//                        {
+//                            xtype: 'permissiongrid'
+//                        }
+//                    ],
+//                    listeners: {
+//                        activate: {
+//                            fn: me.onPanelActivate,
+//                            scope: me
+//                        }
+//                    }
+//                }
             ]
         });
 

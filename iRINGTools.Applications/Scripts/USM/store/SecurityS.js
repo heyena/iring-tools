@@ -16,13 +16,12 @@
             autoLoad: true,
             model: 'USM.model.SecurityM',
             storeId: storeId,
-			//data: [{"name": "Groups"},{"name": "Users"},{"name": "Roles"},{"name": "Permissions"}] 
+			data: [{"name": "Groups"},{"name": "Users"},{"name": "Roles"},{"name": "Permissions"}] ,
             proxy: {
                 type: 'ajax',
-                url: '/Scripts/USM/jsonfiles/security.json',
+                //url: '/Scripts/USM/jsonfiles/security.json',
                 reader: {
-                    type: 'json',
-                    root: 'items'
+                    type: 'json'
                 }
             }
         }, cfg)]);

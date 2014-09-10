@@ -123,10 +123,11 @@ Ext.define('USM.view.roles.RoleGroupSelectionPanel', {
                 url: 'usersecuritymanager/saveGroupRoles',
                 success: function (f, a) {
                     msg.close();
-                    me.getForm().reset();
                     if (btn.text == "Save") {
+                        me.getForm().reset();
                         me.up('window').destroy();
                     }
+                    Ext.getCmp('groupgridid').store.reload();
                     var message = 'Selected Roles to Group saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     return;
@@ -149,30 +150,40 @@ Ext.define('USM.view.roles.RoleGroupSelectionPanel', {
 
     onSelectGroup: function (combo, records, eOpts) {
         var me = this;
-        var grpName = records[0].data.GroupName;
+        var groupId = records[0].data.GroupId;
+        me.getGroupRoles(groupId, me);
+    },
+
+    getGroupRoles: function (groupId, scope) {
+        var me = this;
+        Ext.Ajax.request({
+            url: 'usersecuritymanager/getGroupRoles',
+            method: 'POST',
+            params: {
+                GroupId: groupId
+            },
+            success: function (response, options) {
+                var responseObj = Ext.JSON.decode(response.responseText);
+                var form = scope.up("itemselectorwindow").down('rolegroupselectionpanel');
+
+                var selArr = [];
+
+                if (responseObj != null || responseObj != "") {
+                    for (var i = 0; i < responseObj.length; i++) {
+                        selArr.push(responseObj[i].RoleId);
+                    }
+                    form.getForm().findField('SelectedRoles').setValue(selArr);
+                }
+                form.getForm().findField('GroupId').setValue(groupId);
+               // win.show();
+            },
+            failure: function (response, options) {
+            }
+        });
     },
 
     loadValues: function () {
         var me = this;
 
-        //        if (me.record != null) {
-        //            var selector = me.down('#keyselector');
-        //            var itemList = me.record.parentNode.raw.properties.dataProperties;
-
-        //            var availItems = [];
-        //            Ext.each(itemList, function (item) {
-        //                availItems.push({ name: item.columnName });
-        //            });
-
-        //            selector.store.loadData(availItems);
-        //            selector.reset();
-
-        //            var selectedItems = [];
-        //            Ext.each(me.record.childNodes, function (child) {
-        //                selectedItems.push(child.raw.properties.columnName);
-        //            });
-
-        //            selector.setValue(selectedItems);
-        //        }
     }
 });

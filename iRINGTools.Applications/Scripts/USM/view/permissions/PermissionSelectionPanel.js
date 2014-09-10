@@ -50,7 +50,7 @@ Ext.define('USM.view.permissions.PermissionSelectionPanel', {
 							flex: 3
 							//menuDisabled: true
 						},
-{
+                        {
 							xtype: 'gridcolumn',
 							dataIndex: 'PermissionId',
 							text: 'Permission',

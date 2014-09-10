@@ -60,10 +60,7 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
                 }]
             }],
 
-            listeners: {
-                afterrender: me.loadValues,
-                scope: me
-            },
+           
             dockedItems: [
                 {
                     xtype: 'toolbar',
@@ -75,7 +72,7 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
                         {
                             xtype: 'button',
                             handler: function (button, event) {
-                                me.onSave();
+                                me.onSave(button);
                             },
                             iconCls: 'icon-accept',
                             text: 'Apply'
@@ -123,10 +120,11 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
                 url: 'usersecuritymanager/saveGroupUsers',
                 success: function (f, a) {
                     msg.close();
-                    me.getForm().reset();
                     if (btn.text == "Save") {
+                        me.getForm().reset();
                         me.up('window').destroy();
                     }
+                    Ext.getCmp('groupgridid').store.reload();
                     var message = 'Selected Users saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     return;
@@ -149,30 +147,35 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
 
     onSelectGroup: function (combo, records, eOpts) {
         var me = this;
-        var grpName = records[0].data.GroupName;
+        var groupId = records[0].data.GroupId;
+        me.getGroupUsers(groupId, me);
     },
 
-    loadValues: function () {
+    getGroupUsers: function (groupId, scope) {
         var me = this;
+        Ext.Ajax.request({
+            url: 'usersecuritymanager/getGroupUsers',
+            method: 'POST',
+            params: {
+                GroupId: groupId
+            },
+            success: function (response, options) {
+                var responseObj = Ext.JSON.decode(response.responseText);
+                var form = scope.up("itemselectorwindow").down('grpuserselectionpanel');
 
-        //        if (me.record != null) {
-        //            var selector = me.down('#keyselector');
-        //            var itemList = me.record.parentNode.raw.properties.dataProperties;
+                var selArr = [];
+                if (responseObj != null) {
+                    for (var i = 0; i < responseObj.length; i++) {
+                        selArr.push(responseObj[i].UserId);
+                    }
+                    form.getForm().findField('selectedUsers').setValue(selArr);
+                }
+                form.getForm().findField('groupId').setValue(groupId);
+            },
 
-        //            var availItems = [];
-        //            Ext.each(itemList, function (item) {
-        //                availItems.push({ name: item.columnName });
-        //            });
-
-        //            selector.store.loadData(availItems);
-        //            selector.reset();
-
-        //            var selectedItems = [];
-        //            Ext.each(me.record.childNodes, function (child) {
-        //                selectedItems.push(child.raw.properties.columnName);
-        //            });
-
-        //            selector.setValue(selectedItems);
-        //        }
+            failure: function (response, options) {
+            }
+        });
     }
+
 });

@@ -33,7 +33,7 @@ Ext.define('USM.view.roles.GroupRoleSelectionPanel', {
                     valueField: 'RoleId',
                     listeners: {
                         select: {
-                            fn: me.onSelectGroup,
+                            fn: me.onSelectRole,
                             scope: me
                         }
                     }
@@ -123,10 +123,11 @@ Ext.define('USM.view.roles.GroupRoleSelectionPanel', {
                 url: 'usersecuritymanager/saveRoleGroups',
                 success: function (f, a) {
                     msg.close();
-                    me.getForm().reset();
                     if (btn.text == "Save") {
+                        me.getForm().reset();
                         me.up('window').destroy();
                     }
+                    Ext.getCmp('rolegridid').store.reload();
                     var message = 'Selected Groups to Role saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     return;
@@ -147,35 +148,41 @@ Ext.define('USM.view.roles.GroupRoleSelectionPanel', {
         this.loadValues();
     },
 
-    onSelectGroup: function (combo, records, eOpts) {
+    onSelectRole: function (combo, records, eOpts) {
         var me = this;
-        var roleName = records[0].data.RoleName;
-        //utilsObj.grpUser = grpName + " Users";
-        //me.down('itemselector').updateLayout();
-        //me.updateLayout();
+        var roleId = records[0].data.RoleId;
+        me.getRoleGroups(roleId, me);
+    },
+
+    getRoleGroups: function (roleId, scope) {
+        var me = this;
+        Ext.Ajax.request({
+            url: 'usersecuritymanager/getRoleGroups',
+            method: 'POST',
+            params: {
+                RoleId: roleId
+            },
+            success: function (response, options) {
+                var responseObj = Ext.JSON.decode(response.responseText);
+                var form = scope.up("itemselectorwindow").down('grouproleselectionpanel');
+
+                var selArr = [];
+                if (responseObj != null) {
+                    for (var i = 0; i < responseObj.length; i++) {
+                        selArr.push(responseObj[i].GroupId);
+                    }
+                    form.getForm().findField('SelectedGroups').setValue(selArr);
+                }
+                form.getForm().findField('RoleId').setValue(roleId);
+            },
+
+            failure: function (response, options) {
+            }
+        });
     },
 
     loadValues: function () {
         var me = this;
 
-        //        if (me.record != null) {
-        //            var selector = me.down('#keyselector');
-        //            var itemList = me.record.parentNode.raw.properties.dataProperties;
-
-        //            var availItems = [];
-        //            Ext.each(itemList, function (item) {
-        //                availItems.push({ name: item.columnName });
-        //            });
-
-        //            selector.store.loadData(availItems);
-        //            selector.reset();
-
-        //            var selectedItems = [];
-        //            Ext.each(me.record.childNodes, function (child) {
-        //                selectedItems.push(child.raw.properties.columnName);
-        //            });
-
-        //            selector.setValue(selectedItems);
-        //        }
     }
 });

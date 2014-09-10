@@ -667,6 +667,26 @@ namespace iRINGTools.Web.Models
             return items;
         }
 
+        public Permissions GetRolePermissions(string roleId, string format)
+        {
+            Permissions items = null;
+            _logger.Debug("In SecurityRepository GetRolePermissions");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                items = client.Get<Permissions>("/rolePermissions?roleId=" + roleId + "&format=" + format);
+
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return items;
+        }
+
         public void InsertRolePermissions(FormCollection form)
         {
 
