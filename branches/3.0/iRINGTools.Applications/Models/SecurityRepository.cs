@@ -706,7 +706,7 @@ namespace iRINGTools.Web.Models
 
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
 
-                client.Post<RolePermissions>("/insertRolePermission?format=xml", userGroups, true);
+                client.Post<RolePermissions>("/insertRolePermissions?format=xml", userGroups, true);
                 _logger.Debug("Successfully called Security Service.");
 
             }
