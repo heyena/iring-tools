@@ -609,6 +609,37 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Insert Commodity to the data base.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/insertCommodity/{userName}?groupIds={groupIds}&format={format}")]
+        public void InsertCommodity(string userName, string groupIds, string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Commodity>(stream, format);
+                    response = _applicationConfigurationProvider.InsertCommodity(userName,groupIds, new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
         [Description("Get valueList collection for user")]
         [WebGet(UriTemplate = "/valueList/{userName}?siteId={siteId}&applicationId={applicationId}&format={format}")]
         public void GetValueListForUser(string userName, int siteId, Guid applicationId, string format)
