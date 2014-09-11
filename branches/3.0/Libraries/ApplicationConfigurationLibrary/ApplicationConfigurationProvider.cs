@@ -868,5 +868,70 @@ namespace org.iringtools.applicationConfig
 
             return response;
         }
+
+        public Response UpdateCommodity(string userName, string groupIds, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteCommand("spuCommodity @UserName = {0}, @SiteId = {1}, @CommodityId = {2}, " +
+                                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.CommodityId, commodity.CommodityName, groupIds);
+
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Commodity updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Applications: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeleteCommodity(string comodityId)
+        {
+            Response response = new Response();
+
+            try
+            {
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteCommand("spdCommodity @CommodityId = {0} ", comodityId);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Commodity deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Applications: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
     }
 }
