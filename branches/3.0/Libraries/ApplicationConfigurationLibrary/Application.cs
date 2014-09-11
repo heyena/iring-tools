@@ -272,6 +272,11 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "commodity", Namespace = "http://www.iringtools.org/library")]
     public class Commodity
     {
+        Commodity()
+        {
+            permissions = new Permissions();    
+        }
+
         [DataMember(Name = "contextId", Order = 0)]
         public Guid ContextId { get; set; }
 
