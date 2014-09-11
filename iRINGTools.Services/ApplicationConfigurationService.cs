@@ -640,6 +640,67 @@ namespace org.iringtools.services
             _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
+        [Description("update Commodity to the data base.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateCommodity/{userName}?groupIds={groupIds}&format={format}")]
+        public void UpdateCommodity(string userName, string groupIds, string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Commodity>(stream, format);
+                    response = _applicationConfigurationProvider.UpdateCommodity(userName, groupIds, new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
+        [Description("delete Commodity to the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteCommodity/{commodityId}?format={format}")]
+        public void DeleteCommodity(string commodityId, string format)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    response = _applicationConfigurationProvider.DeleteCommodity(commodityId);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
         [Description("Get valueList collection for user")]
         [WebGet(UriTemplate = "/valueList/{userName}?siteId={siteId}&applicationId={applicationId}&format={format}")]
         public void GetValueListForUser(string userName, int siteId, Guid applicationId, string format)
