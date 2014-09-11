@@ -834,5 +834,39 @@ namespace org.iringtools.applicationConfig
             }
             return manifest;
         }
+
+        public Response InsertCommodity(string userName, string groupIds, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                        dc.ExecuteCommand("spiCommodity @UserName = {0}, @SiteId = {1}, @ContextId = {2}, " +
+                                                      "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId,commodity.ContextId,commodity.CommodityName,groupIds);
+                    
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Commodity added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Applications: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
     }
 }
