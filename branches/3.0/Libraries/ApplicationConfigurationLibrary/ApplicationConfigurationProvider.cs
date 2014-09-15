@@ -755,6 +755,135 @@ namespace org.iringtools.applicationConfig
             return exchanges;
         }
 
+        public Response InsertExchange(string userName, string groupIds, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Exchange exchange = Utility.DeserializeDataContract<Exchange>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                    nvl.Add(new ListItem() { Name = "@CommodityId", Value = Convert.ToString(exchange.CommodityId) });
+                    nvl.Add(new ListItem() { Name = "@SourceGraphId", Value = Convert.ToString(exchange.SourceGraphId) });
+                    nvl.Add(new ListItem() { Name = "@DestinationGraphId", Value = Convert.ToString(exchange.DestinationGraphId) });
+                    nvl.Add(new ListItem() { Name = "@Name", Value = exchange.Name });
+                    nvl.Add(new ListItem() { Name = "@Description", Value = exchange.Description });
+                    nvl.Add(new ListItem() { Name = "@PoolSize", Value = Convert.ToString(exchange.PoolSize) });
+                    nvl.Add(new ListItem() { Name = "@XTypeAdd", Value = exchange.XTypeAdd });
+                    nvl.Add(new ListItem() { Name = "@XTypeChange", Value = exchange.XTypeChange });
+                    nvl.Add(new ListItem() { Name = "@XTypeSync", Value = exchange.XTypeSync });
+                    nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
+                    nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
+                    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
+                    nvl.Add(new ListItem() { Name = "@GroupList", Value = groupIds });
+
+                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiExchange", nvl);
+
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Exchange added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Exchange: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response UpdateExchange(string userName, string groupIds, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Exchange exchange = Utility.DeserializeDataContract<Exchange>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                    nvl.Add(new ListItem() { Name = "@ExchangeId", Value = Convert.ToString(exchange.ExchangeId) });
+                    nvl.Add(new ListItem() { Name = "@SourceGraphId", Value = Convert.ToString(exchange.SourceGraphId) });
+                    nvl.Add(new ListItem() { Name = "@DestinationGraphId", Value = Convert.ToString(exchange.DestinationGraphId) });
+                    nvl.Add(new ListItem() { Name = "@Name", Value = exchange.Name });
+                    nvl.Add(new ListItem() { Name = "@Description", Value = exchange.Description });
+                    nvl.Add(new ListItem() { Name = "@PoolSize", Value = Convert.ToString(exchange.PoolSize) });
+                    nvl.Add(new ListItem() { Name = "@XTypeAdd", Value = exchange.XTypeAdd });
+                    nvl.Add(new ListItem() { Name = "@XTypeChange", Value = exchange.XTypeChange });
+                    nvl.Add(new ListItem() { Name = "@XTypeSync", Value = exchange.XTypeSync });
+                    nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
+                    nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
+                    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
+                    nvl.Add(new ListItem() { Name = "@GroupList", Value = groupIds });
+
+                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuExchange", nvl);
+
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Exchange updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error updating Exchange: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeleteExchange(string exchangeId)
+        {
+            Response response = new Response();
+
+            try
+            {
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteCommand("spdExchange @ExchangeId = {0} ", exchangeId);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Exchange deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting Exchange: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
         public Commodities GetCommoditiesForUser(string userName, int siteId, Guid contextId)
         {
             Commodities commodities = new Commodities();
@@ -770,9 +899,108 @@ namespace org.iringtools.applicationConfig
             }
             catch (Exception ex)
             {
-                _logger.Error("Error getting  Contexts: " + ex);
+                _logger.Error("Error getting  Commodity: " + ex);
             }
             return commodities;
+        }
+
+        public Response InsertCommodity(string userName, string groupIds, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteCommand("spiCommodity @UserName = {0}, @SiteId = {1}, @ContextId = {2}, " +
+                                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.ContextId, commodity.CommodityName, groupIds);
+
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Commodity added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Commodity: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response UpdateCommodity(string userName, string groupIds, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteCommand("spuCommodity @UserName = {0}, @SiteId = {1}, @CommodityId = {2}, " +
+                                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.CommodityId, commodity.CommodityName, groupIds);
+
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Commodity updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error updating Commodity: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeleteCommodity(string comodityId)
+        {
+            Response response = new Response();
+
+            try
+            {
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteCommand("spdCommodity @CommodityId = {0} ", comodityId);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Commodity deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting Commodity: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
         }
 
         public ValueListMaps GetValueListForUser(string userName, int siteId, Guid applicationId)
@@ -835,103 +1063,6 @@ namespace org.iringtools.applicationConfig
             return manifest;
         }
 
-        public Response InsertCommodity(string userName, string groupIds, XDocument xml)
-        {
-            Response response = new Response();
-
-            try
-            {
-                Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
-
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                        dc.ExecuteCommand("spiCommodity @UserName = {0}, @SiteId = {1}, @ContextId = {2}, " +
-                                                      "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId,commodity.ContextId,commodity.CommodityName,groupIds);
-                    
-                }
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Commodity added successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error adding Applications: " + ex);
-
-                Status status = new Status { Level = StatusLevel.Error };
-                status.Messages = new Messages { ex.Message };
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Error;
-                response.StatusList.Add(status);
-            }
-
-            return response;
-        }
-
-        public Response UpdateCommodity(string userName, string groupIds, XDocument xml)
-        {
-            Response response = new Response();
-
-            try
-            {
-                Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
-
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                    dc.ExecuteCommand("spuCommodity @UserName = {0}, @SiteId = {1}, @CommodityId = {2}, " +
-                                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.CommodityId, commodity.CommodityName, groupIds);
-
-                }
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Commodity updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error adding Applications: " + ex);
-
-                Status status = new Status { Level = StatusLevel.Error };
-                status.Messages = new Messages { ex.Message };
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Error;
-                response.StatusList.Add(status);
-            }
-
-            return response;
-        }
-
-        public Response DeleteCommodity(string comodityId)
-        {
-            Response response = new Response();
-
-            try
-            {
-
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                    dc.ExecuteCommand("spdCommodity @CommodityId = {0} ", comodityId);
-                }
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Commodity deleted successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error adding Applications: " + ex);
-
-                Status status = new Status { Level = StatusLevel.Error };
-                status.Messages = new Messages { ex.Message };
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Error;
-                response.StatusList.Add(status);
-            }
-
-            return response;
-        }
+        
     }
 }

@@ -589,6 +589,98 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Insert Exchange to the data base.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/insertExchange/{userName}?groupIds={groupIds}&format={format}")]
+        public void InsertExchange(string userName, string groupIds, string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.Exchange>(stream, format);
+                    response = _applicationConfigurationProvider.InsertExchange(userName, groupIds, new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
+        [Description("Insert Exchange to the data base.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateExchange/{userName}?groupIds={groupIds}&format={format}")]
+        public void UpdateExchange(string userName, string groupIds, string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.Exchange>(stream, format);
+                    response = _applicationConfigurationProvider.UpdateExchange(userName, groupIds, new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
+        [Description("delete Exchange to the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteExchange/{exchangeId}?format={format}")]
+        public void DeleteExchange(string exchangeId, string format)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    response = _applicationConfigurationProvider.DeleteExchange(exchangeId);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
         [Description("Get Commodities collection for user")]
         [WebGet(UriTemplate = "/commodities/{userName}?siteId={siteId}&contextId={contextId}&format={format}")]
         public void GetCommoditiesForUser(string userName, int siteId, Guid contextId, string format)
