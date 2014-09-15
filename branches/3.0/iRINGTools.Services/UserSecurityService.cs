@@ -773,15 +773,15 @@ namespace org.iringtools.services
         }
 
         [Description("Return all groups that the user belongs to from the database.")]
-        [WebGet(UriTemplate = "/groupsUser?userId={userId}&format={format}")]
-        public void GetGroupsUser(int userId, string format)
+        [WebGet(UriTemplate = "/groupsUser?userName={userName}&format={format}")]
+        public void GetGroupsUser(string userName, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                Groups groups = _userSecurityProvider.GetGroupsUser(userId);
+                Groups groups = _userSecurityProvider.GetGroupsUser(userName);
                 _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
             }
             catch (Exception ex)
