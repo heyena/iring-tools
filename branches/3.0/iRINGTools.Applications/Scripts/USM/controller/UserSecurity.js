@@ -126,7 +126,6 @@
     },
 
     addRemPermissionToRole: function (item, e, eOpts) {
-        
         var me = this;
         var rec = Ext.getCmp('viewportid').down('rolegrid').getSelectionModel().getSelection();
         var roleId = rec[0].data.RoleId;
@@ -145,22 +144,25 @@
                 var grid = form.down("gridpanel");
                 var selArr = [];
                 form.getForm().findField('RoleId').setValue(roleId);
-                win.show();
+                //grid.store.reload();
+                var store = grid.store;
+                //grid.store.on('load', function (store, action) {
+                if (responseObj != null || responseObj != "") {
+                    for (var j = 0; j < store.getCount(); j++) {
+                        var gPrmId = store.getAt(j).get("PermissionId");
+                        for (var i = 0; i < responseObj.length; i++) {
+                            var permId = responseObj[i].PermissionId;
 
-                //win.on('afterrender', function (form, ept) {
-//                    if (responseObj != null || responseObj != "") {
-//                        for (var j = 0; j < grid.store.getCount(); i++) {
-//                            var gPrmId = grid.store.getAt(j).get("PermissionId");
-//                            for (var i = 0; i < responseObj.length; i++) {
-//                                var permId = responseObj[i].PermissionId;
-//                                            
-//                                if (permId === gPrmId) {
-//                                    grid.store.getAt(j).set("chk", true);
-//                                }
-//                            }
-//                        }
-//                    }
+                            if (permId === gPrmId) {
+                                store.getAt(j).set("chk", true);
+                            } else {
+                                store.getAt(j).set("chk", false);
+                            }
+                        }
+                    }
+                }
                 //}, me);
+                win.show();
             },
             failure: function (response, options) {
             }
@@ -429,15 +431,37 @@
             title: 'Add/Remove Users to Group'
         });
         var form = win.down('grpuserselectionpanel');
-        var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
-        form.getForm().findField('groupId').setValue(rec[0].data.GroupId);
+        var rec, groupId = null;
+
+        if (Ext.getCmp('viewportid').down('groupgrid') != undefined) {
+            rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
+            groupId = rec[0].data.GroupId;
+        } else {
+            rec = form.getForm().findField('groupId').store.getAt(0).get("GroupId");
+            groupId = rec;
+        }
+        form.getForm().findField('groupId').setValue(groupId);
         win.show();
     },
 
     editUserGroup: function (btn) {
         var me = this;
-        var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
-        var groupId = rec[0].data.GroupId;
+        var rec, groupId = null;
+
+        var win = new USM.view.ItemSelectorWindow({
+            form: Ext.widget('grpuserselectionpanel'),
+            title: 'Add/Remove Users to Group'
+        });
+        var form = win.down('grpuserselectionpanel');
+        if (Ext.getCmp('viewportid').down('groupgrid') != undefined) {
+            rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
+            groupId = rec[0].data.GroupId;
+        } else {
+            rec = form.getForm().findField('groupId').store.getAt(0).get("GroupId");
+            groupId = rec;
+        }
+
+        var groupId = groupId;
         Ext.Ajax.request({
             url: 'usersecuritymanager/getGroupUsers',
             //url: '/Scripts/USM/jsonfiles/selusers.json',
@@ -447,11 +471,8 @@
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
-                var win = new USM.view.ItemSelectorWindow({
-                    form: Ext.widget('grpuserselectionpanel'),
-                    title: 'Add/Remove Users to Group'
-                });
-                var form = win.down('grpuserselectionpanel');
+
+                
 
                 var selArr = [];
                 form.on('beforerender', function (form, ept) {
@@ -461,14 +482,7 @@
                         }
                         form.getForm().findField('selectedUsers').setValue(selArr);
                     }
-                    //var itemSel = Ext.ComponentQuery.query("#userselector", form);
-                    //var cont = Ext.ComponentQuery.query("container", itemSel[0]);
-                    //var butt = Ext.ComponentQuery.query("button", itemSel[0]);
-                    //var cpy = Ext.Array.slice(butt, 2, 4);
-                    //itemSel[0].items.items[1].items.items = [];
-                    //itemSel[0].items.items[1].items.items = cpy;
-                    //Ext.Array.remove(butons,)
-                }, me);
+                 }, me);
 
                 form.getForm().findField('groupId').setValue(groupId);
                 win.show();
@@ -532,8 +546,21 @@
 
     addRemRolestoGroup: function (btn) {
         var me = this;
-        var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
-        var groupId = rec[0].data.GroupId;
+        var rec, groupId = null;
+        var win = new USM.view.ItemSelectorWindow({
+            form: Ext.widget('rolegroupselectionpanel'),
+            title: 'Add/Remove Roles to Group'
+        });
+
+        var form = win.down('rolegroupselectionpanel');
+        if (Ext.getCmp('viewportid').down('groupgrid') != undefined) {
+            rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
+            groupId = rec[0].data.GroupId;
+        } else {
+            rec = form.getForm().findField('GroupId').store.getAt(0).get("GroupId");
+            groupId = rec;
+        }
+
         Ext.Ajax.request({
             url: 'usersecuritymanager/getGroupRoles',
             //url: '/Scripts/USM/jsonfiles/selroles.json',
@@ -543,11 +570,8 @@
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
-                var win = new USM.view.ItemSelectorWindow({
-                    form: Ext.widget('rolegroupselectionpanel'),
-                    title: 'Add/Remove Roles to Group'
-                });
-                var form = win.down('rolegroupselectionpanel');
+
+                
                 var selArr = [];
 
                 form.on('beforerender', function (form, ept) {
