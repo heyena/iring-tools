@@ -124,7 +124,7 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
                         me.getForm().reset();
                         me.up('window').destroy();
                     }
-                    Ext.getCmp('groupgridid').store.reload();
+                    //Ext.getCmp('groupgridid').store.reload();
                     var message = 'Selected Users saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     return;

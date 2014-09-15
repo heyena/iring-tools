@@ -10,23 +10,23 @@ Ext.define('USM.view.menus.SecurityMenu', {
                 {
                     xtype: 'menuitem',
                     action: 'addGroup',
-                    hidden: true,
+                    hidden: false,
                     iconCls: 'icon-add',
                     text: 'Add Group'
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'editSecUserGroup',
-                    hidden: true,
+                    action: 'addUserToGroup',
+                    hidden: false,
                     iconCls: 'icon-edit',
-                    text: 'Edit User/Group'
+                    text: 'Add/Remove Users to Group'
                 },
                 {
                     xtype: 'menuitem',
-                    action: 'editSecGroupRoles',
-                    hidden: true,
+                    action: 'addRemRolestoGroup',
+                    hidden: false,
                     iconCls: 'icon-edit',
-                    text: 'Edit Group/Roles'
+                    text: 'Add/Remove Roles to Group'
                 }
             ]
         });

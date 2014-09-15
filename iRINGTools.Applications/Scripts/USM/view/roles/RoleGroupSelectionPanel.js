@@ -127,7 +127,7 @@ Ext.define('USM.view.roles.RoleGroupSelectionPanel', {
                         me.getForm().reset();
                         me.up('window').destroy();
                     }
-                    Ext.getCmp('groupgridid').store.reload();
+                    //Ext.getCmp('groupgridid').store.reload();
                     var message = 'Selected Roles to Group saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     return;
