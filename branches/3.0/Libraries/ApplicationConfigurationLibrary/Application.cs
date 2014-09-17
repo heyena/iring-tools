@@ -447,12 +447,12 @@ namespace org.iringtools.applicationConfig
     {
         public Manifest()
         {
-            graphs = new Graphs();
+            graphs = new org.iringtools.dxfr.manifest.Graphs();
             valueListMaps = new ValueListMaps();
         }
 
         [DataMember(Name = "graphs", Order = 0, EmitDefaultValue = false)]
-        public Graphs graphs { get; set; }
+        public org.iringtools.dxfr.manifest.Graphs graphs { get; set; }
 
         [DataMember(Name = "valueListMaps", Order = 1, EmitDefaultValue = false)]
         public ValueListMaps valueListMaps { get; set; }
