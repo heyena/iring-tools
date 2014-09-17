@@ -15,6 +15,7 @@ using System.ServiceModel.Web;
 using System.Data.Linq;
 using System.Web;
 using System.Data;
+using org.iringtools.mapping;
 
 
 namespace org.iringtools.applicationConfig
@@ -1044,17 +1045,13 @@ namespace org.iringtools.applicationConfig
                 xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphMappingByUser", nvl);
                 Graphs graphs = utility.Utility.Deserialize<Graphs>(xmlString, true);
 
-                manifest.graphs = graphs;
-                manifest.valueListMaps = valueListMaps;
-
-                //foreach(Graph g in graphs )
-                //{
-                //    MemoryStream ms = new MemoryStream(g.graph, 0, g.graph.Length);
-                //    ms.Write(g.graph, 0, g.graph.Length);
-                //    System.Xml.XmlDocument xDocument = new System.Xml.XmlDocument();
-                //    xDocument.Load(ms);
-                //}
+                Graph g = graphs.First();
+                string bytesToXml = System.Text.Encoding.Default.GetString(g.graph);
+                org.iringtools.dxfr.manifest.Graphs graph = utility.Utility.Deserialize<org.iringtools.dxfr.manifest.Graphs>(bytesToXml, true); ;
                 
+
+                manifest.graphs = graph;
+                manifest.valueListMaps = valueListMaps;
             }
             catch (Exception ex)
             {
