@@ -288,6 +288,55 @@ namespace org.iringtools.adapter
         }
     }
 
+    public byte[] ExecuteBytesQuery(string connStr, string spName, NameValueList spParamters)
+    {
+        _logger.Debug(spName);
+
+        SqlConnection conn = null;
+        SqlCommand dbCmd = null;
+        string xmlString = string.Empty;
+        byte[] byteArray;
+
+        try
+        {
+            conn = new SqlConnection(connStr);
+            conn.Open();
+
+            dbCmd = new SqlCommand();
+            dbCmd.CommandType = System.Data.CommandType.StoredProcedure;
+            dbCmd.CommandText = spName;
+            dbCmd.Connection = conn;
+
+
+            foreach (ListItem item in spParamters)
+            {
+                dbCmd.Parameters.Add(new SqlParameter(item.Name, item.Value));
+            }
+
+            dbCmd.CommandTimeout = 0;
+            SqlDataAdapter myAdapter1 = new SqlDataAdapter(dbCmd);
+            DataTable dt = new DataTable();
+            myAdapter1.Fill(dt);
+
+            foreach (DataRow row in dt.Rows)
+            {
+                byteArray = (byte[])row["graphObject"];
+                return byteArray;
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Error executing stored procedure [" + spName + "]: " + ex.Message);
+            throw ex;
+        }
+        finally
+        {
+            CloseConnection(conn);
+        }
+    }
+
     public DataTable ExecuteStoredProcedure(string connStr, string spName, NameValueList spParamters)
     {
         _logger.Debug(spName);

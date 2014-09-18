@@ -192,6 +192,24 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Get manifest for user")]
+    [WebGet(UriTemplate = "/manifest/{userName}?siteId={siteId}&graphId={graphId}&applicationId={applicationId}&format={format}")]
+    public void GetManifestForUser(string userName, int siteId, Guid graphId, Guid applicationId, string format)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+             Manifest manifest = _dtoProvider.GetManifestForUser(userName, siteId, graphId, applicationId);
+            _dtoProvider.FormatOutgoingMessage<Manifest>(manifest, format, true);
+        }
+        catch (Exception ex)
+        {
+            ExceptionHander(ex);
+        }
+    }
+
     [Description("Gets data transfer indices of requested manifest.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
     public void GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)

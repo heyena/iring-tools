@@ -822,8 +822,8 @@ namespace org.iringtools.services
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                Manifest manifest = _applicationConfigurationProvider.GetManifestForUser(userName, siteId, graphId, applicationId);
-                _applicationConfigurationProvider.FormatOutgoingMessage<Manifest>(manifest, format, true);
+                org.iringtools.applicationConfig.Manifest manifest = _applicationConfigurationProvider.GetManifestForUser(userName, siteId, graphId, applicationId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Manifest>(manifest, format, true);
             }
             catch (Exception ex)
             {
