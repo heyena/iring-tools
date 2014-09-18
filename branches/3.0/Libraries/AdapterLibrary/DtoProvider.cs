@@ -15,6 +15,7 @@ using org.iringtools.dxfr.manifest;
 using org.iringtools.library;
 using org.iringtools.mapping;
 using org.iringtools.utility;
+using System.Web;
 
 namespace org.iringtools.adapter
 {
@@ -24,9 +25,23 @@ namespace org.iringtools.adapter
 
     protected GraphMap _graphMap;
     protected string _fixedIdentifierBoundary = "#";
+    private string _connSecurityDb;
+    private int _siteID;
 
     [Inject]
-    public DtoProvider(NameValueCollection settings) : base(settings) { }
+    public DtoProvider(NameValueCollection settings)
+        : base(settings)
+    {
+        try
+        {
+            _connSecurityDb = settings["SecurityConnection"];
+            _siteID = Convert.ToInt32(settings["SiteId"]);
+        }
+        catch (Exception e)
+        {
+            _logger.Error("Error initializing adapter provider: " + e.Message);
+        }
+    }
 
     public VersionInfo GetVersion()
     {
@@ -425,6 +440,56 @@ namespace org.iringtools.adapter
     {
       return GetManifest(scope, app, null);
     }
+
+
+    public Manifest GetManifestForUser(string userName, int siteId, Guid graphId, Guid applicationId)
+    {
+       Manifest manifest = new Manifest();
+        try
+        {      
+            ValueMap ValueMap1 = new ValueMap();
+            ValueMap1.label = "label";
+            ValueMap1.internalValue = "internal value";
+            ValueMap1.uri = "test uri";
+
+            ValueMaps maps = new ValueMaps();
+            maps.Add(ValueMap1);
+
+            ValueListMap valueListMap1 = new ValueListMap();
+            valueListMap1.name = "testName";
+            valueListMap1.valueMaps = maps;
+
+            ValueListMaps ValueListMaps1 = new ValueListMaps();
+            ValueListMaps1.Add(valueListMap1);
+            string xml =  utility.Utility.Serialize(ValueListMaps1,true);
+
+            NameValueList nvl = new NameValueList();
+            nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+            nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+            nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationId) });
+
+            string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgValuelistforManifest", nvl);
+            ValueListMaps valueListMaps = utility.Utility.Deserialize<ValueListMaps>(xmlString, true);
+      
+            nvl = new NameValueList();
+            nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+            nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+            nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
+
+            byte[] xmlbyte = DBManager.Instance.ExecuteBytesQuery(_connSecurityDb, "spgGraphBinary", nvl);
+            string bytesToXml = System.Text.Encoding.Default.GetString(xmlbyte);
+            Graphs graphs = utility.Utility.Deserialize<Graphs>(bytesToXml, true); ;
+
+            manifest.graphs = graphs;
+            manifest.valueListMaps = valueListMaps;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Error getting  valueListMaps: " + ex);
+        }
+        return manifest;
+    }
+      
 
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
@@ -2046,5 +2111,24 @@ namespace org.iringtools.adapter
 
       return response;
     }
+
+    public void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
+    {
+        if (format.ToUpper() == "JSON")
+        {
+            string json = Utility.SerializeJson<T>(graph, useDataContractSerializer);
+
+            HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
+            HttpContext.Current.Response.Write(json);
+        }
+        else
+        {
+            string xml = Utility.Serialize<T>(graph, useDataContractSerializer);
+
+            HttpContext.Current.Response.ContentType = "application/xml";
+            HttpContext.Current.Response.Write(xml);
+        }
+    }
+
   }
 }
