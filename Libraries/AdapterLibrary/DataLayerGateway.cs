@@ -1753,6 +1753,7 @@ namespace org.iringtools.adapter
                         start += CachePageSize;
                         pageIndex = pageIndex + 1;
                         table.Clear();
+                        bulkCopy.Close();
                     }
                     string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
                     status.Messages.Add(msg);
