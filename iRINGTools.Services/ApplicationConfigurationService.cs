@@ -569,6 +569,99 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Insert DataFilter to the data base.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/insertDataFilter?resourceId={resourceId}&siteId={siteId}&dataFilterTypeId={dataFilterTypeId}&format={format}")]
+        public void InsertDataFilter(string resourceId, string siteId, string dataFilterTypeId, string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.DataFilters>(stream, format);
+                    response = _applicationConfigurationProvider.InsertDataFilter(resourceId, siteId,dataFilterTypeId, new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
+        [Description("Update DataFilter to the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteDataFilter?dataFilterId={dataFilterId}&format={format}")]
+        public void DeleteDataFilter(string dataFilterId, string format)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    //XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.DataFilter>(stream, format);
+                    response = _applicationConfigurationProvider.DeleteDataFilter(dataFilterId);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
+        [Description("Update DataFilter to the data base.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/udpateDataFilter?dataFilterId={dataFilterId}&siteId={siteId}&dataFilterTypeId={dataFilterTypeId}&format={format}")]
+        public void UpdateDataFilter(string dataFilterId, string siteId, string dataFilterTypeId, string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.DataFilter>(stream, format);
+                    response = _applicationConfigurationProvider.UpdateDataFilter(dataFilterId, siteId, dataFilterTypeId, new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
         [Description("Get exchange collection for user")]
         [WebGet(UriTemplate = "/exchanges/{userName}?siteId={siteId}&commodityId={commodityId}&format={format}")]
         public void GetExchangesForUser(string userName, int siteId, Guid commodityId, string format)

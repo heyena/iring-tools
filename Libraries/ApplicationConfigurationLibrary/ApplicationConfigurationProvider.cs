@@ -736,6 +736,119 @@ namespace org.iringtools.applicationConfig
             return datafilters;
         }
 
+        public Response InsertDataFilter(string resourceId, string siteId, string dataFilterTypeId, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                //Exchange exchange = Utility.DeserializeDataContract<Exchange>(xml.ToString());
+                
+                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@ResourceId", Value = resourceId });
+                    nvl.Add(new ListItem() { Name = "@DataFilterTypeId", Value = dataFilterTypeId });
+                    nvl.Add(new ListItem() { Name = "@SiteId", Value = siteId });
+                    nvl.Add(new ListItem() { Name = "@RawXml", Value = rawXml });
+                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiDataFilter", nvl);
+
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("DataFilter added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding DataFilter: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response UpdateDataFilter(string dataFilterId, string siteId, string dataFilterTypeId, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                //Exchange exchange = Utility.DeserializeDataContract<Exchange>(xml.ToString());
+
+                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@DataFilterId", Value = dataFilterId });
+                    nvl.Add(new ListItem() { Name = "@DataFilterTypeId", Value = dataFilterTypeId });
+                    nvl.Add(new ListItem() { Name = "@SiteId", Value = siteId });
+                    nvl.Add(new ListItem() { Name = "@RawXml", Value = rawXml });
+                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuDataFilter", nvl);
+
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("DataFilter updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error udpating DataFilter: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeleteDataFilter(string dataFilterId)
+        {
+            Response response = new Response();
+
+            try
+            {
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@DataFilterId", Value = dataFilterId });
+                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spdDataFilter", nvl);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("DataFilter deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting DataFilter: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
         public Exchanges GetExchangesForUser(string userName, int siteId, Guid commodityId)
         {
             Exchanges exchanges = new Exchanges();
