@@ -333,16 +333,19 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "resourceId", Order = 1)]
         public Guid ResourceId { get; set; }
 
-        [DataMember(Name = "siteId", Order = 2, EmitDefaultValue = false)]
+        [DataMember(Name = "dataFilterTypeId", Order = 2, EmitDefaultValue = false)]
+        public int DataFilterTypeId { get; set; }
+
+        [DataMember(Name = "siteId", Order = 3, EmitDefaultValue = false)]
         public int SiteId { get; set; }
 
-        [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "expressions", Order = 4, EmitDefaultValue = false)]
+        [DataMember(Name = "expressions", Order = 5, EmitDefaultValue = false)]
         public Expressions expressions { get; set; }
 
-        [DataMember(Name = "orderExpressions", Order = 5, EmitDefaultValue = false)]
+        [DataMember(Name = "orderExpressions", Order = 6, EmitDefaultValue = false)]
         public OrderExpressions orderExpressions { get; set; }
 
         
@@ -372,11 +375,17 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "relationalOperator", Order = 5, EmitDefaultValue = false)]
         public string RelationalOperator { get; set; }
 
-        [DataMember(Name = "value", Order = 6, EmitDefaultValue = false)]
-        public string Value { get; set; }
+        [DataMember(Name = "values", Order = 6, EmitDefaultValue = false)]
+        public values values { get; set; }
 
         [DataMember(Name = "closeCount", Order = 7, EmitDefaultValue = false)]
         public int CloseCount { get; set; }
+
+    }
+
+    [CollectionDataContract(Name = "values", Namespace = "http://www.iringtools.org/library", ItemName = "value")]
+    public class values : List<string>
+    {
 
     }
 
