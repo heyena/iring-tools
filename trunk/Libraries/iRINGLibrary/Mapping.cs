@@ -387,6 +387,8 @@ namespace org.iringtools.legacy
       valueList = roleMap.valueList;
       classMap = roleMap.classMap;
       numberOfDecimals = roleMap.numberOfDecimals;
+      precision = roleMap.precision;
+      scale = roleMap.scale;
     }
 
     [DataMember(Order = 0)]
@@ -415,6 +417,12 @@ namespace org.iringtools.legacy
 
     [DataMember(EmitDefaultValue = false, Order = 8)]
     public int numberOfDecimals { get; set; }
+
+    [DataMember(IsRequired = false, Order = 9)]
+    public int precision { get; set; }
+
+    [DataMember(IsRequired = false, Order = 10)]
+    public int scale { get; set; }
 
     public bool isMapped
     {

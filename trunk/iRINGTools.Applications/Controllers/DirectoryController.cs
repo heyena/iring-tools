@@ -388,6 +388,8 @@ namespace org.iringtools.web.controllers
 
                                 node.property.Add("Datatype", dataType);
                                 node.property.Add("Data Length", property.dataLength.ToString());
+                                node.property.Add("Precison", property.precision.ToString());
+                                node.property.Add("Scale", property.scale.ToString());
                                 //node.property.Add("isVirtual", property.isVirtual.ToString());
                                 if (isKeyProp)
                                 {

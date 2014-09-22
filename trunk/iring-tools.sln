@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMXFGenerator", "Utilities\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGAgent", "Utilities\Agent\iRINGAgent\iRINGAgent.csproj", "{E5E9C14A-CFF1-4933-A093-5683D1D31783}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlDataLayer", "..\iRINGTools_datalayers\sql_datalayer\trunk\SqlDataLayer\SqlDataLayer.csproj", "{933AB6DA-C9FE-48AA-992D-5EDC194E541C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -547,6 +549,31 @@ Global
 		{E5E9C14A-CFF1-4933-A093-5683D1D31783}.Release|Mixed Platforms.Build.0 = Release|x86
 		{E5E9C14A-CFF1-4933-A093-5683D1D31783}.Release|x86.ActiveCfg = Release|x86
 		{E5E9C14A-CFF1-4933-A093-5683D1D31783}.Release|x86.Build.0 = Release|x86
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Default|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Default|Mixed Platforms.Build.0 = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Default|x86.ActiveCfg = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Demo|Any CPU.ActiveCfg = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Demo|Any CPU.Build.0 = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Demo|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Demo|Mixed Platforms.Build.0 = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Demo|x86.ActiveCfg = Debug|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.MobileDev|Any CPU.ActiveCfg = Release|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.MobileDev|Any CPU.Build.0 = Release|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.MobileDev|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.MobileDev|Mixed Platforms.Build.0 = Release|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.MobileDev|x86.ActiveCfg = Release|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{933AB6DA-C9FE-48AA-992D-5EDC194E541C}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

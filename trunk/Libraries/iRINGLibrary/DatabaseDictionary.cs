@@ -70,31 +70,35 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://www.iringtools.org/library")]
   public enum Provider
   {
-    [EnumMember]
-    MsSql2000,
-    [EnumMember]
-    MsSql2005,
-    [EnumMember]
-    MsSql2008,
-    [EnumMember]
-    MySql3,
-    [EnumMember]
-    MySql4,
-    [EnumMember]
-    MySql5,
-    [EnumMember]
-    Oracle8i,
-    [EnumMember]
-    Oracle9i,
-    [EnumMember]
-    Oracle10g,
-    [EnumMember]
-    OracleLite,
-    [EnumMember]
-    PostgresSql81,
-    [EnumMember]
-    PostgresSql82,
-    [EnumMember]
-    SqLite
+      [EnumMember]
+      MsSql2000,
+      [EnumMember]
+      MsSql2005,
+      [EnumMember]
+      MsSql2008,
+      [EnumMember]
+      MySql3,
+      [EnumMember]
+      MySql4,
+      [EnumMember]
+      MySql5,
+      [EnumMember]
+      Oracle8i,
+      [EnumMember]
+      Oracle9i,
+      [EnumMember]
+      Oracle10g,
+      [EnumMember]
+      Oracle11g,
+      [EnumMember]
+      Oracle12c,
+      [EnumMember]
+      OracleLite,
+      [EnumMember]
+      PostgresSql81,
+      [EnumMember]
+      PostgresSql82,
+      [EnumMember]
+      SqLite
   }
 }

@@ -173,7 +173,7 @@ namespace iRINGTools.Web.Models
             {
                 _logger.Error(ex.ToString());
                 throw;
-               // throw ex;
+                // throw ex;
             }
 
             return obj;
@@ -206,14 +206,14 @@ namespace iRINGTools.Web.Models
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 PermissionGroups lstgroup = client.Get<PermissionGroups>("/groups");
 
-               dicSecuritygroups = new List<Dictionary<string, string>>();
-               Dictionary<string, string> dicobj = null;
-               foreach (string group in lstgroup)
-               {
-                   dicobj = new Dictionary<string, string>();
-                   dicobj.Add("permission", group);
-                   dicSecuritygroups.Add(dicobj);
-               }
+                dicSecuritygroups = new List<Dictionary<string, string>>();
+                Dictionary<string, string> dicobj = null;
+                foreach (string group in lstgroup)
+                {
+                    dicobj = new Dictionary<string, string>();
+                    dicobj.Add("permission", group);
+                    dicSecuritygroups.Add(dicobj);
+                }
             }
             catch (Exception ex)
             {
@@ -295,10 +295,10 @@ namespace iRINGTools.Web.Models
             {
                 _logger.Error(ex.ToString());
                 throw;
-                              
+
             }
 
-           
+
 
             return scope;
         }
@@ -525,7 +525,7 @@ namespace iRINGTools.Web.Models
           };
                 }
 
-                WebHttpClient client = CreateWebClient(_adapterServiceUri); 
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 obj = client.Post<ScopeProject>("/scopes", scope, true);
             }
 
@@ -798,7 +798,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                
+
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 client.Timeout = timeout;
 
@@ -843,7 +843,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-               
+
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 client.Timeout = 3600000;
 
@@ -887,7 +887,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                
+
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 client.Timeout = timeout;
 
@@ -1059,7 +1059,7 @@ namespace iRINGTools.Web.Models
             return client.Post<Request, List<string>>(uri, request, true);
         }
 
-        public List<DataObject> GetDBObjects(string scope, string app, 
+        public List<DataObject> GetDBObjects(string scope, string app,
             Dictionary<string, string> conElts, List<string> tableNames)
         {
             string uri = String.Format("/{0}/{1}/objects", scope, app);
@@ -1185,6 +1185,8 @@ namespace iRINGTools.Web.Models
                         {"showOnIndex", dataProperty.showOnIndex.ToString()},
                         {"numberOfDecimals", dataProperty.numberOfDecimals.ToString()},
                         {"isHidden", dataProperty.isHidden.ToString()},
+                        {"precision", dataProperty.precision.ToString()},
+                        {"scale", dataProperty.scale.ToString()}
                     };
 
                     if (dataObject.isKeyProperty(dataProperty.propertyName))
@@ -1231,7 +1233,7 @@ namespace iRINGTools.Web.Models
                 Response response = client.Get<Response>("/generate");
                 return response;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.Error(e.ToString());
                 return PrepareErrorResponse(e, ErrorMessages.errUIRegenAll);
@@ -1309,6 +1311,6 @@ namespace iRINGTools.Web.Models
 
             return obj;
         }
-      
+
     }
 }

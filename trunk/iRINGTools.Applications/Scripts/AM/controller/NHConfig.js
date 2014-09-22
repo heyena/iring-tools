@@ -522,7 +522,9 @@ Ext.define('AM.controller.NHConfig', {
                     isReadOnly: props.isReadOnly,
                     showOnSearch: props.showOnSearch,
                     isHidden: props.isHidden,
-                    isVirtual: props.isVirtual
+                    isVirtual: props.isVirtual,
+                    precision: props.precision,
+                    scale: props.scale
                 });
             });
 
