@@ -67,7 +67,15 @@ Ext.define('AM.view.nhconfig.PropertyConfigPanel', {
                 xtype: 'checkboxfield',
                 fieldLabel: 'Virtual',
                 name: 'isVirtual'
-            }],
+            },
+            {
+                  fieldLabel: 'Precision',
+                  name: 'precision'
+            },
+            {
+                 fieldLabel: 'Scale',
+                 name: 'scale'
+            } ],
             dockedItems: [
             {
                 xtype: 'toolbar',

@@ -165,6 +165,12 @@ namespace org.iringtools.library
     [DataMember(IsRequired = false, Order = 18, EmitDefaultValue = false)]
     public bool isHidden { get; set; }
 
+    [DataMember(IsRequired = false, Order = 19)]
+    public int precision { get; set; }
+
+    [DataMember(IsRequired = false, Order = 20)]
+    public int scale { get; set; }
+
     public bool isKeyProperty(string propertyName)
     {
       foreach (KeyProperty keyProperty in keyProperties)
@@ -259,6 +265,12 @@ namespace org.iringtools.library
 
     [DataMember(IsRequired = false, Order = 14, EmitDefaultValue = false)]
     public bool isVirtual { get; set; }
+
+    [DataMember(IsRequired = false, Order = 15)]
+    public int precision { get; set; }
+
+    [DataMember(IsRequired = false, Order = 16)]
+    public int scale { get; set; }
   }
 
   [Serializable]
