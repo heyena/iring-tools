@@ -77,6 +77,8 @@ namespace org.iringtools.library
       [EnumMember]
       MsSql2008,
       [EnumMember]
+      MsSql2012,
+      [EnumMember]
       MySql3,
       [EnumMember]
       MySql4,

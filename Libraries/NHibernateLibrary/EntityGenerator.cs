@@ -55,6 +55,7 @@ namespace org.iringtools.nhibernate
         private List<DataObject> _dataObjects = null;
         private IndentedTextWriter _dataObjectWriter = null;
         private StringBuilder _dataObjectBuilder = null;
+        private NHibernateProvider _NHibernateProvider = null;
 
         public EntityGenerator(NHibernateSettings settings)
         {
@@ -585,7 +586,7 @@ namespace org.iringtools.nhibernate
                     if (dataType == DataType.Date || dataType == DataType.DateTime)
                     {
                         _dataObjectWriter.WriteLine(
-                        //  string.Format("if (value == null || value.ToString() == string.Empty) {0} = null;", dataProperty.propertyName));
+                            //  string.Format("if (value == null || value.ToString() == string.Empty) {0} = null;", dataProperty.propertyName));
                         string.Format("if (value == null || value.ToString() == string.Empty) {0} = DateTime.Today;", dataProperty.propertyName));
                         _dataObjectWriter.WriteLine("else ");
                     }
@@ -672,22 +673,10 @@ namespace org.iringtools.nhibernate
             {
                 string dbProvider = provider.ToString();
 
-                if (dbProvider.ToUpper().Contains("MSSQL"))
-                {
-                    driver = "NHibernate.Driver.SqlClientDriver";
-                }
-                else if (dbProvider.ToUpper().Contains("MYSQL"))
-                {
-                    driver = "NHibernate.Driver.MySqlDataDriver";
-                }
-                else if (dbProvider.ToUpper().Contains("ORACLE"))
-                {
-                    driver = "NHibernate.Driver.OracleClientDriver";
-                }
-                else
-                    throw new Exception(string.Format("Database provider {0} is not supported", dbProvider));
+                NHibernateProvider _NHibernateProvider = new NHibernateProvider();
+                driver = Convert.ToString(_NHibernateProvider.GetConnectionDriver(dbProvider));
+                dialect = Convert.ToString(_NHibernateProvider.GetDatabaseDialect(dbProvider));
 
-                dialect = "NHibernate.Dialect." + dbProvider + "Dialect";
 
                 StringBuilder configBuilder = new StringBuilder();
                 XmlTextWriter configWriter = new XmlTextWriter(new StringWriter(configBuilder));
