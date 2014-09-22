@@ -58,6 +58,9 @@ namespace org.iringtools.nhibernate
             Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
         }
 
+        internal NHibernateProvider()
+        {}
+
         #region public methods
         public Response Generate(string projectName, string applicationName)
         {
@@ -715,7 +718,7 @@ namespace org.iringtools.nhibernate
         }
 
         // gets dialect for NHibernate.
-        private string GetDatabaseDialect(string dbProvider)
+        internal string GetDatabaseDialect(string dbProvider)
         {
             switch (dbProvider.ToUpper())
             {
@@ -759,7 +762,7 @@ namespace org.iringtools.nhibernate
         }
 
         //gets connection driver for NHibernate
-        private string GetConnectionDriver(string dbProvider)
+        internal string GetConnectionDriver(string dbProvider)
         {
             if (dbProvider.ToUpper().Contains("MSSQL"))
             {
