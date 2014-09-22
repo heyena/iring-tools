@@ -107,6 +107,7 @@ namespace iRINGAgentService
                     //process cache list
                     int count = _cacheList.Count;
                     Task[] tasks = new Task[count];
+                    int threadTimeout = 9000;
 
                     for (int i = 0; i < count; i++)
                     {
@@ -122,7 +123,11 @@ namespace iRINGAgentService
                         if (taskStatus.Equals("Ready") && currentTime >= startTime)
                         {
                             tasks[i] = Task.Factory.StartNew(() => StartCacheProcess(i));
-                            Thread.Sleep(9000);
+
+                            if (_cacheList[i].RequestTimeout > 0)
+                                threadTimeout = _cacheList[i].RequestTimeout;
+
+                            Thread.Sleep(threadTimeout);
                             if (!(tasks[i].Exception == null) || tasks[i].IsFaulted)
                             {
                                 eventLog1.WriteEntry("Error processing cache task " + _cacheList[i].TaskName + " : " + tasks[i].Status);
@@ -133,13 +138,19 @@ namespace iRINGAgentService
                
                     try
                     {
-                        Task.WaitAll(tasks);
+                        for (int l = 0; l < count; l++)
+                        {
+                            if (!(tasks[l] == null))
+                            {
+                                tasks[l].Wait();
+                            }
+                        }
                     }
                     catch (AggregateException ex)
                     {
                         foreach (var exception in ex.Flatten().InnerExceptions)
                         {
-                            eventLog1.WriteEntry("Er ror processing cache task " + ex.Message);
+                            eventLog1.WriteEntry("Error processing cache task " + ex.Message);
                         
                         }
                     }
@@ -158,10 +169,13 @@ namespace iRINGAgentService
                         DateTime startTime = DateTime.Parse(startDate, System.Globalization.CultureInfo.CurrentCulture);
                         DateTime currentTime = DateTime.Parse(currentDate, System.Globalization.CultureInfo.CurrentCulture);
 
+                        if (_cacheList[j].RequestTimeout > 0)
+                            threadTimeout = _cacheList[j].RequestTimeout;
+
                         if (taskStatus.Equals("Ready") && currentTime >= startTime)
                         {
                             exTasks[j] = Task.Factory.StartNew(() => StartExchangeProcess(j));
-                            Thread.Sleep(6000);
+                            Thread.Sleep(threadTimeout);
                             if (!(tasks[j].Exception == null) || tasks[j].IsFaulted)
                             {
                                 eventLog1.WriteEntry("Error processing exchange task " + _exchangeList[j].TaskName + " : " + tasks[j].Status);
@@ -172,7 +186,13 @@ namespace iRINGAgentService
                     }
                     try
                     {
-                        Task.WaitAll(exTasks);
+                        for (int l = 0; l < count; l++)
+                        {
+                            if (!(tasks[l] == null))
+                            {
+                                tasks[l].Wait();
+                            }
+                        }
                     }
                     catch (AggregateException ex)
                     {
@@ -185,7 +205,7 @@ namespace iRINGAgentService
                 });
                 parentTask.Start();
                 parentTask.Wait();
-                parentTask.Dispose();
+                //parentTask.Dispose();
             }
         }
 
