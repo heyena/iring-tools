@@ -906,26 +906,6 @@ namespace org.iringtools.services
             }
         }
 
-        [Description("Get manifest for user")]
-        [WebGet(UriTemplate = "/manifest/{userName}?siteId={siteId}&graphId={graphId}&applicationId={applicationId}&format={format}")]
-        public void GetManifestForUser(string userName, int siteId, Guid graphId, Guid applicationId, string format)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
-
-                org.iringtools.applicationConfig.Manifest manifest = _applicationConfigurationProvider.GetManifestForUser(userName, siteId, graphId, applicationId);
-                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Manifest>(manifest, format, true);
-            }
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-        }
-
         #region Private Methods
         private string MapContentType(string format)
         {

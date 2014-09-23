@@ -1136,43 +1136,5 @@ namespace org.iringtools.applicationConfig
             }
             return valueListMaps;
         }
-
-        public Manifest GetManifestForUser(string userName, int siteId, Guid graphId, Guid applicationId)
-        {
-            Manifest manifest = new Manifest();
-            try
-            {
-                NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
-                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationId) });
-
-                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgValuelist", nvl);
-                ValueListMaps valueListMaps = utility.Utility.Deserialize<ValueListMaps>(xmlString, true);
-
-                nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
-                nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
-
-                xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphMappingByUser", nvl);
-                Graphs graphs = utility.Utility.Deserialize<Graphs>(xmlString, true);
-
-                Graph g = graphs.First();
-                string bytesToXml = System.Text.Encoding.Default.GetString(g.graph);
-                org.iringtools.dxfr.manifest.Graphs graph = utility.Utility.Deserialize<org.iringtools.dxfr.manifest.Graphs>(bytesToXml, true); ;
-                
-
-                manifest.graphs = graph;
-                manifest.valueListMaps = valueListMaps;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error getting  valueListMaps: " + ex);
-            }
-            return manifest;
-        }
-
-        
     }
 }
