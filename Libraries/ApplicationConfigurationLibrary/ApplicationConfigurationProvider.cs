@@ -776,7 +776,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateDataFilter(string dataFilterId, string siteId, string dataFilterTypeId, XDocument xml)
+        public Response UpdateDataFilter(string resourceId, string siteId, string dataFilterTypeId, XDocument xml)
         {
             Response response = new Response();
 
@@ -789,7 +789,7 @@ namespace org.iringtools.applicationConfig
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     NameValueList nvl = new NameValueList();
-                    nvl.Add(new ListItem() { Name = "@DataFilterId", Value = dataFilterId });
+                    nvl.Add(new ListItem() { Name = "@ResourceId", Value = resourceId });
                     nvl.Add(new ListItem() { Name = "@DataFilterTypeId", Value = dataFilterTypeId });
                     nvl.Add(new ListItem() { Name = "@SiteId", Value = siteId });
                     nvl.Add(new ListItem() { Name = "@RawXml", Value = rawXml });
