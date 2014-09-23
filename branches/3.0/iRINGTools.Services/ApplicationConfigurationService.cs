@@ -632,8 +632,8 @@ namespace org.iringtools.services
         }
 
         [Description("Update DataFilter to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/udpateDataFilter?dataFilterId={dataFilterId}&siteId={siteId}&dataFilterTypeId={dataFilterTypeId}&format={format}")]
-        public void UpdateDataFilter(string dataFilterId, string siteId, string dataFilterTypeId, string format, Stream stream)
+        [WebInvoke(Method = "PUT", UriTemplate = "/udpateDataFilter?resourceId={resourceId}&siteId={siteId}&dataFilterTypeId={dataFilterTypeId}&format={format}")]
+        public void UpdateDataFilter(string resourceId, string siteId, string dataFilterTypeId, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -648,8 +648,8 @@ namespace org.iringtools.services
                 }
                 else
                 {
-                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.DataFilter>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateDataFilter(dataFilterId, siteId, dataFilterTypeId, new XDocument(xElement));
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.DataFilters>(stream, format);
+                    response = _applicationConfigurationProvider.UpdateDataFilter(resourceId, siteId, dataFilterTypeId, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
