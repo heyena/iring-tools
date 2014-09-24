@@ -324,8 +324,25 @@ namespace org.iringtools.adapter
                             };
                             manifestClassTemplates.templates.Add(manifestTemplate);
 
+                            //loop thorough all roleMap and assign following nodes to roles.
                             foreach (RoleMap roleMap in templateMap.roleMaps)
                             {
+                                string strDataType = "";
+                                int intPrecision = 0;
+                                int intScale = 0;
+
+                                //find column name from roleMap.Use the column name to find DBdatatype from dataProperties.
+                                if (roleMap.propertyName != null)
+                                {
+                                    string strColumnName = roleMap.propertyName;
+                                    strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
+                                    DataProperty dataProperty = dataObject.dataProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
+                                    strDataType = dataProperty.dataType.ToString();
+                                    intPrecision = Convert.ToInt16(dataProperty.precision);
+                                    intScale = Convert.ToInt16(dataProperty.scale);
+                                }
+
+                                //assign valus to the following nodes.
                                 Role manifestRole = new Role
                                 {
                                     type = roleMap.type,
@@ -333,7 +350,12 @@ namespace org.iringtools.adapter
                                     name = roleMap.name,
                                     dataType = roleMap.dataType,
                                     value = roleMap.value,
+                                    dbDataType = strDataType,
+                                    precision = intPrecision,
+                                    scale = intScale,
+
                                 };
+
                                 manifestTemplate.roles.Add(manifestRole);
 
                                 if (roleMap.type == RoleType.Property ||
