@@ -184,6 +184,7 @@
     <Compile Include="CommonDataService.cs" />
     <Compile Include="DataService.cs" />
     <Compile Include="DataTransferService.cs" />
+    <Compile Include="DictionaryService.cs" />
     <Compile Include="FacadeService.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
