@@ -343,6 +343,8 @@ namespace org.iringtools.adapter
                             foreach (RoleMap roleMap in templateMap.roleMaps)
                             {
                                 string strDataType = "";
+                                int intPrecision = 0;
+                                int intScale = 0;
 
                                 //find column name from roleMap.Use the column name to find DBdatatype from dataProperties.
                                 if (roleMap.propertyName != null)
@@ -351,11 +353,10 @@ namespace org.iringtools.adapter
                                     strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
                                     DataProperty dataProperty = dataObject.dataProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
                                     strDataType = dataProperty.dataType.ToString();
+                                    intPrecision = Convert.ToInt16(dataProperty.precision);
+                                    intScale = Convert.ToInt16(dataProperty.scale);
                                 }
-                                else
-                                {
-                                    strDataType = "";
-                                }
+                               
                                 //assign valus to the following nodes.
                                 Role manifestRole = new Role
                                 {
@@ -365,6 +366,9 @@ namespace org.iringtools.adapter
                                     dataType = roleMap.dataType,
                                     value = roleMap.value,
                                     dbDataType = strDataType,
+                                    precision=intPrecision,
+                                    scale=intScale,
+
                                 };
 
                                 manifestTemplate.roles.Add(manifestRole);

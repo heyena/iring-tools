@@ -409,6 +409,10 @@ namespace org.iringtools.dxfr.manifest
         
         private string dbDataTypeField;
 
+        private int precisionField;
+
+        private int scaleField;
+
         private org.iringtools.dxfr.manifest.Class classField;
 
         private Cardinality cardinalityField;
@@ -529,6 +533,34 @@ namespace org.iringtools.dxfr.manifest
                 this.dbDataTypeField = value;
             }
         }
+
+          [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 9)]
+          public int precision
+          {
+              get
+              {
+                  return this.precisionField;
+              }
+              set
+              {
+                  this.precisionField = value;
+              }
+          }
+
+
+          [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 10)]
+          public int scale
+          {
+              get
+              {
+                  return this.scaleField;
+              }
+              set
+              {
+                  this.scaleField = value;
+              }
+          }
+
     }
 
     [System.Runtime.Serialization.DataContractAttribute(Name = "transferOption", Namespace = "http://www.iringtools.org/dxfr/manifest")]
@@ -1213,6 +1245,7 @@ namespace org.iringtools.mapping
             }
         }
 
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 8)]
         public int dataLength
         {
             get
@@ -1224,6 +1257,8 @@ namespace org.iringtools.mapping
                 this.dataLengthField = value;
             }
         }
+
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 9)]
         public int scale
         {
             get
@@ -1236,6 +1271,7 @@ namespace org.iringtools.mapping
             }
         }
 
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 10)]
         public int precision
         {
             get

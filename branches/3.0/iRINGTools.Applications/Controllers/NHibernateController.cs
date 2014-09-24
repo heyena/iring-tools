@@ -289,8 +289,8 @@ namespace org.iringtools.web.controllers
                                         {"showOnSearch", dictProperty.showOnSearch},
                                         {"isHidden", dictProperty.isHidden},
                                         {"isVirtual", dictProperty.isVirtual},
-                                         {"precision", dictProperty.precision},
-                                         {"scale", dictProperty.scale}
+                                        {"precision", dictProperty.precision},
+                                        {"scale", dictProperty.scale}
                                     };
 
                                     bool isKey = false;
