@@ -1185,6 +1185,8 @@ namespace iRINGTools.Web.Models
                         {"showOnIndex", dataProperty.showOnIndex.ToString()},
                         {"numberOfDecimals", dataProperty.numberOfDecimals.ToString()},
                         {"isHidden", dataProperty.isHidden.ToString()},
+                        {"precision", dataProperty.precision.ToString()},
+                        {"scale", dataProperty.scale.ToString()}
                     };
 
                     if (dataObject.isKeyProperty(dataProperty.propertyName))

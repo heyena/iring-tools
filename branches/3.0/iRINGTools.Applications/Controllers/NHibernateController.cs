@@ -37,7 +37,7 @@ namespace org.iringtools.web.controllers
 
             try
             {
-                
+
                 foreach (Provider provider in System.Enum.GetValues(typeof(Provider)))
                 {
                     string value = provider.ToString();
@@ -60,8 +60,8 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-                
-                
+
+
                 Dictionary<string, string> conElts = new Dictionary<string, string>();
                 conElts.Add("dbProvider", form["dbProvider"]);
                 conElts.Add("dbServer", form["dbServer"]);
@@ -90,7 +90,7 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-               
+
                 string scope = form["scope"];
                 string app = form["app"];
                 string selectedTables = form["selectedTables"];
@@ -288,7 +288,9 @@ namespace org.iringtools.web.controllers
                                         {"showOnIndex", dictProperty.showOnIndex},
                                         {"showOnSearch", dictProperty.showOnSearch},
                                         {"isHidden", dictProperty.isHidden},
-                                        {"isVirtual", dictProperty.isVirtual}
+                                        {"isVirtual", dictProperty.isVirtual},
+                                         {"precision", dictProperty.precision},
+                                         {"scale", dictProperty.scale}
                                     };
 
                                     bool isKey = false;
@@ -344,7 +346,7 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-               
+
                 string scope = Request.Params["scope"];
                 string app = Request.Params["app"];
 

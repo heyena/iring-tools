@@ -54,6 +54,14 @@ Ext.define('AM.view.nhconfig.PropertyConfigPanel', {
                 name: 'numberOfDecimals'
             },
             {
+                 fieldLabel: 'Precision',
+                 name: 'precision'
+             },
+             {
+                  fieldLabel: 'Scale',
+                  name: 'scale'
+              },
+            {
                 xtype: 'checkboxfield',
                 fieldLabel: 'Hidden',
                 name: 'isHidden'

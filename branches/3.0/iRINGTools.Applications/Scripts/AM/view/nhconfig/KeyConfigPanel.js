@@ -72,7 +72,15 @@ Ext.define('AM.view.nhconfig.KeyConfigPanel', {
                 fieldLabel: 'Key Type',
                 hidden: true,
                 name: 'keyType'
-            }],
+            },
+             {
+                 fieldLabel: 'Precision',
+                 name: 'precision'
+             },
+              {
+                  fieldLabel: 'Scale',
+                  name: 'scale'
+              }],
             dockedItems: [
             {
                 xtype: 'toolbar',
