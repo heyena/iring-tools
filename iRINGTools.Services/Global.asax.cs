@@ -81,6 +81,8 @@ namespace org.iringtools.adapter
             RouteTable.Routes.Add(new ServiceRoute("security", new RawServiceHostFactory(), typeof(org.iringtools.services.UserSecurityService)));
 
             RouteTable.Routes.Add(new ServiceRoute("appconfig", new RawServiceHostFactory(), typeof(org.iringtools.services.ApplicationConfigurationService)));
+
+            RouteTable.Routes.Add(new ServiceRoute("dictionary", new RawServiceHostFactory(), typeof(org.iringtools.services.DictionaryService)));
         }
 
         private DataLayers GetDataLayers()
