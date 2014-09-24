@@ -385,8 +385,8 @@ namespace org.iringtools.nhibernate
                     string nullable = Convert.ToString(metadata[4]).ToUpper();
                     bool isNullable = (nullable == "Y" || nullable == "TRUE" || nullable == "1");
                     string constraint = Convert.ToString(metadata[5]);
-                    int precision = Convert.ToInt32(metadata[6]);
-                    int scale = Convert.ToInt32(metadata[7]);
+                    int precision = (Convert.ToInt32(metadata[6])==null)?0:Convert.ToInt32(metadata[6]); //set precision= 0 if value is null
+                    int scale = (Convert.ToInt32(metadata[7]) == null) ? 0 : Convert.ToInt32(metadata[7]); //set scale= 0 if value is null
                     if (String.IsNullOrEmpty(constraint)) // process columns
                     {
                         DataProperty column = new DataProperty()
@@ -396,9 +396,9 @@ namespace org.iringtools.nhibernate
                             dataLength = dataLength,
                             isNullable = isNullable,
                             propertyName = Utility.ToSafeName(columnName),
-                              precision =precision,
-                              scale=scale,
-     
+                            precision = precision,
+                            scale = scale,
+
 
                         };
 
@@ -512,8 +512,8 @@ namespace org.iringtools.nhibernate
                         dataType = "String";
                     }
                     string constraint = Convert.ToString(metadata[5]);
-                    int precision = Convert.ToInt32(metadata[6]);  //total length of decimal number
-                    int scale = Convert.ToInt32(metadata[7]);     //length after decimal place.
+                    int precision = (Convert.ToInt32(metadata[6]) == null) ? 0 : Convert.ToInt32(metadata[6]); //total length of decimal number and set precision= 0 if value is null 
+                    int scale = (Convert.ToInt32(metadata[7]) == null) ? 0 : Convert.ToInt32(metadata[7]); //length after decimal place and set precision= 0 if value is null    
 
                     if (String.IsNullOrEmpty(constraint)) // process columns
                     {
@@ -524,13 +524,13 @@ namespace org.iringtools.nhibernate
                             dataLength = dataLength,
                             isNullable = isNullable,
                             propertyName = Utility.ToSafeName(columnName),
-                            precision=precision,
-                            scale= scale
+                            precision = precision,
+                            scale = scale
                         };
 
                         dataObject.dataProperties.Add(column);
                     }
-                        
+
                     else
                     {
                         KeyType keyType = KeyType.assigned;
