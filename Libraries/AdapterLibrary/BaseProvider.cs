@@ -1221,7 +1221,9 @@ namespace org.iringtools.adapter
               dataType = roleMap.dataType,
               propertyName = roleMap.propertyName,
               value = roleMap.value,
-              valueListName = roleMap.valueList
+              valueListName = roleMap.valueList,
+              precision=roleMap.precision,
+              scale=roleMap.scale
             };
 
             newTemplateMap.roleMaps.Add(newRoleMap);

@@ -385,7 +385,8 @@ namespace org.iringtools.nhibernate
                     string nullable = Convert.ToString(metadata[4]).ToUpper();
                     bool isNullable = (nullable == "Y" || nullable == "TRUE" || nullable == "1");
                     string constraint = Convert.ToString(metadata[5]);
-
+                    int precision = Convert.ToInt32(metadata[6]);
+                    int scale = Convert.ToInt32(metadata[7]);
                     if (String.IsNullOrEmpty(constraint)) // process columns
                     {
                         DataProperty column = new DataProperty()
@@ -394,7 +395,11 @@ namespace org.iringtools.nhibernate
                             dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
                             dataLength = dataLength,
                             isNullable = isNullable,
-                            propertyName = Utility.ToSafeName(columnName)
+                            propertyName = Utility.ToSafeName(columnName),
+                              precision =precision,
+                              scale=scale,
+     
+
                         };
 
                         dataObject.dataProperties.Add(column);
@@ -497,7 +502,7 @@ namespace org.iringtools.nhibernate
                 {
                     string columnName = Convert.ToString(metadata[0]);
                     string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[1]));
-                    int dataLength = Convert.ToInt32(metadata[2]);
+                    int dataLength = Convert.ToInt32(metadata[2]); //* MSSQL returns just the part befor decimal.eg 4 for (6,2)
                     bool isIdentity = Convert.ToBoolean(metadata[3]);
                     string nullable = Convert.ToString(metadata[4]).ToUpper();
                     //   bool isNullable = CheckNullable(dbProvider, nullable);
@@ -507,6 +512,8 @@ namespace org.iringtools.nhibernate
                         dataType = "String";
                     }
                     string constraint = Convert.ToString(metadata[5]);
+                    int precision = Convert.ToInt32(metadata[6]);  //total length of decimal number
+                    int scale = Convert.ToInt32(metadata[7]);     //length after decimal place.
 
                     if (String.IsNullOrEmpty(constraint)) // process columns
                     {
@@ -516,11 +523,14 @@ namespace org.iringtools.nhibernate
                             dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
                             dataLength = dataLength,
                             isNullable = isNullable,
-                            propertyName = Utility.ToSafeName(columnName)
+                            propertyName = Utility.ToSafeName(columnName),
+                            precision=precision,
+                            scale= scale
                         };
 
                         dataObject.dataProperties.Add(column);
                     }
+                        
                     else
                     {
                         KeyType keyType = KeyType.assigned;
@@ -542,6 +552,8 @@ namespace org.iringtools.nhibernate
                             isNullable = isNullable,
                             keyType = keyType,
                             propertyName = Utility.ToSafeName(columnName),
+                            precision = precision,
+                            scale = scale
                         };
 
                         dataObject.addKeyProperty(key);
@@ -637,7 +649,7 @@ namespace org.iringtools.nhibernate
             return sessionFactory.OpenSession();
         }
 
-        //gets all the table names from DB
+        //gets all the table, view and synonym names from DB
         private string GetDatabaseMetaquery(string dbProvider, string database, string schemaName)
         {
             string metaQuery = String.Empty;
@@ -678,6 +690,7 @@ namespace org.iringtools.nhibernate
             {
                 tableQuery = String.Format(@"
           select t1.table_name, t1.column_name, t1.data_type, t1.character_maximum_length as data_length, 
+          t1.NUMERIC_PRECISION as PRECISION , t1.NUMERIC_SCALE as SCALE
           t1.extra as is_auto_increment, t1.is_nullable, t1.column_key from information_schema.columns t1 
           left join information_schema.views t2 on t2.table_name = t1.table_name 
           where upper(t1.table_schema) = '{0}' and upper(t1.table_name) = '{1}'",
@@ -686,9 +699,9 @@ namespace org.iringtools.nhibernate
             else if (dbProvider.ToUpper().Contains("MSSQL"))
             {
                 tableQuery = String.Format(@"
-          select t2.name as column_name, type_name(t2.user_type_id) as data_type, 
-          t2.max_length as data_length, t2.is_identity as is_identity, 
-          t2.is_nullable as is_nullable, t4.column_id as is_primary_key from sys.objects t1
+          select t2.name as column_name, type_name(t2.user_type_id) as data_type, t2.max_length as data_length, 
+          t2.is_identity as is_identity, t2.is_nullable as is_nullable, t4.column_id as is_primary_key ,t2.precision as precision, t2.scale as scale
+          from sys.objects t1
           inner join sys.columns t2 on t2.object_id = t1.object_id  
           left join sys.index_columns t4 on t4.object_id = t1.object_id and t4.column_id = t2.column_id
           left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
@@ -703,8 +716,8 @@ namespace org.iringtools.nhibernate
             else if (dbProvider.ToUpper().Contains("ORACLE"))
             {
                 tableQuery = string.Format(@"
-          SELECT t2.column_name, t2.data_type, t2.data_length,
-          0 AS is_sequence, t2.nullable, t4.constraint_type
+          SELECT t2.column_name, t2.data_type, t2.data_length, 
+          0 AS is_sequence, t2.nullable, t4.constraint_type,t2.DATA_PRECISION, t2.DATA_SCALE
           FROM all_objects t1 INNER JOIN all_tab_cols t2
           ON t2.table_name = t1.object_name AND t2.owner = t1.owner 
           LEFT JOIN all_cons_columns t3 ON t3.table_name = t2.table_name
