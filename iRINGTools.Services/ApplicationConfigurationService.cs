@@ -548,6 +548,97 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Insert folder to the data base.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/insertFolder/{userName}?groupIds={groupIds}&format={format}")]
+        public void InsertFolder(string userName, string groupIds, string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Folder>(stream, format);
+                    response = _applicationConfigurationProvider.InsertFolder(userName, groupIds, new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
+        [Description("update Folder to the data base.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateFolder/{userName}?groupIds={groupIds}&format={format}")]
+        public void UpdateFolder(string userName, string groupIds, string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Folder>(stream, format);
+                    response = _applicationConfigurationProvider.UpdateFolder(userName, groupIds, new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
+        [Description("delete Folder to the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteFolder/{folderId}?format={format}")]
+        public void DeleteFolder(string folderId, string format)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    response = _applicationConfigurationProvider.DeleteFolder(folderId);
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
 
         [Description("Get datafilter collection for user")]
         [WebGet(UriTemplate = "/datafilters/{userName}?siteId={siteId}&resourceId={resourceId}&format={format}")]
