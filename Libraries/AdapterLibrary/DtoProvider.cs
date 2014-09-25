@@ -27,6 +27,7 @@ namespace org.iringtools.adapter
         protected string _fixedIdentifierBoundary = "#";
         private string _connSecurityDb;
         private int _siteID;
+        DictionaryProvider dictionaryProvider;
 
         [Inject]
         public DtoProvider(NameValueCollection settings)
@@ -36,6 +37,7 @@ namespace org.iringtools.adapter
             {
                 _connSecurityDb = settings["SecurityConnection"];
                 _siteID = Convert.ToInt32(settings["SiteId"]);
+                dictionaryProvider = new adapter.DictionaryProvider(settings);
             }
             catch (Exception e)
             {
@@ -506,11 +508,13 @@ namespace org.iringtools.adapter
                     app = Convert.ToString(row["AppName"]);
                 }
 
-                InitializeScope(scope, app);
+                /*InitializeScope(scope, app);
                 InitializeDataLayer();
-
                 DataDictionary dataDictionary = _dataLayerGateway.GetDictionary();
+                */
 
+                DatabaseDictionary dataDictionary = dictionaryProvider.GetDBDictionary(Convert.ToString(applicationId));
+                
                 foreach (GraphMap graphMap in _mapping.graphMaps)
                 {
                     Graph manifestGraph = null;
