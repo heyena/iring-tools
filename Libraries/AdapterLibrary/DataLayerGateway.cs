@@ -934,7 +934,7 @@ namespace org.iringtools.adapter
             {
                 string cacheId = string.Empty;
 
-                if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
+                if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null || _lwDataLayer2 != null)
                 {
                     cacheId = CheckCache();
 
