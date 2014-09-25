@@ -270,8 +270,106 @@ namespace org.iringtools.applicationConfig
             }
             return folders;
         }
-
         
+        public Response InsertFolder(string userName, string groupIds, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Folder folder = Utility.DeserializeDataContract<Folder>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteCommand("spiFolder @UserName = {0}, @SiteId = {1}, @ParentFolderId = {2}, " +
+                                                  "@FolderName = {3}, @GroupList = {4}", userName, folder.SiteId, folder.ParentFolderId, folder.FolderName, groupIds);
+
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Folder added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding Folder: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response UpdateFolder(string userName, string groupIds, XDocument xml)
+        {
+            Response response = new Response();
+
+            try
+            {
+                Folder folder = Utility.DeserializeDataContract<Folder>(xml.ToString());
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteCommand("spuFolder @UserName = {0}, @SiteId = {1}, @FolderId = {2}, @ParentFolderId = {3}, " +
+                                                  "@FolderName = {4}, @GroupList = {5}", userName, folder.SiteId, folder.FolderId,folder.ParentFolderId, folder.FolderName, groupIds);
+
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Folder updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error updating Folder: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response DeleteFolder(string folderId)
+        {
+            Response response = new Response();
+
+            try
+            {
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    dc.ExecuteCommand("spdFolder @FolderId = {0} ", folderId);
+                }
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Messages = new Messages();
+                response.Messages.Add("Folder deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting Folder: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
         public Graphs GetGraphsForUser(string userName, int siteId, Guid applicationId)
         {
             Graphs graphs = new Graphs();
@@ -1136,5 +1234,6 @@ namespace org.iringtools.applicationConfig
             }
             return valueListMaps;
         }
+
     }
 }
