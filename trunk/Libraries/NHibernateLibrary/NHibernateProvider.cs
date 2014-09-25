@@ -498,8 +498,8 @@ namespace org.iringtools.nhibernate
                         dataType = "String";
                     }
                     string constraint = Convert.ToString(metadata[5]);
-                    int precision = (metadata[6] == null) ? 0 : Convert.ToInt32(metadata[6]); //total length of decimal number and set precision= 0 if value is null 
-                    int scale = (metadata[7] == null) ? 0 : Convert.ToInt32(metadata[7]); //length after decimal place and set precision= 0 if value is null    
+                    int precision = Convert.ToInt32(metadata[6]); //total length of decimal number
+                    int scale = Convert.ToInt32(metadata[7]);     //length after decimal place.
 
                     if (String.IsNullOrEmpty(constraint)) // process columns
                     {
