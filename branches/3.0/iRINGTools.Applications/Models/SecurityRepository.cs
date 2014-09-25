@@ -545,14 +545,14 @@ namespace iRINGTools.Web.Models
 
         }
 
-        public Groups GetUserGroups(string userId, string format)
+        public Groups GetUserGroups(string userName, string format)
         {
             Groups items = null;
             _logger.Debug("In SecurityRepository GetUserGroups");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                items = client.Get<Groups>("/groupsUser?userId=" + userId + "&format=" + format);
+                items = client.Get<Groups>("/groupsUser?userName=" + userName + "&format=" + format);
 
                 _logger.Debug("Successfully called Security Service.");
             }
@@ -670,11 +670,25 @@ namespace iRINGTools.Web.Models
         public Permissions GetRolePermissions(string roleId, string format)
         {
             Permissions items = null;
+            Permissions allPermissions = null;
             _logger.Debug("In SecurityRepository GetRolePermissions");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 items = client.Get<Permissions>("/rolePermissions?roleId=" + roleId + "&format=" + format);
+                allPermissions = GetAllPermissions("xml");
+                foreach(var permItem  in allPermissions){
+                    Permission perm = (Permission)permItem;
+                    var permId = perm.PermissionId;
+                    foreach(var selPerms1  in items){
+                        Permission selPerm = (Permission)selPerms1;
+                        var selPermId = selPerm.PermissionId;
+                        if (selPermId == permId)
+                        {
+                            permItem.Chk = true;
+                        }
+                    }
+                }
 
                 _logger.Debug("Successfully called Security Service.");
             }
@@ -682,9 +696,8 @@ namespace iRINGTools.Web.Models
             {
                 _logger.Error(ex.ToString());
                 throw;
-
             }
-            return items;
+            return allPermissions;
         }
 
         public void InsertRolePermissions(FormCollection form)

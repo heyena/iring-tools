@@ -185,7 +185,7 @@ namespace org.iringtools.web.controllers
 
         public JsonResult getUserGroups(FormCollection form)
         {
-            string iUserId = form["UserId"];
+            string iUserId = form["UserName"];
             Groups userGroups = _repository.GetUserGroups(iUserId, "xml");
             return Json(userGroups, JsonRequestBehavior.AllowGet);
         }

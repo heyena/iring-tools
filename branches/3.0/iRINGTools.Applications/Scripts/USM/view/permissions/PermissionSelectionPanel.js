@@ -67,7 +67,7 @@ Ext.define('USM.view.permissions.PermissionSelectionPanel', {
 						{
 						    xtype: 'checkcolumn',
 						    header: 'Select',
-						    dataIndex: 'chk',
+						    dataIndex: 'Chk',
 						    flex: 1
 						}
 					]
@@ -101,25 +101,27 @@ Ext.define('USM.view.permissions.PermissionSelectionPanel', {
                 var grid = me.down("gridpanel");
                 var selArr = [];
                 form.getForm().findField('RoleId').setValue(roleId);
-                grid.store.reload();
-                var store = grid.store;
-                store.on('load', function (store1, action) {
-                    if (responseObj != null || responseObj != "") {
-                        for (var j = 0; j < store1.getCount(); j++) {
-                            var gPrmId = store1.getAt(j).get("PermissionId");
-                            for (var i = 0; i < responseObj.length; i++) {
-                                var permId = responseObj[i].PermissionId;
+                grid.store.loadData(responseObj);
+                
+                //                grid.store.reload();
+                //                var store = grid.store;
+                //                store.on('load', function (store1, action) {
+                //                    if (responseObj != null || responseObj != "") {
+                //                        for (var j = 0; j < store1.getCount(); j++) {
+                //                            var gPrmId = store1.getAt(j).get("PermissionId");
+                //                            for (var i = 0; i < responseObj.length; i++) {
+                //                                var permId = responseObj[i].PermissionId;
 
-                                if (permId === gPrmId) {
-                                    store1.getAt(j).set("chk", true);
-                                } else {
-                                    store1.getAt(j).set("chk", false);
-                                }
-                            }
-                        }
-                    }
-                });
-               
+                //                                if (permId === gPrmId) {
+                //                                    store1.getAt(j).set("chk", true);
+                //                                } else {
+                //                                    store1.getAt(j).set("chk", false);
+                //                                }
+                //                            }
+                //                        }
+                //                    }
+                //                });
+
             },
             failure: function (response, options) {
             }

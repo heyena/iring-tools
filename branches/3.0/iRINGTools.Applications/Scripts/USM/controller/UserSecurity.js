@@ -144,24 +144,22 @@
                 var grid = form.down("gridpanel");
                 var selArr = [];
                 form.getForm().findField('RoleId').setValue(roleId);
-                //grid.store.reload();
-                var store = grid.store;
-                //grid.store.on('load', function (store, action) {
-                if (responseObj != null || responseObj != "") {
-                    for (var j = 0; j < store.getCount(); j++) {
-                        var gPrmId = store.getAt(j).get("PermissionId");
-                        for (var i = 0; i < responseObj.length; i++) {
-                            var permId = responseObj[i].PermissionId;
+                grid.store.loadData(responseObj);
+                //var store = grid.store;
+//                grid.store.on('load', function (store, rec, val, eOpt) {
+//                    if (responseObj != null || responseObj != "") {
+//                        for (var i = 0; i < responseObj.length; i++) {
+//                            var permId = responseObj[i].PermissionId;
+//                            for (var j = 0; j < store.getCount(); j++) {
+//                                var gPrmId = store.getAt(j).get("PermissionId");
 
-                            if (permId === gPrmId) {
-                                store.getAt(j).set("chk", true);
-                            } else {
-                                store.getAt(j).set("chk", false);
-                            }
-                        }
-                    }
-                }
-                //}, me);
+//                                if (permId == gPrmId) {
+//                                    store.getAt(j).set("chk", true);
+//                                } 
+//                            }
+//                        }
+//                    }
+//                }, me);
                 win.show();
             },
             failure: function (response, options) {
@@ -263,23 +261,6 @@
         form.getForm().setValues(rec[0].data);
         form.getForm().findField('ActionType').setValue('EDIT');
         win.show();
-        //        Ext.Ajax.request({
-        //            url: 'usersecuritymanager/editGroup',
-        //            method: 'POST',
-        //            params: {
-        //                groupId: groupId
-        //            },
-        //            success: function (response, options) {
-        //                var responseObj = Ext.JSON.decode(response.responseText);
-        //                var win = Ext.widget('groupwindow');
-        //                var form = win.down('groupform');
-        //                form.getForm().findField('actionType').setValue('EDIT');
-        //                win.show();
-        //            },
-
-        //            failure: function (response, options) {
-        //            }
-        //        });
     },
 
     deleteGroup: function (btn) {
@@ -287,25 +268,7 @@
         var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
         var groupId = rec[0].data.GroupId;
         Ext.MessageBox.alert('Status', 'Changes saved successfully.', function (btn) { if (btn == "ok") { alert(btn) } });
-        //        Ext.MessageBox.confirm('Delete', 'Are you sure to delete this group?', function (btn) {
-        //            if (btn === 'yes') {
-        //                Ext.Ajax.request({
-        //                    url: 'usersecuritymanager/deleteGroup',
-        //                    method: 'POST',
-        //                    params: {
-        //                        GroupId: groupId
-        //                    },
-        //                    success: function (response, options) {
-        //                        var responseObj = Ext.JSON.decode(response.responseText);
-        //                        Ext.getCmp('viewportid').down('groupgrid').store.reload();
 
-        //                    },
-
-        //                    failure: function (response, options) {
-        //                    }
-        //                });
-        //            }
-        //        });
     },
 
     addRole: function (btn) {
@@ -323,23 +286,7 @@
         form.getForm().setValues(rec[0].data);
         form.getForm().findField('ActionType').setValue('EDIT');
         win.show();
-        //        Ext.Ajax.request({
-        //            url: 'usersecuritymanager/editRole',
-        //            method: 'POST',
-        //            params: {
-        //                RoleId: roleId
-        //            },
-        //            success: function (response, options) {
-        //                var responseObj = Ext.JSON.decode(response.responseText);
-        //                var win = Ext.widget('rolewindow');
-        //                var form = win.down('roleform');
-        //                form.getForm().findField('actionType').setValue('EDIT');
-        //                win.show();
-        //            },
 
-        //            failure: function (response, options) {
-        //            }
-        //        });
     },
 
     deleteRole: function (btn) {
@@ -381,23 +328,7 @@
         form.getForm().setValues(rec[0].data);
         form.getForm().findField('ActionType').setValue('EDIT');
         win.show();
-        //        Ext.Ajax.request({
-        //            url: 'usersecuritymanager/editPermission',
-        //            method: 'POST',
-        //            params: {
-        //                PermissionId: permissionId
-        //            },
-        //            success: function (response, options) {
-        //                var responseObj = Ext.JSON.decode(response.responseText);
-        //                var win = Ext.widget('permissionwindow');
-        //                var form = win.down('permissionform');
-        //                form.getForm().findField('actionType').setValue('EDIT');
-        //                win.show();
-        //            },
 
-        //            failure: function (response, options) {
-        //            }
-        //        });
     },
 
     deletePermission: function (btn) {
@@ -472,7 +403,7 @@
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
 
-                
+
 
                 var selArr = [];
                 form.on('beforerender', function (form, ept) {
@@ -482,7 +413,7 @@
                         }
                         form.getForm().findField('selectedUsers').setValue(selArr);
                     }
-                 }, me);
+                }, me);
 
                 form.getForm().findField('groupId').setValue(groupId);
                 win.show();
@@ -511,12 +442,13 @@
         var me = this;
         var rec = Ext.getCmp('viewportid').down('usergrid').getSelectionModel().getSelection();
         var userId = rec[0].data.UserId;
+        var userName = rec[0].data.UserName;
         Ext.Ajax.request({
             url: 'usersecuritymanager/getUserGroups',
             //url: '/Scripts/USM/jsonfiles/selgroup.json',
             method: 'POST',
             params: {
-                userId: userId
+                UserName: userName
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
@@ -571,7 +503,7 @@
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
 
-                
+
                 var selArr = [];
 
                 form.on('beforerender', function (form, ept) {

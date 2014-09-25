@@ -151,17 +151,18 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
     onSelectUser: function (combo, records, eOpts) {
         var me = this;
         var userId = records[0].data.UserId;
-        me.getUsersGroup(userId, me);
+        var userName = records[0].data.UserName;
+        me.getUsersGroup(userName, userId, me);
     },
 
-    getUsersGroup: function (userId, scope) {
+    getUsersGroup: function (userName, userId, scope) {
         var me = this;
         Ext.Ajax.request({
             url: 'usersecuritymanager/getUserGroups',
             //url: '/Scripts/USM/jsonfiles/selgroup.json',
             method: 'POST',
             params: {
-                userId: userId
+                UserName: userName
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);

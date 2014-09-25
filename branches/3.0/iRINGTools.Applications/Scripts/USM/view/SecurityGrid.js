@@ -79,6 +79,7 @@ Ext.define('USM.view.SecurityGrid', {
                     closable: true
                 });
                 tabPanel.add(gridPanel);
+                gridPanel.store.reload();
             }
             tabPanel.setActiveTab(Ext.getCmp("permissiongridid"));
         }

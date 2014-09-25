@@ -6,7 +6,7 @@ Ext.define('USM.view.permissions.PermissionSelectionPanelWindow', {
    'USM.view.permissions.PermissionSelectionPanel'
   ],
   border: false,
-  //modal: true,
+  modal: true,
   height: 310,
   width: 500,
   buttonType: '',
