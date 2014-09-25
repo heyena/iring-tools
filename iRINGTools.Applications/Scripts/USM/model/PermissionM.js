@@ -13,6 +13,9 @@
         },
         {
             name: 'PermissionDesc'
+        },
+        {
+            name: 'Chk'
         }
     ]
 });
