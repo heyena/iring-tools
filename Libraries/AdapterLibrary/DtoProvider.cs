@@ -466,7 +466,7 @@ namespace org.iringtools.adapter
         }
 
 
-        public Manifest GetManifestForUser(string userName, int siteId, Guid graphId, Guid applicationId)
+        public Manifest GetManifestForUser(string userName, int siteId, Guid graphId)
         {
             Manifest manifest = new Manifest()
             {
@@ -478,9 +478,24 @@ namespace org.iringtools.adapter
             try
             {
                 NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
+                System.Data.DataTable dt = DBManager.Instance.ExecuteStoredProcedure(_connSecurityDb, "spgNames", nvl);
+
+                string graph = string.Empty; string scope = string.Empty;
+                string app = string.Empty; string appId = string.Empty;
+
+                foreach (System.Data.DataRow row in dt.Rows)
+                {
+                    graph = Convert.ToString(row["GraphName"]);
+                    scope = Convert.ToString(row["ScopeName"]);
+                    app = Convert.ToString(row["AppName"]);
+                    appId = Convert.ToString(row["AppId"]);
+                }
+
+                nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                 nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
-                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationId) });
+                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = appId });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgValuelistforManifest", nvl);
                 ValueListMaps valueListMaps = utility.Utility.Deserialize<ValueListMaps>(xmlString, true);
@@ -493,27 +508,8 @@ namespace org.iringtools.adapter
                 byte[] xmlbyte = DBManager.Instance.ExecuteBytesQuery(_connSecurityDb, "spgGraphBinary", nvl);
                 string bytesToXml = System.Text.Encoding.Default.GetString(xmlbyte);
                 mapping.Mapping _mapping = utility.Utility.Deserialize<mapping.Mapping>(bytesToXml, true); ;
-
-                nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
-                System.Data.DataTable dt = DBManager.Instance.ExecuteStoredProcedure(_connSecurityDb, "spgNames", nvl);
-
-                string graph = string.Empty; string scope = string.Empty;
-                string app = string.Empty;
-
-                foreach (System.Data.DataRow row in dt.Rows)
-                {
-                    graph = Convert.ToString(row["GraphName"]);
-                    scope = Convert.ToString(row["ScopeName"]);
-                    app = Convert.ToString(row["AppName"]);
-                }
-
-                /*InitializeScope(scope, app);
-                InitializeDataLayer();
-                DataDictionary dataDictionary = _dataLayerGateway.GetDictionary();
-                */
-
-                DatabaseDictionary dataDictionary = dictionaryProvider.GetDBDictionary(Convert.ToString(applicationId));
+                          
+                DatabaseDictionary dataDictionary = dictionaryProvider.GetDBDictionary(appId);
                 
                 foreach (GraphMap graphMap in _mapping.graphMaps)
                 {
