@@ -75,6 +75,11 @@ CREATE TABLE [dbo].[ScheduleCache](
 	[Request_Timeout] [int] NULL,
 	[Start_Time] DateTime NOT NULL,
 	[End_Time] DateTime NULL,
+	[Created_Date] DateTime NOT NULL,
+	[Created_By] [nvarchar](100) NOT NULL,
+	[Occurance] [nvarchar](24) NOT NULL,
+	[NextStart_Date_Time] DateTime  NULL,
+	[End_Date_Time] DateTime  NOT NULL,
 	[Status] [nvarchar] (64) NOT NULL,
 	[Active] [tinyint] NOT NULL
  )
@@ -102,6 +107,11 @@ CREATE TABLE [dbo].[ScheduleExchange](
 	[Request_Timeout] [int] NULL,
 	[Start_Time] DateTime NOT NULL,
 	[End_Time] DateTime NULL,
+	[Created_Date] DateTime NOT NULL,
+	[Created_By] [nvarchar](100) NOT NULL,
+	[Occurance] [nvarchar](24) NOT NULL,
+	[NextStart_Date_Time] DateTime  NULL,
+	[End_Date_Time] DateTime  NOT NULL,
 	[Status] [nvarchar] (64) NOT NULL,
 	[Active] [tinyint] NOT NULL
  )
@@ -154,6 +164,11 @@ SELECT
 	[REQUEST_TIMEOUT] AS [REQUEST_TIMEOUT],
 	[Start_Time] AS [Start_Time],
 	[End_Time] AS [End_Time],
+	[Created_Date] AS [Created_Date],
+	[Created_By] AS [Created_By],
+	[Occurance] AS [Occurance],
+	[NextStart_Date_Time] AS [NextStart_Date_Time],
+	[End_Date_Time] AS [End_Date_Time],
 	[STATUS] AS [STATUS],
 	[ACTIVE] AS [ACTIVE]
 FROM [dbo].[ScheduleCache] WITH (NoLock)
@@ -184,6 +199,11 @@ CREATE PROCEDURE [dbo].[spiScheduleCache]
 	@REQUEST_TIMEOUT	int,
 	@START_TIME			DateTime,
 	@END_TIME			DateTime,
+	@CREATED_DATE		DateTime,
+	@CREATED_BY			nvarchar(100),
+	@OCCURANCE			nvarchar(24),
+	@NEXTSTART_DATE_TIME DateTime,
+	@END_DATE_TIME		DateTime,
 	@STATUS				nvarchar(64),
 	@ACTIVE				tinyint
 AS
@@ -202,6 +222,11 @@ INSERT INTO [dbo].[ScheduleCache] (
 	[REQUEST_TIMEOUT],
 	[START_TIME],
 	[END_TIME],
+	[CREATED_DATE],
+	[CREATED_BY],
+	[OCCURANCE],
+	[NEXTSTART_DATE_TIME],
+	[END_DATE_TIME],
 	[STATUS],
 	[ACTIVE]
 	)
@@ -220,6 +245,11 @@ VALUES (
 	@REQUEST_TIMEOUT,
 	@START_TIME,
 	@END_TIME,
+	@CREATED_DATE,
+	@CREATED_BY,
+	@OCCURANCE,
+	@NEXTSTART_DATE_TIME,
+	@END_DATE_TIME,
 	@STATUS,
 	@ACTIVE)
 
@@ -247,6 +277,11 @@ CREATE PROCEDURE [dbo].[spuScheduleCache]
 	@REQUEST_TIMEOUT	int,
 	@START_TIME			DateTime,
 	@END_TIME			DateTime,
+	@CREATED_DATE		DateTime,
+	@CREATED_BY			nvarchar(100),
+	@OCCURANCE			nvarchar(24),
+	@NEXTSTART_DATE_TIME DateTime,
+	@END_DATE_TIME		DateTime,
 	@STATUS				nvarchar(64),
 	@ACTIVE				tinyint
 AS
@@ -264,6 +299,11 @@ UPDATE [dbo].[ScheduleCache] SET
 	[REQUEST_TIMEOUT] = @REQUEST_TIMEOUT,
 	[START_TIME] = @START_TIME,
 	[END_TIME] = @END_TIME,
+	[CREATED_DATE] = @CREATED_DATE,
+	[CREATED_BY] = @CREATED_BY,
+	[OCCURANCE] = @OCCURANCE,
+	[NEXTSTART_DATE_TIME] = @NEXTSTART_DATE_TIME,
+	[END_DATE_TIME] = @END_DATE_TIME,
 	[STATUS] = @STATUS,
 	[ACTIVE] = @ACTIVE
 WHERE [dbo].[ScheduleCache].[Schedule_Cache_Id] = @SCHEDULE_CACHE_ID
@@ -314,6 +354,11 @@ SELECT
 	[REQUEST_TIMEOUT] AS [REQUEST_TIMEOUT],
 	[Start_Time] AS [Start_Time],
 	[End_Time] AS [End_Time],
+	[Created_Date] AS [Created_Date] ,
+	[Created_By] AS [Created_By],
+	[Occurance] AS [Occurance],
+	[NextStart_Date_Time] AS [NextStart_Date_Time],
+	[End_Date_Time] AS [End_Date_Time],
 	[STATUS] AS [STATUS],
 	[ACTIVE] AS [ACTIVE]
 FROM [dbo].[ScheduleExchange] WITH (NoLock)
@@ -339,6 +384,11 @@ CREATE PROCEDURE [dbo].[spiScheduleExchange]
 	@REQUEST_TIMEOUT		int,
 	@START_TIME				DateTime,
 	@END_TIME				DateTime,
+	@CREATED_DATE			DateTime,
+	@CREATED_BY				nvarchar(100),
+	@OCCURANCE				nvarchar(24),
+	@NEXTSTART_DATE_TIME 	DateTime,
+	@END_DATE_TIME			DateTime,
 	@STATUS					nvarchar(64),
 	@ACTIVE					tinyint
 AS
@@ -352,6 +402,11 @@ INSERT INTO [dbo].[ScheduleExchange] (
 	[REQUEST_TIMEOUT],
 	[START_TIME],
 	[END_TIME],
+	[CREATED_DATE],
+	[CREATED_BY],
+	[OCCURANCE],
+	[NEXTSTART_DATE_TIME],
+	[END_DATE_TIME],
 	[STATUS],
 	[ACTIVE]
 	)
@@ -365,6 +420,11 @@ VALUES (
 	@REQUEST_TIMEOUT,
 	@START_TIME,
 	@END_TIME,
+	@CREATED_DATE,
+	@CREATED_BY,
+	@OCCURANCE,
+	@NEXTSTART_DATE_TIME,
+	@END_DATE_TIME,
 	@STATUS,
 	@ACTIVE)
 GO
@@ -387,6 +447,11 @@ CREATE PROCEDURE [dbo].[spuScheduleExchange]
 	@REQUEST_TIMEOUT		int,
 	@START_TIME				DateTime,
 	@END_TIME				DateTime,
+	@CREATED_DATE			DateTime,
+	@CREATED_BY				nvarchar(100),
+	@OCCURANCE				nvarchar(24),
+	@NEXTSTART_DATE_TIME 	DateTime,
+	@END_DATE_TIME			DateTime,
 	@STATUS					nvarchar(64),
 	@ACTIVE					tinyint
 AS
@@ -400,6 +465,11 @@ UPDATE [dbo].[ScheduleExchange] SET
 	[REQUEST_TIMEOUT] = @REQUEST_TIMEOUT,
 	[START_TIME] = @START_TIME,
 	[END_TIME] = @END_TIME,
+	[CREATED_DATE] = @CREATED_DATE,
+	[CREATED_BY] = @CREATED_BY,
+	[OCCURANCE] = @OCCURANCE,
+	[NEXTSTART_DATE_TIME] = @NEXTSTART_DATE_TIME,
+	[END_DATE_TIME] = @END_DATE_TIME,
 	[STATUS] = @STATUS,
 	[ACTIVE] = @ACTIVE
 WHERE [dbo].[ScheduleExchange].[SCHEDULE_EXCHANGE_ID] = @SCHEDULE_EXCHANGE_ID

@@ -23,6 +23,11 @@ namespace iRINGAgentService
         public int RequestTimeout { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string CreatedBy { get; set; }
+        public string Occurance { get; set; }
+        public DateTime NextStartDateTime { get; set; }
+        public DateTime EndDateTime { get; set; }
         public string Status { get; set; }
         public int Active { get; set; }
 
