@@ -88,7 +88,7 @@ Ext.define('USM.view.permissions.PermissionSelectionPanelWindow', {
 		var val = '';
 		var checkval = '';
 		for ( var j = 0; j < permGrid[0].store.getCount(); j++) {
-			var val = permGrid[0].store.getAt(j).get('chk');
+			var val = permGrid[0].store.getAt(j).get('Chk');
 			if (val == true) {
 				var commId = permGrid[0].store.getAt(j).get('PermissionId');
 				checkval = checkval + commId + ',';
