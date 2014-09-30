@@ -605,7 +605,7 @@ Ext.define('AM.controller.Directory', {
                     if (node.parentNode.data.property["LightweightDataLayer"] == "Yes") {
                         graphMenu.items.map['switchToCached'].setVisible(false);
                         graphMenu.items.map['switchToLive'].setVisible(true);
-                        graphMenu.items.map['showCacheInfo'].setVisible(false);
+                        graphMenu.items.map['showCacheInfo'].setVisible(true);
                     }
                 }
                 graphMenu.showAt(e.getXY());
