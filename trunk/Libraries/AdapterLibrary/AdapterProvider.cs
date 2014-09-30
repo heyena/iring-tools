@@ -465,7 +465,7 @@ namespace org.iringtools.adapter
             {
                 // check if this scope exists in the current scope list
                 ScopeProject scope = _scopes.FirstOrDefault<ScopeProject>(o => o.Name.ToLower() == scopeName.ToLower());
-
+                
                 if (scope == null)
                 {
                     throw new Exception(String.Format("Scope [{0}] not found.", scopeName));
@@ -478,6 +478,7 @@ namespace org.iringtools.adapter
                     application.DisplayName = updatedApp.DisplayName;
                     application.Description = updatedApp.Description;
                     application.DataMode = updatedApp.DataMode;
+                    scope.Applications[0].DataMode = updatedApp.DataMode;
                     application.PermissionGroup = updatedApp.PermissionGroup;
                     application.Assembly = updatedApp.Assembly;  ////lightweight2 sql datalayer change   22 sep 2014
                     //update bind ////lightweight2 sql datalayer  change   22 sep 2014
