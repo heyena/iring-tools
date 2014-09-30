@@ -1118,7 +1118,7 @@ namespace org.iringtools.adapter
                 bool enableCacheUpdate = _settings["EnableCacheUpdate"] == null ||
                   _settings["EnableCacheUpdate"].ToString().ToLower() == "true";
 
-                if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
+                if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null || _lwDataLayer2 != null)
                 {
                     cacheId = CheckCache();
 
@@ -1158,7 +1158,10 @@ namespace org.iringtools.adapter
                         sdos.Add((SerializableDataObject)dataObject);
                     }
 
+                    if(_lwDataLayer != null)
                     response = _lwDataLayer.Update(objectType, sdos);
+                    else
+                        response = _lwDataLayer2.Update(objectType, sdos);
 
                     if (enableCacheUpdate)
                     {
