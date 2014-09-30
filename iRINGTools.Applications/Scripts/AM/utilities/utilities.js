@@ -56,6 +56,16 @@ function showDialog(width, height, title, msg, buttons, callback) {
   });
 }
 
+function panelDisable() {
+    var dPanel = Ext.getCmp('directoryTreeID');
+    dPanel.getEl().mask();
+}
+
+function panelEnable() {
+    var dPanel = Ext.getCmp('directoryTreeID');
+    dPanel.getEl().unmask();
+}
+
 function getLastXString(str, num) {
   var index = str.length;
 
