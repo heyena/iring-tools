@@ -1149,7 +1149,7 @@ namespace org.iringtools.adapter
                 //
                 // call data layer to perform update then update cache
                 //        
-                if (_lwDataLayer != null)
+                if (_lwDataLayer != null || _lwDataLayer2 != null)
                 {
                     List<SerializableDataObject> sdos = new List<SerializableDataObject>();
 
