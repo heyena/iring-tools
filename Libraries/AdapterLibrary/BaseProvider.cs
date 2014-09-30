@@ -262,17 +262,17 @@ namespace org.iringtools.adapter
         {
             if (scope.Name.ToLower() == scopeName.ToLower())
             {
-                foreach (ScopeApplication app in scope.Applications)
-                {
-                    string bindingConfigPath =
-                      string.Format("{0}BindingConfiguration.{1}.{2}.xml",
-                      _settings["AppDataPath"], scope.Name, app.Name);
+               // foreach (ScopeApplication app in scope.Applications)
+               // {
+                  //  string bindingConfigPath =
+                  //    string.Format("{0}BindingConfiguration.{1}.{2}.xml",
+                  //    _settings["AppDataPath"], scope.Name, app.Name);
 
-                    XElement binding = Utility.GetxElementObject(bindingConfigPath);
+                  //  XElement binding = Utility.GetxElementObject(bindingConfigPath);
 
-                    if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
-                        app.DataMode = DataMode.Cache;
-                }
+                  //  if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
+                  //      app.DataMode = DataMode.Cache;
+               // }
 
                 return scope;
             }
