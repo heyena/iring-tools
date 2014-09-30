@@ -290,8 +290,8 @@ Ext.define('AM.controller.Directory', {
             var cacheImportURI = node.data.record.CacheImportURI;
             var cacheTimeout = node.data.record.CacheTimeout;
             var permission = node.data.record.PermissionGroups;
-            var internalName = node.data.record.Name; 
-           
+            var internalName = node.data.record.Name;
+
             form.getForm().findField('internalName').setReadOnly(true);
         } else {
             var wintitle = 'Add Application';
@@ -306,7 +306,7 @@ Ext.define('AM.controller.Directory', {
         win.on('save', function () {
             win.close();
             tree.view.refresh();
-			var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
+            var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
             detailGrid.setSource({});
         }, me);
 
@@ -593,22 +593,20 @@ Ext.define('AM.controller.Directory', {
 
                 if (node.data.property["Data Mode"] == "Live") {
                     if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
+                        graphMenu.items.map['switchToCached'].setVisible(false);
+                        graphMenu.items.map['switchToLive'].setVisible(false);
+                        graphMenu.items.map['showCacheInfo'].setVisible(false);
+                    } else if (node.parentNode.data.property["LightweightDataLayer"] == "Yes") {
                         graphMenu.items.map['switchToCached'].setVisible(true);
                         graphMenu.items.map['switchToLive'].setVisible(false);
                         graphMenu.items.map['showCacheInfo'].setVisible(false);
                     }
-                    //graphMenu.items.map['refreshCacheId'].setVisible(false);	
-                    //graphMenu.items.map['importCacheId'].setVisible(false);	
-                } else if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
-                    graphMenu.items.map['switchToCached'].setVisible(false);
-                    graphMenu.items.map['switchToLive'].setVisible(true);
-                    graphMenu.items.map['showCacheInfo'].setVisible(true);
-                    //graphMenu.items.map['refreshCacheId'].setVisible(true);	
-                    //graphMenu.items.map['importCacheId'].setVisible(true);	
-                } else if (node.parentNode.data.property["LightweightDataLayer"] == "Yes") {
-                    graphMenu.items.map['switchToCached'].setVisible(false);
-                    graphMenu.items.map['switchToLive'].setVisible(false);
-                    graphMenu.items.map['showCacheInfo'].setVisible(true);
+                } else if (node.data.property["Data Mode"] == "Cache") {
+                    if (node.parentNode.data.property["LightweightDataLayer"] == "Yes") {
+                        graphMenu.items.map['switchToCached'].setVisible(false);
+                        graphMenu.items.map['switchToLive'].setVisible(true);
+                        graphMenu.items.map['showCacheInfo'].setVisible(false);
+                    }
                 }
                 graphMenu.showAt(e.getXY());
             } else if (obj.type === "DataPropertyNode") {
