@@ -279,7 +279,7 @@ namespace org.iringtools.adapter
 
                         XElement binding = Utility.GetxElementObject(bindingConfigPath);
 
-                        if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
+                        if (binding.Element("bind").Attribute("service").Value.ToString() == "org.iringtools.library.ILightweightDataLayer, iRINGLibrary")
                             app.DataMode = DataMode.Cache;
                     }
 
@@ -403,6 +403,8 @@ namespace org.iringtools.adapter
 
                             if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
                                 app.DataMode = DataMode.Cache;
+                            if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer2).Name))
+                                app.DataMode = DataMode.Live;
 
                             return app;
                         }
