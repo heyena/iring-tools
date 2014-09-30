@@ -395,16 +395,16 @@ namespace org.iringtools.adapter
                     {
                         if (app.Name.ToLower() == appName.ToLower())
                         {
-                            string bindingConfigPath =
-                              string.Format("{0}BindingConfiguration.{1}.{2}.xml",
-                              _settings["AppDataPath"], scope.Name, app.Name);
+                            //string bindingConfigPath =
+                            //  string.Format("{0}BindingConfiguration.{1}.{2}.xml",
+                            //  _settings["AppDataPath"], scope.Name, app.Name);
 
-                            XElement binding = Utility.GetxElementObject(bindingConfigPath);
+                            //XElement binding = Utility.GetxElementObject(bindingConfigPath);
 
-                            if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
-                                app.DataMode = DataMode.Cache;
-                            if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer2).Name))
-                                app.DataMode = DataMode.Live;
+                            //if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer).Name))
+                            //    app.DataMode = DataMode.Cache;
+                            //if (binding.Element("bind").Attribute("service").Value.ToString().Contains(typeof(ILightweightDataLayer2).Name))
+                            //    app.DataMode = DataMode.Live;
 
                             return app;
                         }
