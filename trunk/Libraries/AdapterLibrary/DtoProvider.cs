@@ -313,6 +313,7 @@ namespace org.iringtools.adapter
                         };
                         manifestClassTemplates.@class = manifestClass;
 
+
                         foreach (TemplateMap templateMap in templateMaps)
                         {
                             Template manifestTemplate = new Template
@@ -324,8 +325,29 @@ namespace org.iringtools.adapter
                             };
                             manifestClassTemplates.templates.Add(manifestTemplate);
 
+                            //loop thorough all roleMap and assign following nodes to roles.
                             foreach (RoleMap roleMap in templateMap.roleMaps)
                             {
+                                string strDataType = "";
+                                int intPrecision = 0;
+                                int intScale = 0;
+
+                                //find column name from roleMap.Use the column name to find DBdatatype, precision and scale from dataProperties.
+                                if (roleMap.propertyName != null && dataObject != null)
+                                {
+                                    string strColumnName = roleMap.propertyName;
+                                    strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
+
+                                    DataProperty dataProperty = dataObject.dataProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
+                                    if (dataProperty != null)
+                                    {
+                                        strDataType = dataProperty.dataType.ToString();
+                                        intPrecision = Convert.ToInt16(dataProperty.precision);
+                                        intScale = Convert.ToInt16(dataProperty.scale);
+                                    }
+                                }
+
+                                //assign valus to the following nodes.
                                 Role manifestRole = new Role
                                 {
                                     type = roleMap.type,
@@ -333,7 +355,11 @@ namespace org.iringtools.adapter
                                     name = roleMap.name,
                                     dataType = roleMap.dataType,
                                     value = roleMap.value,
+                                    dbDataType = strDataType,
+                                    precision = intPrecision,
+                                    scale = intScale,
                                 };
+
                                 manifestTemplate.roles.Add(manifestRole);
 
                                 if (roleMap.type == RoleType.Property ||
@@ -1374,7 +1400,7 @@ namespace org.iringtools.adapter
 
                         // set nulls for all mapped properties in manifest
                         foreach (string prop in mappedProps)
-                        {                            
+                        {
                             sdo.Dictionary[prop] = null;
                         }
 
@@ -1386,7 +1412,7 @@ namespace org.iringtools.adapter
                         else if (objectType.keyProperties.Count > 1)
                         {
                             string[] parts = identifier.Split(
-                                new string[] {objectType.keyDelimeter}, StringSplitOptions.None);
+                                new string[] { objectType.keyDelimeter }, StringSplitOptions.None);
 
                             for (int j = 0; j < parts.Length; j++)
                             {
