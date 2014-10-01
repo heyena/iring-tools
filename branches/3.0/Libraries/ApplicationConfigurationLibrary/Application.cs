@@ -274,7 +274,8 @@ namespace org.iringtools.applicationConfig
     {
         Commodity()
         {
-            permissions = new Permissions();    
+            permissions = new Permissions();
+            groups = new Groups();
         }
 
         [DataMember(Name = "contextId", Order = 0)]
@@ -294,6 +295,9 @@ namespace org.iringtools.applicationConfig
 
         [DataMember(Name = "permissions", Order = 5, EmitDefaultValue = false)]
         public Permissions permissions { get; set; }
+
+        [DataMember(Name = "groups", Order = 6, EmitDefaultValue = false)]
+        public Groups groups { get; set; }
     }
 
     [CollectionDataContract(Name = "applicationSettings", Namespace = "http://www.iringtools.org/library", ItemName = "applicationSetting")]

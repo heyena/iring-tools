@@ -886,8 +886,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert Commodity to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertCommodity/{userName}?groupIds={groupIds}&format={format}")]
-        public void InsertCommodity(string userName, string groupIds, string format, Stream stream)
+        [WebInvoke(Method = "POST", UriTemplate = "/insertCommodity/{userName}?format={format}")]
+        public void InsertCommodity(string userName, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -903,7 +903,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Commodity>(stream, format);
-                    response = _applicationConfigurationProvider.InsertCommodity(userName,groupIds, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.InsertCommodity(userName, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -917,8 +917,8 @@ namespace org.iringtools.services
         }
 
         [Description("update Commodity to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateCommodity/{userName}?groupIds={groupIds}&format={format}")]
-        public void UpdateCommodity(string userName, string groupIds, string format, Stream stream)
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateCommodity/{userName}?format={format}")]
+        public void UpdateCommodity(string userName, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -934,7 +934,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Commodity>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateCommodity(userName, groupIds, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.UpdateCommodity(userName, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
