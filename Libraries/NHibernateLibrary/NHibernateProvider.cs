@@ -59,7 +59,7 @@ namespace org.iringtools.nhibernate
         }
 
         internal NHibernateProvider()
-        {}
+        { }
 
         #region public methods
         public Response Generate(string projectName, string applicationName)
@@ -376,6 +376,8 @@ namespace org.iringtools.nhibernate
                     string nullable = Convert.ToString(metadata[4]).ToUpper();
                     bool isNullable = (nullable == "Y" || nullable == "TRUE" || nullable == "1");
                     string constraint = Convert.ToString(metadata[5]);
+                    int precision = (metadata[6] == null) ? 0 : Convert.ToInt32(metadata[6]); //total length of decimal number and set precision= 0 if value is null 
+                    int scale = (metadata[7] == null) ? 0 : Convert.ToInt32(metadata[7]); //length after decimal place and set precision= 0 if value is null    
 
                     if (String.IsNullOrEmpty(constraint)) // process columns
                     {
@@ -385,7 +387,9 @@ namespace org.iringtools.nhibernate
                             dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
                             dataLength = dataLength,
                             isNullable = isNullable,
-                            propertyName = Utility.ToSafeName(columnName)
+                            propertyName = Utility.ToSafeName(columnName),
+                            precision = precision,
+                            scale = scale,
                         };
 
                         dataObject.dataProperties.Add(column);
@@ -411,6 +415,8 @@ namespace org.iringtools.nhibernate
                             isNullable = isNullable,
                             keyType = keyType,
                             propertyName = Utility.ToSafeName(columnName),
+                            precision = precision,
+                            scale = scale,
                         };
                         dataObject.addKeyProperty(key);
                     }
@@ -488,7 +494,7 @@ namespace org.iringtools.nhibernate
                 {
                     string columnName = Convert.ToString(metadata[0]);
                     string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[1]));
-                    int dataLength = Convert.ToInt32(metadata[2]);
+                    int dataLength = Convert.ToInt32(metadata[2]); //* MSSQL returns just the part befor decimal.eg 4 for (6,2) and oracle returns max bit size.
                     bool isIdentity = Convert.ToBoolean(metadata[3]);
                     string nullable = Convert.ToString(metadata[4]).ToUpper();
                     //   bool isNullable = CheckNullable(dbProvider, nullable);
@@ -498,8 +504,8 @@ namespace org.iringtools.nhibernate
                         dataType = "String";
                     }
                     string constraint = Convert.ToString(metadata[5]);
-                    int precision = Convert.ToInt32(metadata[6]); //total length of decimal number
-                    int scale = Convert.ToInt32(metadata[7]);     //length after decimal place.
+                    int precision = (metadata[6] == null) ? 0 : Convert.ToInt32(metadata[6]); //total length of decimal number and set precision= 0 if value is null 
+                    int scale = (metadata[7] == null) ? 0 : Convert.ToInt32(metadata[7]); //length after decimal place and set precision= 0 if value is null    
 
                     if (String.IsNullOrEmpty(constraint)) // process columns
                     {
@@ -511,7 +517,7 @@ namespace org.iringtools.nhibernate
                             isNullable = isNullable,
                             propertyName = Utility.ToSafeName(columnName),
                             precision = precision,
-                            scale = scale
+                            scale = scale,
                         };
 
                         dataObject.dataProperties.Add(column);
@@ -537,6 +543,8 @@ namespace org.iringtools.nhibernate
                             isNullable = isNullable,
                             keyType = keyType,
                             propertyName = Utility.ToSafeName(columnName),
+                            precision = precision,
+                            scale = scale,
                         };
 
                         dataObject.addKeyProperty(key);
