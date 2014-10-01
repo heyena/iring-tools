@@ -1116,7 +1116,7 @@ namespace org.iringtools.applicationConfig
             return commodities;
         }
 
-        public Response InsertCommodity(string userName, string groupIds, XDocument xml)
+        public Response InsertCommodity(string userName, XDocument xml)
         {
             Response response = new Response();
 
@@ -1124,10 +1124,12 @@ namespace org.iringtools.applicationConfig
             {
                 Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
 
+                string rawXml = commodity.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     dc.ExecuteCommand("spiCommodity @UserName = {0}, @SiteId = {1}, @ContextId = {2}, " +
-                                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.ContextId, commodity.CommodityName, groupIds);
+                                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.ContextId, commodity.CommodityName, rawXml);
 
                 }
 
@@ -1150,18 +1152,18 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateCommodity(string userName, string groupIds, XDocument xml)
+        public Response UpdateCommodity(string userName, XDocument xml)
         {
             Response response = new Response();
 
             try
             {
                 Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
-
+                string rawXml = commodity.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     dc.ExecuteCommand("spuCommodity @UserName = {0}, @SiteId = {1}, @CommodityId = {2}, " +
-                                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.CommodityId, commodity.CommodityName, groupIds);
+                                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.CommodityId, commodity.CommodityName, rawXml);
 
                 }
 
