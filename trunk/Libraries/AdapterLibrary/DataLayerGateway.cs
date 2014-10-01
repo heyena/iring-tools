@@ -1437,6 +1437,10 @@ namespace org.iringtools.adapter
                 {
                     contents = _lwDataLayer.GetContents(objectType, idFormats).ToList();
                 }
+                else if (_lwDataLayer2 != null)
+                {
+                    contents = _lwDataLayer2.GetContents(objectType, idFormats).ToList();
+                } 
                 else if (_dataLayer != null)
                 {
                     contents = _dataLayer.GetContents(objectType.objectName, idFormats).ToList();
