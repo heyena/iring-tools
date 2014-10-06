@@ -287,7 +287,8 @@ namespace iRINGTools.Web.Models
               _logger.Error("Error getting data items." + ex);
               //response = response + " " + ex.Message.ToString();
               CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-              _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, ex, _logger);
+              _CustomError = objCustomErrorLog.customErrorLogger("Cache entry has not been created. You need to refresh or import cache files.", ex, _logger);
+              //_CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, ex, _logger);
               response = response + " " + throwJsonResponse(_CustomError);
           }
       }
