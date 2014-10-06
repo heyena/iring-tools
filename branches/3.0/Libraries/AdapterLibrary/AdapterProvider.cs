@@ -479,8 +479,37 @@ namespace org.iringtools.adapter
                     application.DisplayName = updatedApp.DisplayName;
                     application.Description = updatedApp.Description;
                     application.DataMode = updatedApp.DataMode;
+                    scope.Applications[0].DataMode = updatedApp.DataMode;
                     application.PermissionGroup = updatedApp.PermissionGroup;
+                    application.Assembly = updatedApp.Assembly;  ////lightweight2 sql datalayer change   22 sep 2014
+                    //update bind ////lightweight2 sql datalayer  change   22 sep 2014
+                    XElement binding = GetBinding(scopeName,application.Name);
+                                       
+                    if (typeof(ILightweightDataLayer2).IsAssignableFrom(Type.GetType(application.Assembly)))
+                    {
+                        binding.Element("bind").Attribute("to").Value = application.Assembly;
+                        binding.Element("bind").Attribute("service").Value = "org.iringtools.library.ILightweightDataLayer2, iRINGLibrary";
+                        UpdateBinding(_settings["ProjectName"], _settings["ApplicationName"], binding);
+                    }
+                    else if (typeof(ILightweightDataLayer).IsAssignableFrom(Type.GetType(application.Assembly)))
+                    {
+                        binding.Element("bind").Attribute("to").Value = application.Assembly;
+                        binding.Element("bind").Attribute("service").Value = "org.iringtools.library.ILightweightDataLayer, iRINGLibrary";
+                        UpdateBinding(_settings["ProjectName"], _settings["ApplicationName"], binding);
+                    }
+                    else
+                    {
+                        binding.Element("bind").Attribute("name").Value = "DataLayer";
+                        binding.Element("bind").Attribute("to").Value = application.Assembly; //"org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary"; //application.Assembly;
+                        binding.Element("bind").Attribute("service").Value = "org.iringtools.library.IDataLayer, iRINGLibrary";
+                        UpdateBinding(_settings["ProjectName"], _settings["ApplicationName"], binding);
+                        
+                    }
 
+
+                    // lightweight2 sql datalayer changes end here
+                     
+                   
                     if (application.CacheInfo == null)
                         application.CacheInfo = new CacheInfo();
 
