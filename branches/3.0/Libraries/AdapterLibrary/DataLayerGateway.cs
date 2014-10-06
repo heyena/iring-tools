@@ -934,7 +934,7 @@ namespace org.iringtools.adapter
       {
         string cacheId = string.Empty;
 
-        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
+        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null || _lwDataLayer2 != null)
         {
           cacheId = CheckCache();
 
@@ -1118,7 +1118,7 @@ namespace org.iringtools.adapter
         bool enableCacheUpdate = _settings["EnableCacheUpdate"] == null ||
           _settings["EnableCacheUpdate"].ToString().ToLower() == "true";
 
-        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
+        if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null || _lwDataLayer2 != null)
         {
           cacheId = CheckCache();
 
@@ -1149,7 +1149,7 @@ namespace org.iringtools.adapter
         //
         // call data layer to perform update then update cache
         //        
-        if (_lwDataLayer != null)
+        if (_lwDataLayer != null || _lwDataLayer2 != null)
         {
           List<SerializableDataObject> sdos = new List<SerializableDataObject>();
 
@@ -1158,7 +1158,10 @@ namespace org.iringtools.adapter
             sdos.Add((SerializableDataObject)dataObject);
           }
 
+if (_lwDataLayer != null)
           response = _lwDataLayer.Update(objectType, sdos);
+else
+                        response = _lwDataLayer2.Update(objectType, sdos);
 
           if (enableCacheUpdate)
           {
@@ -1434,6 +1437,10 @@ namespace org.iringtools.adapter
         {
           contents = _lwDataLayer.GetContents(objectType, idFormats).ToList();
         }
+   else if (_lwDataLayer2 != null)
+                {
+                    contents = _lwDataLayer2.GetContents(objectType, idFormats).ToList();
+                }
         else if (_dataLayer != null)
         {
           contents = _dataLayer.GetContents(objectType.objectName, idFormats).ToList();
@@ -1627,7 +1634,7 @@ namespace org.iringtools.adapter
       foreach (DataProperty prop in objectType.dataProperties)
       {
         string columnName = "[" + prop.propertyName + "]";
-        string dataType = ToSQLType(prop.dataType);
+        string dataType = ToSQLType(prop);
         string nullable = prop.isNullable ? "NULL" : "NOT NULL";
 
         tableBuilder.AppendFormat("{0} {1} {2}{3}", columnName, dataType, nullable, PROP_SEPARATOR);
@@ -1652,15 +1659,16 @@ namespace org.iringtools.adapter
       return Regex.IsMatch(text, pattern);
     }
 
-    protected string ToSQLType(DataType dataType)
+    protected string ToSQLType(DataProperty prop)
     {
+DataType dataType = prop.dataType;
       switch (dataType)
       {
         case DataType.Boolean:
           return "bit";
 
         case DataType.Char:
-          return "varchar(1)";
+          return string.Format("varchar({0})", prop.dataLength);
 
         case DataType.Byte:
         case DataType.Int16:
@@ -1676,6 +1684,8 @@ namespace org.iringtools.adapter
         case DataType.Double:
           return "float";
 
+case DataType.Decimal:
+                    return string.Format("decimal({0},{1})", prop.precision, prop.scale);
         case DataType.Date:
           return "date";
 
@@ -1684,6 +1694,8 @@ namespace org.iringtools.adapter
 
         case DataType.TimeStamp:
           return "timestamp";
+case DataType.String:
+                    return string.Format("nvarchar({0})", prop.dataLength);
 
                 default:
                     return "nvarchar(MAX)";
