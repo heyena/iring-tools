@@ -389,7 +389,6 @@ namespace org.iringtools.legacy
       numberOfDecimals = roleMap.numberOfDecimals;
       precision = roleMap.precision;
       scale = roleMap.scale;
-      dbDataType = roleMap.dbDatatype;
     }
 
     [DataMember(Order = 0)]
