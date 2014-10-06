@@ -1808,6 +1808,7 @@ namespace org.iringtools.adapter
                                                     rolesMatchedCount++;
                                                 }
 
+                                                //update roleMap properties with matching manifest property.
                                                 if (manifestRole.type == RoleType.Property ||
                                                     manifestRole.type == RoleType.DataProperty ||
                                                     manifestRole.type == RoleType.ObjectProperty ||
@@ -1815,6 +1816,9 @@ namespace org.iringtools.adapter
                                                 {
                                                     roleMap.dataLength = manifestRole.dataLength;
                                                     roleMap.dataType = manifestRole.dataType;
+                                                    roleMap.precision = manifestRole.precision;
+                                                    roleMap.scale = manifestRole.scale;
+                                                    roleMap.dbDataType=manifestRole.dbDataType;
                                                 }
 
                                                 break;
