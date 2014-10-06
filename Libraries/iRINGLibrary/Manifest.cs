@@ -1138,6 +1138,8 @@ namespace org.iringtools.mapping
 
         private int scaleField;
 
+        private string dbDataTypeField;
+
         private org.iringtools.mapping.ClassMap classMapField;
 
         [System.Runtime.Serialization.DataMemberAttribute(Order = 0)]
@@ -1244,6 +1246,7 @@ namespace org.iringtools.mapping
             }
         }
 
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 8)]
         public int dataLength
         {
             get
@@ -1255,6 +1258,21 @@ namespace org.iringtools.mapping
                 this.dataLengthField = value;
             }
         }
+
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 9)]
+        public int precision
+        {
+            get
+            {
+                return this.precisionField;
+            }
+            set
+            {
+                this.precisionField = value;
+            }
+        }
+
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 10)]
         public int scale
         {
             get
@@ -1267,17 +1285,19 @@ namespace org.iringtools.mapping
             }
         }
 
-        public int precision
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 11)]
+        public string dbDataType
         {
             get
             {
-                return this.precisionField;
+                return this.dbDataTypeField;
             }
             set
             {
-                this.precisionField = value;
+                this.dbDataTypeField = value;
             }
         }
+
     }
 
     [Serializable]
