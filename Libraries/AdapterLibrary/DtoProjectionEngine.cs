@@ -921,12 +921,43 @@ namespace org.iringtools.adapter.projection
                     value = Utility.ToXsdDate(value);
                 }
                 else if (propertyRole.dataType == "xsd:string" &&
-                  propertyRole.dataLength > 0 && value.Length > propertyRole.dataLength)
+                  propertyRole.dataLength > 0 && value.Length > propertyRole.dataLength && propertyRole.dbDataType != "Decimal")
                 {
                     value = value.Substring(0, propertyRole.dataLength);
 
                     //value might contain trailing whitespaces when taking substring, trim it again
                     value = value.TrimEnd();
+                }
+
+                //if db data type is decimal parse out smallest integer length and smallest fractional length
+                else if (propertyRole.dbDataType == "Decimal")
+                {
+                    int nSmallestIntegerLength = propertyRole.precision - propertyRole.scale;
+                    string[] strLength = value.Split('.');
+                    string strSmallestIntegerPart = "";
+                    string strSmallestFractionalPart = "";
+
+                    //trim integer part if it contains more digit than defined in cross manifest.
+                    if (strLength[0].Length > nSmallestIntegerLength)
+                    {
+                        strSmallestIntegerPart = strLength[0].Substring((strLength[0].Length - nSmallestIntegerLength), nSmallestIntegerLength);
+                    }
+                    else
+                    {
+                        strSmallestIntegerPart = strLength[0].Trim();
+                    }
+
+                    //trim fractional part if it contains more digit than defined in cross manifest.
+                    if (strLength[1].Length > propertyRole.scale)
+                    {
+                        strSmallestFractionalPart = strLength[1].Substring(0, propertyRole.scale);
+                    }
+                    else
+                    {
+                        strSmallestFractionalPart = strLength[1].Trim();
+                    }
+                    value = strSmallestIntegerPart + "." + strSmallestFractionalPart;
+
                 }
             }
             else  // resolve value list to uri
