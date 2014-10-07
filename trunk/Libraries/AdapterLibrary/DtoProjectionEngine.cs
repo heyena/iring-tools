@@ -930,33 +930,38 @@ namespace org.iringtools.adapter.projection
                 }
 
                 //if db data type is decimal parse out smallest integer length and smallest fractional length
-                else if (propertyRole.dbDataType=="Decimal" && value.Length >0)
+                else if (propertyRole.dbDataType == "Decimal" && value.Length > 0)
                 {
-                        int nSmallestIntegerLength = propertyRole.precision - propertyRole.scale;
-                        string[] strLength = value.Split('.');
-                        string strSmallestIntegerPart = "";
-                        string strSmallestFractionalPart = "";
+                    int nSmallestIntegerLength = propertyRole.precision - propertyRole.scale;
+                    string[] strLength = value.Split('.');
+                    string strSmallestIntegerPart = "";
+                    string strSmallestFractionalPart = "";
 
-                        //trim integer part if it contains more digit than defined in cross manifest.
-                        if (strLength[0].Length > nSmallestIntegerLength)
-                        {
-                            strSmallestIntegerPart = strLength[0].Substring((strLength[0].Length - nSmallestIntegerLength), nSmallestIntegerLength);
-                        }
-                        else
-                        {
-                            strSmallestIntegerPart = strLength[0].Trim();
-                        }
+                    //trim integer part if it contains more digit than defined in cross manifest.
+                    if (strLength[0].Length > nSmallestIntegerLength)
+                    {
+                        strSmallestIntegerPart = strLength[0].Substring((strLength[0].Length - nSmallestIntegerLength), nSmallestIntegerLength);
+                    }
+                    else
+                    {
+                        strSmallestIntegerPart = strLength[0].Trim();
+                    }
 
-                        //trim fractional part if it contains more digit than defined in cross manifest.
-                        if (strLength[1].Length > propertyRole.scale)
-                        {
-                            strSmallestFractionalPart = strLength[1].Substring(0, propertyRole.scale);
-                        }
-                        else
-                        {
-                            strSmallestFractionalPart = strLength[1].Trim();
-                        }
-                        value = strSmallestIntegerPart + "." + strSmallestFractionalPart;
+                    //trim fractional part if it contains more digit than defined in cross manifest.
+                    if (strLength[1].Length > propertyRole.scale)
+                    {
+                        strSmallestFractionalPart = strLength[1].Substring(0, propertyRole.scale);
+                    }
+                    else
+                    {
+                        strSmallestFractionalPart = strLength[1].Trim();
+                    }
+                    value = strSmallestIntegerPart + "." + strSmallestFractionalPart;
+                }
+                else if (propertyRole.dbDataType == "Int32" && value.Length > 0)
+                {
+                    string[] strLength = value.Split('.');
+                    value = strLength[0];
                 }
             }
             else  // resolve value list to uri
