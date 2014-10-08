@@ -108,8 +108,19 @@ namespace QMXFGenerator
                   var resp = _refdataClient.Post<QMXF, Response>("/classes", q, true);
                   if (resp.Level == StatusLevel.Error)
                   {
-                    Console.WriteLine("Error posting class: " + cls.name[0].value);
-                    Utility.WriteString("Error posting class: " + cls.name[0].value + "\r\n" + resp.ToString() + "\r\n", "error.log", true);
+                    Console.WriteLine("Retrying HTTP Request in 30 seconds...");
+                    Utility.WriteString("Retrying HTTP Request in 30 seconds...\r\n", "error.log", true);
+                    System.Threading.Thread.Sleep(30000);
+
+                    resp = _refdataClient.Post<QMXF, Response>("/classes", q, true);
+
+                    if (resp.Level == StatusLevel.Error)
+                    {
+                      Console.WriteLine("Error posting class: " + cls.name[0].value);
+                      Utility.WriteString("Error posting class: " + cls.name[0].value + "\r\n" + resp.ToString() + "\r\n", "error.log", true);
+                    }
+                    else
+                      Console.WriteLine("Success: posted class: " + cls.name[0].value);
                   }
                   else
                     Console.WriteLine("Success: posted class: " + cls.name[0].value);
@@ -142,7 +153,7 @@ namespace QMXFGenerator
                       //Console.WriteLine("error in template " + t.identifier + " see : error.log");
                       errorMessage = errorMessage + "\r\n" + r.identifier + " do not have range defined \r\n";
                     }
-                    if (CheckUri(r.identifier))
+                    if (!CheckUri(r.identifier))
                       errorMessage = errorMessage + "Cannot Post Example namespace " + r.identifier + "\r\n";
 
                   }
