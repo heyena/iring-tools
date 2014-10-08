@@ -1100,19 +1100,19 @@ namespace org.iringtools.web.controllers
 
                     if (!string.IsNullOrEmpty(rMap.dataType) && rMap.dataType.StartsWith("xsd"))
                     {
-						if (relatedObject != "undefined" && relatedObject != "")
-            			{
-              				rMap.propertyName = string.Format("{0}.{1}.{2}",
-                				graphMap.dataObjectName,
-                				relatedObject,
-                				propertyName);
-            			}
-						else
-						{
+                        //if (relatedObject != "undefined" && relatedObject != "")
+                        //{
+                        //    rMap.propertyName = string.Format("{0}.{1}.{2}",
+                        //        graphMap.dataObjectName,
+                        //        relatedObject,
+                        //        propertyName);
+                        //}
+                        //else
+                        //{
 	                        rMap.propertyName = propertyName;
 	                        rMap.type = RoleType.DataProperty;
 	                        rMap.valueListName = null;
-						}
+						//}
                     }
                     else
                     {
