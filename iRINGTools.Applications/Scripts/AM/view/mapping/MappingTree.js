@@ -41,7 +41,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                     Ext.create('Ext.tree.plugin.TreeViewDragDrop', {
                         //ddGroup: 'refdataGroup',
                         ddGroup: 'propertyGroup',
-						enableDrag: false
+                        enableDrag: false
                     })
                 ],
                 listeners: {
@@ -103,30 +103,38 @@ Ext.define('AM.view.mapping.MappingTree', {
         var tempArr = pan.graph.split('/'); //pan.graphName;
         var graphName = tempArr[tempArr.length - 1];
         var modelType = data.records[0].data.type;
+        var selNode = me.up('viewport').down('directorytree').getSelectedNode();
         var node = overModel;
-		if (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'DataPropertyNode') {
-			var dataObj = data.records[0].data.parentId.split('/');
-			var propertyName = dataObj[dataObj.length-1]+'.'+data.records[0].data.text;
-			var scope = pan.contextName;
+        if ((overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'DataPropertyNode') || (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'KeyDataPropertyNode')) {
+            var dataObj = data.records[0].data.parentId.split('/');
+            var propertyName = "";
+            if (selNode.parentNode.data.type == "RelationshipNode") {
+                propertyName = dataObj[dataObj.length - 2] + '.' + dataObj[dataObj.length - 1] + '.' + data.records[0].data.text;
+            } else {
+                propertyName = dataObj[dataObj.length - 1] + '.' + data.records[0].data.text;
+            }
+
+
+            var scope = pan.contextName;
             var app = pan.endpoint;
-			var classIndex = overModel.parentNode.parentNode.data.identifierIndex;
-			var classId = overModel.parentNode.parentNode.data.identifier;
-			var tempId = overModel.parentNode.data.id.split('/');
-			var mappingNode = overModel.parentNode.data.parentId + '/' + tempId[tempId.length - 1] + '/' + overModel.data.record.name;
-			var index = overModel.parentNode.parentNode.indexOf(overModel.parentNode);
-			me.setLoading();
+            var classIndex = overModel.parentNode.parentNode.data.identifierIndex;
+            var classId = overModel.parentNode.parentNode.data.identifier;
+            var tempId = overModel.parentNode.data.id.split('/');
+            var mappingNode = overModel.parentNode.data.parentId + '/' + tempId[tempId.length - 1] + '/' + overModel.data.record.name;
+            var index = overModel.parentNode.parentNode.indexOf(overModel.parentNode);
+            me.setLoading();
             Ext.Ajax.request({
-                url: 'mapping/mapproperty', 
+                url: 'mapping/mapproperty',
                 method: 'POST',
                 params: {
-							propertyName:propertyName,
-							classIndex:classIndex,
-							graphName:graphName,
-							classId:classId,
-							index:index,
-							contextName:scope,
-							endpoint:app,
-							mappingNode:mappingNode
+                    propertyName: propertyName,
+                    classIndex: classIndex,
+                    graphName: graphName,
+                    classId: classId,
+                    index: index,
+                    contextName: scope,
+                    endpoint: app,
+                    mappingNode: mappingNode
                 },
                 success: function (result, request) {
                     var res = Ext.JSON.decode(result.responseText);
@@ -135,16 +143,16 @@ Ext.define('AM.view.mapping.MappingTree', {
                         var nodeIndex = parentNode.indexOf(node);
                         parentNode.removeChild(node);
                         parentNode.insertChild(nodeIndex, res.node);
-						//tree.view.refresh();
-						me.view.refresh();
+                        //tree.view.refresh();
+                        me.view.refresh();
                     }
                     else {
                         //Ext.widget('messagepanel', { title: 'asdasd', msg: res.message });
-						var userMsg = res.message;
-						var detailMsg = res.stackTraceDescription;
-						var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-						Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-						Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+                        var userMsg = res.message;
+                        var detailMsg = res.stackTraceDescription;
+                        var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                        Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                        Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                     }
                     me.setLoading(false);
                 },
@@ -153,7 +161,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                     me.setLoading(false);
                 }
             });
-		}else if (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'ClassNode') {
+        } else if (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'ClassNode') {
             reference = data.records[0].data.record.Uri;
             label = data.records[0].data.record.Label;
             roleId = overModel.data.record.id;
@@ -178,7 +186,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                     app: pan.endpoint,
                     templateIndex: index,
                     graph: graphName,
-                    classIndex: classIndex                    
+                    classIndex: classIndex
                 },
                 success: function (result, request) {
                     var res = Ext.JSON.decode(result.responseText);
@@ -187,7 +195,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                         var nodeIndex = parentNode.indexOf(node);
                         parentNode.removeChild(node);
                         parentNode.insertChild(nodeIndex, res.node);
-						me.view.refresh();
+                        me.view.refresh();
                     }
                     else {
                         Ext.widget('messagepanel', { title: 'Error', msg: res.message });
@@ -243,7 +251,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                 },
                 failure: function (result, request) {
                     Ext.widget('messagepanel', { title: 'Error', msg: 'Error in add template.' });
-                    me.setLoading(false);                    
+                    me.setLoading(false);
                 }
             });
         }
@@ -357,20 +365,20 @@ Ext.define('AM.view.mapping.MappingTree', {
                 baseUrl: mapPanel.baseUrl
             },
             success: function (result, request) {
-					var resp = Ext.decode(result.responseText);
-					if(resp.success){
-						Ext.example.msg('Notification', 'Configuration saved successfully!');
-						me.onReload();
-					}else{
-						var userMsg = resp['message'];
-						var detailMsg = resp['stackTraceDescription'];
-						var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-						Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-						Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
-					}
+                var resp = Ext.decode(result.responseText);
+                if (resp.success) {
+                    Ext.example.msg('Notification', 'Configuration saved successfully!');
+                    me.onReload();
+                } else {
+                    var userMsg = resp['message'];
+                    var detailMsg = resp['stackTraceDescription'];
+                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+                }
             },
             failure: function (result, request) {
-				return false;
+                return false;
             }
         });
     },

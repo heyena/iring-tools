@@ -214,15 +214,31 @@ Ext.define('AM.view.mapping.ClassMapForm', {
                 else {
 
                     var ident = getLastXString(data.records[0].data.id, 1);
-                    var object = getLastXString(data.records[0].data.id, 2);
-                    var key = object + '.' + ident; //key1+'.'+key2;
+                    var object = "";
+
+                    var key = ""; //key1+'.'+key2;
+                    var selNode = Ext.getCmp("directoryTreeID").down("directorytree").getSelectedNode();
+
+                    var propertyArr = data.records[0].data.id.split('/');
+                    if (selNode.parentNode.data.type == "RelationshipNode") {
+                        key = propertyArr[propertyArr.length - 3] + '.' + propertyArr[propertyArr.length - 2] + '.' + propertyArr[propertyArr.length - 1];
+                        object = propertyArr[propertyArr.length - 3] + '.' + propertyArr[propertyArr.length - 2];
+                    } else {
+                        key = propertyArr[propertyArr.length - 2] + '.' + propertyArr[propertyArr.length - 1];
+                        object = getLastXString(data.records[0].data.id, 2);
+                    }
                     if (me.getForm().findField('identifier').getValue() != 'Drop property node(s) here.') {
 
                         var existingIdentifier = me.getForm().findField('identifier').getValue();
                         var objectName = me.getForm().findField('objectName').getValue();
-
+                        var tempObjName = "";
                         if (existingIdentifier != '') {
-                            var tempObjName = existingIdentifier.split('.')[0];
+                            if (selNode.parentNode.data.type == "RelationshipNode") {
+                                tempObjName = existingIdentifier.split('.')[0] +'.'+ existingIdentifier.split('.')[1];
+                            } else {
+                                tempObjName = existingIdentifier.split('.')[0];
+                            }
+
                             if (object != tempObjName) {
                                 //var message = 'Properties must root from the same data object as graph!';
                                 //showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
@@ -262,7 +278,7 @@ Ext.define('AM.view.mapping.ClassMapForm', {
         var classDropTarget = new Ext.dd.DropTarget(ccont.getEl(), {
             scope: me,
             //ddGroup: 'refdataGroup',
-			ddGroup:'propertyGroup',
+            ddGroup: 'propertyGroup',
             copy: false,
             overClass: 'over',
             notifyEnter: function (dd, e, data) {
@@ -305,10 +321,7 @@ Ext.define('AM.view.mapping.ClassMapForm', {
         var win = me.up('window');
         var form = me.getForm();
         var message;
-        if (form.findField('identifier').getValue() == 'Drop property node(s) here.' ||
-		form.findField('className').getValue() == 'Drop a class node here.') {
-            //message = 'Required fields can not be blank!';
-            //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+        if ((form.findField('identifier').getValue().trim() == 'Drop property node(s) here.' || form.findField('identifier').getValue().trim() == '') || (form.findField('className').getValue().trim() == 'Drop a class node here.' || form.findField('className').getValue().trim() == '')) {
             Ext.widget('messagepanel', { title: 'Warning', msg: 'Required fields can not be blank!' });
             return;
         }
@@ -322,11 +335,11 @@ Ext.define('AM.view.mapping.ClassMapForm', {
                 },
                 failure: function (result, request) {
                     var resp = Ext.decode(request.response.responseText);
-					var userMsg = resp['message'];
-					var detailMsg = resp['stackTraceDescription'];
-					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+                    var userMsg = resp['message'];
+                    var detailMsg = resp['stackTraceDescription'];
+                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                 }
             });
         } else {
@@ -342,6 +355,7 @@ Ext.define('AM.view.mapping.ClassMapForm', {
 
         var me = this;
         var win = me.up('window');
+        me.getForm().reset();
         me.getForm().findField('objectName').setValue('');
         me.getForm().findField('identifier').setValue('Drop property node(s) here.');
         me.down('#cmpcontainer').update('Drop property node(s) here.');
@@ -358,32 +372,32 @@ Ext.define('AM.view.mapping.ClassMapForm', {
         var newEdit = 'NEW';
         var delimeter = '_';
         /*if (record != null && record.classMap != null) {
-            identifier = record.classMap.identifiers[0];
-            if (record.classMap.identifiers.length > 1) {
-                for (var i = 1; i < record.classMap.identifiers.length; i++) {
-                    identifier = identifier + ',' + record.classMap.identifiers[i];
-                }
-            }
-            classlabel = record.classMap.name;
-            classId = record.classMap.id;
-            classIndex = record.classMap.index;
-            newEdit = 'EDIT';
-            if (record.classMap.identifierDelimiter != null)
-                delimeter = record.classMap.identifierDelimiter;
+        identifier = record.classMap.identifiers[0];
+        if (record.classMap.identifiers.length > 1) {
+        for (var i = 1; i < record.classMap.identifiers.length; i++) {
+        identifier = identifier + ',' + record.classMap.identifiers[i];
+        }
+        }
+        classlabel = record.classMap.name;
+        classId = record.classMap.id;
+        classIndex = record.classMap.index;
+        newEdit = 'EDIT';
+        if (record.classMap.identifierDelimiter != null)
+        delimeter = record.classMap.identifierDelimiter;
         }*/
         if (record != null) {
             identifier = record['identifier'];
-			/*var identifierArr = identifier.split(',');
+            /*var identifierArr = identifier.split(',');
             if (identifierArr.length > 1) {
-                for (var i = 1; i < identifierArr.length; i++) {
-                    identifier = identifier + ',' + identifierArr[i].split('.')[1];
-                }
+            for (var i = 1; i < identifierArr.length; i++) {
+            identifier = identifier + ',' + identifierArr[i].split('.')[1];
+            }
             }*/
             classlabel = record['class name'];
             classId = record['class id'];
             //classIndex = record.classMap.index;
             newEdit = 'EDIT';
-            if (record['identifier delimiter']!= null)
+            if (record['identifier delimiter'] != null)
                 delimeter = record['identifier delimiter'];
         }
         pcon.update(identifier);
@@ -394,7 +408,7 @@ Ext.define('AM.view.mapping.ClassMapForm', {
         me.getForm().findField('classId').setValue(classId);
         me.getForm().findField('classIndex').setValue(classIndex);
         me.getForm().findField('delimeter').setValue(delimeter);
-        
+
 
 
         //if(record!=null)
