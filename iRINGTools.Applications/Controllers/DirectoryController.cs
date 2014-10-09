@@ -50,6 +50,66 @@ namespace org.iringtools.web.controllers
 
                 switch (form["type"])
                 {
+
+                    case "RootNode":
+                        {
+
+                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+                            JsonTreeNode node = new JsonTreeNode
+                            {
+                                nodeType = "async",
+                                type = "GroupsNode",
+                                //iconCls = "folder",
+                                id = "groupsnode",
+                                text = "Groups",
+                                expanded = false,
+                                leaf = false,
+                                children = null
+                            };
+                            nodes.Add(node);
+                            return Json(nodes, JsonRequestBehavior.AllowGet);
+                        }
+                    case "GroupsNode":
+                        {
+
+                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+                            JsonTreeNode node = new JsonTreeNode
+                            {
+                                nodeType = "async",
+                                type = "GroupNode",
+                                //iconCls = "scopes",
+                                id = "groupnode",
+                                text = "Group1",
+                                expanded = false,
+                                leaf = false,
+                                children = null
+                            };
+                            nodes.Add(node);
+                            return Json(nodes, JsonRequestBehavior.AllowGet);
+                        }
+                    case "GroupNode":
+                        {
+
+                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+                            JsonTreeNode node = new JsonTreeNode
+                            {
+                                nodeType = "async",
+                                type = "ScopesNode",
+                                iconCls = "scopes",
+                                id = "scopenode",
+                                text = "Scopes",
+                                expanded = false,
+                                leaf = false,
+                                children = null
+                            };
+                            nodes.Add(node);
+                            return Json(nodes, JsonRequestBehavior.AllowGet);
+                        }
+
+
                     case "ScopesNode":
                         {
                             System.Collections.IEnumerator ie = Session.GetEnumerator();
