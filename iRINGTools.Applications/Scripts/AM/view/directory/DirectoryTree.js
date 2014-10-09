@@ -22,7 +22,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
     bodyStyle: 'background:#fff;padding:4px',
     border: false,
     store: 'DirectoryTreeStore',
-
+    rootVisible: false,
     initComponent: function () {
         var me = this;
         Ext.applyIf(me, {
@@ -86,7 +86,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
     onReload: function (options) {
         var me = this;
         var state = me.getState();
-        me.on('beforeload', function (store, action) {
+          me.on('beforeload', function (store, action) {
             me.getStore().getProxy().extraParams.type = 'ScopesNode';
         });
 		var storeProxy = me.store.getProxy();

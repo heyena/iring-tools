@@ -14,47 +14,44 @@
  */
 
 Ext.define('AM.store.DirectoryTreeStore', {
-  extend: 'Ext.data.TreeStore',
+    extend: 'Ext.data.TreeStore',
 
-  requires: [
+    requires: [
     'AM.model.DirectoryModel'
   ],
 
-  constructor: function(cfg) {
-    var me = this;
-    cfg = cfg || {};
-    me.callParent([Ext.apply({
-      filterOnLoad: false,
-      model: 'AM.model.DirectoryModel',
-      storeId: 'directorytreestore',
-      root: {
-        expanded: true,
-        type: 'ScopesNode',
-        iconCls: 'scopes',
-        text: 'Scopes',
-        security: ''
-      },
-      proxy: {
-        type: 'ajax',
-        actionMethods: {
-          read: 'POST'
-        },
-        extraParams: {
-          id: null,
-          type: 'ScopesNode',
-          contextName: null,
-          endpoint: null,
-          baseUrl: null,
-          related: null,
-          security: null,
-          refresh: false
-        },
-        timeout: 600000,
-        url: 'directory/getnode',
-        reader: {
-          type: 'json'
-        }
-      }
-    }, cfg)]);
-  }
+    constructor: function (cfg) {
+        var me = this;
+        cfg = cfg || {};
+        me.callParent([Ext.apply({
+            filterOnLoad: false,
+            model: 'AM.model.DirectoryModel',
+            storeId: 'directorytreestore',
+            root: {
+                expanded: true
+            },
+            proxy: {
+                type: 'ajax',
+                actionMethods: {
+                    read: 'POST'
+                },
+                extraParams: {
+                    id: null,
+                    type: 'RootNode',
+                    contextName: null,
+                    endpoint: null,
+                    baseUrl: null,
+                    related: null,
+                    security: null,
+                    refresh: false
+                },
+                timeout: 600000,
+                url: 'directory/getnode',
+                reader: {
+                    type: 'json'
+                }
+            }
+        }, cfg)]);
+    }
 });
+
