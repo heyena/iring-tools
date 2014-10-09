@@ -920,8 +920,9 @@ namespace org.iringtools.adapter.projection
                 {
                     value = Utility.ToXsdDate(value);
                 }
-                else if (propertyRole.dataType == "xsd:string" &&
-                  propertyRole.dataLength > 0 && value.Length > propertyRole.dataLength && propertyRole.dbDataType != "Decimal")
+                else if (propertyRole.dataType == "xsd:string" && propertyRole.dataLength > 0 && 
+                    value.Length > propertyRole.dataLength && propertyRole.dbDataType != "Decimal" && 
+                    !propertyRole.dbDataType.Contains("Int"))
                 {
                     value = value.Substring(0, propertyRole.dataLength);
 
@@ -958,7 +959,7 @@ namespace org.iringtools.adapter.projection
                     }
                     value = strSmallestIntegerPart + "." + strSmallestFractionalPart;
                 }
-                else if (propertyRole.dbDataType == "Int32" && value.Length > 0)
+                else if (propertyRole.dbDataType.Contains("Int") && value.Length > 0)
                 {
                     string[] strLength = value.Split('.');
                     value = strLength[0];
