@@ -313,6 +313,24 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets a page data transfer indices by graphid.")]
+    [WebGet(UriTemplate = "/{userName}/{graphId}/{siteId}/dtiByGraphId?start={start}&limit={limit}")]
+    public void GetPagedDataTransferIndicesByGraphID(string userName, string graphId, string siteId, int start, int limit)
+    {
+        try
+        {
+            DataTransferIndices dtis = _dtoProvider.GetPagedDataTransferIndicesByGraphID(userName, graphId, siteId, null, start, limit);
+
+            HttpContext.Current.Response.ContentType = "application/xml";
+            HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+        }
+        catch (Exception ex)
+        {
+            ExceptionHander(ex);
+        }
+    }
+
+
     [Description("Gets a page data transfer indices with filter.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dti?start={start}&limit={limit}")]
     public void GetPagedDataTransferIndicesWithFilter(string scope, string app, string graph, DataFilter filter, int start, int limit)

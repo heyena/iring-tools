@@ -1298,6 +1298,85 @@ namespace org.iringtools.adapter
             }
         }
 
+        public DataTransferIndices GetPagedDataTransferIndicesByGraphID(string userName, string graphId, string siteId, DataFilter filter, int start, int limit)
+        {
+            DataTransferIndices dataTransferIndices = new DataTransferIndices();
+
+            try
+            {
+
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
+                System.Data.DataRow dr = DBManager.Instance.ExecuteStoredProcedure(_connSecurityDb, "spgNames", nvl).Rows[0];
+
+                string graphName = string.Empty,
+                     appId = string.Empty,
+                   scopeName = string.Empty,
+                  appName = string.Empty;
+                    
+                
+
+                graphName = Convert.ToString(dr["GraphName"]);
+                appId = Convert.ToString(dr["AppId"]);
+
+                scopeName = Convert.ToString(dr["ScopeName"]);
+                appName = Convert.ToString(dr["AppName"]);
+
+                InitializeScope(scopeName, appName);
+                InitializeDataLayer();
+
+                nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
+
+                byte[] xmlbyte = DBManager.Instance.ExecuteBytesQuery(_connSecurityDb, "spgGraphBinary", nvl);
+                string bytesToXml = System.Text.Encoding.Default.GetString(xmlbyte);
+                
+                //Reinitializing the values from database
+                _mapping = utility.Utility.Deserialize<mapping.Mapping>(bytesToXml, true); ;
+                _dictionary = dictionaryProvider.GetDataDictionary(appId);
+                _graphMap = _mapping.FindGraphMap(graphName);
+
+                if (_graphMap == null)
+                {
+                    throw new Exception("Graph [" + graphName + "] not found.");
+                }
+                
+
+                DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+                dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
+
+                DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+
+                if (filter != null)
+                {
+                    dtoProjectionEngine.ProjectDataFilter(dataObject, ref filter, _graphMap);
+                    filter.AppendFilter(GetPresetFilters(dtoProjectionEngine));
+                }
+                else
+                {
+                    filter = GetPresetFilters(dtoProjectionEngine);
+                }
+
+                List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, filter, start, limit);
+
+                if (dataObjects != null && dataObjects.Count > 0)
+                {
+                    dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, string.Empty);
+                    dataTransferIndices.TotalCount = _dataLayerGateway.GetCount(dataObject, filter);
+                }
+
+                return dataTransferIndices;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting data transfer indices: " + ex);
+                throw ex;
+            }
+        }
+
+
         // get single data transfer object (but wrap it in a list!)
         public DataTransferObjects GetDataTransferObject(string scope, string app, string graph, string id)
         {

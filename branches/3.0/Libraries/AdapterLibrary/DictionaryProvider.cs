@@ -50,6 +50,29 @@ namespace org.iringtools.adapter
             return databaseDictionary;
         }
 
+        public DataDictionary GetDataDictionary(string applicatyionId)
+        {
+            DataDictionary dataDictionary = new DataDictionary();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ApplicationID", Value = applicatyionId });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDataDictionary", nvl);
+                //Note: As different namespaces are specified for below classes, hence this repleace statement is required
+                xmlString = xmlString.Replace("<dataDictionary ", "<dataDictionary xmlns=\"http://www.iringtools.org/library\"  ")
+                    .Replace("<expressions>", "<expressions xmlns=\"http://www.iringtools.org/data/filter\">")
+                    .Replace("<orderExpressions>", "<orderExpressions xmlns=\"http://www.iringtools.org/data/filter\">")
+                    .Replace("<values>", "<values xmlns=\"http://www.iringtools.org/data/filter\">");
+                dataDictionary = utility.Utility.Deserialize<DataDictionary>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  DataDictionary: " + ex);
+            }
+            return dataDictionary;
+        }
+
 
         public void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
         {
