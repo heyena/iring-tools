@@ -759,13 +759,13 @@ namespace org.iringtools.UserSecurity
             return permissions;
         }
 
-        public Groups GetGroupsUser(string userName)
+        public Groups GetGroupsUser(string userName, int siteId)
         {
             List<Group> lstGroup = new List<Group>();
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstGroup = dc.ExecuteQuery<Group>("spgGroupUser @UserName = {0}, @SiteId = {1}", userName, _siteID).ToList();
+                lstGroup = dc.ExecuteQuery<Group>("spgGroupUser @UserName = {0}, @SiteId = {1}", userName, siteId).ToList();
             }
 
             Groups groups = new Groups();
