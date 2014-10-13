@@ -1685,6 +1685,11 @@ namespace org.iringtools.adapter
                     return "float";
 
                 case DataType.Decimal:
+                    if (prop.precision == 0 && prop.scale == 0)
+                    {
+                        prop.precision = 38;
+                        prop.scale = 19;
+                    }
                     return string.Format("decimal({0},{1})", prop.precision, prop.scale);
 
                 case DataType.Date:
@@ -1697,6 +1702,10 @@ namespace org.iringtools.adapter
                     return "timestamp";
 
                 case DataType.String:
+                    if (prop.dataLength == 0)
+                    {
+                        return "nvarchar(MAX)";
+                    }
                     return string.Format("nvarchar({0})", prop.dataLength);
 
                 default:
