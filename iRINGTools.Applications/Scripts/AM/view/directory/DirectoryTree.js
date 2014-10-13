@@ -22,7 +22,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
     bodyStyle: 'background:#fff;padding:4px',
     border: false,
     store: 'DirectoryTreeStore',
-    rootVisible: false,
+    //rootVisible: false,
     initComponent: function () {
         var me = this;
         Ext.applyIf(me, {
