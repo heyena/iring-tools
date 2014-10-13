@@ -938,24 +938,29 @@ namespace org.iringtools.adapter.projection
                     string strSmallestIntegerPart = "";
                     string strSmallestFractionalPart = "";
 
-                    //trim integer part if it contains more digit than defined in cross manifest.
-                    if (strLength[0].Length > nSmallestIntegerLength)
+                    if (strLength.Length >= 1)
                     {
-                        strSmallestIntegerPart = strLength[0].Substring((strLength[0].Length - nSmallestIntegerLength), nSmallestIntegerLength);
+                        //trim integer part if it contains more digit than defined in cross manifest.
+                        if (strLength[0].Length > nSmallestIntegerLength)
+                        {
+                            strSmallestIntegerPart = strLength[0].Substring((strLength[0].Length - nSmallestIntegerLength), nSmallestIntegerLength);
+                        }
+                        else
+                        {
+                            strSmallestIntegerPart = strLength[0].Trim();
+                        }
                     }
-                    else
+                    if (strLength.Length >= 2)
                     {
-                        strSmallestIntegerPart = strLength[0].Trim();
-                    }
-
-                    //trim fractional part if it contains more digit than defined in cross manifest.
-                    if (strLength[1].Length > propertyRole.scale)
-                    {
-                        strSmallestFractionalPart = strLength[1].Substring(0, propertyRole.scale);
-                    }
-                    else
-                    {
-                        strSmallestFractionalPart = strLength[1].Trim();
+                        //trim fractional part if it contains more digit than defined in cross manifest.
+                        if (strLength[1].Length > propertyRole.scale)
+                        {
+                            strSmallestFractionalPart = strLength[1].Substring(0, propertyRole.scale);
+                        }
+                        else
+                        {
+                            strSmallestFractionalPart = strLength[1].Trim();
+                        }
                     }
                     value = strSmallestIntegerPart + "." + strSmallestFractionalPart;
                 }
