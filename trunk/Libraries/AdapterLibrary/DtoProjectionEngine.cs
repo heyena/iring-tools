@@ -959,7 +959,7 @@ namespace org.iringtools.adapter.projection
                     }
                     value = strSmallestIntegerPart + "." + strSmallestFractionalPart;
                 }
-                else if (propertyRole.dbDataType.Contains("Int") && value.Length > 0)
+                else if (propertyRole.dbDataType != null && propertyRole.dbDataType.Contains("Int") && value.Length > 0)
                 {
                     string[] strLength = value.Split('.');
                     value = strLength[0];
