@@ -279,10 +279,10 @@ namespace org.iringtools.web.controllers
                                     {
                                         {"columnName", dictProperty.columnName},
                                         {"propertyName", dictProperty.propertyName},
-                                        {"dataType", dictProperty.dataType.ToString()},
+                                        {"dataType", dictProperty.dataType},
                                         {"dataLength", dictProperty.dataLength},
                                         {"isNullable", dictProperty.isNullable},
-                                        {"keyType", dictProperty.keyType.ToString()},
+                                        {"keyType", dictProperty.keyType},
                                         {"numberOfDecimals", dictProperty.numberOfDecimals},
                                         {"isReadOnly", dictProperty.isReadOnly},
                                         {"showOnIndex", dictProperty.showOnIndex},
