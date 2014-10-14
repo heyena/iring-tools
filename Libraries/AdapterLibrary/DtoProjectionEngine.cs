@@ -906,7 +906,7 @@ namespace org.iringtools.adapter.projection
             }
         }
 
-        //Trims given value based on datalegth for string and precision and scale for numbers.
+        //Trims  value based on datalegth for string and precision and scale for numbers.
         private string ParsePropertyValue(RoleMap propertyRole, string propertyValue)
         {
             string value = propertyValue.Trim();
@@ -921,8 +921,8 @@ namespace org.iringtools.adapter.projection
                 {
                     value = Utility.ToXsdDate(value);
                 }
-                else if (propertyRole.dataType == "xsd:string" && propertyRole.dataLength > 0 && 
-                    value.Length > propertyRole.dataLength && propertyRole.dbDataType != "Decimal" && 
+                else if (propertyRole.dataType == "xsd:string" && propertyRole.dataLength > 0 &&
+                    value.Length > propertyRole.dataLength && propertyRole.dbDataType != "Decimal" &&
                     !propertyRole.dbDataType.Contains("Int"))
                 {
                     value = value.Substring(0, propertyRole.dataLength);
@@ -937,9 +937,8 @@ namespace org.iringtools.adapter.projection
                     int nSmallestIntegerLength = propertyRole.precision - propertyRole.scale;
                     string[] strLength = value.Split('.');
                     string strSmallestIntegerPart = "";
-                    string strSmallestFractionalPart = "";
 
-                    if (strLength.Length >= 1) 
+                    if (strLength.Length >= 1 && propertyRole.precision > 0)
                     {
                         //trim integer part if it contains more digit than defined in cross manifest.
                         if (strLength[0].Length > nSmallestIntegerLength)
@@ -955,27 +954,18 @@ namespace org.iringtools.adapter.projection
                         if (strLength.Length == 2)
                         {
                             //trim fractional part if it contains more digit than defined in cross manifest.
-                            if (strLength[1] != null && strLength[1].Length > propertyRole.scale)
-                            {
-                                strSmallestFractionalPart = strLength[1].Substring(0, propertyRole.scale);
-                            }
-                            else
-                            {
-                                strSmallestFractionalPart = strLength[1].Trim();
-                            }
+                            decimal fractionalNumber = 0;
+                            value = strSmallestIntegerPart + "." + strLength[1];
+                            Decimal.TryParse(value, out fractionalNumber);
+                            fractionalNumber = Math.Round(fractionalNumber, propertyRole.scale);
+                            value = Convert.ToString(fractionalNumber);
                         }
-                        //append "." only if fractionalpart exists.
-                        if (strSmallestFractionalPart != "")
-                        {
-                            value = strSmallestIntegerPart + "." + strSmallestFractionalPart;
-                        }
-                        else 
+                        else
                         {
                             value = strSmallestIntegerPart;
                         }
-
                     }
-                    else 
+                    else
                     {
                         value = String.Empty;
                     }
