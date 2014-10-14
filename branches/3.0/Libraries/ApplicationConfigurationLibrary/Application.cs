@@ -317,13 +317,13 @@ namespace org.iringtools.applicationConfig
     }
 
 
-    [CollectionDataContract(Name = "dataFilters", Namespace = "http://www.iringtools.org/library", ItemName = "dataFilter")]
+    [CollectionDataContract(Name = "dataFilters", Namespace = "http://www.iringtools.org/data/filter", ItemName = "dataFilter")]
     public class DataFilters : List<DataFilter>
     {
 
     }
 
-    [DataContract(Name = "dataFilter", Namespace = "http://www.iringtools.org/library")]
+    [DataContract(Name = "dataFilter", Namespace = "http://www.iringtools.org/data/filter")]
     public class DataFilter
     {
         DataFilter()
@@ -352,54 +352,57 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "orderExpressions", Order = 6, EmitDefaultValue = false)]
         public OrderExpressions orderExpressions { get; set; }
 
+        [DataMember(Name = "isAdmin", Order = 7, EmitDefaultValue = false)]
+        public bool isAdmin { get; set; }	
+
         
     }
 
-    [CollectionDataContract(Name = "expressions", Namespace = "http://www.iringtools.org/library", ItemName = "expression")]
+    [CollectionDataContract(Name = "expressions", Namespace = "http://www.iringtools.org/data/filter", ItemName = "expression")]
     public class Expressions : List<Expression>
     {
 
     }
 
-    [DataContract(Name = "expression", Namespace = "http://www.iringtools.org/library")]
+    [DataContract(Name = "expression", Namespace = "http://www.iringtools.org/data/filter")]
     public class Expression
     {
         [DataMember(Name = "dfOrder", Order = 0, EmitDefaultValue = false)]
         public int DFOrder { get; set; }
 
-        [DataMember(Name = "openCount", Order = 1, EmitDefaultValue = false)]
-        public int OpenCount { get; set; }
+        [DataMember(Name = "openGroupCount", Order = 1, EmitDefaultValue = false)]
+        public int OpenGroupCount { get; set; }
 
-        [DataMember(Name = "logicalOperator", Order = 2, EmitDefaultValue = false)]
-        public string LogicalOperator { get; set; }
-
-        [DataMember(Name = "propertyName", Order = 4, EmitDefaultValue = false)]
+        [DataMember(Name = "propertyName", Order = 2, IsRequired = true)]
         public string PropertyName { get; set; }
 
-        [DataMember(Name = "relationalOperator", Order = 5, EmitDefaultValue = false)]
+        [DataMember(Name = "relationalOperator", Order = 3, IsRequired = true)]
         public string RelationalOperator { get; set; }
 
-        [DataMember(Name = "values", Order = 6, EmitDefaultValue = false)]
-        public values values { get; set; }
+        [DataMember(Name = "values", Order = 4, IsRequired = true)]
+        public Values Values { get; set; }
 
-        [DataMember(Name = "closeCount", Order = 7, EmitDefaultValue = false)]
-        public int CloseCount { get; set; }
+        [DataMember(Name = "logicalOperator", Order = 5, EmitDefaultValue = false)]
+        public string LogicalOperator { get; set; }
+
+        [DataMember(Name = "closeGroupCount", Order = 6, EmitDefaultValue = false)]
+        public int CloseGroupCount { get; set; }
+
+        [DataMember(Name = "isCaseSensitive", Order = 7, EmitDefaultValue = false)]
+        public bool IsCaseSensitive { get; set; }
 
     }
 
-    [CollectionDataContract(Name = "values", Namespace = "http://www.iringtools.org/library", ItemName = "value")]
-    public class values : List<string>
-    {
+    [CollectionDataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "values", ItemName = "value")]
+    public class Values : List<string> { }
 
-    }
-
-    [CollectionDataContract(Name = "orderExpressions", Namespace = "http://www.iringtools.org/library", ItemName = "orderExpression")]
+    [CollectionDataContract(Name = "orderExpressions", Namespace = "http://www.iringtools.org/data/filter", ItemName = "orderExpression")]
     public class OrderExpressions : List<OrderExpression>
     {
 
     }
 
-    [DataContract(Name = "orderExpression", Namespace = "http://www.iringtools.org/library")]
+    [DataContract(Name = "orderExpression", Namespace = "http://www.iringtools.org/data/filter")]
     public class OrderExpression
     {
         [DataMember(Name = "dfOrder", Order = 0, EmitDefaultValue = false)]
@@ -408,8 +411,8 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "propertyName", Order = 1, EmitDefaultValue = false)]
         public string PropertyName { get; set; }
 
-        [DataMember(Name = "sort", Order = 2, EmitDefaultValue = false)]
-        public string Sort { get; set; }
+        [DataMember(Name = "sortOrder", Order = 2, EmitDefaultValue = false)]
+        public string SortOrder { get; set; }
 
     }
 
