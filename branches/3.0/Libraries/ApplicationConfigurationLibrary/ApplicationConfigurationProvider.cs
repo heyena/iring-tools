@@ -914,7 +914,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response DeleteDataFilter(string dataFilterId)
+        public Response DeleteDataFilter(string resourceId)
         {
             Response response = new Response();
 
@@ -924,7 +924,7 @@ namespace org.iringtools.applicationConfig
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     NameValueList nvl = new NameValueList();
-                    nvl.Add(new ListItem() { Name = "@DataFilterId", Value = dataFilterId });
+                    nvl.Add(new ListItem() { Name = "@ResourceId", Value = resourceId });
                     DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spdDataFilter", nvl);
                 }
 

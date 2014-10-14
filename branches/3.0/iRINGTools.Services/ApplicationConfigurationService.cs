@@ -692,8 +692,8 @@ namespace org.iringtools.services
         }
 
         [Description("Update DataFilter to the data base.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteDataFilter?dataFilterId={dataFilterId}&format={format}")]
-        public void DeleteDataFilter(string dataFilterId, string format)
+        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteDataFilter?resourceId={resourceId}&format={format}")]
+        public void DeleteDataFilter(string resourceId, string format)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -709,7 +709,7 @@ namespace org.iringtools.services
                 else
                 {
                     //XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.DataFilter>(stream, format);
-                    response = _applicationConfigurationProvider.DeleteDataFilter(dataFilterId);
+                    response = _applicationConfigurationProvider.DeleteDataFilter(resourceId);
                 }
             }
             catch (Exception ex)
