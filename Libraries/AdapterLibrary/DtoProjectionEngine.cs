@@ -906,6 +906,7 @@ namespace org.iringtools.adapter.projection
             }
         }
 
+        //Trims given value based on datalegth for string and precision and scale for numbers.
         private string ParsePropertyValue(RoleMap propertyRole, string propertyValue)
         {
             string value = propertyValue.Trim();
@@ -938,7 +939,7 @@ namespace org.iringtools.adapter.projection
                     string strSmallestIntegerPart = "";
                     string strSmallestFractionalPart = "";
 
-                    if (strLength.Length >= 1)
+                    if (strLength.Length >= 1) 
                     {
                         //trim integer part if it contains more digit than defined in cross manifest.
                         if (strLength[0].Length > nSmallestIntegerLength)
@@ -949,20 +950,35 @@ namespace org.iringtools.adapter.projection
                         {
                             strSmallestIntegerPart = strLength[0].Trim();
                         }
+
+                        //trim fractional part only if fractional value exists
+                        if (strLength.Length == 2)
+                        {
+                            //trim fractional part if it contains more digit than defined in cross manifest.
+                            if (strLength[1] != null && strLength[1].Length > propertyRole.scale)
+                            {
+                                strSmallestFractionalPart = strLength[1].Substring(0, propertyRole.scale);
+                            }
+                            else
+                            {
+                                strSmallestFractionalPart = strLength[1].Trim();
+                            }
+                        }
+                        //append "." only if fractionalpart exists.
+                        if (strSmallestFractionalPart != "")
+                        {
+                            value = strSmallestIntegerPart + "." + strSmallestFractionalPart;
+                        }
+                        else 
+                        {
+                            value = strSmallestIntegerPart;
+                        }
+
                     }
-                    if (strLength.Length >= 2)
+                    else 
                     {
-                        //trim fractional part if it contains more digit than defined in cross manifest.
-                        if (strLength[1].Length > propertyRole.scale)
-                        {
-                            strSmallestFractionalPart = strLength[1].Substring(0, propertyRole.scale);
-                        }
-                        else
-                        {
-                            strSmallestFractionalPart = strLength[1].Trim();
-                        }
+                        value = String.Empty;
                     }
-                    value = strSmallestIntegerPart + "." + strSmallestFractionalPart;
                 }
                 else if (propertyRole.dbDataType != null && propertyRole.dbDataType.Contains("Int") && value.Length > 0)
                 {
