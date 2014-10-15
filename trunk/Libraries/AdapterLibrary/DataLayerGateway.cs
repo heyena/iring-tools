@@ -1328,6 +1328,13 @@ namespace org.iringtools.adapter
                                             value = null;
                                         }
                                     }
+                                    else if (prop.dataType == DataType.Decimal)
+                                    {
+                                        decimal decValue=0;
+                                        Decimal.TryParse(value.ToString(), out decValue);
+                                        value = decValue;
+                                    }
+
                                 }
 
                                 idataObject.SetPropertyValue(key, value);
