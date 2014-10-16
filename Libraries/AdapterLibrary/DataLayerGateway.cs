@@ -1714,7 +1714,7 @@ namespace org.iringtools.adapter
                     return "timestamp";
 
                 case DataType.String:
-                    if (prop.dataLength == 0)
+                    if (prop.dataLength == 0 || prop.dataLength>4000)
                     {
                         return "nvarchar(MAX)";
                     }
