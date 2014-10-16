@@ -593,7 +593,7 @@ Ext.define('AM.controller.Directory', {
 
                 if (node.data.property["Data Mode"] == "Live") {
                     if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
-                        graphMenu.items.map['switchToCached'].setVisible(false);
+                        graphMenu.items.map['switchToCached'].setVisible(true);
                         graphMenu.items.map['switchToLive'].setVisible(false);
                         graphMenu.items.map['showCacheInfo'].setVisible(false);
                     } else if (node.parentNode.data.property["LightweightDataLayer"] == "Yes") {
@@ -603,6 +603,11 @@ Ext.define('AM.controller.Directory', {
                     }
                 } else if (node.data.property["Data Mode"] == "Cache") {
                     if (node.parentNode.data.property["LightweightDataLayer"] == "Yes") {
+                        graphMenu.items.map['switchToCached'].setVisible(false);
+                        graphMenu.items.map['switchToLive'].setVisible(true);
+                        graphMenu.items.map['showCacheInfo'].setVisible(true);
+                    }
+                    else if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
                         graphMenu.items.map['switchToCached'].setVisible(false);
                         graphMenu.items.map['switchToLive'].setVisible(true);
                         graphMenu.items.map['showCacheInfo'].setVisible(true);
