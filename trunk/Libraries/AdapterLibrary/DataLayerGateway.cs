@@ -1334,7 +1334,12 @@ namespace org.iringtools.adapter
                                         Decimal.TryParse(value.ToString(), out decValue);
                                         value = decValue;
                                     }
-
+                                    else if (prop.dataType.ToString().Contains("Int"))
+                                    {
+                                        int nValue = 0;
+                                        int.TryParse(value.ToString(), out nValue);
+                                        value = nValue;
+                                    }
                                 }
 
                                 idataObject.SetPropertyValue(key, value);
