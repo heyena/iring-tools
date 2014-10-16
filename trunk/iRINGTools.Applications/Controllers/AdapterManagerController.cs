@@ -199,7 +199,8 @@ namespace org.iringtools.web.controllers
 
                     if (application != null)
                     {
-                        dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
+                     //   dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
+                        dataObjectsNode.property.Add("Data Mode", mode.ToString());
                     }
                 }
                 nodes.Add(dataObjectsNode);
