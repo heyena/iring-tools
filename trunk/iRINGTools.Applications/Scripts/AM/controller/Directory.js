@@ -192,7 +192,7 @@ Ext.define('AM.controller.Directory', {
             win.destroy();
             tree.view.refresh();
             tree.expandPath(tree.getRootNode().getPath());
-            var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
+            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
             detailGrid.setSource({});
         }, me);
 
@@ -306,7 +306,7 @@ Ext.define('AM.controller.Directory', {
         win.on('save', function () {
             win.close();
             tree.view.refresh();
-            var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
+            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
             detailGrid.setSource({});
         }, me);
 
@@ -1525,6 +1525,7 @@ Ext.define('AM.controller.Directory', {
     ]
     },
 
+ 
     switchDataMode: function (mode) {
         var me = this;
         var tree = me.getDirTree();
@@ -1549,12 +1550,17 @@ Ext.define('AM.controller.Directory', {
                         parentNode.insertChild(nodeIndex, Ext.JSON.decode(response.responseText).nodes[0]);
                         //me.setLoading(false);
                         tree.view.refresh();
-                        //showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
+                        var data = Ext.JSON.decode(response.responseText).nodes[0].property;
+                        var detailGrid = tree.up('panel').down('propertypanel');
+                         //showDialog(500, 160, 'Result', responseObj.Messages.join('\n'), Ext.Msg.OK, null);
                         //Ext.widget('messagepanel', { title: 'Result', msg: responseObj.response.Messages.join('\n') });
+                        detailGrid.setSource(data);
                         Ext.example.msg('Notification', 'Data Mode switched successfully!');
+                 
+
                     }
                     content.getEl().unmask();
-                    //tree.onReload();
+                   
                 } else {
                     content.getEl().unmask();
                     var userMsg = responseObj.message;
@@ -1563,6 +1569,8 @@ Ext.define('AM.controller.Directory', {
                     Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                     Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                 }
+                //                var detailGrid = tree.up('panel').down('propertypanel');
+                //                detailGrid.view.refresh();
             },
             failure: function (response, request) {
                 var responseObj = Ext.decode(response.responseText);
