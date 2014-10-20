@@ -94,21 +94,25 @@ namespace iRINGAgentService
             SetServiceStatus(this.ServiceHandle, ref _serviceStatus);
 
             _eventLog1.WriteEntry("In OnStart");
-            if (!Initialize())
-            {
-                _eventLog1.WriteEntry("Error getting configuration data.");
-            }
-            else
-            {
-                // Update the service state to Running.
-                _serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
-                SetServiceStatus(this.ServiceHandle, ref _serviceStatus);
+            //if (!Initialize())
+            //{
+            //    _eventLog1.WriteEntry("Error getting configuration data.");
+            //}
+            //else
+            //{
+            // Update the service state to Running.
+            _serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
+            SetServiceStatus(this.ServiceHandle, ref _serviceStatus);
 
-                _timer.Enabled = true;
-                _timer.Interval = _timerInterval;
-                _timer.Elapsed += new System.Timers.ElapsedEventHandler(TimerElapsed);
+            NameValueCollection settings;
+            settings = ConfigurationManager.AppSettings;
+            _timerInterval = long.Parse(settings.Get("TimerInterval"));
 
-            }
+            _timer.Enabled = true;
+            _timer.Interval = _timerInterval;
+            _timer.Elapsed += new System.Timers.ElapsedEventHandler(TimerElapsed);
+
+            //}
         }
 
         protected void TimerElapsed(object source, System.Timers.ElapsedEventArgs eventArgs)
@@ -120,118 +124,124 @@ namespace iRINGAgentService
             //Perform caching and Exchange Tasks
             var parentTask = new Task(() =>
             {
-                //process cache list
-                int count = _cacheList.Count;
-                Task[] tasks = new Task[count];
-                
-                for (int i = 0; i < count; i++)
+                if (!Initialize())
                 {
-                    //check for valid time and state
-                    string taskStatus = _cacheList[i].Status;
-                    string startDate = _cacheList[i].StartTime.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
-                    string currentDate = DateTime.Now.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
-                    DateTime startTime = DateTime.Parse(startDate, System.Globalization.CultureInfo.CurrentCulture);
-                    DateTime currentTime = DateTime.Parse(currentDate, System.Globalization.CultureInfo.CurrentCulture);
+                    _eventLog1.WriteEntry("Error getting configuration data.");
+                }
+                else
+                {
+                    //process cache list
+                    int count = _cacheList.Count;
+                    Task[] tasks = new Task[count];
 
-                    //check for occurance validity
-                    isValid = CheckValidOccurance(i, "cache");
-
-                    if (isValid)
+                    for (int i = 0; i < count; i++)
                     {
-                        if ((taskStatus.Equals("Ready")) && (_cacheList[i].Active).ToString().Equals("1"))
+                        //check for valid time and state
+                        string taskStatus = _cacheList[i].Status;
+                        string startDate = _cacheList[i].StartTime.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
+                        string currentDate = DateTime.Now.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
+                        DateTime startTime = DateTime.Parse(startDate, System.Globalization.CultureInfo.CurrentCulture);
+                        DateTime currentTime = DateTime.Parse(currentDate, System.Globalization.CultureInfo.CurrentCulture);
+
+                        //check for occurance validity
+                        isValid = CheckValidOccurance(i, "cache");
+
+                        if (isValid)
                         {
-                            _eventLog1.WriteEntry("Starting cache process " + _cacheList[i].TaskName);
-                            tasks[i] = Task.Factory.StartNew(() => StartCacheProcess(i));
-
-                            if (_cacheList[i].RequestTimeout > 0)
-                                threadTimeout = _cacheList[i].RequestTimeout;
-
-                            _eventLog1.WriteEntry(_cacheList[i].TaskName + " thread Timeout " + threadTimeout);
-                            Thread.Sleep(threadTimeout);
-                            if (!(tasks[i].Exception == null) || tasks[i].IsFaulted)
+                            if ((taskStatus.Equals("Ready")) && (_cacheList[i].Active).ToString().Equals("1"))
                             {
-                                _eventLog1.WriteEntry("Error processing cache task " + _cacheList[i].TaskName + " : " + tasks[i].Status);
-                                throw new Exception("Error processing cache task " + _cacheList[i].TaskName + " : " + tasks[i].Status);
+                                _eventLog1.WriteEntry("Starting cache process " + _cacheList[i].TaskName);
+                                tasks[i] = Task.Factory.StartNew(() => StartCacheProcess(i));
+
+                                if (_cacheList[i].RequestTimeout > 0)
+                                    threadTimeout = _cacheList[i].RequestTimeout;
+
+                                _eventLog1.WriteEntry(_cacheList[i].TaskName + " thread Timeout " + threadTimeout);
+                                Thread.Sleep(threadTimeout);
+                                if (!(tasks[i].Exception == null) || tasks[i].IsFaulted)
+                                {
+                                    _eventLog1.WriteEntry("Error processing cache task " + _cacheList[i].TaskName + " : " + tasks[i].Status);
+                                    throw new Exception("Error processing cache task " + _cacheList[i].TaskName + " : " + tasks[i].Status);
+                                }
                             }
                         }
                     }
-                }
 
-                try
-                {
-                    for (int l = 0; l < count; l++)
+                    try
                     {
-                        if (!(tasks[l] == null))
+                        for (int l = 0; l < count; l++)
                         {
-                            tasks[l].Wait();
+                            if (!(tasks[l] == null))
+                            {
+                                tasks[l].Wait();
+                            }
+                        }
+                    }
+                    catch (AggregateException ex)
+                    {
+                        foreach (var exception in ex.Flatten().InnerExceptions)
+                        {
+                            _eventLog1.WriteEntry("Error processing cache task " + ex.Message);
+                        }
+                    }
+
+                    //process exchange list
+                    int exCount = _exchangeList.Count;
+                    Task[] exTasks = new Task[exCount];
+                    for (int j = 0; j < exCount; j++)
+                    {
+                        //check for valid time and state
+                        string taskStatus = _exchangeList[j].Status;
+                        string startDate = _exchangeList[j].StartTime.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
+                        string currentDate = DateTime.Now.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
+                        DateTime startTime = DateTime.Parse(startDate, System.Globalization.CultureInfo.CurrentCulture);
+                        DateTime currentTime = DateTime.Parse(currentDate, System.Globalization.CultureInfo.CurrentCulture);
+
+                        if (_exchangeList[j].RequestTimeout > 0)
+                            threadTimeout = _exchangeList[j].RequestTimeout;
+
+                        isValid = CheckValidOccurance(j, "exchange");
+
+                        if (isValid)
+                        {
+                            if (taskStatus.Equals("Ready") && (_exchangeList[j].Active).ToString().Equals("1"))
+                            {
+                                _eventLog1.WriteEntry("Starting exchange process " + _exchangeList[j].TaskName);
+                                exTasks[j] = Task.Factory.StartNew(() => StartExchangeProcess(j));
+
+                                if (_exchangeList[j].RequestTimeout > 0)
+                                    threadTimeout = _exchangeList[j].RequestTimeout;
+
+                                _eventLog1.WriteEntry(_cacheList[j].TaskName + " thread Timeout " + threadTimeout);
+                                Thread.Sleep(threadTimeout);
+
+                                if (!(tasks[j].Exception == null) || tasks[j].IsFaulted)
+                                {
+                                    _eventLog1.WriteEntry("Error processing exchange task " + _exchangeList[j].TaskName + " : " + tasks[j].Status);
+                                    throw new Exception("Error processing exchange task " + _exchangeList[j].TaskName + " : " + tasks[j].Status);
+                                }
+
+                            }
+                        }
+                    }
+                    try
+                    {
+                        for (int l = 0; l < count; l++)
+                        {
+                            if (!(tasks[l] == null))
+                            {
+                                tasks[l].Wait();
+                            }
+                        }
+                    }
+                    catch (AggregateException ex)
+                    {
+                        foreach (var exception in ex.Flatten().InnerExceptions)
+                        {
+                            _eventLog1.WriteEntry("Error processing exchange task " + ex.Message);
                         }
                     }
                 }
-                catch (AggregateException ex)
-                {
-                    foreach (var exception in ex.Flatten().InnerExceptions)
-                    {
-                        _eventLog1.WriteEntry("Error processing cache task " + ex.Message);
-                    }
-                }
-
-                //process exchange list
-                int exCount = _exchangeList.Count;
-                Task[] exTasks = new Task[exCount];
-                for (int j = 0; j < exCount; j++)
-                {
-                    //check for valid time and state
-                    string taskStatus = _exchangeList[j].Status;
-                    string startDate = _exchangeList[j].StartTime.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
-                    string currentDate = DateTime.Now.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
-                    DateTime startTime = DateTime.Parse(startDate, System.Globalization.CultureInfo.CurrentCulture);
-                    DateTime currentTime = DateTime.Parse(currentDate, System.Globalization.CultureInfo.CurrentCulture);
-
-                    if (_exchangeList[j].RequestTimeout > 0)
-                        threadTimeout = _exchangeList[j].RequestTimeout;
-
-                     isValid = CheckValidOccurance(j, "exchange");
-
-                     if (isValid)
-                     {
-                         if (taskStatus.Equals("Ready") && (_exchangeList[j].Active).ToString().Equals("1"))
-                         {
-                             _eventLog1.WriteEntry("Starting exchange process " + _exchangeList[j].TaskName);
-                             exTasks[j] = Task.Factory.StartNew(() => StartExchangeProcess(j));
-
-                             if (_exchangeList[j].RequestTimeout > 0)
-                                 threadTimeout = _exchangeList[j].RequestTimeout;
-
-                             _eventLog1.WriteEntry(_cacheList[j].TaskName + " thread Timeout " + threadTimeout);
-                             Thread.Sleep(threadTimeout);
-
-                             if (!(tasks[j].Exception == null) || tasks[j].IsFaulted)
-                             {
-                                 _eventLog1.WriteEntry("Error processing exchange task " + _exchangeList[j].TaskName + " : " + tasks[j].Status);
-                                 throw new Exception("Error processing exchange task " + _exchangeList[j].TaskName + " : " + tasks[j].Status);
-                             }
-
-                         }
-                     }
-                }
-                try
-                {
-                    for (int l = 0; l < count; l++)
-                    {
-                        if (!(tasks[l] == null))
-                        {
-                            tasks[l].Wait();
-                        }
-                    }
-                }
-                catch (AggregateException ex)
-                {
-                    foreach (var exception in ex.Flatten().InnerExceptions)
-                    {
-                        _eventLog1.WriteEntry("Error processing exchange task " + ex.Message);
-                    }
-                }
-
             });
             parentTask.Start();
             parentTask.Wait();
@@ -451,7 +461,7 @@ namespace iRINGAgentService
             }
         }
 
-        static bool Initialize()
+        private bool Initialize()
         {
             _logger.Debug("Initialize ...");
             NameValueCollection settings;
@@ -462,7 +472,7 @@ namespace iRINGAgentService
                 settings = ConfigurationManager.AppSettings;
                 _agentConnStr = settings.Get("iRINGAgentConnStr");
                 _agentConnStr = EncryptionUtility.Decrypt(_agentConnStr);
-                _timerInterval = long.Parse(settings.Get("TimerInterval"));
+                //_timerInterval = long.Parse(settings.Get("TimerInterval"));
 
 
                 string cacheSQL = "SELECT * FROM SCHEDULECACHE ";
@@ -500,7 +510,7 @@ namespace iRINGAgentService
                         }
                         catch (Exception ex)
                         {
-                            _logger.Error(string.Format("Error getting cache configuration data.", ex));
+                            _eventLog1.WriteEntry(string.Format("Error getting cache configuration data.", ex));
                             throw ex;
                         }
                     }
@@ -539,7 +549,7 @@ namespace iRINGAgentService
                         }
                         catch (Exception ex)
                         {
-                            _logger.Error(string.Format("Error getting exchange configuration data.", ex));
+                            _eventLog1.WriteEntry(string.Format("Error getting exchange configuration data.", ex));
                             throw ex;
                         }
                     }
@@ -548,7 +558,7 @@ namespace iRINGAgentService
             }
             catch (Exception ex)
             {
-                _logger.Error("Initialization failed: " + ex.Message, ex);
+                _eventLog1.WriteEntry(string.Format("Initialization failed: " + ex.Message, ex));
                 return false;
             }
             _logger.Debug("Successfully retrieved configuration data.");
