@@ -23,6 +23,7 @@ namespace org.iringtools.applicationConfig
         Context()
         {
             permissions = new Permissions();
+            groups = new Groups();
         }
 
         [DataMember(Name = "contextId", Order = 0)]
@@ -51,6 +52,9 @@ namespace org.iringtools.applicationConfig
 
         [DataMember(Name = "permissions", Order = 8, EmitDefaultValue = false)]
         public Permissions permissions { get; set; }
+
+        [DataMember(Name = "groups", Order = 9, EmitDefaultValue = false)]
+        public Groups groups { get; set; }
     }
 
 
