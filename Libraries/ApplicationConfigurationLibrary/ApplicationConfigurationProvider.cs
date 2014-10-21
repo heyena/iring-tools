@@ -68,33 +68,30 @@ namespace org.iringtools.applicationConfig
             return contexts;
         }
 
-        public Response InsertContext(XDocument xml)
+        public Response InsertContext(string userName,XDocument xml)
         {
             Response response = new Response();
 
             try
             {
-                Contexts contexts = Utility.DeserializeDataContract<Contexts>(xml.ToString());
+                Context context = Utility.DeserializeDataContract<Context>(xml.ToString());
+
+                string rawXml = context.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Context context in contexts)
-                    {
-                        int siteId = _siteID;
-                        if (context.SiteId != 0)
-                        {
-                            siteId = context.SiteId;
-                        }
                         NameValueList nvl = new NameValueList();
+
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
                         nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(context.SiteId) });
                         nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(context.FolderId) });
-
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                    
                         DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiContext", nvl);
-                    }
                 }
 
                 response.DateTimeStamp = DateTime.Now;
@@ -116,40 +113,28 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateContext(XDocument xml)
+        public Response UpdateContext(string userName,XDocument xml)
         {
             Response response = new Response();
 
             try
             {
-                Contexts contexts = Utility.DeserializeDataContract<Contexts>(xml.ToString());
+                Context context = Utility.DeserializeDataContract<Context>(xml.ToString());
+
+                string rawXml = context.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Context context in contexts)
-                    {
-                        if (string.IsNullOrEmpty(context.InternalName))
-                        {
-                            throw new Exception("Please provide the internal name of the context in" + 
-                                                 " the payload which you want to update.");
-                        }
-
-                        int siteId = _siteID;
-                        if (context.SiteId != 0)
-                        {
-                            siteId = context.SiteId;
-                        }
-
                         NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
-                        nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
-                        nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(context.FolderId) });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(context.SiteId) });
+                        nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(context.ContextId) });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
                         DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuContext", nvl);
-                    }
                 }
 
                 response.DateTimeStamp = DateTime.Now;
@@ -171,20 +156,15 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response DeleteContext(string internalName, int siteId)
+        public Response DeleteContext(string contextId)
         {
             Response response = new Response();
 
             try
             {
-                if (siteId == 0)
-                {
-                    siteId = _siteID;
-                }
-
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<Context>("spdContext @InternalName = {0}, @SiteId = {1}", internalName, siteId);
+                    dc.ExecuteQuery<Context>("spdContext @ContextId = {0}", contextId);
                 }
 
                 response.DateTimeStamp = DateTime.Now;
