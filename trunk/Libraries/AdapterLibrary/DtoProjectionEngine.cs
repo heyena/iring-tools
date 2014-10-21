@@ -954,11 +954,11 @@ namespace org.iringtools.adapter.projection
                         if (strLength.Length == 2)
                         {
                             //trim fractional part if it contains more digit than defined in cross manifest.
-                            decimal fractionalNumber = 0;
+                            decimal decDecimalValue = 0;
                             value = strSmallestIntegerPart + "." + strLength[1];
-                            Decimal.TryParse(value, out fractionalNumber);
-                            fractionalNumber = Math.Round(fractionalNumber, propertyRole.scale);
-                            value = Convert.ToString(fractionalNumber);
+                            Decimal.TryParse(value, out decDecimalValue);
+                            decDecimalValue = Math.Round(decDecimalValue, propertyRole.scale);
+                            value = Convert.ToString(decDecimalValue);
                         }
                         else
                         {
@@ -970,10 +970,12 @@ namespace org.iringtools.adapter.projection
                         value = String.Empty;
                     }
                 }
-                else if (propertyRole.dbDataType != null && propertyRole.dbDataType.Contains("Int") && value.Length > 0)
+                else if (propertyRole.dbDataType != null && propertyRole.dbDataType.Contains("Int") && value.Length > 0 && value.Contains("."))
                 {
-                    string[] strLength = value.Split('.');
-                    value = strLength[0];
+                    decimal decDecimalValue = 0;
+                    Decimal.TryParse(value, out decDecimalValue);
+                    decDecimalValue = Math.Round(decDecimalValue, 0); //Round to closest integer.
+                    value = Convert.ToString(decDecimalValue);
                 }
             }
             else  // resolve value list to uri
