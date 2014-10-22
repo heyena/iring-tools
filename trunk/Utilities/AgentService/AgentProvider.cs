@@ -84,9 +84,16 @@ namespace iRINGAgentService
                 Initialize();
                 string clientToken = GetClientToken();
 
-                 RefreshCache(project, app, false);
+                if (clientToken != null)
+                {
+                    _settings["AllowImpersonation"] = "True";
+                    _settings["ImpersonatedUser"] = _clientId;
+                    _settings["ClientToken"] = clientToken;
+                }
+
+                RefreshCache(project, app, false);
                
-                 _logger.Info("Caching task finished: ");
+                _logger.Info("Caching task finished: ");
               
             }
             catch (Exception e)
