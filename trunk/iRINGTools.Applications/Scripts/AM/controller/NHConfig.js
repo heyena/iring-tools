@@ -100,10 +100,12 @@ Ext.define('AM.controller.NHConfig', {
 
         var contentPanel = me.getContentPanel();
         var title = 'NHConfig.' + me.scope + '.' + me.app;
+        var scope = me.scope;
+        var app = me.app;
         var configPanel = contentPanel.down('mainconfigpanel[title=' + title + ']');
 
         if (!configPanel) {
-            var configPanel = Ext.widget('mainconfigpanel', { title: title });
+            var configPanel = Ext.widget('mainconfigpanel', { title: title, scope:scope, app:app });
             contentPanel.add(configPanel);
             contentPanel.setActiveTab(configPanel);
             me.reload(configPanel);
@@ -134,11 +136,11 @@ Ext.define('AM.controller.NHConfig', {
                 }
                 else {
                     //var resp = Ext.decode(request.response.responseText);
-					var userMsg = operation.request.scope.reader.jsonData.message;
-					var detailMsg = operation.request.scope.reader.jsonData.stackTraceDescription;
-					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+                    var userMsg = operation.request.scope.reader.jsonData.message;
+                    var detailMsg = operation.request.scope.reader.jsonData.stackTraceDescription;
+                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                 }
             }
         });
@@ -233,11 +235,11 @@ Ext.define('AM.controller.NHConfig', {
                 failure: function (form, action) {
                     configPanel.setLoading(false);
                     var resp = Ext.decode(action.response.responseText);
-					var userMsg = resp['message'];
-					var detailMsg = resp['stackTraceDescription'];
-					var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-					Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-					Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+                    var userMsg = resp['message'];
+                    var detailMsg = resp['stackTraceDescription'];
+                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                 }
             });
         }
@@ -355,8 +357,8 @@ Ext.define('AM.controller.NHConfig', {
         var treePanel = panel.up('mainconfigpanel').down('objectstreepanel');
 
         var values = panel.getForm().getValues();
-		
-		if (values.isNullable == "on") {
+
+        if (values.isNullable == "on") {
             values.isNullable = true;
         } else {
             values.isNullable = false;
@@ -446,6 +448,10 @@ Ext.define('AM.controller.NHConfig', {
         var treePanel = button.up('objectstreepanel');
         var configPanel = treePanel.up('mainconfigpanel');
         var objectsNode = treePanel.getRootNode().firstChild;
+        var content = me.getContentPanel();
+        var activeTab = content.getActiveTab();
+        var scope = activeTab.scope;
+        var app = activeTab.app;
         configPanel.setLoading();
         var connInfo = configPanel.down('connectionpanel').getForm().getValues();
         var connStr = (connInfo.dbProvider.toLowerCase().indexOf('mssql') != -1)
@@ -560,8 +566,8 @@ Ext.define('AM.controller.NHConfig', {
                 method: 'POST',
                 timeout: 300000,  // 5 min
                 params: {
-                    scope: me.scope,
-                    app: me.app
+                    scope: scope,
+                    app: app
                 },
                 jsonData: dbDictionary,
                 success: function (response, request) {
@@ -569,10 +575,10 @@ Ext.define('AM.controller.NHConfig', {
                     var result = Ext.decode(response.responseText);
                     if (!result.success) {
                         var userMsg = result['message'];
-						var detailMsg = result['stackTraceDescription'];
-						var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-						Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-						Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+                        var detailMsg = result['stackTraceDescription'];
+                        var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                        Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                        Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                         return;
                     }
                     var dirTree = me.getDirectoryTree();
