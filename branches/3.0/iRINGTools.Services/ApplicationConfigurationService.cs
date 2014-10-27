@@ -549,8 +549,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert folder to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertFolder/{userName}?groupIds={groupIds}&format={format}")]
-        public void InsertFolder(string userName, string groupIds, string format, Stream stream)
+        [WebInvoke(Method = "POST", UriTemplate = "/insertFolder/{userName}?format={format}")]
+        public void InsertFolder(string userName, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -566,7 +566,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Folder>(stream, format);
-                    response = _applicationConfigurationProvider.InsertFolder(userName, groupIds, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.InsertFolder(userName, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -580,8 +580,8 @@ namespace org.iringtools.services
         }
 
         [Description("update Folder to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateFolder/{userName}?groupIds={groupIds}&format={format}")]
-        public void UpdateFolder(string userName, string groupIds, string format, Stream stream)
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateFolder/{userName}?format={format}")]
+        public void UpdateFolder(string userName, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -597,7 +597,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Folder>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateFolder(userName, groupIds, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.UpdateFolder(userName, new XDocument(xElement));
                 }
             }
             catch (Exception ex)

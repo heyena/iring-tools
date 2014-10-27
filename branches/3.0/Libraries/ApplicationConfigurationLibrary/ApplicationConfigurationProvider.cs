@@ -251,7 +251,7 @@ namespace org.iringtools.applicationConfig
             return folders;
         }
         
-        public Response InsertFolder(string userName, string groupIds, XDocument xml)
+        public Response InsertFolder(string userName, XDocument xml)
         {
             Response response = new Response();
 
@@ -259,10 +259,12 @@ namespace org.iringtools.applicationConfig
             {
                 Folder folder = Utility.DeserializeDataContract<Folder>(xml.ToString());
 
+                string rawXml = folder.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     dc.ExecuteCommand("spiFolder @UserName = {0}, @SiteId = {1}, @ParentFolderId = {2}, " +
-                                                  "@FolderName = {3}, @GroupList = {4}", userName, folder.SiteId, folder.ParentFolderId, folder.FolderName, groupIds);
+                                                  "@FolderName = {3}, @GroupList = {4}", userName, folder.SiteId, folder.ParentFolderId, folder.FolderName, rawXml);
 
                 }
 
@@ -285,18 +287,18 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateFolder(string userName, string groupIds, XDocument xml)
+        public Response UpdateFolder(string userName, XDocument xml)
         {
             Response response = new Response();
 
             try
             {
                 Folder folder = Utility.DeserializeDataContract<Folder>(xml.ToString());
-
+                string rawXml = folder.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     dc.ExecuteCommand("spuFolder @UserName = {0}, @SiteId = {1}, @FolderId = {2}, @ParentFolderId = {3}, " +
-                                                  "@FolderName = {4}, @GroupList = {5}", userName, folder.SiteId, folder.FolderId,folder.ParentFolderId, folder.FolderName, groupIds);
+                                                  "@FolderName = {4}, @GroupList = {5}", userName, folder.SiteId, folder.FolderId, folder.ParentFolderId, folder.FolderName, rawXml);
 
                 }
 
