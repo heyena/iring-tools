@@ -73,7 +73,7 @@ namespace iRINGAgentService
                 _clientSecret = config.ClientSecret;
                 _authType = config.GrantType;
 
-               
+                _clientSecret = EncryptionUtility.Decrypt(_clientSecret);
                 settings = ConfigurationManager.AppSettings;
                 settings["AppKey"] = config.AppKey;
                 settings["AccessToken"] = config.AccessToken;
@@ -82,7 +82,7 @@ namespace iRINGAgentService
                 adapterSettings.AppendSettings(settings);
 
                 Initialize();
-                string clientToken = GetClientToken();
+                string clientToken = GetClientToken(); 
 
                 if (clientToken != null)
                 {
@@ -159,30 +159,30 @@ namespace iRINGAgentService
                 int.TryParse(proxyPort, out _proxyPort);
                 #endregion
 
-                #region init client credentials
-                //_ssoURL = ConfigurationManager.AppSettings["SSO_URL"];
-                //_clientId = ConfigurationManager.AppSettings["client_id"];
-                //_clientSecret = ConfigurationManager.AppSettings["client_secret"];
-                //_authType = ConfigurationManager.AppSettings["grant_type"];
+                //#region init client credentials
+                ////_ssoURL = ConfigurationManager.AppSettings["SSO_URL"];
+                ////_clientId = ConfigurationManager.AppSettings["client_id"];
+                ////_clientSecret = ConfigurationManager.AppSettings["client_secret"];
+                ////_authType = ConfigurationManager.AppSettings["grant_type"];
 
-                string clientKey = ConfigurationManager.AppSettings["client_key"];
-                if (!string.IsNullOrEmpty(clientKey))
-                {
-                    _clientSecret = EncryptionUtility.Decrypt(_clientSecret, clientKey);
-                }
-                else
-                {
-                    _clientSecret = EncryptionUtility.Decrypt(_clientSecret);
-                }
-                #endregion
+                //string clientKey = ConfigurationManager.AppSettings["client_key"];
+                //if (!string.IsNullOrEmpty(clientKey))
+                //{
+                //    _clientSecret = EncryptionUtility.Decrypt(_clientSecret, clientKey);
+                //}
+                //else
+                //{
+                //    _clientSecret = EncryptionUtility.Decrypt(_clientSecret);
+                //}
+                //#endregion
 
-                #region init agent sequence and timeout
-                string httpRequestTimeout = ConfigurationManager.AppSettings["RequestTimeout"];
-                if (!string.IsNullOrWhiteSpace(httpRequestTimeout))
-                {
-                    _requestTimeout = Convert.ToInt32(httpRequestTimeout);
-                }
-                #endregion
+                //#region init agent sequence and timeout
+                //string httpRequestTimeout = ConfigurationManager.AppSettings["RequestTimeout"];
+                //if (!string.IsNullOrWhiteSpace(httpRequestTimeout))
+                //{
+                //    _requestTimeout = Convert.ToInt32(httpRequestTimeout);
+                //}
+                //#endregion
             }
             catch (Exception ex)
             {
