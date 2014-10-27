@@ -157,6 +157,7 @@ namespace org.iringtools.applicationConfig
         Folder()
         {
             permissions = new Permissions();
+            groups = new Groups();
         }
 
         [DataMember(Name = "folderId", Order = 0)]
@@ -176,6 +177,9 @@ namespace org.iringtools.applicationConfig
 
         [DataMember(Name = "permissions", Order = 5, EmitDefaultValue = false)]
         public Permissions permissions { get; set; }
+
+        [DataMember(Name = "groups", Order = 6, EmitDefaultValue = false)]
+        public Groups groups { get; set; }
     }
 
 
