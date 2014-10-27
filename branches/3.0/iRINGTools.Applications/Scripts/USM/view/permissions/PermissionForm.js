@@ -31,7 +31,8 @@ Ext.define('USM.view.permissions.PermissionForm', {
                     fieldLabel: 'Name',
                     name: 'PermissionName',
                     allowBlank: false,
-                    emptyText: 'Enter Permission Name'
+                    emptyText: 'Enter Permission Name',
+                    maxLength: 100
                 },
                 {
                     xtype: 'textfield',
@@ -39,7 +40,8 @@ Ext.define('USM.view.permissions.PermissionForm', {
                     style: 'margin:5px;padding:8px;',
                     fieldLabel: 'Description',
                     name: 'PermissionDesc',
-                    emptyText: 'Enter Permission Description'
+                    emptyText: 'Enter Permission Description',
+                    maxLength:255
                 }
             ]
         });
