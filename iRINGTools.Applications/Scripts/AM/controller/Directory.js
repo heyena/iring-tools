@@ -550,7 +550,8 @@ Ext.define('AM.controller.Directory', {
                 me.application.fireEvent('nhconfig', node);
                 break;
             default:
-                Ext.widget('messagepanel', { title: 'Warning', msg: 'Datalayer ' + datalayer + ' is not configurable...' }); //showDialog(300, 300, 'Warning', 'Datalayer ' + datalayer + ' is not configurable...', Ext.msg.OK, null);
+                //  Ext.widget('messagepanel', { title: 'Warning', msg: 'Datalayer ' + datalayer + ' is not configurable...' }); //showDialog(300, 300, 'Warning', 'Datalayer ' + datalayer + ' is not configurable...', Ext.msg.OK, null);
+                me.application.fireEvent('nhconfig', node);
                 break;
         }
     },
