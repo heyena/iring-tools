@@ -166,8 +166,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert applications to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/apps/{scopeInternalName}?format={format}")]
-        public void InsertApplications(string scopeInternalName, string format, Stream stream) 
+        [WebInvoke(Method = "POST", UriTemplate = "/insertApplication/{userName}?format={format}")]
+        public void InsertApplication(string userName, string format, Stream stream) 
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -182,8 +182,8 @@ namespace org.iringtools.services
                 }
                 else
                 {
-                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Applications>(stream, format);
-                    response = _applicationConfigurationProvider.InsertApplications(scopeInternalName, new XDocument(xElement));
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Application>(stream, format);
+                    response = _applicationConfigurationProvider.InsertApplication(userName, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -193,12 +193,12 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Update applications to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/apps/{scopeInternalName}?format={format}")]
-        public void UpdateApplications(string scopeInternalName, string format, Stream stream) // Completed.
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateApplication/{userName}?format={format}")]
+        public void UpdateApplication(string userName, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -213,8 +213,8 @@ namespace org.iringtools.services
                 }
                 else
                 {
-                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Applications>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateApplications(scopeInternalName, new XDocument(xElement));
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Application>(stream, format);
+                    response = _applicationConfigurationProvider.UpdateApplication(userName, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -224,12 +224,12 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Update contexts to the data base.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/apps/{scopeInternalName}/{appInternalName}?format={format}")]
-        public void DeleteApplication(string scopeInternalName, string appInternalName, string format) // Completed.
+        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteApplication/{applicationId}?format={format}")]
+        public void DeleteApplication(string applicationId, string format) // Completed.
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -244,7 +244,7 @@ namespace org.iringtools.services
                 }
                 else
                 {
-                    response = _applicationConfigurationProvider.DeleteApplication(scopeInternalName, appInternalName);
+                    response = _applicationConfigurationProvider.DeleteApplication(applicationId);
                 }
             }
             catch (Exception ex)
@@ -254,7 +254,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Gets all graphs available from the data base.")]
