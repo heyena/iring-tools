@@ -302,6 +302,7 @@ namespace org.iringtools.adapter
             {
 
                 response = DoRefreshCache(cacheId, objectType);
+
             }
             else
             {
@@ -345,11 +346,14 @@ namespace org.iringtools.adapter
 
             try
             {
+
+
                 //
                 // create new cache table
                 //
                 DeleteCacheTable(cacheId, objectType);
                 CreateCacheTable(cacheId, objectType);
+                _logger.Debug(string.Format("{0}_{1} cache table created.", cacheId, objectType.objectName));
 
                 Status status = new Status()
                 {
@@ -367,10 +371,11 @@ namespace org.iringtools.adapter
                 string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
                 DataTable table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
 
+
                 if (_lwDataLayer != null)
                 {
+                    _logger.Debug(string.Format("Populating  cache data for cache table {0}_{1}.", cacheId, objectType.objectName));
                     IList<SerializableDataObject> dataObjects = _lwDataLayer.Get(objectType);
-
                     if (dataObjects != null && dataObjects.Count > 0)
                     {
                         foreach (SerializableDataObject dataObj in dataObjects)
@@ -396,6 +401,7 @@ namespace org.iringtools.adapter
                         SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
                         bulkCopy.DestinationTableName = tableName;
                         bulkCopy.WriteToServer(table);
+                        _logger.Debug(string.Format("Caching completed for cache table {0}_{1}.", cacheId, objectType.objectName));
 
                         string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
                         status.Messages.Add(msg);
@@ -405,7 +411,7 @@ namespace org.iringtools.adapter
                 else if (_dataLayer != null)
                 {
                     int page = 100;
-                    string cachePage = Convert.ToString(_settings["CachePage"]);
+                    string cachePage = Convert.ToString(_settings["CachePageSize"]);
 
                     if (!string.IsNullOrEmpty(cachePage))
                     {
@@ -415,7 +421,9 @@ namespace org.iringtools.adapter
                     long objCount = _dataLayer.GetCount(objectType.objectName, null);
                     int start = 0;
                     long limit = 0;
+                    long nRowCounter = 0;
 
+                    _logger.Debug(string.Format("Populating data to be cached, for table {0}_{1} with page size {2}.", cacheId, objectType.objectName, page));
                     while (start < objCount)
                     {
                         limit = page;// (start + page < objCount) ? page : objCount - start;
@@ -448,12 +456,16 @@ namespace org.iringtools.adapter
                             }
                         }
 
+                        nRowCounter = (objCount <= page) ? objCount : page;
+                        _logger.Debug(string.Format("Saving rows {0} to {1}  in memory for table {2}_{3}.", start, start+nRowCounter, cacheId, objectType.objectName));
                         start += page;
                     }
 
                     SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
                     bulkCopy.DestinationTableName = tableName;
                     bulkCopy.WriteToServer(table);
+
+                    _logger.Debug(string.Format("Data cached for table {0}_{1}", cacheId, objectType.objectName));
 
                     string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
                     status.Messages.Add(msg);
@@ -1308,7 +1320,7 @@ namespace org.iringtools.adapter
                                 string key = sdo.Dictionary.Keys.ElementAt(i);
                                 object value = sdo.Dictionary[key];
 
-                                if (value != null)
+                                if (value != null && value != "")
                                 {
                                     DataProperty prop = localObjectType.dataProperties.Find(x => x.propertyName.ToLower() == key.ToLower());
 
@@ -1330,7 +1342,7 @@ namespace org.iringtools.adapter
                                     }
                                     else if (prop.dataType == DataType.Decimal)
                                     {
-                                        decimal decValue=0;
+                                        decimal decValue = 0;
                                         Decimal.TryParse(value.ToString(), out decValue);
                                         value = decValue;
                                     }
@@ -1714,7 +1726,7 @@ namespace org.iringtools.adapter
                     return "timestamp";
 
                 case DataType.String:
-                    if (prop.dataLength == 0 || prop.dataLength>4000)
+                    if (prop.dataLength == 0 || prop.dataLength > 4000)
                     {
                         return "nvarchar(MAX)";
                     }
@@ -1736,6 +1748,7 @@ namespace org.iringtools.adapter
                 //
                 DeleteCacheTable(cacheId, objectType);
                 CreateCacheTable(cacheId, objectType);
+                _logger.Debug(string.Format("{0}_{1} cache table created.", cacheId, objectType.objectName));
 
                 Status status = new Status()
                 {
@@ -1755,8 +1768,10 @@ namespace org.iringtools.adapter
                 //   int dataCount = CachePageSize;
                 int pageIndex = 0;
                 int start = 0;
+                int nRowCounter = 0;
                 if (_lwDataLayer2 != null)
                 {
+                    _logger.Debug(string.Format("Populating  cache data for cache table {0}_{1}, using light weight datalayer 2. Set page size = {2}.", cacheId, objectType.objectName, CachePageSize));
                     //get all identifier from datalayer   for idatalayer2 interface
                     List<SerializableDataObject> dataObjects2 = _lwDataLayer2.GetIndex(objectType);
                     while (start < dataObjects2.Count)
@@ -1785,11 +1800,18 @@ namespace org.iringtools.adapter
                         SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
                         bulkCopy.DestinationTableName = tableName;
                         bulkCopy.WriteToServer(table);
+
+                        nRowCounter = (dataObjects2.Count <= CachePageSize) ? dataObjects2.Count : CachePageSize;
+                        _logger.Debug(string.Format("Saving rows {0} to {1}  from table {2} to cache table {3}_{2}", start, start+nRowCounter, objectType.objectName, cacheId));
+
                         start += CachePageSize;
                         pageIndex = pageIndex + 1;
                         table.Clear();
                         bulkCopy.Close();
+
                     }
+                    _logger.Debug(string.Format("Caching completed for cache table {0}_{1}", cacheId, objectType.objectName));
+
                     string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
                     status.Messages.Add(msg);
                     response.Messages.Add(msg);
