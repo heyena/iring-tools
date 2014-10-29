@@ -416,22 +416,31 @@ namespace org.iringtools.applicationConfig
             return applications;
         }
 
-        public Response InsertApplications(string scopeInternalName, XDocument xml)
+        public Response InsertApplication(string userName, XDocument xml)
         {
             Response response = new Response();
 
             try
             {
-                Applications applications = Utility.DeserializeDataContract<Applications>(xml.ToString());
+                Application application = Utility.DeserializeDataContract<Application>(xml.ToString());
+
+                string rawXml = application.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Application application in applications)
-                    {
-                        dc.ExecuteQuery<Application>("spiApplication @ScopeInternalName = {0}, @AppDisplayName = {1}, @AppInternalName = {2}, " +
-                                                      "@Description = {3}, @DXFRUrl = {4}, @SiteId = {5}", scopeInternalName, application.DisplayName,
-                                                      application.InternalName, application.Description, application.DXFRUrl, _siteID).ToList();
-                    }
+                    NameValueList nvl = new NameValueList();
+
+                    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                    nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(application.ContextId) });
+                    nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName});
+                    nvl.Add(new ListItem() { Name = "@InternalName", Value = application.InternalName });
+                    nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
+                    nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
+                    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(application.SiteId) });
+                    nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
+                    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+
+                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiApplication", nvl);
                 }
 
                 response.DateTimeStamp = DateTime.Now;
@@ -453,22 +462,30 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateApplications(string scopeInternalName, XDocument xml)
+        public Response UpdateApplication(string userName, XDocument xml)
         {
             Response response = new Response();
 
             try
             {
-                Applications applications = Utility.DeserializeDataContract<Applications>(xml.ToString());
+                Application application = Utility.DeserializeDataContract<Application>(xml.ToString());
+
+                string rawXml = application.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Application application in applications)
-                    {
-                        dc.ExecuteQuery<Application>("spuApplication @ScopeInternalName = {0}, @AppDisplayName = {1}, @AppInternalName = {2}, " +
-                                                      "@Description = {3}, @DXFRUrl = {4}, @SiteId = {5}", scopeInternalName, application.DisplayName,
-                                                      application.InternalName, application.Description, application.DXFRUrl, _siteID).ToList();
-                    }
+                    NameValueList nvl = new NameValueList();
+
+                    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                    nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(application.ApplicationId) });
+                    nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName });
+                    nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
+                    nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
+                    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(application.SiteId) });
+                    nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
+                    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+
+                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuApplication", nvl);
                 }
 
                 response.DateTimeStamp = DateTime.Now;
@@ -490,7 +507,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response DeleteApplication(string scopeInternalName, string appInternalName)
+        public Response DeleteApplication(string applicationId)
         {
             Response response = new Response();
 
@@ -498,7 +515,7 @@ namespace org.iringtools.applicationConfig
             {
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<Context>("spdApplication @ScopeInternalName = {0}, @AppInternalName = {1}, @SiteId = {2}", scopeInternalName, appInternalName, _siteID);
+                    dc.ExecuteCommand("spdApplication @ApplicationId = {0} ", applicationId);
                 }
 
                 response.DateTimeStamp = DateTime.Now;
