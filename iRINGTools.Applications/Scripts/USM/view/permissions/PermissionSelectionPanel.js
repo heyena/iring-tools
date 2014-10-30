@@ -42,6 +42,7 @@ Ext.define('USM.view.permissions.PermissionSelectionPanel', {
 			{
 			    xtype: 'container',
 			    autoScroll: true,
+                layout: 'fit',
 			    items: [{
 			        xtype: 'gridpanel',
 			        itemId: 'permgridid',
