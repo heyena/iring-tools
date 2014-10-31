@@ -491,7 +491,12 @@ namespace iRINGTools.Web.Models
                 string[] userIds =  form["SelectedUsers"].Split(new string[]{","},StringSplitOptions.RemoveEmptyEntries);
 
                 UserGroups userGroups = new UserGroups();
-                
+                if (userIds.Length == 0)//to delete
+                {
+                    UserGroup userGroup = new UserGroup { GroupId = groupId, UserId = -1 };
+                    userGroups.Add(userGroup);
+                }
+                               
                 foreach (string item in userIds)
                 {
                     UserGroup userGroup = new UserGroup { GroupId = groupId, UserId = Convert.ToInt32(item) };
@@ -523,6 +528,11 @@ namespace iRINGTools.Web.Models
                 string[] groupIds = form["SelectedGroups"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
                 UserGroups userGroups = new UserGroups();
+                if (groupIds.Length == 0)
+                {
+                    UserGroup userGroup = new UserGroup { GroupId =-1, UserId = userId };
+                    userGroups.Add(userGroup);
+                }
 
                 foreach (string item in groupIds)
                 {
@@ -552,7 +562,7 @@ namespace iRINGTools.Web.Models
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                items = client.Get<Groups>("/groupsUser?userName=" + userName + "&format=" + format);
+                items = client.Get<Groups>("/groupsUser?userName=" + userName + "&siteId=1&format=" + format);
 
                 _logger.Debug("Successfully called Security Service.");
             }
@@ -575,6 +585,11 @@ namespace iRINGTools.Web.Models
                 string[] groupIds = form["SelectedGroups"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
                 GroupRoles userGroups = new GroupRoles();
+                if(groupIds.Length==0)
+                   {
+                    GroupRole userGroup = new GroupRole { GroupId = -1, RoleId = roleId };
+                    userGroups.Add(userGroup);
+                   }
 
                 foreach (string item in groupIds)
                 {
@@ -626,6 +641,12 @@ namespace iRINGTools.Web.Models
                 string[] roleIds = form["SelectedRoles"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
                 GroupRoles userGroups = new GroupRoles();
+                if (roleIds.Length == 0)//to delete
+                {
+                    GroupRole userGroup = new GroupRole { GroupId = groupId, RoleId = -1 };
+                    userGroups.Add(userGroup);
+
+                }
 
                 foreach (string item in roleIds)
                 {
@@ -708,8 +729,12 @@ namespace iRINGTools.Web.Models
             {
                 int roleId = Convert.ToInt32(form["RoleId"]);
                 string[] permissionIds = form["SelectedPermissions"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-
                 RolePermissions userGroups = new RolePermissions();
+                if (permissionIds.Length == 0)
+                {
+                    RolePermission userGroup = new RolePermission { RoleId = roleId, PermissionId =-1 };
+                    userGroups.Add(userGroup);
+                }
 
                 foreach (string item in permissionIds)
                 {
