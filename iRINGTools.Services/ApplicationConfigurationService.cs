@@ -774,8 +774,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert Exchange to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertExchange/{userName}?groupIds={groupIds}&format={format}")]
-        public void InsertExchange(string userName, string groupIds, string format, Stream stream)
+        [WebInvoke(Method = "POST", UriTemplate = "/insertExchange/{userName}?format={format}")]
+        public void InsertExchange(string userName, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -791,7 +791,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.Exchange>(stream, format);
-                    response = _applicationConfigurationProvider.InsertExchange(userName, groupIds, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.InsertExchange(userName, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -805,8 +805,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert Exchange to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateExchange/{userName}?groupIds={groupIds}&format={format}")]
-        public void UpdateExchange(string userName, string groupIds, string format, Stream stream)
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateExchange/{userName}?format={format}")]
+        public void UpdateExchange(string userName, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -822,7 +822,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.Exchange>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateExchange(userName, groupIds, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.UpdateExchange(userName, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
