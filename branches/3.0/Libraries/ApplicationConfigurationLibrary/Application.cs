@@ -199,6 +199,7 @@ namespace org.iringtools.applicationConfig
         Exchange()
         {
             permissions = new Permissions();
+            groups = new Groups();
         }
 
         [DataMember(Name = "exchangeId", Order = 0)]
@@ -245,6 +246,9 @@ namespace org.iringtools.applicationConfig
 
         [DataMember(Name = "permissions", Order = 14, EmitDefaultValue = false)]
         public Permissions permissions { get; set; }
+
+        [DataMember(Name = "groups", Order = 15, EmitDefaultValue = false)]
+        public Groups groups { get; set; }
     }
 
 

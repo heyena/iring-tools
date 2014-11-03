@@ -966,13 +966,15 @@ namespace org.iringtools.applicationConfig
             return exchanges;
         }
 
-        public Response InsertExchange(string userName, string groupIds, XDocument xml)
+        public Response InsertExchange(string userName, XDocument xml)
         {
             Response response = new Response();
 
             try
             {
                 Exchange exchange = Utility.DeserializeDataContract<Exchange>(xml.ToString());
+
+                string rawXml = exchange.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -990,7 +992,7 @@ namespace org.iringtools.applicationConfig
                     nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
                     nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
                     nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
-                    nvl.Add(new ListItem() { Name = "@GroupList", Value = groupIds });
+                    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
                     DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiExchange", nvl);
 
@@ -1015,13 +1017,15 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateExchange(string userName, string groupIds, XDocument xml)
+        public Response UpdateExchange(string userName, XDocument xml)
         {
             Response response = new Response();
 
             try
             {
                 Exchange exchange = Utility.DeserializeDataContract<Exchange>(xml.ToString());
+
+                string rawXml = exchange.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -1039,7 +1043,7 @@ namespace org.iringtools.applicationConfig
                     nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
                     nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
                     nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
-                    nvl.Add(new ListItem() { Name = "@GroupList", Value = groupIds });
+                    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
                     DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuExchange", nvl);
 
