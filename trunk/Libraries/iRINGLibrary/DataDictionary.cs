@@ -305,6 +305,9 @@ namespace org.iringtools.library
         public int scale { get; set; }
 
         [DataMember(IsRequired = false, Order = 9)]
+        public string definition { get; set; }
+
+        [DataMember(IsRequired = false, Order = 10)]
         public List<Parameters> parameters { get; set; }
     }
 
