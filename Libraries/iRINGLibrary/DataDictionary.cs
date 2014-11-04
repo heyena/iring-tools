@@ -106,7 +106,7 @@ namespace org.iringtools.library
             keyProperties = new List<KeyProperty>();
             dataProperties = new List<DataProperty>();
             dataRelationships = new List<DataRelationship>();
-            extensionProperty = new List<ExtensionProperty>();
+            extensionProperties = new List<ExtensionProperty>();
         }
 
         [DataMember(IsRequired = true, Order = 0)]
@@ -167,7 +167,7 @@ namespace org.iringtools.library
         public bool isHidden { get; set; }
 
         [DataMember(IsRequired = false, Order = 19)]
-        public List<ExtensionProperty> extensionProperty { get; set; }
+        public List<ExtensionProperty> extensionProperties  { get; set; }
 
 
 
