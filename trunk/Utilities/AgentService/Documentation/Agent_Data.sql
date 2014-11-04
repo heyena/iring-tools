@@ -12,5 +12,5 @@ INSERT INTO [iRINGAgent].[dbo].[SCHEDULEExchange]
 
 INSERT INTO [iRINGAgent].[dbo].[SCHEDULEExchange] 
 	([Task_Name],[Scope],[Base_Url],[Exchange_Id],[Sso_Url],[Client_Id],[Client_Secret],[Grant_Type],[Request_Timeout],[Start_Time],[End_Time],[Created_Date],[Created_By],[Occurance],[NextStart_Date_Time],[End_Date_Time],[Status],[Active] ) 
-	VALUES('Sender->Receiver','AgentServices','http://localhost:8087/iringtools-apps/xchmgr','1','https://sso.mypsn.com/as/token.oauth2','iRingTools','JxX6VHu8uZYff7zPUkTNw7sdDodvF3G3','client_credentials',300000,'08/07/2014 06:00:00','','08/07/2014 07:00:00','Sujan Gorkhali','Daily','','10/16/2015 06:00:00','Ready',1)
+	VALUES('Sender->Receiver','AgentServices','http://localhost:8087/iringtools-apps/runUnattendedExchange','1','https://sso.mypsn.com/as/token.oauth2','iRingTools','JxX6VHu8uZYff7zPUkTNw7sdDodvF3G3','client_credentials',300000,'08/07/2014 06:00:00','','08/07/2014 07:00:00','Sujan Gorkhali','Daily','','10/16/2015 06:00:00','Ready',1)
 
