@@ -107,6 +107,7 @@ namespace org.iringtools.library
             dataProperties = new List<DataProperty>();
             dataRelationships = new List<DataRelationship>();
             extensionProperties = new List<ExtensionProperty>();
+            unionObjects = new List<UnionObject>();
         }
 
         [DataMember(IsRequired = true, Order = 0)]
@@ -169,6 +170,8 @@ namespace org.iringtools.library
         [DataMember(IsRequired = false, Order = 19)]
         public List<ExtensionProperty> extensionProperties  { get; set; }
 
+        [DataMember(IsRequired = false, Order = 20)]
+        public List<UnionObject> unionObjects { get; set; }
 
 
         public bool isKeyProperty(string propertyName)
@@ -308,18 +311,38 @@ namespace org.iringtools.library
         public string definition { get; set; }
 
         [DataMember(IsRequired = false, Order = 10)]
-        public List<Parameters> parameters { get; set; }
+        public List<ExtensionParameter> parameters { get; set; }
     }
+
 
     [Serializable]
     [DataContract(Name = "parameter", Namespace = "http://www.iringtools.org/library")]
-    public class Parameters
+    public class ExtensionParameter
     {
         [DataMember(IsRequired = false, Order = 0)]
         public string key { get; set; }
 
         [DataMember(IsRequired = false, Order = 1)]
         public string value { get; set; }
+    }
+
+    [Serializable]
+    [DataContract(Name = "unionObject", Namespace = "http://www.iringtools.org/library")]
+    public class UnionObject
+    {
+        [DataMember(IsRequired = false, Order = 0)]
+        public string unionName { get; set; }
+
+        [DataMember(IsRequired = false, Order = 1)]
+        public List<UnionType> unionTypes { get; set; }
+    }
+
+    [Serializable]
+    [DataContract(Name = "unionType", Namespace = "http://www.iringtools.org/library")]
+    public class UnionType
+    {
+        [DataMember(IsRequired = false, Order = 0)]
+        public string unionType { get; set; }
     }
 
     [Serializable]
@@ -342,6 +365,7 @@ namespace org.iringtools.library
         //[EnumMember]
         //ManyToMany
     }
+
     [Serializable]
     [DataContract(Name = "propertyMap", Namespace = "http://www.iringtools.org/library")]
     public class PropertyMap
