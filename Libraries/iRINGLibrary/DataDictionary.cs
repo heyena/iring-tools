@@ -166,7 +166,7 @@ namespace org.iringtools.library
         [DataMember(IsRequired = false, Order = 18, EmitDefaultValue = false)]
         public bool isHidden { get; set; }
 
-        [DataMember(IsRequired = false, Order = 5)]
+        [DataMember(IsRequired = false, Order = 19)]
         public List<ExtensionProperty> extensionProperty { get; set; }
 
 
@@ -312,7 +312,7 @@ namespace org.iringtools.library
     }
 
     [Serializable]
-    [DataContract(Name = "parameters", Namespace = "http://www.iringtools.org/library")]
+    [DataContract(Name = "parameter", Namespace = "http://www.iringtools.org/library")]
     public class Parameters
     {
         [DataMember(IsRequired = false, Order = 0)]
