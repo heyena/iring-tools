@@ -106,6 +106,8 @@ namespace org.iringtools.library
             keyProperties = new List<KeyProperty>();
             dataProperties = new List<DataProperty>();
             dataRelationships = new List<DataRelationship>();
+            extensionProperties = new List<ExtensionProperty>();
+            unionObjects = new List<UnionObject>();
         }
 
         [DataMember(IsRequired = true, Order = 0)]
@@ -166,10 +168,11 @@ namespace org.iringtools.library
         public bool isHidden { get; set; }
 
         [DataMember(IsRequired = false, Order = 19)]
-        public int precision { get; set; }
+        public List<ExtensionProperty> extensionProperties  { get; set; }
 
         [DataMember(IsRequired = false, Order = 20)]
-        public int scale { get; set; }
+        public List<UnionObject> unionObjects { get; set; }
+
 
         public bool isKeyProperty(string propertyName)
         {
@@ -274,6 +277,75 @@ namespace org.iringtools.library
     }
 
     [Serializable]
+    [DataContract(Name = "extensionProperty", Namespace = "http://www.iringtools.org/library")]
+    public class ExtensionProperty
+    {
+        [DataMember(IsRequired = true, Order = 0)]
+        public string columnName { get; set; }
+
+        [DataMember(IsRequired = true, Order = 1)]
+        public string propertyName { get; set; }
+
+        [DataMember(IsRequired = true, Order = 2)]
+        public DataType dataType { get; set; }
+
+        [DataMember(IsRequired = true, Order = 3)]
+        public int dataLength { get; set; }
+
+        [DataMember(IsRequired = true, Order = 4)]
+        public bool isNullable { get; set; }
+
+        [DataMember(IsRequired = true, Order = 5)]
+        public KeyType keyType { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 6)]
+        public bool showOnIndex { get; set; }
+
+        [DataMember(IsRequired = false, Order = 7)]
+        public int precision { get; set; }
+
+        [DataMember(IsRequired = false, Order = 8)]
+        public int scale { get; set; }
+
+        [DataMember(IsRequired = false, Order = 9)]
+        public string definition { get; set; }
+
+        [DataMember(IsRequired = false, Order = 10)]
+        public List<ExtensionParameter> parameters { get; set; }
+    }
+
+
+    [Serializable]
+    [DataContract(Name = "parameter", Namespace = "http://www.iringtools.org/library")]
+    public class ExtensionParameter
+    {
+        [DataMember(IsRequired = false, Order = 0)]
+        public string key { get; set; }
+
+        [DataMember(IsRequired = false, Order = 1)]
+        public string value { get; set; }
+    }
+
+    [Serializable]
+    [DataContract(Name = "unionObject", Namespace = "http://www.iringtools.org/library")]
+    public class UnionObject
+    {
+        [DataMember(IsRequired = false, Order = 0)]
+        public string unionName { get; set; }
+
+        [DataMember(IsRequired = false, Order = 1)]
+        public List<UnionType> unionTypes { get; set; }
+    }
+
+    [Serializable]
+    [DataContract(Name = "unionType", Namespace = "http://www.iringtools.org/library")]
+    public class UnionType
+    {
+        [DataMember(IsRequired = false, Order = 0)]
+        public string unionType { get; set; }
+    }
+
+    [Serializable]
     [DataContract(Name = "keyProperty", Namespace = "http://www.iringtools.org/library")]
     public class KeyProperty
     {
@@ -293,6 +365,7 @@ namespace org.iringtools.library
         //[EnumMember]
         //ManyToMany
     }
+
     [Serializable]
     [DataContract(Name = "propertyMap", Namespace = "http://www.iringtools.org/library")]
     public class PropertyMap
