@@ -1,149 +1,499 @@
 USE [master]
 GO
 
-IF EXISTS(SELECT name FROM sys.databases WHERE name = 'iRingAgentSchedule')
-	DROP DATABASE [iRingAgentSchedule]
+IF EXISTS(SELECT name FROM sys.databases WHERE name = 'iRINGAgent')
+	DROP DATABASE [iRINGAgent]
 GO
 
-CREATE DATABASE [iRingAgentSchedule] 
+CREATE DATABASE [iRINGAgent] 
 GO
 
-IF EXISTS(SELECT * FROM sys.syslogins WHERE name = N'iRingAgentSchedule')
-	DROP LOGIN [iRingAgentSchedule]
+IF EXISTS(SELECT * FROM sys.syslogins WHERE name = N'iRINGAgent')
+	DROP LOGIN [iRINGAgent]
 GO
 
-CREATE LOGIN [iRingAgentSchedule] WITH PASSWORD = 'iRingAgentSchedule', CHECK_POLICY = OFF
+CREATE LOGIN [iRINGAgent] WITH PASSWORD = 'iRINGAgent', CHECK_POLICY = OFF
 GO
 
-USE [iRingAgentSchedule]
+USE [iRINGAgent]
 GO
 
-IF  EXISTS (SELECT * FROM sys.database_principals WHERE name = N'iRingAgentSchedule') 
-	DROP USER [iRingAgentSchedule]
+IF  EXISTS (SELECT * FROM sys.database_principals WHERE name = N'iRINGAgent') 
+	DROP USER [iRINGAgent]
 GO
 
-CREATE USER [iRingAgentSchedule] FOR LOGIN [iRingAgentSchedule] WITH DEFAULT_SCHEMA=[dbo]
+CREATE USER [iRINGAgent] FOR LOGIN [iRINGAgent] WITH DEFAULT_SCHEMA=[dbo]
 GO
 
-EXEC sp_addrolemember 'db_owner', N'iRingAgentSchedule'
+EXEC sp_addrolemember 'db_owner', N'iRINGAgent'
 GO
 
-USE [iRingAgentSchedule]
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = N'TASKS')
+	DROP TABLE [dbo].[TASKS]
 GO
-ALTER TABLE [dbo].[JobSchedule] DROP CONSTRAINT [FK_JobSchedule_Schedule]
-GO
-ALTER TABLE [dbo].[JobSchedule] DROP CONSTRAINT [FK_JobSchedule_Job]
-GO
-ALTER TABLE [dbo].[Job_client_Info] DROP CONSTRAINT [FK_Job_client_Info_Job]
-GO
-/****** Object:  Table [dbo].[Schedule]    Script Date: 10/29/2014 10:12:57 AM ******/
-DROP TABLE [dbo].[Schedule]
-GO
-/****** Object:  Table [dbo].[JobSchedule]    Script Date: 10/29/2014 10:12:58 AM ******/
-DROP TABLE [dbo].[JobSchedule]
-GO
-/****** Object:  Table [dbo].[Job_client_Info]    Script Date: 10/29/2014 10:12:58 AM ******/
-DROP TABLE [dbo].[Job_client_Info]
-GO
-/****** Object:  Table [dbo].[Job]    Script Date: 10/29/2014 10:12:58 AM ******/
-DROP TABLE [dbo].[Job]
-GO
-/****** Object:  Table [dbo].[Job]    Script Date: 10/29/2014 10:12:58 AM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Job](
-	[Job_id] [uniqueidentifier] NOT NULL,
-	[Is_Exchange] [tinyint] NOT NULL,
-	[Scope] [nvarchar](50) NULL,
-	[App] [nvarchar](50) NULL,
-	[DataObject] [nvarchar](50) NULL,
-	[Xid] [nvarchar](50) NULL,
-	[Exchange_Url] [nvarchar](250) NULL,
-	[Cache_Page_size] [nvarchar](50) NULL,
- CONSTRAINT [PK_Job] PRIMARY KEY CLUSTERED 
-(
-	[Job_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
 
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spgTasks')
+DROP PROCEDURE spgTasks
 GO
-/****** Object:  Table [dbo].[Job_client_Info]    Script Date: 10/29/2014 10:12:58 AM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Job_client_Info](
-	[Job_Id] [uniqueidentifier] NOT NULL,
-	[SSo_Url] [nvarchar](250) NOT NULL,
-	[Client_id] [nvarchar](250) NOT NULL,
-	[Client_Secret] [nvarchar](250) NOT NULL,
-	[Access_Token] [nvarchar](250) NOT NULL,
-	[App_Key] [nvarchar](250) NOT NULL,
-	[Grant_Type] [nvarchar](50) NULL,
-	[Request_Timeout] [int] NULL
-) ON [PRIMARY]
 
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spiTasks')
+DROP PROCEDURE spiTasks
 GO
-/****** Object:  Table [dbo].[JobSchedule]    Script Date: 10/29/2014 10:12:58 AM ******/
-SET ANSI_NULLS ON
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spuTasks')
+DROP PROCEDURE spuTasks
 GO
-SET QUOTED_IDENTIFIER ON
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spdTasks')
+DROP PROCEDURE spdTasks
 GO
-CREATE TABLE [dbo].[JobSchedule](
-	[Schedule_Id] [uniqueidentifier] NOT NULL,
-	[Job_Id] [uniqueidentifier] NOT NULL,
-	[Next_Start_DateTime] [datetime] NULL,
-	[Last_Start_DateTime] [datetime] NULL,
+
+
+
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = N'ScheduleCache')
+	DROP TABLE [dbo].[ScheduleCache]
+GO
+
+
+
+--* ==================================================
+--*  Create Table ScheduleCache
+--* ==================================================
+
+CREATE TABLE [dbo].[ScheduleCache](
+	[Schedule_Cache_Id] UNIQUEIDENTIFIER DEFAULT NEWSEQUENTIALID() PRIMARY KEY,
+	[Task_Name] [nvarchar](100) NOT NULL,
+	[Project] [nvarchar](64) NOT NULL,
+	[App] [nvarchar](64) NOT NULL,
+	[Cache_Page_Size] [int] NULL,
+	[Sso_Url] [nvarchar](256) NULL,
+	[Client_Id] [nvarchar](64) NULL,
+	[Client_Secret] [nvarchar](64) NULL,
+	[Grant_Type] [nvarchar](64) NULL,
+	[App_Key] [nvarchar](64) NULL,
+	[Access_Token] [nvarchar](64) NULL,
+	[Request_Timeout] [int] NULL,
+	[Start_Time] DateTime NOT NULL,
+	[End_Time] DateTime NULL,
+	[Created_Date] DateTime NOT NULL,
+	[Created_By] [nvarchar](100) NOT NULL,
+	[Occurance] [nvarchar](24) NOT NULL,
+	[NextStart_Date_Time] DateTime  NULL,
+	[End_Date_Time] DateTime  NOT NULL,
+	[Status] [nvarchar] (64) NOT NULL,
 	[Active] [tinyint] NOT NULL
-) ON [PRIMARY]
+ )
+ 
+GO
+
+IF EXISTS (SELECT * FROM sys.all_objects WHERE name = N'ScheduleExchange')
+	DROP TABLE [dbo].[ScheduleExchange]
+GO
+
+--* ==================================================
+--*  Create Table ScheduleExchange
+--* ==================================================
+
+CREATE TABLE [dbo].[ScheduleExchange](
+	[Schedule_Exchange_Id] UNIQUEIDENTIFIER DEFAULT NEWSEQUENTIALID() PRIMARY KEY,
+	[Task_Name] [nvarchar](100) NOT NULL,
+	[Scope] [nvarchar](64) NULL,
+	[Base_Url] [nvarchar](256) NULL,
+	[Exchange_Id] [nvarchar](64) NULL,
+	[Sso_Url] [nvarchar](256) NULL,
+	[Client_Id] [nvarchar](64) NULL,
+	[Client_Secret] [nvarchar](64) NULL,
+	[Grant_Type] [nvarchar](64) NULL,
+	[Request_Timeout] [int] NULL,
+	[Start_Time] DateTime NOT NULL,
+	[End_Time] DateTime NULL,
+	[Created_Date] DateTime NOT NULL,
+	[Created_By] [nvarchar](100) NOT NULL,
+	[Occurance] [nvarchar](24) NOT NULL,
+	[NextStart_Date_Time] DateTime  NULL,
+	[End_Date_Time] DateTime  NOT NULL,
+	[Status] [nvarchar] (64) NOT NULL,
+	[Active] [tinyint] NOT NULL
+ )
+ 
+GO
+
+
+
+--*ALTER TABLE [dbo].[TASK_CONNECTION]  WITH CHECK ADD  CONSTRAINT [FK_TASK_CONNECTION_TASKS] FOREIGN KEY([TASK_ID])
+--*REFERENCES [dbo].[TASKS] ([TASK_ID])
+--*GO
+
+--*ALTER TABLE [dbo].[TASK_CONNECTION] CHECK CONSTRAINT [FK_TASK_CONNECTION_TASKS]
+GO
+
+--* ==================================================
+--*  Create Procedures
+--* ==================================================
+
+SET ANSI_NULLS OFF
+GO
+
+SET QUOTED_IDENTIFIER OFF
+GO
+
+--* ==================================================
+--*  Procedure ScheduleCache Get
+--* ==================================================
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spgScheduleCache')
+DROP PROCEDURE spgScheduleCache
+GO
+
+CREATE PROCEDURE [dbo].[spgScheduleCache]
+	@Schedule_Cache_Id	[varchar](126)
+AS
+
+SELECT
+	[Schedule_Cache_Id] AS [Schedule_Cache_Id],
+	[Task_Name] AS [Task_Name],
+	[PROJECT] AS [PROJECT],
+	[APP] AS [APP],
+	[CACHE_PAGE_SIZE] AS [CACHE_PAGE_SIZE],
+	[SSO_URL] AS [SSO_URL],
+	[CLIENT_ID] AS [CLIENT_ID],
+	[CLIENT_SECRET] AS [CLIENT_SECRET],
+	[GRANT_TYPE] AS [GRANT_TYPE],
+	[APP_KEY] AS [APP_KEY],
+	[ACCESS_TOKEN] AS [ACCESS_TOKEN],
+	[REQUEST_TIMEOUT] AS [REQUEST_TIMEOUT],
+	[Start_Time] AS [Start_Time],
+	[End_Time] AS [End_Time],
+	[Created_Date] AS [Created_Date],
+	[Created_By] AS [Created_By],
+	[Occurance] AS [Occurance],
+	[NextStart_Date_Time] AS [NextStart_Date_Time],
+	[End_Date_Time] AS [End_Date_Time],
+	[STATUS] AS [STATUS],
+	[ACTIVE] AS [ACTIVE]
+FROM [dbo].[ScheduleCache] WITH (NoLock)
+WHERE
+	[dbo].[ScheduleCache].[Schedule_Cache_Id] = @Schedule_Cache_Id
 
 GO
-/****** Object:  Table [dbo].[Schedule]    Script Date: 10/29/2014 10:12:58 AM ******/
-SET ANSI_NULLS ON
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spiScheduleCache')
+DROP PROCEDURE spiScheduleCache
 GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Schedule](
-	[Schedule_Id] [uniqueidentifier] NOT NULL,
-	[Created_DateTime] [datetime] NOT NULL,
-	[Created_By] [nvarchar](250) NOT NULL,
-	[Occurance] [nvarchar](50) NULL,
-	[Start_DateTime] [datetime] NULL,
-	[End_DateTime] [datetime] NULL,
-	[Status] [nvarchar](50) NOT NULL,
- CONSTRAINT [PK_Schedule] PRIMARY KEY CLUSTERED 
-(
-	[Schedule_Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+
+--* ==================================================
+--*  Procedure ScheduleCache Insert
+--* ==================================================
+CREATE PROCEDURE [dbo].[spiScheduleCache]
+	@SCHEDULE_CACHE_ID	nvarchar(64),
+	@TASK_NAME			nvarchar(100),
+	@PROJECT			nvarchar(64),
+	@APP				nvarchar(64), 
+	@CACHE_PAGE_SIZE	int,
+	@SSO_URL			nvarchar(256),
+	@CLIENT_ID			nvarchar(64),
+	@CLIENT_SECRET		nvarchar(64), 
+	@GRANT_TYPE			nvarchar(64),
+	@APP_KEY			nvarchar(64),
+	@ACCESS_TOKEN		nvarchar(64),
+	@REQUEST_TIMEOUT	int,
+	@START_TIME			DateTime,
+	@END_TIME			DateTime,
+	@CREATED_DATE		DateTime,
+	@CREATED_BY			nvarchar(100),
+	@OCCURANCE			nvarchar(24),
+	@NEXTSTART_DATE_TIME DateTime,
+	@END_DATE_TIME		DateTime,
+	@STATUS				nvarchar(64),
+	@ACTIVE				tinyint
+AS
+INSERT INTO [dbo].[ScheduleCache] (
+	[SCHEDULE_CACHE_ID],
+	[TASK_NAME],
+	[PROJECT],
+	[APP],
+	[CACHE_PAGE_SIZE],
+	[SSO_URL],
+	[CLIENT_ID],
+	[CLIENT_SECRET],
+	[GRANT_TYPE],
+	[APP_KEY],
+	[ACCESS_TOKEN],
+	[REQUEST_TIMEOUT],
+	[START_TIME],
+	[END_TIME],
+	[CREATED_DATE],
+	[CREATED_BY],
+	[OCCURANCE],
+	[NEXTSTART_DATE_TIME],
+	[END_DATE_TIME],
+	[STATUS],
+	[ACTIVE]
+	)
+VALUES (
+	@SCHEDULE_CACHE_ID,
+	@TASK_NAME,
+	@PROJECT,
+	@APP,
+	@CACHE_PAGE_SIZE,
+	@SSO_URL,
+	@CLIENT_ID,
+	@CLIENT_SECRET,
+	@GRANT_TYPE,
+	@APP_KEY,
+	@ACCESS_TOKEN,
+	@REQUEST_TIMEOUT,
+	@START_TIME,
+	@END_TIME,
+	@CREATED_DATE,
+	@CREATED_BY,
+	@OCCURANCE,
+	@NEXTSTART_DATE_TIME,
+	@END_DATE_TIME,
+	@STATUS,
+	@ACTIVE)
 
 GO
-INSERT [dbo].[Job] ([Job_id], [Is_Exchange], [Scope], [App], [DataObject], [Xid], [Exchange_Url], [Cache_Page_size]) VALUES (N'5ddc49b3-1599-47e2-9f9a-ad37413d0987', 0, N'12345_000', N'ABC', N'Lines', NULL, NULL, N'200')
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spuScheduleCache')
+DROP PROCEDURE spuScheduleCache
 GO
-INSERT [dbo].[Job] ([Job_id], [Is_Exchange], [Scope], [App], [DataObject], [Xid], [Exchange_Url], [Cache_Page_size]) VALUES (N'5ddc49b3-1599-47e2-9f9a-ad37413d28a7', 1, N'12345_000', NULL, NULL, N'1', N'http://localhost:8087/apps/runUnattendedExchange', NULL)
+
+--* ==================================================
+--*  Procedure ScheduleCache Update
+--* ==================================================
+CREATE PROCEDURE [dbo].[spuScheduleCache]
+	@SCHEDULE_CACHE_ID	nvarchar(64),
+	@TASK_NAME			nvarchar(100),
+	@PROJECT			nvarchar(64),
+	@APP				nvarchar(64), 
+	@CACHE_PAGE_SIZE	int,
+	@SSO_URL			nvarchar(256),
+	@CLIENT_ID			nvarchar(64),
+	@CLIENT_SECRET		nvarchar(64), 
+	@GRANT_TYPE			nvarchar(64),
+	@APP_KEY			nvarchar(64),
+	@ACCESS_TOKEN		nvarchar(64),
+	@REQUEST_TIMEOUT	int,
+	@START_TIME			DateTime,
+	@END_TIME			DateTime,
+	@CREATED_DATE		DateTime,
+	@CREATED_BY			nvarchar(100),
+	@OCCURANCE			nvarchar(24),
+	@NEXTSTART_DATE_TIME DateTime,
+	@END_DATE_TIME		DateTime,
+	@STATUS				nvarchar(64),
+	@ACTIVE				tinyint
+AS
+UPDATE [dbo].[ScheduleCache] SET
+	[TASK_NAME] = @TASK_NAME,
+	[PROJECT] = @PROJECT,
+	[APP] = @APP,
+	[CACHE_PAGE_SIZE] = @CACHE_PAGE_SIZE,
+	[SSO_URL] = @SSO_URL,
+	[CLIENT_ID] = @CLIENT_ID,
+	[CLIENT_SECRET] = @CLIENT_SECRET,
+	[GRANT_TYPE] = @GRANT_TYPE,
+	[APP_KEY] = @APP_KEY,
+	[ACCESS_TOKEN] = @ACCESS_TOKEN,
+	[REQUEST_TIMEOUT] = @REQUEST_TIMEOUT,
+	[START_TIME] = @START_TIME,
+	[END_TIME] = @END_TIME,
+	[CREATED_DATE] = @CREATED_DATE,
+	[CREATED_BY] = @CREATED_BY,
+	[OCCURANCE] = @OCCURANCE,
+	[NEXTSTART_DATE_TIME] = @NEXTSTART_DATE_TIME,
+	[END_DATE_TIME] = @END_DATE_TIME,
+	[STATUS] = @STATUS,
+	[ACTIVE] = @ACTIVE
+WHERE [dbo].[ScheduleCache].[Schedule_Cache_Id] = @SCHEDULE_CACHE_ID
+
 GO
-INSERT [dbo].[Job] ([Job_id], [Is_Exchange], [Scope], [App], [DataObject], [Xid], [Exchange_Url], [Cache_Page_size]) VALUES (N'5ddc49b3-1599-47e2-9f9a-ad37413d3456', 0, N'12345_000', N'ABC', NULL, NULL, NULL, N'200')
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spdScheduleCache')
+DROP PROCEDURE spdScheduleCache
 GO
-INSERT [dbo].[Job_client_Info] ([Job_Id], [SSo_Url], [Client_id], [Client_secret], [Access_Token], [App_Key], [Grant_Type], [Request_Timeout]) VALUES (N'5ddc49b3-1599-47e2-9f9a-ad37413d0987', N'https://sso.mypsn.com/as/token.oauth2', N'iRingTools', N'0Lvnvat5T5OJk5n6VwD4optFJoq7/0POq++NfYkIgHYtmy6Pluix3aGy7EAN1Jxp', N'TmMopozebXnR8ky6YgRnAV22ICOz', N'wHKxvUyEqrLTNSvsVTPX1GJs02nAo5IF', N'client_credentials', 300000)
+
+--* ==================================================
+--*  Procedure ScheduleCache Delete
+--* ==================================================
+CREATE PROCEDURE [dbo].[spdScheduleCache]
+	@SCHEDULE_CACHE_ID	[varchar](126)
+AS
+
+UPDATE [dbo].[ScheduleCache] 
+SET 
+	[ACTIVE] = 0
+WHERE [SCHEDULE_CACHE_ID] = @SCHEDULE_CACHE_ID
+
 GO
-INSERT [dbo].[JobSchedule] ([Schedule_Id], [Job_Id], [Next_Start_DateTime], [Last_Start_DateTime], [Active]) VALUES (N'5ddc49b3-1599-47e2-9f9a-ad3741355987', N'5ddc49b3-1599-47e2-9f9a-ad37413d0987', CAST(0x0000A3810062E080 AS DateTime), CAST(0x0000A3800062E080 AS DateTime), 1)
+
+
+--* ==================================================
+--*  Procedure ScheduleExchange Get
+--* ==================================================
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spgScheduleExchange')
+DROP PROCEDURE spgScheduleExchange
 GO
-INSERT [dbo].[Schedule] ([Schedule_Id], [Created_DateTime], [Created_By], [Occurance], [Start_DateTime], [End_DateTime], [Status]) VALUES (N'5ddc49b3-1599-47e2-9f9a-ad3741355987', CAST(0x0000A3800062E080 AS DateTime), N'Hemant', N'Daily', CAST(0x0000A3800062E080 AS DateTime), CAST(0x0000A380006B1DE0 AS DateTime), N'Completed')
+
+CREATE PROCEDURE [dbo].[spgScheduleExchange]
+	@Schedule_Exchange_Id	[varchar](126)
+AS
+
+SELECT
+	[Schedule_Exchange_Id] AS [Schedule_Exchange_Id],
+	[Task_Name] AS [Task_Name],
+	[SCOPE] AS [SCOPE],
+	[Base_Url] AS [Base_Url],
+	[Exchange_Id] AS [Exchange_Id],
+	[SSO_URL] AS [SSO_URL],
+	[CLIENT_ID] AS [CLIENT_ID],
+	[CLIENT_SECRET] AS [CLIENT_SECRET],
+	[GRANT_TYPE] AS [GRANT_TYPE],
+	[REQUEST_TIMEOUT] AS [REQUEST_TIMEOUT],
+	[Start_Time] AS [Start_Time],
+	[End_Time] AS [End_Time],
+	[Created_Date] AS [Created_Date] ,
+	[Created_By] AS [Created_By],
+	[Occurance] AS [Occurance],
+	[NextStart_Date_Time] AS [NextStart_Date_Time],
+	[End_Date_Time] AS [End_Date_Time],
+	[STATUS] AS [STATUS],
+	[ACTIVE] AS [ACTIVE]
+FROM [dbo].[ScheduleExchange] WITH (NoLock)
+WHERE
+	[dbo].[ScheduleExchange].[Schedule_Exchange_Id] = @Schedule_Exchange_Id
+
 GO
-ALTER TABLE [dbo].[Job_client_Info]  WITH CHECK ADD  CONSTRAINT [FK_Job_client_Info_Job] FOREIGN KEY([Job_Id])
-REFERENCES [dbo].[Job] ([Job_id])
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spiScheduleExchange')
+DROP PROCEDURE spiScheduleExchange
 GO
-ALTER TABLE [dbo].[Job_client_Info] CHECK CONSTRAINT [FK_Job_client_Info_Job]
+
+--* ==================================================
+--*  Procedure ScheduleExchange Insert
+--* ==================================================
+CREATE PROCEDURE [dbo].[spiScheduleExchange]
+	@TASK_NAME				nvarchar(100),
+	@SCOPE					nvarchar(64),
+	@SSO_URL				nvarchar(256),
+	@CLIENT_ID				nvarchar(64),
+	@CLIENT_SECRET			nvarchar(64), 
+	@GRANT_TYPE				nvarchar(64),
+	@REQUEST_TIMEOUT		int,
+	@START_TIME				DateTime,
+	@END_TIME				DateTime,
+	@CREATED_DATE			DateTime,
+	@CREATED_BY				nvarchar(100),
+	@OCCURANCE				nvarchar(24),
+	@NEXTSTART_DATE_TIME 	DateTime,
+	@END_DATE_TIME			DateTime,
+	@STATUS					nvarchar(64),
+	@ACTIVE					tinyint
+AS
+INSERT INTO [dbo].[ScheduleExchange] (
+	[TASK_NAME],
+	[SCOPE],
+	[SSO_URL],
+	[CLIENT_ID],
+	[CLIENT_SECRET],
+	[GRANT_TYPE],
+	[REQUEST_TIMEOUT],
+	[START_TIME],
+	[END_TIME],
+	[CREATED_DATE],
+	[CREATED_BY],
+	[OCCURANCE],
+	[NEXTSTART_DATE_TIME],
+	[END_DATE_TIME],
+	[STATUS],
+	[ACTIVE]
+	)
+VALUES (
+	@TASK_NAME,
+	@SCOPE,
+	@SSO_URL,
+	@CLIENT_ID,
+	@CLIENT_SECRET,
+	@GRANT_TYPE,
+	@REQUEST_TIMEOUT,
+	@START_TIME,
+	@END_TIME,
+	@CREATED_DATE,
+	@CREATED_BY,
+	@OCCURANCE,
+	@NEXTSTART_DATE_TIME,
+	@END_DATE_TIME,
+	@STATUS,
+	@ACTIVE)
 GO
-ALTER TABLE [dbo].[JobSchedule]  WITH CHECK ADD  CONSTRAINT [FK_JobSchedule_Job] FOREIGN KEY([Job_Id])
-REFERENCES [dbo].[Job] ([Job_id])
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spuScheduleExchange')
+DROP PROCEDURE spuScheduleExchange
 GO
-ALTER TABLE [dbo].[JobSchedule] CHECK CONSTRAINT [FK_JobSchedule_Job]
+
+--* ==================================================
+--*  Procedure ScheduleExchange Update
+--* ==================================================
+CREATE PROCEDURE [dbo].[spuScheduleExchange]
+	@SCHEDULE_EXCHANGE_ID	nvarchar(64),
+	@TASK_NAME				nvarchar(100),
+	@SCOPE					nvarchar(64),
+	@SSO_URL				nvarchar(256),
+	@CLIENT_ID				nvarchar(64),
+	@CLIENT_SECRET			nvarchar(64), 
+	@GRANT_TYPE				nvarchar(64),
+	@REQUEST_TIMEOUT		int,
+	@START_TIME				DateTime,
+	@END_TIME				DateTime,
+	@CREATED_DATE			DateTime,
+	@CREATED_BY				nvarchar(100),
+	@OCCURANCE				nvarchar(24),
+	@NEXTSTART_DATE_TIME 	DateTime,
+	@END_DATE_TIME			DateTime,
+	@STATUS					nvarchar(64),
+	@ACTIVE					tinyint
+AS
+UPDATE [dbo].[ScheduleExchange] SET
+	[TASK_NAME] = @TASK_NAME,
+	[SCOPE] = @SCOPE,
+	[SSO_URL] = @SSO_URL,
+	[CLIENT_ID] = @CLIENT_ID,
+	[CLIENT_SECRET] = @CLIENT_SECRET,
+	[GRANT_TYPE] = @GRANT_TYPE,
+	[REQUEST_TIMEOUT] = @REQUEST_TIMEOUT,
+	[START_TIME] = @START_TIME,
+	[END_TIME] = @END_TIME,
+	[CREATED_DATE] = @CREATED_DATE,
+	[CREATED_BY] = @CREATED_BY,
+	[OCCURANCE] = @OCCURANCE,
+	[NEXTSTART_DATE_TIME] = @NEXTSTART_DATE_TIME,
+	[END_DATE_TIME] = @END_DATE_TIME,
+	[STATUS] = @STATUS,
+	[ACTIVE] = @ACTIVE
+WHERE [dbo].[ScheduleExchange].[SCHEDULE_EXCHANGE_ID] = @SCHEDULE_EXCHANGE_ID
+
 GO
-ALTER TABLE [dbo].[JobSchedule]  WITH CHECK ADD  CONSTRAINT [FK_JobSchedule_Schedule] FOREIGN KEY([Schedule_Id])
-REFERENCES [dbo].[Schedule] ([Schedule_Id])
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spdScheduleExchange')
+DROP PROCEDURE spdScheduleExchange
 GO
-ALTER TABLE [dbo].[JobSchedule] CHECK CONSTRAINT [FK_JobSchedule_Schedule]
+
+--* ==================================================
+--*  Procedure ScheduleExchange Delete
+--* ==================================================
+CREATE PROCEDURE [dbo].[spdScheduleExchange]
+	@SCHEDULE_EXCHANGE_ID	[varchar](126)
+AS
+
+UPDATE [dbo].[ScheduleExchange] 
+SET 
+	[ACTIVE] = 0
+WHERE [dbo].[ScheduleExchange].[SCHEDULE_EXCHANGE_ID] = @SCHEDULE_EXCHANGE_ID
+
 GO
+
+
+GO
+
