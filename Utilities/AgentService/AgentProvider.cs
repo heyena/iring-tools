@@ -57,32 +57,22 @@ namespace iRINGAgentService
             }
         }
 
-        public void ProcessTask(AgentConfig config)
+        public void ProcessTask(AgentCache config)
         {
-            string project = string.Empty; 
-            string app = string.Empty;
-            string dataObject = string.Empty;
+            string project = string.Empty; ;
+            string app = string.Empty; ;
             AdapterSettings adapterSettings;
             NameValueCollection settings;
-
-            string baseUrl = string.Empty;
-            string scope = string.Empty; ;
-            string exchangeId = string.Empty;
            
             try
             {
-                project = config.Scope; //config.Project;
+                project = config.Project;
                 app = config.App;
-                dataObject = config.DataObject;
-                baseUrl = config.ExchangeUrl;
-                scope = config.Scope;
-                exchangeId = config.ExchangeId;
-
                 _ssoURL = config.SsoUrl;
                 _clientId = config.ClientId;
                 _clientSecret = config.ClientSecret;
                 _authType = config.GrantType;
-                
+
                 _clientSecret = EncryptionUtility.Decrypt(_clientSecret);
                 settings = ConfigurationManager.AppSettings;
                 settings["AppKey"] = config.AppKey;
@@ -94,39 +84,64 @@ namespace iRINGAgentService
                 Initialize();
                 string clientToken = GetClientToken(); 
 
-                if (config.IsExchange == 0)
+                if (clientToken != null)
                 {
-                    if (!string.IsNullOrEmpty(clientToken))
-                    {
-                        _settings["AllowImpersonation"] = "True";
-                        _settings["ImpersonatedUser"] = _clientId;
-                        _settings["ClientToken"] = clientToken;
-                    }
-                    RefreshCache(project, app, false);
+                    _settings["AllowImpersonation"] = "True";
+                    _settings["ImpersonatedUser"] = _clientId;
+                    _settings["ClientToken"] = clientToken;
                 }
-                else
-                {
-                    string url = string.Format("{0}?scope={1}&xid={2}", baseUrl, scope, exchangeId);
-                    WebRequest request = CreateWebRequest(url);
 
-                    if (!string.IsNullOrEmpty(clientToken))
-                    {
-                        _logger.Info("Use client token.");
-                        request.Headers.Add("AuthType", _authType);
-                        request.Headers.Add("ClientToken", clientToken);
-                        request.Headers.Add("UserName", _clientId);
-                    }
-
-                    request.Timeout = _requestTimeout;
-                    string responseText = GetResponseText(request);
-                }
+                RefreshCache(project, app, false);
                
-                _logger.Info("Task finished: ");
+                _logger.Info("Caching task finished: ");
               
             }
             catch (Exception e)
             {
-                _logger.Error("Error processing task: " + config.JobId + "  " + e.Message);
+                _logger.Error("Error processing caching task: " + config.TaskName + "  " + e.Message);
+            }
+        }
+
+        public void ProcessTask(AgentExchange config)
+        {
+            string baseUrl = string.Empty; ;
+            string scope = string.Empty; ;
+            string exchangeId = string.Empty; ;
+
+            try
+            {
+         
+                baseUrl = config.BaseUrl;
+                scope = config.Scope;
+                exchangeId = config.ExchangeId;
+                _ssoURL = config.SsoUrl;
+                _clientId = config.ClientId;
+                _clientSecret = config.ClientSecret;
+                _authType = config.GrantType;
+
+                Initialize();
+                string clientToken = GetClientToken();
+
+                string url = string.Format("{0}?scope={1}&xid={2}", baseUrl, scope, exchangeId);
+                WebRequest request = CreateWebRequest(url);
+
+                if (!string.IsNullOrEmpty(clientToken))
+                {
+                    _logger.Info("Use client token.");
+                    request.Headers.Add("AuthType", _authType);
+                    request.Headers.Add("ClientToken", clientToken);
+                    request.Headers.Add("UserName", _clientId);
+                }
+
+                request.Timeout = _requestTimeout;
+                string responseText = GetResponseText(request);
+
+                _logger.Info("Exchange task finished: " + responseText);
+
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error processing exchnage task: " + config.TaskName + "  " + e.Message);
             }
         }
 
