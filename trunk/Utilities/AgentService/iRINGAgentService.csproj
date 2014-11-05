@@ -88,8 +88,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AgentCache.cs" />
-    <Compile Include="AgentExchange.cs" />
+    <Compile Include="AgentConfig.cs" />
     <Compile Include="AgentProvider.cs" />
     <Compile Include="iRingAgentService.cs">
       <SubType>Component</SubType>
