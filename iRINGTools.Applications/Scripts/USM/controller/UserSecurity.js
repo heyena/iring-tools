@@ -267,9 +267,26 @@
         var me = this;
         var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
         var groupId = rec[0].data.GroupId;
-        Ext.MessageBox.alert('Status', 'Changes saved successfully.', function (btn) { if (btn == "ok") { alert(btn) } });
+	    Ext.MessageBox.confirm('Delete', 'Are you sure to delete this group?', function (btn) {
+			if (btn === 'yes') {
+				Ext.Ajax.request({
+				   url: 'usersecuritymanager/deleteGroup',
+					method: 'POST',
+					params: {
+						GroupId: groupId
+					},
+					success: function (response, options) {
+						var responseObj = Ext.JSON.decode(response.responseText);
+						Ext.getCmp('viewportid').down('groupgrid').store.reload();
 
-    },
+					},
+
+					failure: function (response, options) {
+					}
+			   });
+			}
+		});
+	},
 
     addRole: function (btn) {
         var me = this;
