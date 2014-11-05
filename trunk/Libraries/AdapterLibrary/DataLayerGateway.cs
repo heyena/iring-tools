@@ -1774,11 +1774,10 @@ namespace org.iringtools.adapter
                     _logger.Debug(string.Format("Populating  cache data for cache table {0}_{1}, using light weight datalayer 2. Set page size = {2}.", cacheId, objectType.objectName, CachePageSize));
                     //get all identifier from datalayer   for idatalayer2 interface
                     List<SerializableDataObject> dataObjects2 = _lwDataLayer2.GetIndex(objectType);
-
-                    if (dataObjects2.Count < CachePageSize)
+                    while (start < dataObjects2.Count)
                     {
-                        
-                        List<SerializableDataObject> getdataObjects2 = _lwDataLayer2.Get(objectType);
+                        List<SerializableDataObject> data = dataObjects2.Skip(CachePageSize * pageIndex).Take(CachePageSize).ToList();
+                        List<SerializableDataObject> getdataObjects2 = _lwDataLayer2.GetPage(objectType, data);
                         foreach (SerializableDataObject dataObj in getdataObjects2)
                         {
                             DataRow newRow = table.NewRow();
@@ -1797,58 +1796,19 @@ namespace org.iringtools.adapter
                             }
                             table.Rows.Add(newRow);
                         }
-                                           
-                        
+
                         SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
                         bulkCopy.DestinationTableName = tableName;
                         bulkCopy.WriteToServer(table);
 
                         nRowCounter = (dataObjects2.Count <= CachePageSize) ? dataObjects2.Count : CachePageSize;
-                        _logger.Debug(string.Format("Saving rows {0} to {1}  from table {2} to cache table {3}_{2}", start, start + nRowCounter, objectType.objectName, cacheId));
-                                            
+                        _logger.Debug(string.Format("Saving rows {0} to {1}  from table {2} to cache table {3}_{2}", start, start+nRowCounter, objectType.objectName, cacheId));
+
+                        start += CachePageSize;
+                        pageIndex = pageIndex + 1;
                         table.Clear();
                         bulkCopy.Close();
 
-                    }
-                    else
-                    {
-
-                        while (start < dataObjects2.Count)
-                        {
-                            List<SerializableDataObject> data = dataObjects2.Skip(CachePageSize * pageIndex).Take(CachePageSize).ToList();
-                            List<SerializableDataObject> getdataObjects2 = _lwDataLayer2.GetPage(objectType, data);
-                            foreach (SerializableDataObject dataObj in getdataObjects2)
-                            {
-                                DataRow newRow = table.NewRow();
-
-                                foreach (var pair in dataObj.Dictionary)
-                                {
-                                    if (pair.Value == null)
-                                        newRow[pair.Key] = DBNull.Value;
-                                    else
-                                        newRow[pair.Key] = pair.Value;
-                                }
-
-                                if (dataObj.HasContent)
-                                {
-                                    newRow[BaseLightweightDataLayer.HAS_CONTENT] = true;
-                                }
-                                table.Rows.Add(newRow);
-                            }
-
-                            SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
-                            bulkCopy.DestinationTableName = tableName;
-                            bulkCopy.WriteToServer(table);
-
-                            nRowCounter = (dataObjects2.Count <= CachePageSize) ? dataObjects2.Count : CachePageSize;
-                            _logger.Debug(string.Format("Saving rows {0} to {1}  from table {2} to cache table {3}_{2}", start, start + nRowCounter, objectType.objectName, cacheId));
-
-                            start += CachePageSize;
-                            pageIndex = pageIndex + 1;
-                            table.Clear();
-                            bulkCopy.Close();
-
-                        }
                     }
                     _logger.Debug(string.Format("Caching completed for cache table {0}_{1}", cacheId, objectType.objectName));
 
