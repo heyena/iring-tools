@@ -50,8 +50,7 @@ namespace iRINGAgentService
     {
         private static ILog _logger = LogManager.GetLogger(typeof(iRINGAgentService));
         private System.Diagnostics.EventLog _eventLog1;
-        private static List<AgentCache> _cacheList = new List<AgentCache>();
-        private static List<AgentExchange> _exchangeList = new List<AgentExchange>();
+        private static List<AgentConfig> _configList = new List<AgentConfig>();
         private ServiceStatus _serviceStatus = new ServiceStatus();
         private static string _agentConnStr = null;
         private static long _timerInterval = 600000;
@@ -131,37 +130,37 @@ namespace iRINGAgentService
                 else
                 {
                     //process cache list
-                    int count = _cacheList.Count;
+                    int count = _configList.Count;
                     Task[] tasks = new Task[count];
 
                     for (int i = 0; i < count; i++)
                     {
                         //check for valid time and state
-                        string taskStatus = _cacheList[i].Status;
-                        string startDate = _cacheList[i].StartTime.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
+                        string taskStatus = _configList[i].Status;
+                        string startDate = _configList[i].StartDateTime.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
                         string currentDate = DateTime.Now.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
                         DateTime startTime = DateTime.Parse(startDate, System.Globalization.CultureInfo.CurrentCulture);
                         DateTime currentTime = DateTime.Parse(currentDate, System.Globalization.CultureInfo.CurrentCulture);
 
                         //check for occurance validity
-                        isValid = CheckValidOccurance(i, "cache");
+                        isValid = CheckValidOccurance(i);
 
                         if (isValid)
                         {
-                            if ((taskStatus.Equals("Ready")) && (_cacheList[i].Active).ToString().Equals("1"))
+                            if ((taskStatus.Equals("Ready")) && (_configList[i].Active).ToString().Equals("1"))
                             {
-                                _eventLog1.WriteEntry("Starting cache process " + _cacheList[i].TaskName);
-                                tasks[i] = Task.Factory.StartNew(() => StartCacheProcess(i));
+                                _eventLog1.WriteEntry("Starting process for job " + _configList[i].JobId);
+                                tasks[i] = Task.Factory.StartNew(() => StartProcess(i));
 
-                                if (_cacheList[i].RequestTimeout > 0)
-                                    threadTimeout = _cacheList[i].RequestTimeout;
+                                if (_configList[i].RequestTimeout > 0)
+                                    threadTimeout = _configList[i].RequestTimeout;
 
-                                _eventLog1.WriteEntry(_cacheList[i].TaskName + " thread Timeout " + threadTimeout);
+                                _eventLog1.WriteEntry(_configList[i].JobId + " thread Timeout " + threadTimeout);
                                 Thread.Sleep(threadTimeout);
                                 if (!(tasks[i].Exception == null) || tasks[i].IsFaulted)
                                 {
-                                    _eventLog1.WriteEntry("Error processing cache task " + _cacheList[i].TaskName + " : " + tasks[i].Status);
-                                    throw new Exception("Error processing cache task " + _cacheList[i].TaskName + " : " + tasks[i].Status);
+                                    _eventLog1.WriteEntry("Error processing task " + _configList[i].JobId + " : " + tasks[i].Status);
+                                    throw new Exception("Error processing task " + _configList[i].JobId + " : " + tasks[i].Status);
                                 }
                             }
                         }
@@ -181,64 +180,7 @@ namespace iRINGAgentService
                     {
                         foreach (var exception in ex.Flatten().InnerExceptions)
                         {
-                            _eventLog1.WriteEntry("Error processing cache task " + ex.Message);
-                        }
-                    }
-
-                    //process exchange list
-                    int exCount = _exchangeList.Count;
-                    Task[] exTasks = new Task[exCount];
-                    for (int j = 0; j < exCount; j++)
-                    {
-                        //check for valid time and state
-                        string taskStatus = _exchangeList[j].Status;
-                        string startDate = _exchangeList[j].StartTime.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
-                        string currentDate = DateTime.Now.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
-                        DateTime startTime = DateTime.Parse(startDate, System.Globalization.CultureInfo.CurrentCulture);
-                        DateTime currentTime = DateTime.Parse(currentDate, System.Globalization.CultureInfo.CurrentCulture);
-
-                        if (_exchangeList[j].RequestTimeout > 0)
-                            threadTimeout = _exchangeList[j].RequestTimeout;
-
-                        isValid = CheckValidOccurance(j, "exchange");
-
-                        if (isValid)
-                        {
-                            if (taskStatus.Equals("Ready") && (_exchangeList[j].Active).ToString().Equals("1"))
-                            {
-                                _eventLog1.WriteEntry("Starting exchange process " + _exchangeList[j].TaskName);
-                                exTasks[j] = Task.Factory.StartNew(() => StartExchangeProcess(j));
-
-                                if (_exchangeList[j].RequestTimeout > 0)
-                                    threadTimeout = _exchangeList[j].RequestTimeout;
-
-                                _eventLog1.WriteEntry(_cacheList[j].TaskName + " thread Timeout " + threadTimeout);
-                                Thread.Sleep(threadTimeout);
-
-                                if (!(tasks[j].Exception == null) || tasks[j].IsFaulted)
-                                {
-                                    _eventLog1.WriteEntry("Error processing exchange task " + _exchangeList[j].TaskName + " : " + tasks[j].Status);
-                                    throw new Exception("Error processing exchange task " + _exchangeList[j].TaskName + " : " + tasks[j].Status);
-                                }
-
-                            }
-                        }
-                    }
-                    try
-                    {
-                        for (int l = 0; l < count; l++)
-                        {
-                            if (!(tasks[l] == null))
-                            {
-                                tasks[l].Wait();
-                            }
-                        }
-                    }
-                    catch (AggregateException ex)
-                    {
-                        foreach (var exception in ex.Flatten().InnerExceptions)
-                        {
-                            _eventLog1.WriteEntry("Error processing exchange task " + ex.Message);
+                            _eventLog1.WriteEntry("Error processing task " + ex.Message);
                         }
                     }
                 }
@@ -255,7 +197,7 @@ namespace iRINGAgentService
             SetServiceStatus(this.ServiceHandle, ref _serviceStatus);
         }
 
-        private Boolean CheckValidOccurance(int i, string taskType)
+        private Boolean CheckValidOccurance(int i)
         {
             Boolean bReturn = false;
             string occurance = "";
@@ -263,25 +205,15 @@ namespace iRINGAgentService
             DateTime endDateTime;
             DateTime currentDateTime;
 
-
             try
             {
                 string currentDate = DateTime.Now.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
                 currentDateTime = DateTime.Parse(currentDate, System.Globalization.CultureInfo.CurrentCulture);
                 
-                if (taskType.Equals("cache"))
-                {
-                    occurance = _cacheList[i].Occurance;
-                    nextStartDateTime = DateTime.Parse(_cacheList[i].NextStartDateTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
-                    endDateTime = DateTime.Parse(_cacheList[i].EndDateTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
-                }
-                else 
-                {
-                    occurance = _exchangeList[i].Occurance;
-                    nextStartDateTime = DateTime.Parse(_exchangeList[i].NextStartDateTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
-                    endDateTime = DateTime.Parse(_exchangeList[i].EndDateTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
-                }
-
+                occurance = _configList[i].Occurance;
+                nextStartDateTime = DateTime.Parse(_configList[i].NextStartDateTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
+                endDateTime = DateTime.Parse(_configList[i].EndDateTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
+                
                 if (occurance.Equals("Immediate"))
                 {
                     bReturn = true;
@@ -299,7 +231,7 @@ namespace iRINGAgentService
             return bReturn;
         }
 
-        private void StartCacheProcess(int k)
+        private void StartProcess(int k)
         {
             AdapterSettings adapterSettings;
             NameValueCollection settings;
@@ -313,39 +245,43 @@ namespace iRINGAgentService
             try
             {
                 settings = ConfigurationManager.AppSettings;
-                if (int.Parse(_cacheList[k].CachePageSize) > 0)
+                if (int.Parse(_configList[k].CachePageSize) > 0)
                 {
-                    settings.Set("cachePage", _cacheList[k].CachePageSize);
-                    settings.Set("CachePageSize", _cacheList[k].CachePageSize);
+                    settings.Set("cachePage", _configList[k].CachePageSize);
+                    settings.Set("CachePageSize", _configList[k].CachePageSize);
                 }
 
                 adapterSettings = new AdapterSettings();
                 adapterSettings.AppendSettings(settings);
 
                 //update status to Busy in DB 
-                updateSQL = string.Format(UPDATE_SQL_TPL, "SCHEDULECACHE", "Status = 'Busy'", " where Schedule_Cache_Id = '" + _cacheList[k].ScheduleCacheId + "'");
-                idSQLMap[_cacheList[k].ScheduleCacheId] = updateSQL;
+                updateSQL = string.Format(UPDATE_SQL_TPL, "Schedule", "Status = 'Busy'", " where Schedule_Id = '" + _configList[k].ScheduleId + "'");
+                idSQLMap[_configList[k].JobId] = updateSQL;
                 DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
-            
+
+                updateSQL = string.Format(UPDATE_SQL_TPL, "JobSchedule", "Last_Start_DateTime = '" + DateTime.Now + "'", " where Schedule_Id = '" + _configList[k].ScheduleId + "' and Job_Id = '" + _configList[k].JobId + "'");
+                idSQLMap[_configList[k].JobId] = updateSQL;
+                DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
+
                 //Call agent provider
                 AgentProvider agentProvider = new AgentProvider(adapterSettings);
-                AgentCache cacheConfig = (AgentCache)_cacheList[k];
-                _logger.Debug("Calling cache process task with config no. " + k);
-                agentProvider.ProcessTask(cacheConfig);
-           
+                AgentConfig agentConfig = (AgentConfig)_configList[k];
+                _logger.Debug("Calling task with config no. " + k);
+                agentProvider.ProcessTask(agentConfig);
+
                 //update status and completion time in DB 
-                updateSQL = string.Format(UPDATE_SQL_TPL, "SCHEDULECACHE", "Status = 'Ready'", " where Schedule_Cache_Id = '" + _cacheList[k].ScheduleCacheId + "'");
-                idSQLMap[_cacheList[k].ScheduleCacheId] = updateSQL;
+                updateSQL = string.Format(UPDATE_SQL_TPL, "Schedule", "Status = 'Ready'", " where Schedule_Id = '" + _configList[k].ScheduleId + "'");
+                idSQLMap[_configList[k].JobId] = updateSQL;
                 DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
 
                 //update nextstartdatetime
                 string currentDate = DateTime.Now.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
                 currentDateTime = DateTime.Parse(currentDate, System.Globalization.CultureInfo.CurrentCulture);
-                endTime = DateTime.Parse(_cacheList[k].EndTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
-                endDateTime = DateTime.Parse(_cacheList[k].EndDateTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
-                startDateTime = DateTime.Parse(_cacheList[k].StartTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
+                endTime = DateTime.Parse(_configList[k].EndDateTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
+                endDateTime = DateTime.Parse(_configList[k].EndDateTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
+                startDateTime = DateTime.Parse(_configList[k].StartDateTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
                 DateTime nextStartDateTime = currentDateTime;
-                string occurance = _cacheList[k].Occurance;
+                string occurance = _configList[k].Occurance;
                 switch (occurance)
                 {
                     case "Immediate":
@@ -361,106 +297,22 @@ namespace iRINGAgentService
                         nextStartDateTime = currentDateTime.AddMonths(1);
                         break;
                 }
-                updateSQL = string.Format(UPDATE_SQL_TPL, "SCHEDULECACHE", "NextStart_Date_Time = '" + nextStartDateTime + "'", " where Schedule_Cache_Id = '" + _cacheList[k].ScheduleCacheId + "'");
-                idSQLMap[_cacheList[k].ScheduleCacheId] = updateSQL;
-                DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
-
-                updateSQL = string.Format(UPDATE_SQL_TPL, "SCHEDULECACHE", "End_Time = '" + DateTime.Now + "'", " where Schedule_Cache_Id = '" + _cacheList[k].ScheduleCacheId + "'");
-                idSQLMap[_cacheList[k].ScheduleCacheId] = updateSQL;
+                updateSQL = string.Format(UPDATE_SQL_TPL, "JobSchedule", "Next_Start_DateTime = '" + nextStartDateTime + "'", " where Schedule_Id = '" + _configList[k].ScheduleId + "' and Job_Id = '" + _configList[k].JobId + "'");
+                idSQLMap[_configList[k].JobId] = updateSQL;
                 DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
 
                 //if currenttime is greater than enddatetime then set active flag to 0
                 if (currentDateTime >= endDateTime)
                 {
-                    updateSQL = string.Format(UPDATE_SQL_TPL, "SCHEDULECACHE", "Active = 0 " , " where Schedule_Cache_Id = '" + _cacheList[k].ScheduleCacheId + "'");
-                    idSQLMap[_cacheList[k].ScheduleCacheId] = updateSQL;
+                    updateSQL = string.Format(UPDATE_SQL_TPL, "JobSchedule", "Active = 0 ", " where Schedule_Id = '" + _configList[k].ScheduleId + "' and Job_Id = '" + _configList[k].JobId + "'");
+                    idSQLMap[_configList[k].JobId] = updateSQL;
                     DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
                 }
 
             }
             catch (Exception ex)
             {
-                _eventLog1.WriteEntry("Error in StartCacheProcess " + _cacheList[k].TaskName + " : " + ex.Message);
-            }
-        }
-
-        private void StartExchangeProcess(int l)
-        {
-            AdapterSettings adapterSettings;
-            NameValueCollection settings;
-            Dictionary<string, string> idSQLMap = new Dictionary<string, string>();
-            string updateSQL = null;
-            DateTime currentDateTime;
-            DateTime endTime;
-            DateTime endDateTime;
-            DateTime startDateTime;
-
-            try
-            {
-                settings = ConfigurationManager.AppSettings;
-                adapterSettings = new AdapterSettings();
-                adapterSettings.AppendSettings(settings);
-
-                //update status to Busy in DB 
-                updateSQL = string.Format(UPDATE_SQL_TPL, "SCHEDULEEXCHANGE", "Status = 'Busy'", " where Schedule_Exchange_Id = '" + _exchangeList[l].ScheduleExchangeId + "'");
-                idSQLMap[_exchangeList[l].ScheduleExchangeId] = updateSQL;
-                DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
-
-                //Call agent provider
-                AgentProvider agentProvider = new AgentProvider(adapterSettings);
-                AgentExchange exchangeConfig = (AgentExchange)_exchangeList[l];
-                _logger.Debug("Calling exchange process task with config no. " + l);
-
-                agentProvider.ProcessTask(exchangeConfig);
-           
-                //update status and completion time in DB 
-                updateSQL = string.Format(UPDATE_SQL_TPL, "SCHEDULEEXCHANGE", "Status = 'Ready'", " where Schedule_Exchange_Id = '" + _exchangeList[l].ScheduleExchangeId + "'");
-                idSQLMap[_exchangeList[l].ScheduleExchangeId] = updateSQL;
-                DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
-
-                //update nextstartdatetime
-                string currentDate = DateTime.Now.ToString("hh:mm:ss tt", System.Globalization.DateTimeFormatInfo.InvariantInfo);
-                currentDateTime = DateTime.Parse(currentDate, System.Globalization.CultureInfo.CurrentCulture);
-                endTime = DateTime.Parse(_exchangeList[l].EndTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
-                endDateTime = DateTime.Parse(_exchangeList[l].EndDateTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
-                startDateTime = DateTime.Parse(_exchangeList[l].StartTime.ToString(), System.Globalization.CultureInfo.CurrentCulture);
-                DateTime nextStartDateTime = currentDateTime;
-
-                string occurance = _exchangeList[l].Occurance;
-                switch (occurance)
-                {
-                    case "Immediate":
-                        nextStartDateTime = currentDateTime;
-                        break;
-                    case "Daily":
-                        nextStartDateTime = currentDateTime.AddHours(24);
-                        break;
-                    case "Weekly":
-                        nextStartDateTime = currentDateTime.AddDays(7);
-                        break;
-                    case "Monthly":
-                        nextStartDateTime = currentDateTime.AddMonths(1);
-                        break;
-                }
-                updateSQL = string.Format(UPDATE_SQL_TPL, "SCHEDULEEXCHANGE", "NextStart_Date_Time = '" + nextStartDateTime + "'", " where Schedule_Exchange_Id = '" + _exchangeList[l].ScheduleExchangeId + "'");
-                idSQLMap[_exchangeList[l].ScheduleExchangeId] = updateSQL;
-                DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
-
-                updateSQL = string.Format(UPDATE_SQL_TPL, "SCHEDULEEXCHANGE", "End_Time = '" + DateTime.Now + "'", " where Schedule_Exchange_Id = '" + _exchangeList[l].ScheduleExchangeId + "'");
-                idSQLMap[_exchangeList[l].ScheduleExchangeId] = updateSQL;
-                DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
-
-                //if currenttime is greater than enddatetime then set active flag to 0
-                if (currentDateTime >= endDateTime)
-                {
-                    updateSQL = string.Format(UPDATE_SQL_TPL, "SCHEDULEEXCHANGE", "Active = 0 ", " where Schedule_Exchange_Id = '" + _exchangeList[l].ScheduleExchangeId + "'");
-                    idSQLMap[_exchangeList[l].ScheduleExchangeId] = updateSQL;
-                    DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
-                }
-            }
-            catch (Exception ex)
-            {
-                _eventLog1.WriteEntry("Error in StartExchangeProcess " + _exchangeList[l].TaskName + " : " + ex.Message);
+                _eventLog1.WriteEntry("Error in StartProcess " + _configList[k].JobId + " : " + ex.Message);
             }
         }
 
@@ -475,89 +327,57 @@ namespace iRINGAgentService
                 settings = ConfigurationManager.AppSettings;
                 _agentConnStr = settings.Get("iRINGAgentConnStr");
                 _agentConnStr = EncryptionUtility.Decrypt(_agentConnStr);
-                //_timerInterval = long.Parse(settings.Get("TimerInterval"));
+                _configList.Clear();
 
+                string sSql = "select a.job_id,a.is_exchange,a.scope,a.app,a.dataobject,a.xid,a.exchange_url,a.cache_page_size, " +
+                               " b.sso_url,b.client_id,b.client_secret,b.access_token,b.app_key,b.grant_type,b.request_timeout, " +
+                               " c.schedule_id,c.occurance,c.start_datetime,c.end_datetime,c.status, " +
+                               " d.next_start_datetime,d.last_start_datetime,d.active " +
+                               " from job a, job_client_info b, schedule c, jobschedule d " +
+                               " where a.job_id = b.job_id and a.job_id = d.job_id and c.schedule_id = d.schedule_id ";
 
-                string cacheSQL = "SELECT * FROM SCHEDULECACHE ";
-                DataTable cacheTable = DBManager.Instance.ExecuteQuery(_agentConnStr, cacheSQL);
-                if (cacheTable != null && cacheTable.Rows.Count > 0)
+                DataTable agentConfig = DBManager.Instance.ExecuteQuery(_agentConnStr, sSql);
+                if (agentConfig != null && agentConfig.Rows.Count > 0)
                 {
-                    foreach (DataRow dataRow in cacheTable.Rows)
+                    foreach (DataRow dataRow in agentConfig.Rows)
                     {
                         try
                         {
-                            _cacheList.Add(new AgentCache
+                            _configList.Add(new AgentConfig
                             {
-                                ScheduleCacheId = dataRow["Schedule_Cache_Id"].ToString(),
-                                TaskName = dataRow["Task_Name"].ToString(),
-                                Project = dataRow["Project"].ToString(),
-                                App = dataRow["App"].ToString(),
-                                CachePageSize = dataRow["Cache_Page_Size"].ToString(),
-                                SsoUrl = dataRow["Sso_Url"].ToString(),
-                                ClientId = dataRow["Client_Id"].ToString(),
-                                ClientSecret = dataRow["Client_Secret"].ToString(),
-                                GrantType = dataRow["Grant_Type"].ToString(),
-                                AppKey = dataRow["App_Key"].ToString(),
-                                AccessToken = dataRow["Access_Token"].ToString(),
-                                RequestTimeout = Convert.ToInt32(dataRow["Request_Timeout"]),
-                                StartTime = Convert.ToDateTime(dataRow["Start_Time"]),
-                                EndTime = Convert.ToDateTime(dataRow["End_Time"]),
-                                CreatedDate = Convert.ToDateTime(dataRow["Created_Date"]),
-                                CreatedBy = dataRow["Created_By"].ToString(),
-                                Occurance = dataRow["Occurance"].ToString(),
-                                NextStartDateTime = Convert.ToDateTime(dataRow["NextStart_Date_Time"]),
-                                EndDateTime = Convert.ToDateTime(dataRow["End_Date_Time"]),
-                                Status = dataRow["Status"].ToString(),
-                                Active = Convert.ToInt32(dataRow["Active"])
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            _eventLog1.WriteEntry(string.Format("Error getting cache configuration data.", ex));
-                            throw ex;
-                        }
-                    }
-                }
 
-                string exchangeSQL = "SELECT * FROM SCHEDULEEXCHANGE ";
-                DataTable exchangeTable = DBManager.Instance.ExecuteQuery(_agentConnStr, exchangeSQL);
-                if (exchangeTable != null && exchangeTable.Rows.Count > 0)
-                {
-                    foreach (DataRow dataRow in exchangeTable.Rows)
-                    {
-                        try
-                        {
-                            _exchangeList.Add(new AgentExchange
-                            {
-                                ScheduleExchangeId = dataRow["Schedule_Exchange_Id"].ToString(),
-                                TaskName = dataRow["Task_Name"].ToString(),
+                                JobId = dataRow["Job_Id"].ToString(),
+                                IsExchange = Convert.ToInt32(dataRow["is_exchange"]),
                                 Scope = dataRow["Scope"].ToString(),
-                                BaseUrl = dataRow["Base_Url"].ToString(),
-                                ExchangeId = dataRow["Exchange_Id"].ToString(),
-                                SsoUrl = dataRow["Sso_Url"].ToString(),
-                                ClientId = dataRow["Client_Id"].ToString(),
-                                ClientSecret = dataRow["Client_Secret"].ToString(),
-                                GrantType = dataRow["Grant_Type"].ToString(),
-                                RequestTimeout = Convert.ToInt32(dataRow["Request_Timeout"]),
-                                StartTime = Convert.ToDateTime(dataRow["Start_Time"]),
-                                EndTime = Convert.ToDateTime(dataRow["End_Time"]),
-                                CreatedDate = Convert.ToDateTime(dataRow["Created_Date"]),
-                                CreatedBy = dataRow["Created_By"].ToString(),
-                                Occurance = dataRow["Occurance"].ToString(),
-                                NextStartDateTime = Convert.ToDateTime(dataRow["NextStart_Date_Time"]),
-                                EndDateTime = Convert.ToDateTime(dataRow["End_Date_Time"]),
-                                Status = dataRow["Status"].ToString(),
-                                Active = Convert.ToInt32(dataRow["Active"])
+                                App = dataRow["App"].ToString(),
+                                DataObject = dataRow["DataObject"].ToString(),
+                                ExchangeId = dataRow["xid"].ToString(),
+                                ExchangeUrl = dataRow["exchange_url"].ToString(),
+                                CachePageSize = dataRow["cache_page_size"].ToString(),
+                                SsoUrl = dataRow["sso_url"].ToString(),
+                                ClientId = dataRow["client_id"].ToString(),
+                                ClientSecret = dataRow["client_secret"].ToString(),
+                                AccessToken = dataRow["access_token"].ToString(),
+                                AppKey = dataRow["app_key"].ToString(),
+                                GrantType = dataRow["grant_type"].ToString(),
+                                RequestTimeout = Convert.ToInt32(dataRow["request_timeout"]),
+                                ScheduleId = dataRow["schedule_id"].ToString(),
+                                Occurance = dataRow["occurance"].ToString(),
+                                StartDateTime = Convert.ToDateTime(dataRow["start_datetime"]),
+                                EndDateTime = Convert.ToDateTime(dataRow["end_datetime"]),
+                                Status = dataRow["status"].ToString(),
+                                NextStartDateTime = Convert.ToDateTime(dataRow["next_start_datetime"]),
+                                LastStartDateTime = Convert.ToDateTime(dataRow["last_start_datetime"]),
+                                Active = Convert.ToInt32(dataRow["active"])
                             });
                         }
                         catch (Exception ex)
                         {
-                            _eventLog1.WriteEntry(string.Format("Error getting exchange configuration data.", ex));
+                            _eventLog1.WriteEntry(string.Format("Error getting configuration data.", ex));
                             throw ex;
                         }
                     }
                 }
-
             }
             catch (Exception ex)
             {
