@@ -40,6 +40,7 @@ namespace org.iringtools.library
         {
             dataObjects = new List<DataObject>();
             picklists = new List<PicklistObject>();
+            unionObjects = new List<UnionObject>();
         }
 
         [DataMember(Order = 0)]
@@ -59,6 +60,9 @@ namespace org.iringtools.library
 
         [DataMember(Order = 5, EmitDefaultValue = false)]
         public string description { get; set; }
+
+        [DataMember(IsRequired = false, Order = 6)]
+        public List<UnionObject> unionObjects { get; set; }
 
         public static bool IsNumeric(DataType dataType)
         {
@@ -107,7 +111,6 @@ namespace org.iringtools.library
             dataProperties = new List<DataProperty>();
             dataRelationships = new List<DataRelationship>();
             extensionProperties = new List<ExtensionProperty>();
-            unionObjects = new List<UnionObject>();
         }
 
         [DataMember(IsRequired = true, Order = 0)]
@@ -168,10 +171,7 @@ namespace org.iringtools.library
         public bool isHidden { get; set; }
 
         [DataMember(IsRequired = false, Order = 19)]
-        public List<ExtensionProperty> extensionProperties  { get; set; }
-
-        [DataMember(IsRequired = false, Order = 20)]
-        public List<UnionObject> unionObjects { get; set; }
+        public List<ExtensionProperty> extensionProperties { get; set; }
 
 
         public bool isKeyProperty(string propertyName)
@@ -314,7 +314,6 @@ namespace org.iringtools.library
         public List<ExtensionParameter> parameters { get; set; }
     }
 
-
     [Serializable]
     [DataContract(Name = "parameter", Namespace = "http://www.iringtools.org/library")]
     public class ExtensionParameter
@@ -326,24 +325,6 @@ namespace org.iringtools.library
         public string value { get; set; }
     }
 
-    [Serializable]
-    [DataContract(Name = "unionObject", Namespace = "http://www.iringtools.org/library")]
-    public class UnionObject
-    {
-        [DataMember(IsRequired = false, Order = 0)]
-        public string unionName { get; set; }
-
-        [DataMember(IsRequired = false, Order = 1)]
-        public List<UnionType> unionTypes { get; set; }
-    }
-
-    [Serializable]
-    [DataContract(Name = "unionType", Namespace = "http://www.iringtools.org/library")]
-    public class UnionType
-    {
-        [DataMember(IsRequired = false, Order = 0)]
-        public string unionType { get; set; }
-    }
 
     [Serializable]
     [DataContract(Name = "keyProperty", Namespace = "http://www.iringtools.org/library")]
@@ -465,5 +446,24 @@ namespace org.iringtools.library
 
         [DataMember(IsRequired = false, Order = 4)]
         public List<DataProperty> pickListProperties { get; set; }
+    }
+
+    [Serializable]
+    [DataContract(Name = "unionObject", Namespace = "http://www.iringtools.org/library")]
+    public class UnionObject
+    {
+        [DataMember(IsRequired = false, Order = 0)]
+        public string unionName { get; set; }
+
+        [DataMember(IsRequired = false, Order = 1)]
+        public List<UnionType> unionTypes { get; set; }
+    }
+
+    [Serializable]
+    [DataContract(Name = "unionType", Namespace = "http://www.iringtools.org/library")]
+    public class UnionType
+    {
+        [DataMember(IsRequired = false, Order = 0)]
+        public string unionType { get; set; }
     }
 }
