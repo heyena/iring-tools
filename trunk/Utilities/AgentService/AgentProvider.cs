@@ -102,7 +102,7 @@ namespace iRINGAgentService
                         _settings["ImpersonatedUser"] = _clientId;
                         _settings["ClientToken"] = clientToken;
                     }
-                    RefreshCache(project, app, false);
+                    RefreshCache(project, app, dataObject, false);
                 }
                 else
                 {
@@ -142,6 +142,17 @@ namespace iRINGAgentService
 
                 string proxyPort = ConfigurationManager.AppSettings["ProxyPort"];
                 int.TryParse(proxyPort, out _proxyPort);
+
+                if (_proxyCredentialToken == null && _proxyHost == null && proxyPort == null)
+                {
+                    string filename = @"Web.Config";
+                    UK.ORG.Webman.ConfigurationSettings ConfigurationSettings = new UK.ORG.Webman.ConfigurationSettings(filename);
+                    _proxyCredentialToken = ConfigurationSettings.AppSettings["ProxyCredentialToken"];
+                    _proxyHost = ConfigurationSettings.AppSettings["ProxyHost"];
+                    proxyPort = ConfigurationSettings.AppSettings["ProxyPort"];
+                    int.TryParse(proxyPort, out _proxyPort);
+                }
+
                 #endregion
 
                 //#region init client credentials
