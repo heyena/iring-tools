@@ -46,6 +46,9 @@
     <OutputPath>bin\x64\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ConfigurationSettings">
+      <HintPath>lib\ConfigurationSettings.dll</HintPath>
+    </Reference>
     <Reference Include="IWDataLayer, Version=1.2.0.6, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\IWDataLayer\bin\Debug\IWDataLayer.dll</HintPath>
