@@ -558,28 +558,28 @@ namespace org.iringtools.applicationConfig
             return graphs;
         }
 
-        public Response InsertGraph(XDocument xml)
+        public Response InsertGraph(string userName, XDocument xml)
         {
             Response response = new Response();
 
             try
             {
-                Graphs graphs = Utility.DeserializeDataContract<Graphs>(xml.ToString());
-               
+
+                Graph graph = Utility.DeserializeDataContract<Graph>(xml.ToString());
+
+                string rawXml = graph.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Graph graph in graphs)
-                    {
-                        //if (graph.graph == null)  ////For testing purpose.
-                        //{
-                        //    string grapthPath = @"C:\Branch3.0\iRINGTools.Services\App_Data\Mapping.1234_000.ABC.xml";
-                        //    byte[] bytes = System.IO.File.ReadAllBytes(grapthPath);
-                        //    graph.graph = bytes;
-                        //}
+                    //if (graph.graph == null)  ////For testing purpose.
+                    //{
+                    //    string grapthPath = @"C:\Branch3.0\iRINGTools.Services\App_Data\Mapping.1234_000.ABC.xml";
+                    //    byte[] bytes = System.IO.File.ReadAllBytes(grapthPath);
+                    //    graph.graph = bytes;
+                    //}
 
-                        dc.ExecuteQuery<Graph>("spiGraphs @ApplicationId = {0}, @GraphName = {1}, @Graph = {2}, @SiteId = {3}",
-                                                         graph.ApplicationId, graph.GraphName, graph.graph, _siteID).ToList();
-                    }
+                    dc.ExecuteQuery<Graph>("spiGraph @Username = {0}, @ApplicationId = {1}, @GraphName = {2}, @Graph = {3}, @SiteId = {4}, @GroupList = {5}",
+                                                         userName, graph.ApplicationId, graph.GraphName, graph.graph, _siteID, rawXml).ToList();
                 }
 
                 response.DateTimeStamp = DateTime.Now;
@@ -602,27 +602,21 @@ namespace org.iringtools.applicationConfig
         }
 
 
-        public Response UpdateGraphs(XDocument xml)
+        public Response UpdateGraph(string userName, XDocument xml)
         {
             Response response = new Response();
 
             try
             {
-                Graphs graphs = Utility.DeserializeDataContract<Graphs>(xml.ToString());
+                Graph graph = Utility.DeserializeDataContract<Graph>(xml.ToString());
+
+                string rawXml = graph.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Graph graph in graphs)
-                    {
-                        if (graph.GraphId == Guid.Empty)
-                        {
-                            throw new Exception("Please provide the GraphId of the Graph in" +
-                                                  " the payload which you want to update.");
-                        }
 
-                        dc.ExecuteQuery<Graph>("spuGraphs @GraphId = {0}, @GraphName = {1}, @Graph = {2}, " +
-                                                "@SiteId = {3}", graph.GraphId, graph.GraphName, graph.graph, _siteID).ToList();
-                    }
+                    dc.ExecuteQuery<Graph>("spuGraph @Username = {0}, @GraphId = {1}, @GraphName = {2}, @Graph = {3}, @SiteId = {4}, @GroupList = {5}",
+                                                         userName, graph.GraphId, graph.GraphName, graph.graph, _siteID, rawXml).ToList();
                 }
 
                 response.DateTimeStamp = DateTime.Now;
@@ -653,7 +647,7 @@ namespace org.iringtools.applicationConfig
                 Guid id = new Guid(graphId);
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<Graph>("spdGraph @GraphId = {0}, @SiteId = {1}", id, _siteID);
+                    dc.ExecuteQuery<Graph>("spdGraph @GraphId = {0}", id);
                 }
 
                 response.DateTimeStamp = DateTime.Now;

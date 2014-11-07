@@ -279,8 +279,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert graphs to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/graphs?format={format}")]
-        public void InsertGraphs(string format, Stream stream)
+        [WebInvoke(Method = "POST", UriTemplate = "/insertGraph/{userName}?format={format}")]
+        public void InsertGraph(string userName,string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -295,8 +295,8 @@ namespace org.iringtools.services
                 }
                 else
                 {
-                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Graphs>(stream, format, true);
-                    response = _applicationConfigurationProvider.InsertGraph(new XDocument(xElement));
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Graph>(stream, format, true);
+                    response = _applicationConfigurationProvider.InsertGraph(userName,new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -306,12 +306,12 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Update graphs to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/graphs?format={format}")]
-        public void UpdateGraphs(string format, Stream stream) // Completed.
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateGraph/{userName}?format={format}")]
+        public void UpdateGraph(string userName,string format, Stream stream) 
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -326,8 +326,8 @@ namespace org.iringtools.services
                 }
                 else
                 {
-                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Graphs>(stream, format, true);
-                    response = _applicationConfigurationProvider.UpdateGraphs(new XDocument(xElement));
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Graph>(stream, format, true);
+                    response = _applicationConfigurationProvider.UpdateGraph(userName,new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -337,12 +337,12 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Delete Graphs from the data base.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/graphs/{graphId}?format={format}")]
-        public void DeleteGraph(string graphId, string format) // Completed.
+        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteGraph/{graphId}?format={format}")]
+        public void DeleteGraph(string graphId, string format) 
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -367,7 +367,7 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
-            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, false);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
         [Description("Insert application for user")]

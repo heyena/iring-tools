@@ -124,6 +124,7 @@ namespace org.iringtools.applicationConfig
         Graph()
         {
             permissions = new Permissions();
+            groups = new Groups();
         }
 
         [DataMember(Name = "applicationId", Order = 0)]
@@ -146,6 +147,9 @@ namespace org.iringtools.applicationConfig
 
         [DataMember(Name = "permissions", Order = 6, EmitDefaultValue = false)]
         public Permissions permissions { get; set; }
+
+        [DataMember(Name = "groups", Order = 7, EmitDefaultValue = false)]
+        public Groups groups { get; set; }
     }
 
 
