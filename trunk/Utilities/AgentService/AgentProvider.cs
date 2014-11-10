@@ -145,7 +145,7 @@ namespace iRINGAgentService
 
                 if (_proxyCredentialToken == null && _proxyHost == null && proxyPort == null)
                 {
-                    string filename = @"Web.Config";
+                    string filename = @"..\Web.Config";
                     UK.ORG.Webman.ConfigurationSettings ConfigurationSettings = new UK.ORG.Webman.ConfigurationSettings(filename);
                     _proxyCredentialToken = ConfigurationSettings.AppSettings["ProxyCredentialToken"];
                     _proxyHost = ConfigurationSettings.AppSettings["ProxyHost"];
