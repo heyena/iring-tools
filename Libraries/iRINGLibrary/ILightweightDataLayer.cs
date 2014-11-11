@@ -127,7 +127,7 @@ namespace org.iringtools.library
 
                             if (BaseLightweightDataLayer.IsNumeric(dataProp.dataType))
                             {
-                                if (prop.Value != null)
+                                if (prop.Value != null && prop.Value!="")
                                 {
                                     valsBuilder.Append("," + prop.Value);
                                 }
@@ -167,7 +167,15 @@ namespace org.iringtools.library
 
                             if (BaseLightweightDataLayer.IsNumeric(dataProp.dataType))
                             {
-                                builder.Append("," + prop.Key + "=" + prop.Value);
+                                if (prop.Value != null && prop.Value != "")
+                                {
+                                    builder.Append("," + prop.Key + "=" + prop.Value);
+                                }
+                                else
+                                {
+                                    builder.Append("," + prop.Key + "=" + "null");
+                                }
+                               
                             }
                             else if (dataProp.dataType == DataType.Date || dataProp.dataType == DataType.DateTime)
                             {
