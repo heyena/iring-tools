@@ -913,69 +913,76 @@ namespace org.iringtools.adapter.projection
 
             if (String.IsNullOrEmpty(propertyRole.valueListName))
             {
-                if (propertyRole.dataType.ToLower().Contains("datetime"))
+                if (String.IsNullOrEmpty(value))
                 {
-                    value = Utility.ToXsdDateTime(value);
+                    value = String.Empty;
                 }
-                else if (propertyRole.dataType.ToLower().Contains("date"))
+                else
                 {
-                    value = Utility.ToXsdDate(value);
-                }
-                else if (propertyRole.dataType == "xsd:string" && propertyRole.dataLength > 0 &&
-                    value.Length > propertyRole.dataLength && propertyRole.dbDataType != "Decimal" &&
-                    !propertyRole.dbDataType.Contains("Int"))
-                {
-                    value = value.Substring(0, propertyRole.dataLength);
-
-                    //value might contain trailing whitespaces when taking substring, trim it again
-                    value = value.TrimEnd();
-                }
-
-                //if db data type is decimal parse out smallest integer length and smallest fractional length
-                else if (propertyRole.dbDataType == "Decimal" && value.Length > 0)
-                {
-                    int nSmallestIntegerLength = propertyRole.precision - propertyRole.scale;
-                    string[] strLength = value.Split('.');
-                    string strSmallestIntegerPart = "";
-
-                    if (strLength.Length >= 1 && propertyRole.precision > 0)
+                    if (propertyRole.dataType.ToLower().Contains("datetime"))
                     {
-                        //trim integer part if it contains more digit than defined in cross manifest.
-                        if (strLength[0].Length > nSmallestIntegerLength)
+                        value = Utility.ToXsdDateTime(value);
+                    }
+                    else if (propertyRole.dataType.ToLower().Contains("date"))
+                    {
+                        value = Utility.ToXsdDate(value);
+                    }
+                    else if (propertyRole.dataType == "xsd:string" && propertyRole.dataLength > 0 &&
+                        value.Length > propertyRole.dataLength && propertyRole.dbDataType != "Decimal" &&
+                        !propertyRole.dbDataType.Contains("Int"))
+                    {
+                        value = value.Substring(0, propertyRole.dataLength);
+
+                        //value might contain trailing whitespaces when taking substring, trim it again
+                        value = value.TrimEnd();
+                    }
+
+                    //if db data type is decimal parse out smallest integer length and smallest fractional length
+                    else if (propertyRole.dbDataType == "Decimal" && propertyRole.precision > propertyRole.scale)
+                    {
+                        int nSmallestIntegerLength = propertyRole.precision - propertyRole.scale;
+                        string[] strLength = value.Split('.');
+                        string strSmallestIntegerPart = "";
+
+                        if (strLength.Length >= 1 && propertyRole.precision > 0)
                         {
-                            strSmallestIntegerPart = strLength[0].Substring((strLength[0].Length - nSmallestIntegerLength), nSmallestIntegerLength);
+                            //trim integer part if it contains more digit than defined in cross manifest.
+                            if (strLength[0].Length > nSmallestIntegerLength)
+                            {
+                                strSmallestIntegerPart = strLength[0].Substring((strLength[0].Length - nSmallestIntegerLength), nSmallestIntegerLength);
+                            }
+                            else
+                            {
+                                strSmallestIntegerPart = strLength[0].Trim();
+                            }
+
+                            //trim fractional part only if fractional value exists
+                            if (strLength.Length == 2)
+                            {
+                                //trim fractional part if it contains more digit than defined in cross manifest.
+                                decimal decDecimalValue = 0;
+                                value = strSmallestIntegerPart + "." + strLength[1];
+                                Decimal.TryParse(value, out decDecimalValue);
+                                decDecimalValue = Math.Round(decDecimalValue, propertyRole.scale);
+                                value = Convert.ToString(decDecimalValue);
+                            }
+                            else
+                            {
+                                value = strSmallestIntegerPart;
+                            }
                         }
                         else
                         {
-                            strSmallestIntegerPart = strLength[0].Trim();
-                        }
-
-                        //trim fractional part only if fractional value exists
-                        if (strLength.Length == 2)
-                        {
-                            //trim fractional part if it contains more digit than defined in cross manifest.
-                            decimal decDecimalValue = 0;
-                            value = strSmallestIntegerPart + "." + strLength[1];
-                            Decimal.TryParse(value, out decDecimalValue);
-                            decDecimalValue = Math.Round(decDecimalValue, propertyRole.scale);
-                            value = Convert.ToString(decDecimalValue);
-                        }
-                        else
-                        {
-                            value = strSmallestIntegerPart;
+                            value = String.Empty;
                         }
                     }
-                    else
+                    else if (propertyRole.dbDataType != null && propertyRole.dbDataType.Contains("Int") && value.Length > 0 && value.Contains("."))
                     {
-                        value = String.Empty;
+                        decimal decDecimalValue = 0;
+                        Decimal.TryParse(value, out decDecimalValue);
+                        decDecimalValue = Math.Round(decDecimalValue, 0); //Round to closest integer.
+                        value = Convert.ToString(decDecimalValue);
                     }
-                }
-                else if (propertyRole.dbDataType != null && propertyRole.dbDataType.Contains("Int") && value.Length > 0 && value.Contains("."))
-                {
-                    decimal decDecimalValue = 0;
-                    Decimal.TryParse(value, out decDecimalValue);
-                    decDecimalValue = Math.Round(decDecimalValue, 0); //Round to closest integer.
-                    value = Convert.ToString(decDecimalValue);
                 }
             }
             else  // resolve value list to uri

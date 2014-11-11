@@ -599,7 +599,14 @@ namespace org.iringtools.nhibernate
                     }
                     else if (dataPropertyIsNullable)
                     {
-                        _dataObjectWriter.WriteLine("{0} = Convert.To{1}(value);", dataProperty.propertyName, dataType);
+                        if(IsNumeric(dataType))
+                        {
+                            _dataObjectWriter.WriteLine("{0} = (value != null || value.ToString() != \"\") ? ({1}?)null :Convert.To{1}(value);", dataProperty.propertyName, dataType);
+                        }
+                        else
+                        {
+                         _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) :default({1});", dataProperty.propertyName, dataType);
+                        }
                     }
                     else
                     {
