@@ -54,26 +54,35 @@ namespace org.iringtools.UserSecurity
         
         public Response InsertUsers(XDocument xml)
         {
-            Response response = new Response();
 
+            Response response = new Response();
+            response.DateTimeStamp = DateTime.Now;
+            response.Messages = new Messages();
             try
             {
-                Users users = Utility.DeserializeDataContract<Users>(xml.ToString());
+                User user = Utility.DeserializeDataContract<Users>(xml.ToString()).FirstOrDefault();
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (User user in users)
+                    if (user == null || string.IsNullOrEmpty(user.UserName))
+                        response.Messages.Add("Please enter UserName.");
+                    else
                     {
-                        dc.ExecuteQuery<User>("spiUser @SiteId = {0}, @UserName = {1}, @UserFirstName = {2}, "+
-                                              "@UserLastName = {3}, @UserEmail = {4}, @UserPhone = {5}, @UserDesc = {6}",
-                                              _siteID, user.UserName, user.UserFirstName, user.UserLastName,
-                                              user.UserEmail, user.UserPhone, user.UserDesc).ToList();
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = user.UserName });
+                        nvl.Add(new ListItem() { Name = "@UserFirstName", Value = user.UserFirstName });
+                        nvl.Add(new ListItem() { Name = "@UserLastName", Value = user.UserLastName });
+                        nvl.Add(new ListItem() { Name = "@UserEmail", Value = user.UserEmail });
+                        nvl.Add(new ListItem() { Name = "@UserPhone", Value = user.UserPhone });
+                        nvl.Add(new ListItem() { Name = "@UserDesc", Value = user.UserDesc });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiUser", nvl);
+                        response.Messages.Add(output);
                     }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Users added successfully.");
             }
             catch (Exception ex)
             {
@@ -209,24 +218,31 @@ namespace org.iringtools.UserSecurity
 
         public Response InsertRole(XDocument xml)
         {
+            
             Response response = new Response();
-
+            response.DateTimeStamp = DateTime.Now;
+            response.Messages = new Messages();
             try
             {
-                Roles roles = Utility.DeserializeDataContract<Roles>(xml.ToString());
+                Role role = Utility.DeserializeDataContract<Roles>(xml.ToString()).FirstOrDefault();
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Role role in roles)
+                    if (role == null || string.IsNullOrEmpty(role.RoleName))
+                        response.Messages.Add("Please enter RoleName.");
+                    else
                     {
-                        dc.ExecuteQuery<Role>("spiRole @SiteId = {0}, @RoleName = {1}, @RoleDesc = {2}",
-                                                         _siteID, role.RoleName, role.RoleDesc).ToList();
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@RoleName", Value = role.RoleName });
+                        nvl.Add(new ListItem() { Name = "@RoleDesc", Value = role.RoleDesc });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiRole", nvl);
+                        response.Messages.Add(output);
                     }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Roles added successfully.");
             }
             catch (Exception ex)
             {
@@ -312,23 +328,29 @@ namespace org.iringtools.UserSecurity
         public Response InsertPermission(XDocument xml)
         {
             Response response = new Response();
-
+            response.DateTimeStamp = DateTime.Now;
+            response.Messages = new Messages();
             try
             {
-                Permissions permissions = Utility.DeserializeDataContract<Permissions>(xml.ToString());
+                Permission permission = Utility.DeserializeDataContract<Permissions>(xml.ToString()).FirstOrDefault();
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Permission permission in permissions)
+                    if (permission == null || string.IsNullOrEmpty(permission.PermissionName))
+                        response.Messages.Add("Please enter PermissionName.");
+                    else
                     {
-                        dc.ExecuteQuery<Permission>("spiPermissions @SiteId = {0}, @PermissionName = {1}, @PermissionDesc = {2}",
-                                                         _siteID, permission.PermissionName, permission.PermissionDesc).ToList();
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@PermissionName", Value = permission.PermissionName });
+                        nvl.Add(new ListItem() { Name = "@PermissionDesc", Value = permission.PermissionDesc });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiPermissions", nvl);
+                        response.Messages.Add(output);
                     }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Permissions added successfully.");
             }
             catch (Exception ex)
             {
@@ -414,23 +436,31 @@ namespace org.iringtools.UserSecurity
         public Response InsertGroup(XDocument xml)
         {
             Response response = new Response();
-
+            response.DateTimeStamp = DateTime.Now;
+            response.Messages = new Messages();
             try
             {
-                Groups groups = Utility.DeserializeDataContract<Groups>(xml.ToString());
+                Group group = Utility.DeserializeDataContract<Groups>(xml.ToString()).FirstOrDefault();
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Group group in groups)
+                    if (group == null || string.IsNullOrEmpty(group.GroupName))
+                        response.Messages.Add("Please enter GroupName.");
+                    else
                     {
-                        dc.ExecuteQuery<Group>("spiGroups @SiteId = {0}, @GroupName = {1}, @GroupDesc = {2}",
-                                                         _siteID, group.GroupName, group.GroupDesc).ToList();
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@GroupName", Value = group.GroupName });
+                        nvl.Add(new ListItem() { Name = "@GroupDesc", Value = group.GroupDesc });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiGroups", nvl);
+                        response.Messages.Add(output);
                     }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Groups added successfully.");
+                
+                
             }
             catch (Exception ex)
             {
