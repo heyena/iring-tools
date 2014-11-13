@@ -213,6 +213,7 @@
     <Content Include="Scripts\AM\controller\Mapping.js" />
     <Content Include="Scripts\AM\controller\Search.js" />
     <Content Include="Scripts\AM\controller\Spreadsheet.js" />
+    <Content Include="Scripts\AM\controller\SQLConfig.js" />
     <Content Include="Scripts\AM\model\AvailItemsModel.js" />
     <Content Include="Scripts\AM\model\BaseUrlModel.js" />
     <Content Include="Scripts\AM\model\ContextModel.js" />
@@ -347,6 +348,7 @@
     <Content Include="Scripts\AM\view\menus\RootAdminScopesMenu.js" />
     <Content Include="Scripts\AM\view\menus\ScopeMenu.js" />
     <Content Include="Scripts\AM\view\menus\ScopesMenu.js" />
+    <Content Include="Scripts\AM\view\menus\SqlObjectsTreePanel.js" />
     <Content Include="Scripts\AM\view\menus\TemplatemapMenu.js" />
     <Content Include="Scripts\AM\view\menus\ValueListMapMenu.js" />
     <Content Include="Scripts\AM\view\menus\ValueListMenu.js" />
@@ -375,6 +377,17 @@
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetPanel.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetTree.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetWindow.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlConnectionPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlKeyConfigPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlKeySelectionPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlMainConfigPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlObjectConfigPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlObjectsTreePanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlPropertyConfigPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlPropertySelectionPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlRelationshipConfigPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlRelationshipsPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlTableSelectionPanel.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />
     <Content Include="Scripts\common\QuickFilter.js" />
     <Content Include="Scripts\datafilter\controller\DataFilter.js" />

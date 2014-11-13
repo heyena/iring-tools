@@ -177,8 +177,12 @@ namespace org.iringtools.web.controllers
                     bool checkDictionary = (dictionary != null && dictionary.dataObjects != null && dictionary.dataObjects.Count > 0);
                     List<Node> objectNodes = root.children;
 
+                    List<string> availTables = new List<string>();
+
                     foreach (DataObject dbObject in dbObjects)
                     {
+                        availTables.Add(dbObject.tableName);
+
                         Node keyPropertiesNode = new Node()
                         {
                             text = "Keys",
@@ -206,6 +210,25 @@ namespace org.iringtools.web.controllers
                             children = new List<Node>()
                         };
 
+                        //Creating list to contain data and key properties names
+                        DataObject tempDataObject = dictionary.dataObjects.Find(dObj => dObj.objectName == dbObject.objectName);
+                        List<string> dataPropertyNamesCollection = new List<string>();
+                        List<string> keyPropertyNamesCollection = new List<string>();
+
+                        foreach(DataProperty dProp in tempDataObject.dataProperties)
+                        {
+                            KeyProperty commonProperties = tempDataObject.keyProperties.Find(kProp => kProp.keyPropertyName == dProp.propertyName);
+
+                            if (commonProperties == null)
+                            {
+                                dataPropertyNamesCollection.Add(dProp.columnName);
+                            }
+                            else
+                            {
+                                keyPropertyNamesCollection.Add(dProp.columnName);
+                            }
+                        }
+
                         // create object node
                         Node dataObjectNode = new Node()
                         {
@@ -214,7 +237,7 @@ namespace org.iringtools.web.controllers
                             iconCls = "treeObject",
                             children = new List<Node>() { keyPropertiesNode, dataPropertiesNode, relationshipsNode },
                             properties = new Dictionary<string, object>() { 
-                                {"dataProperties", dbObject.dataProperties} 
+                                {"keyProperties", keyPropertyNamesCollection}, {"dataProperties", dbObject.dataProperties}, {"aliasDataProperties", dataPropertyNamesCollection} 
                             }
                         };
 
@@ -235,6 +258,7 @@ namespace org.iringtools.web.controllers
                             dataObjectNode.properties.Add("tableName", dbObject.tableName);
                             dataObjectNode.properties.Add("keyDelimiter", dbObject.keyDelimeter);
                             dataObjectNode.properties.Add("description", dbObject.description);
+                            dataObjectNode.properties.Add("aliasDictionary", dbObject.aliasDictionary[0].value);
                         }
                         else  // has been configured, apply object configurations
                         {
@@ -243,6 +267,7 @@ namespace org.iringtools.web.controllers
                             dataObjectNode.properties.Add("tableName", dictObject.tableName);
                             dataObjectNode.properties.Add("keyDelimiter", dictObject.keyDelimeter);
                             dataObjectNode.properties.Add("description", dictObject.description);
+                            dataObjectNode.properties.Add("aliasDictionary", dictObject.aliasDictionary[0].value);
 
                             // apply relationship configurations
                             foreach (DataRelationship relationship in dictObject.dataRelationships)
@@ -279,6 +304,7 @@ namespace org.iringtools.web.controllers
                                     {
                                         {"columnName", dictProperty.columnName},
                                         {"propertyName", dictProperty.propertyName},
+                                        {"aliasDictionary",dictProperty.aliasDictionary[0].value},
                                         {"dataType", dictProperty.dataType},
                                         {"dataLength", dictProperty.dataLength},
                                         {"isNullable", dictProperty.isNullable},
@@ -328,6 +354,11 @@ namespace org.iringtools.web.controllers
 
                         objectNodes.Add(dataObjectNode);
                     }
+
+                    foreach (Node dataObjectNode in objectNodes)
+                    {
+                        dataObjectNode.properties.Add("tableNames", availTables);
+                    }
                 }
 
                 return Json(objectsTree);
@@ -340,8 +371,10 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUItree, e, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
-        }
+}
 
+       
+      
         public ActionResult SaveDBDictionary()
         {
             try
