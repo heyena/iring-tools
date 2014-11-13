@@ -13,7 +13,7 @@ Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
         });
 
 
-          var store = Ext.create('Ext.data.Store', {
+        var store = Ext.create('Ext.data.Store', {
             fields: ['name'],
             data: [{ name: ''}]
         });
@@ -159,15 +159,16 @@ Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
             });
 
 
-            var itemList = aliasObject.raw.properties.keyProperties;
+            if (aliasObject != null) {
+                var itemList = aliasObject.raw.properties.keyProperties;
 
-            var availItems = [];
-            Ext.each(itemList, function (item) {
-                availItems.push({ name: item });
-            });
+                var availItems = [];
+                Ext.each(itemList, function (item) {
+                    availItems.push({ name: item });
+                });
 
-            selector.store.loadData(availItems);
-
+                selector.store.loadData(availItems);
+            }
             this.getForm().setValues(this.record.raw.properties);
         }
         else {
