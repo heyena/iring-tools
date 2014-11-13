@@ -30,6 +30,7 @@ Ext.define('USM.view.roles.RoleWindow', {
                         },
                         {
                             xtype: 'button',
+                            itemId:'rolbtn',
                             handler: function (button, event) {
                                 me.onSave();
                             },
@@ -79,7 +80,9 @@ Ext.define('USM.view.roles.RoleWindow', {
                     me.destroy();
                     var message = 'Role saved successfully.';
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
+                    if (Ext.getCmp('rolegridid') != undefined) {
                     Ext.getCmp('rolegridid').store.reload();
+                     }
                     return;
                 },
                 failure: function (f, a) {

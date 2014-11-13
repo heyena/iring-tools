@@ -1,18 +1,18 @@
-
-Ext.define('USM.view.menus.SecurityMenu', {
+﻿
+Ext.define('USM.view.menus.PermSecurityMenu', {
     extend: 'Ext.menu.Menu',
-    alias: 'widget.securitymenu',
-    initComponent: function() {
+    alias: 'widget.permsecuritymenu',
+    initComponent: function () {
         var me = this;
 
         Ext.applyIf(me, {
             items: [
                 {
                     xtype: 'menuitem',
-                    action: 'addGroup',
+                    action: 'addPermission',
                     hidden: false,
                     iconCls: 'icon-add',
-                    text: 'Add Group'
+                    text: 'Add Permission'
                 }
             ]
         });

@@ -31,6 +31,7 @@ Ext.define('USM.view.groups.GroupWindow', {
                         },
                         {
                             xtype: 'button',
+                            itemId:'grpbtn',
                             handler: function (button, event) {
                                 me.onSave();
                             },

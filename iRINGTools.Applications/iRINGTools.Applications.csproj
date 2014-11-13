@@ -406,9 +406,12 @@
     <Content Include="Scripts\USM\view\MainPanel.js" />
     <Content Include="Scripts\USM\view\menus\GroupMenu.js" />
     <Content Include="Scripts\USM\view\menus\PermissionMenu.js" />
+    <Content Include="Scripts\USM\view\menus\PermSecurityMenu.js" />
     <Content Include="Scripts\USM\view\menus\RoleMenu.js" />
+    <Content Include="Scripts\USM\view\menus\RoleSecurityMenu.js" />
     <Content Include="Scripts\USM\view\menus\SecurityMenu.js" />
     <Content Include="Scripts\USM\view\menus\UserMenu.js" />
+    <Content Include="Scripts\USM\view\menus\UserSecurityMenu.js" />
     <Content Include="Scripts\USM\view\permissions\PermissionForm.js" />
     <Content Include="Scripts\USM\view\permissions\PermissionWindow.js" />
     <Content Include="Scripts\USM\view\permissions\PermissionGrid.js" />
