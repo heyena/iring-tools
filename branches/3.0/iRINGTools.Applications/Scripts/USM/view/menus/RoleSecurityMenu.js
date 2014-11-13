@@ -1,18 +1,17 @@
-
-Ext.define('USM.view.menus.SecurityMenu', {
+﻿Ext.define('USM.view.menus.RoleSecurityMenu', {
     extend: 'Ext.menu.Menu',
-    alias: 'widget.securitymenu',
-    initComponent: function() {
+    alias: 'widget.rolesecuritymenu',
+    initComponent: function () {
         var me = this;
 
         Ext.applyIf(me, {
             items: [
                 {
                     xtype: 'menuitem',
-                    action: 'addGroup',
+                    action: 'addRole',
                     hidden: false,
                     iconCls: 'icon-add',
-                    text: 'Add Group'
+                    text: 'Add Role'
                 }
             ]
         });

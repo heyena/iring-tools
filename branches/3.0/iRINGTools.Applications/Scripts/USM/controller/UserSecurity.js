@@ -12,7 +12,7 @@
         'groups.GroupWindow',
         'menus.SecurityMenu',
         'menus.UserMenu',
-	    'users.UserGrid',
+        'users.UserGrid',
         'users.UserForm',
         'users.UserWindow',
         'menus.RoleMenu',
@@ -21,25 +21,25 @@
         'menus.PermissionMenu',
         'permissions.PermissionForm',
         'permissions.PermissionWindow',
-	    'permissions.PermissionSelectionPanel',
-	    'permissions.PermissionSelectionPanelWindow',
-	    'groups.GrpUserSelectionPanel',
+        'permissions.PermissionSelectionPanel',
+        'permissions.PermissionSelectionPanelWindow',
+        'groups.GrpUserSelectionPanel',
         'groups.UserGrpSelectionPanel',
         'roles.RoleGroupSelectionPanel',
         'roles.GroupRoleSelectionPanel',
-        'ItemSelectorWindow'
+        'ItemSelectorWindow',
+        'menus.UserSecurityMenu',
+        'menus.RoleSecurityMenu',
+        'menus.PermSecurityMenu'
     ],
 
-    refs: [
-			{
-			    ref: 'usersecuritytabpanel',
-			    selector: 'viewport > usersecuritytabpanel'
-			},
-			{
-			    ref: 'userGrid',
-			    selector: 'viewport > usersecuritytabpanel > panel > usergrid'
-			}
-    ],
+    refs: [{
+        ref: 'usersecuritytabpanel',
+        selector: 'viewport > usersecuritytabpanel'
+    }, {
+        ref: 'userGrid',
+        selector: 'viewport > usersecuritytabpanel > panel > usergrid'
+    }],
 
     init: function (application) {
         var me = this;
@@ -50,6 +50,7 @@
             "menuitem[action=editGroup]": {
                 click: this.editGroup
             },
+
             "menuitem[action=deleteGroup]": {
                 click: this.deleteGroup
             },
@@ -97,6 +98,7 @@
             },
             "viewport securitygrid": {
                 itemcontextmenu: me.onSecItemClick
+
             },
             "usersecuritytabpanel groupgrid": {
                 itemcontextmenu: me.onGrpItemClick
@@ -146,24 +148,23 @@
                 form.getForm().findField('RoleId').setValue(roleId);
                 grid.store.loadData(responseObj);
                 //var store = grid.store;
-//                grid.store.on('load', function (store, rec, val, eOpt) {
-//                    if (responseObj != null || responseObj != "") {
-//                        for (var i = 0; i < responseObj.length; i++) {
-//                            var permId = responseObj[i].PermissionId;
-//                            for (var j = 0; j < store.getCount(); j++) {
-//                                var gPrmId = store.getAt(j).get("PermissionId");
+                //                grid.store.on('load', function (store, rec, val, eOpt) {
+                //                    if (responseObj != null || responseObj != "") {
+                //                        for (var i = 0; i < responseObj.length; i++) {
+                //                            var permId = responseObj[i].PermissionId;
+                //                            for (var j = 0; j < store.getCount(); j++) {
+                //                                var gPrmId = store.getAt(j).get("PermissionId");
 
-//                                if (permId == gPrmId) {
-//                                    store.getAt(j).set("chk", true);
-//                                } 
-//                            }
-//                        }
-//                    }
-//                }, me);
+                //                                if (permId == gPrmId) {
+                //                                    store.getAt(j).set("chk", true);
+                //                                } 
+                //                            }
+                //                        }
+                //                    }
+                //                }, me);
                 win.show();
             },
-            failure: function (response, options) {
-            }
+            failure: function (response, options) { }
         });
     },
 
@@ -203,8 +204,7 @@
                         Ext.getCmp('viewportid').down('usergrid').store.reload();
                     },
 
-                    failure: function (response, options) {
-                    }
+                    failure: function (response, options) { }
                 });
             }
         });
@@ -220,9 +220,25 @@
     onSecItemClick: function (dataview, record, item, index, e, eOpts) {
         e.stopEvent();
         var me = this;
-        var secMenu = Ext.widget('securitymenu');
-        secMenu.showAt(e.getXY());
-        dataview.getSelectionModel().select(index);
+        var secMenu;
+        if (record.raw.name == "Groups") {
+            secMenu = Ext.widget('securitymenu');
+            secMenu.showAt(e.getXY());
+            //secMenu.get('Add/Remove Users to Group').disable = true;
+            dataview.getSelectionModel().select(index);
+        } else if (record.raw.name == "Users") {
+            secMenu = Ext.widget('usersecuritymenu');
+            secMenu.showAt(e.getXY());
+            dataview.getSelectionModel().select(index);
+        } else if (record.raw.name == "Roles") {
+            secMenu = Ext.widget('rolesecuritymenu');
+            secMenu.showAt(e.getXY());
+            dataview.getSelectionModel().select(index);
+        } else if (record.raw.name == "Permissions") {
+            secMenu = Ext.widget('permsecuritymenu');
+            secMenu.showAt(e.getXY());
+            dataview.getSelectionModel().select(index);
+        }
     },
 
     onGrpItemClick: function (dataview, record, item, index, e, eOpts) {
@@ -252,6 +268,7 @@
         win.show();
     },
 
+
     editGroup: function (btn) {
         var me = this;
         var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
@@ -267,26 +284,25 @@
         var me = this;
         var rec = Ext.getCmp('viewportid').down('groupgrid').getSelectionModel().getSelection();
         var groupId = rec[0].data.GroupId;
-	    Ext.MessageBox.confirm('Delete', 'Are you sure to delete this group?', function (btn) {
-			if (btn === 'yes') {
-				Ext.Ajax.request({
-				   url: 'usersecuritymanager/deleteGroup',
-					method: 'POST',
-					params: {
-						GroupId: groupId
-					},
-					success: function (response, options) {
-						var responseObj = Ext.JSON.decode(response.responseText);
-						Ext.getCmp('viewportid').down('groupgrid').store.reload();
+        Ext.MessageBox.confirm('Delete', 'Are you sure to delete this group?', function (btn) {
+            if (btn === 'yes') {
+                Ext.Ajax.request({
+                    url: 'usersecuritymanager/deleteGroup',
+                    method: 'POST',
+                    params: {
+                        GroupId: groupId
+                    },
+                    success: function (response, options) {
+                        var responseObj = Ext.JSON.decode(response.responseText);
+                        Ext.getCmp('viewportid').down('groupgrid').store.reload();
 
-					},
+                    },
 
-					failure: function (response, options) {
-					}
-			   });
-			}
-		});
-	},
+                    failure: function (response, options) { }
+                });
+            }
+        });
+    },
 
     addRole: function (btn) {
         var me = this;
@@ -323,8 +339,7 @@
                         Ext.getCmp('viewportid').down('rolegrid').store.reload();
                     },
 
-                    failure: function (response, options) {
-                    }
+                    failure: function (response, options) { }
                 });
             }
         });
@@ -365,8 +380,7 @@
                         Ext.getCmp('viewportid').down('permissiongrid').store.reload();
                     },
 
-                    failure: function (response, options) {
-                    }
+                    failure: function (response, options) { }
                 });
             }
         });
@@ -435,8 +449,7 @@
                 form.getForm().findField('groupId').setValue(groupId);
                 win.show();
             },
-            failure: function (response, options) {
-            }
+            failure: function (response, options) { }
         });
     },
 
@@ -488,8 +501,7 @@
                 form.getForm().findField('userId').setValue(userId);
                 win.show();
             },
-            failure: function (response, options) {
-            }
+            failure: function (response, options) { }
         });
     },
 
@@ -534,8 +546,7 @@
                 form.getForm().findField('GroupId').setValue(groupId);
                 win.show();
             },
-            failure: function (response, options) {
-            }
+            failure: function (response, options) { }
         });
     },
 
@@ -570,8 +581,7 @@
                 form.getForm().findField('RoleId').setValue(roleId);
                 win.show();
             },
-            failure: function (response, options) {
-            }
+            failure: function (response, options) { }
         });
     }
 
