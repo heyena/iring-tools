@@ -158,8 +158,11 @@ namespace org.iringtools.library
         [DataMember(IsRequired = false, Order = 14, EmitDefaultValue = false)]
         public string groupName { get; set; }
 
+        //[DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
+        //public Dictionary<string, string> aliasDictionary { get; set; }
+
         [DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
-        public Dictionary<string, string> aliasDictionary { get; set; }
+        public List<aliasDictionary> aliasDictionary { get; set; }
 
         [DataMember(IsRequired = false, Order = 16, EmitDefaultValue = false)]
         public string version { get; set; }
@@ -260,8 +263,10 @@ namespace org.iringtools.library
         [DataMember(IsRequired = false, Order = 11, EmitDefaultValue = false)]
         public string description { get; set; }
 
+        //[DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
+        //public Dictionary<string, string> aliasDictionary { get; set; }
         [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
-        public Dictionary<string, string> aliasDictionary { get; set; }
+        public List<aliasDictionary> aliasDictionary { get; set; }
 
         [DataMember(IsRequired = false, Order = 13, EmitDefaultValue = false)]
         public string referenceType { get; set; }
@@ -312,6 +317,17 @@ namespace org.iringtools.library
 
         [DataMember(IsRequired = false, Order = 10)]
         public List<ExtensionParameter> parameters { get; set; }
+    }
+
+    [Serializable]
+    [DataContract(Name = "aliasDictionary", Namespace = "http://www.iringtools.org/library")]
+    public class aliasDictionary
+    {
+        [DataMember(IsRequired = false, Order = 0)]
+        public string key { get; set; }
+
+        [DataMember(IsRequired = false, Order = 1)]
+        public string value { get; set; }
     }
 
     [Serializable]

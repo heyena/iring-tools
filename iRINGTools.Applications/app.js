@@ -33,6 +33,7 @@ Ext.application({
         'Search',
         'Spreadsheet',
         'NHConfig',
+        'SQLConfig',
         'df.controller.DataFilter'
   ],
 
