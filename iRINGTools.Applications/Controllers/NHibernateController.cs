@@ -215,17 +215,20 @@ namespace org.iringtools.web.controllers
                         List<string> dataPropertyNamesCollection = new List<string>();
                         List<string> keyPropertyNamesCollection = new List<string>();
 
-                        foreach(DataProperty dProp in tempDataObject.dataProperties)
+                        if (tempDataObject != null && tempDataObject.dataProperties != null && tempDataObject.dataProperties.Count > 0)
                         {
-                            KeyProperty commonProperties = tempDataObject.keyProperties.Find(kProp => kProp.keyPropertyName == dProp.propertyName);
+                            foreach (DataProperty dProp in tempDataObject.dataProperties)
+                            {
+                                KeyProperty commonProperties = tempDataObject.keyProperties.Find(kProp => kProp.keyPropertyName == dProp.propertyName);
 
-                            if (commonProperties == null)
-                            {
-                                dataPropertyNamesCollection.Add(dProp.columnName);
-                            }
-                            else
-                            {
-                                keyPropertyNamesCollection.Add(dProp.columnName);
+                                if (commonProperties == null)
+                                {
+                                    dataPropertyNamesCollection.Add(dProp.columnName);
+                                }
+                                else
+                                {
+                                    keyPropertyNamesCollection.Add(dProp.columnName);
+                                }
                             }
                         }
 
@@ -258,7 +261,11 @@ namespace org.iringtools.web.controllers
                             dataObjectNode.properties.Add("tableName", dbObject.tableName);
                             dataObjectNode.properties.Add("keyDelimiter", dbObject.keyDelimeter);
                             dataObjectNode.properties.Add("description", dbObject.description);
-                            dataObjectNode.properties.Add("aliasDictionary", dbObject.aliasDictionary[0].value);
+
+                            if (dbObject.aliasDictionary != null && dbObject.aliasDictionary.Count > 0)
+                            {
+                                dataObjectNode.properties.Add("aliasDictionary", dbObject.aliasDictionary[0].value);
+                            }
                         }
                         else  // has been configured, apply object configurations
                         {
@@ -267,7 +274,11 @@ namespace org.iringtools.web.controllers
                             dataObjectNode.properties.Add("tableName", dictObject.tableName);
                             dataObjectNode.properties.Add("keyDelimiter", dictObject.keyDelimeter);
                             dataObjectNode.properties.Add("description", dictObject.description);
-                            dataObjectNode.properties.Add("aliasDictionary", dictObject.aliasDictionary[0].value);
+
+                            if (dictObject.aliasDictionary != null && dictObject.aliasDictionary.Count > 0)
+                            {
+                                dataObjectNode.properties.Add("aliasDictionary", dictObject.aliasDictionary[0].value);
+                            }
 
                             // apply relationship configurations
                             foreach (DataRelationship relationship in dictObject.dataRelationships)

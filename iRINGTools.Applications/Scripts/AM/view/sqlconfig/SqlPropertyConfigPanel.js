@@ -149,14 +149,16 @@ Ext.define('AM.view.sqlconfig.SqlPropertyConfigPanel', {
             });
 
 
-            var itemList = aliasObject.raw.properties.aliasDataProperties;
+            if (aliasObject != null) {
+                var itemList = aliasObject.raw.properties.aliasDataProperties;
 
-            var availItems = [];
-            Ext.each(itemList, function (item) {
-                availItems.push({ name: item });
-            });
+                var availItems = [];
+                Ext.each(itemList, function (item) {
+                    availItems.push({ name: item });
+                });
 
-            selector.store.loadData(availItems);
+                selector.store.loadData(availItems);
+            }
 
             this.getForm().setValues(this.record.raw.properties);
         }
