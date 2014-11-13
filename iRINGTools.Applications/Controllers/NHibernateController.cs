@@ -315,7 +315,8 @@ namespace org.iringtools.web.controllers
                                     {
                                         {"columnName", dictProperty.columnName},
                                         {"propertyName", dictProperty.propertyName},
-                                        {"aliasDictionary",dictProperty.aliasDictionary[0].value},
+                                      //  {"aliasDictionary",dictProperty.aliasDictionary[0].value},
+                                        {"aliasDictionary",dictProperty.aliasDictionary},
                                         {"dataType", dictProperty.dataType},
                                         {"dataLength", dictProperty.dataLength},
                                         {"isNullable", dictProperty.isNullable},
