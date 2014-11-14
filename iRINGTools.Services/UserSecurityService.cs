@@ -113,8 +113,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert users to the database.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/users?userId={userId}&format={format}")]
-        public void DeleteUser(int userId, string format)
+        [WebInvoke(Method = "DELETE", UriTemplate = "/users?userName={userName}&format={format}")]
+        public void DeleteUser(string userName, string format)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -129,7 +129,7 @@ namespace org.iringtools.services
                 }
                 else
                 {
-                    response = _userSecurityProvider.DeleteUser(userId);
+                    response = _userSecurityProvider.DeleteUser(userName);
                 }
             }
             catch (Exception ex)
