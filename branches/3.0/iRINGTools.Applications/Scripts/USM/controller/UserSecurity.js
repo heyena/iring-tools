@@ -189,7 +189,7 @@
     deleteUser: function (item, e, eOpts) {
         var me = this;
         var rec = Ext.getCmp('viewportid').down('usergrid').getSelectionModel().getSelection();
-        var userId = rec[0].data.UserId;
+        var userName = rec[0].data.UserName;
 
         Ext.MessageBox.confirm('Delete', 'Are you sure to delete this user?', function (btn) {
             if (btn === 'yes') {
@@ -197,7 +197,7 @@
                     url: 'usersecuritymanager/deleteUser',
                     method: 'POST',
                     params: {
-                        UserId: userId
+                        UserName: userName
                     },
                     success: function (response, options) {
                         var responseObj = Ext.JSON.decode(response.responseText);

@@ -94,5 +94,18 @@ namespace org.iringtools.library
         public static readonly string errUIGridPages = "There is an error occured while capturing data for Grid";
         #endregion
 
+
+        #region User Security Manager
+        public static readonly string errUSMSaveGroup = "There is an error occured while saving Group";
+        public static readonly string errUSMSaveUser = "There is an error occured while saving User";
+        public static readonly string errUSMSaveRole = "There is an error occured while saving Role";
+        public static readonly string errUSMSavePermission = "There is an error occured while saving Permission";
+
+        public static readonly string errUSMDeleteGroup = "There is an error occured while Deleting Group";
+        public static readonly string errUSMDeleteUser = "There is an error occured while Deleting User";
+        public static readonly string errUSMDeleteRole = "There is an error occured while Deleting Role";
+        public static readonly string errUSMDeletePermission = "There is an error occured while sDeleting Permission";
+
+        #endregion
     }
 }

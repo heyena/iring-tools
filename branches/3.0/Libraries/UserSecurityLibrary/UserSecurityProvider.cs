@@ -141,7 +141,7 @@ namespace org.iringtools.UserSecurity
             return response;
         }
 
-        public Response DeleteUser(int userId)
+        public Response DeleteUser(string userName)
         {
             Response response = new Response();
 
@@ -149,7 +149,7 @@ namespace org.iringtools.UserSecurity
             {
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<User>("spdUser @UserId = {0}, @SiteId = {1}", userId, _siteID);
+                    dc.ExecuteQuery<User>("spdUser @UserName = {0}, @SiteId = {1}", userName, _siteID);
                 }
 
                 response.DateTimeStamp = DateTime.Now;

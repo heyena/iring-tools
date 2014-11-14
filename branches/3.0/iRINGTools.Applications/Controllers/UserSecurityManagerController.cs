@@ -85,90 +85,189 @@ namespace org.iringtools.web.controllers
 
         public JsonResult saveGroup(FormCollection form)
         {
-            Response response = null;
-            var actionType = form["ActionType"];
-            if (actionType == "ADD") {
-                _repository.InsertGroup(form);
+            try
+            {
+                Response response = null;
+                var actionType = form["ActionType"];
+                if (actionType == "ADD")
+                    response = _repository.InsertGroup(form);
+                else
+                    response = _repository.UpdateGroup(form);
+
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
             }
-            else{
-                _repository.UpdateGroup(form);
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroup, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
-         
-            return Json(new {success = true}, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult deleteGroup(FormCollection form)
         {
-            string iGroupId = form["GroupId"];
-            //  Group group = _repository.getGroupById(iGroupId ,"json");
-            Group group = _repository.deleteGroup(iGroupId, "xml");
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                Response response = null;
+                string iGroupId = form["GroupId"];
+                response = _repository.deleteGroup(iGroupId, "xml");
+
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroup, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public JsonResult saveRole(FormCollection form)
         {
-            var actionType = form["ActionType"];
-            if (actionType == "ADD")
+            try
             {
-                _repository.InsertRole(form);
-            }
-            else
-            {
-                _repository.UpdateRole(form);
+                Response response = null;
+                var actionType = form["ActionType"];
+                if (actionType == "ADD")
+                    response = _repository.InsertRole(form);
+                else
+                    response = _repository.UpdateRole(form);
+
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroup, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public JsonResult deleteRole(FormCollection form)
         {
-            string iRoleId = form["RoleId"];
-            Role role = _repository.DeleteRole(iRoleId, "xml");
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+
+            try
+            {
+                Response response = null;
+                string iRoleId = form["RoleId"];
+                response = _repository.DeleteRole(iRoleId, "xml");
+
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMDeleteRole, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+            
         }
 
         public JsonResult savePermission(FormCollection form)
         {
-            var actionType = form["ActionType"];
-            if (actionType == "ADD")
+            try
             {
-                _repository.InsertPermission(form);
-            }
-            else
-            {
-                _repository.UpdatePermission(form);
-            }
+                Response response = null;
+                var actionType = form["ActionType"];
+                if (actionType == "ADD")
+                    response = _repository.InsertPermission(form);
+                else
+                    response = _repository.UpdatePermission(form);
 
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSavePermission, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public JsonResult deletePermission(FormCollection form)
         {
-            string iPermissionId = form["PermissionId"];
-            Permission permission = _repository.DeletePermission(iPermissionId, "xml");
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                string iPermissionId = form["PermissionId"];
+                Response response = _repository.DeletePermission(iPermissionId, "xml");
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMDeletePermission, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+
         }
 
         public JsonResult saveUser(FormCollection form)
         {
-            var actionType = form["ActionType"];
-            if (actionType == "ADD")
+
+            try
             {
-                _repository.InsertUsers(form);
-            }
-            else
-            {
-                _repository.UpdateUsers(form);
+                Response response = null;
+                var actionType = form["ActionType"];
+                if (actionType == "ADD")
+                    response = _repository.InsertUsers(form);
+                else
+                    response = _repository.UpdateUsers(form);
+
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveUser, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public JsonResult deleteUser(FormCollection form)
         {
-            string iUserId = form["UserId"];
-            User user = _repository.DeleteUser(iUserId, "xml");
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                string userName = form["UserName"];
+                Response response = _repository.DeleteUser(userName, "xml");
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMDeleteUser, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+
         }
 
         public JsonResult saveGroupUsers(FormCollection form)
