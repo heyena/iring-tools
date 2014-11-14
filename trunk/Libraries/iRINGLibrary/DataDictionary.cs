@@ -73,7 +73,7 @@ namespace org.iringtools.library
           DataType.Decimal,
           DataType.Double,
           DataType.Int16,
-          DataType.Int32,
+          DataType.Int32, 
           DataType.Int64,
           DataType.Single,
       };
@@ -158,11 +158,8 @@ namespace org.iringtools.library
         [DataMember(IsRequired = false, Order = 14, EmitDefaultValue = false)]
         public string groupName { get; set; }
 
-        //[DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
-        //public Dictionary<string, string> aliasDictionary { get; set; }
-
         [DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
-        public List<aliasDictionary> aliasDictionary { get; set; }
+        public Dictionary<string, string> aliasDictionary { get; set; }
 
         [DataMember(IsRequired = false, Order = 16, EmitDefaultValue = false)]
         public string version { get; set; }
@@ -263,10 +260,8 @@ namespace org.iringtools.library
         [DataMember(IsRequired = false, Order = 11, EmitDefaultValue = false)]
         public string description { get; set; }
 
-        //[DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
-        //public Dictionary<string, string> aliasDictionary { get; set; }
         [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
-        public List<aliasDictionary> aliasDictionary { get; set; }
+        public Dictionary<string, string> aliasDictionary { get; set; }
 
         [DataMember(IsRequired = false, Order = 13, EmitDefaultValue = false)]
         public string referenceType { get; set; }
