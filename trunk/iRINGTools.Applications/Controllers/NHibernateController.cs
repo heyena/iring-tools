@@ -264,7 +264,7 @@ namespace org.iringtools.web.controllers
 
                             if (dbObject.aliasDictionary != null && dbObject.aliasDictionary.Count > 0)
                             {
-                                dataObjectNode.properties.Add("aliasDictionary", dbObject.aliasDictionary[0].value);
+                                dataObjectNode.properties.Add("aliasDictionary", dbObject.aliasDictionary["TABLE_NAME_IN"]);
                             }
                         }
                         else  // has been configured, apply object configurations
@@ -277,7 +277,7 @@ namespace org.iringtools.web.controllers
 
                             if (dictObject.aliasDictionary != null && dictObject.aliasDictionary.Count > 0)
                             {
-                                dataObjectNode.properties.Add("aliasDictionary", dictObject.aliasDictionary[0].value);
+                                dataObjectNode.properties.Add("aliasDictionary", dictObject.aliasDictionary["TABLE_NAME_IN"]);
                             }
 
                             // apply relationship configurations
@@ -315,8 +315,7 @@ namespace org.iringtools.web.controllers
                                     {
                                         {"columnName", dictProperty.columnName},
                                         {"propertyName", dictProperty.propertyName},
-                                      //  {"aliasDictionary",dictProperty.aliasDictionary[0].value},
-                                        {"aliasDictionary",dictProperty.aliasDictionary},
+                                        {"aliasDictionary",dictProperty.aliasDictionary.ContainsKey("COLUMN_NAME_IN") ? dictProperty.aliasDictionary["COLUMN_NAME_IN"] : null},
                                         {"dataType", dictProperty.dataType},
                                         {"dataLength", dictProperty.dataLength},
                                         {"isNullable", dictProperty.isNullable},
