@@ -601,7 +601,7 @@ namespace org.iringtools.nhibernate
                     {
                         if(IsNumeric(dataType))
                         {
-                            _dataObjectWriter.WriteLine("{0} = (value != null || value.ToString() != \"\") ? ({1}?)null :Convert.To{1}(value);", dataProperty.propertyName, dataType);
+                            _dataObjectWriter.WriteLine("{0} = (value == null || value.ToString() == \"\") ? ({1}?)null :Convert.To{1}(value);", dataProperty.propertyName, dataType);
                         }
                         else
                         {
