@@ -495,8 +495,8 @@
             var aliasDictionary;
             if (objProps.aliasDictionary != "" || objProps.aliasDictionary != null) {
                 aliasDictionary = [{
-                    key: "TABLE_NAME_IN",
-                    value: valName
+                    "Key": "TABLE_NAME_IN",
+                    "Value": valName
                 }]
             }
 
@@ -553,8 +553,8 @@
 
                 if (props.aliasDictionary != "" || props.aliasDictionary != null) {
                     aliasDictionary = [{
-                        key: "COLUMN_NAME_IN",
-                        value: valName
+                        "Key": "COLUMN_NAME_IN",
+                        "Value": valName
                     }]
                 }
                 if (props.isNullable == "on") {
