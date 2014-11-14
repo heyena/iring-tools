@@ -1503,5 +1503,66 @@ namespace org.iringtools.utility
 			throw new Exception("Error while executing HTTP DELETE request on " + uri + ".", exception);
 		}
 	}
+
+    public R Delete<T,R>(string relativeUri, T requestEntity, bool useDataContractSerializer)
+    {
+        try
+        {
+            string uri = _baseUri + relativeUri;
+            _logger.Debug(string.Format("Performing DELETE to URL [{0}]...", uri));
+
+            MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+            PrepareCredentials(request);
+            PrepareHeaders(request);
+
+            request.Timeout = Timeout;
+            request.Method = "DELETE";
+            request.ContentType = "text/xml";
+            request.ContentLength = stream.Length;
+
+            // allows for validation of SSL conversations
+            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+              ValidateRemoteCertificate
+            );
+
+            request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream responseStream = response.GetResponseStream();
+
+            if (typeof(R) == typeof(String))
+            {
+                StreamReader reader = new StreamReader(responseStream);
+                string responseStr = reader.ReadToEnd();
+                reader.Close();
+
+                return (R)Convert.ChangeType(responseStr, typeof(R));
+            }
+            else
+            {
+                return Utility.DeserializeFromStream<R>(responseStream.ToMemoryStream(), useDataContractSerializer);
+            }
+        }
+        catch (Exception e)
+        {
+            String error = String.Empty;
+
+            if (e.GetType() == typeof(WebException))
+            {
+                HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
+                Stream responseStream = response.GetResponseStream();
+                error = Utility.SerializeFromStream(responseStream);
+            }
+            else
+            {
+                error = e.ToString();
+            }
+            string uri = _baseUri + relativeUri;
+
+            throw new Exception("Error while executing HTTP DELETE request on " + uri + ".", e);
+        }
+    }
   }
 }

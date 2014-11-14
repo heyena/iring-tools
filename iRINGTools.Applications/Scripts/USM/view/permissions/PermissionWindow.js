@@ -31,7 +31,7 @@ Ext.define('USM.view.permissions.PermissionWindow', {
                         },
                         {
                             xtype: 'button',
-                            itemId:'perbtn',
+                            itemId: 'perbtn',
                             handler: function (button, event) {
                                 me.onSave();
                             },
@@ -79,10 +79,13 @@ Ext.define('USM.view.permissions.PermissionWindow', {
                 success: function (f, a) {
                     msg.close();
                     me.destroy();
-                    var message = 'Permission saved successfully.';
+                    var objResponseText = Ext.JSON.decode(a.response.responseText);
+                    var message = objResponseText['message'];
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
-                    if (Ext.getCmp('permissiongridid') != undefined) {
-                      Ext.getCmp('permissiongridid').store.reload();
+                    if (objResponseText['success'] == true) {
+                        if (Ext.getCmp('permissiongridid') != undefined) {
+                            Ext.getCmp('permissiongridid').store.reload();
+                        } 
                     }
                     return;
                 },

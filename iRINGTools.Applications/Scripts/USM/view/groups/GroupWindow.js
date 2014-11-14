@@ -31,7 +31,7 @@ Ext.define('USM.view.groups.GroupWindow', {
                         },
                         {
                             xtype: 'button',
-                            itemId:'grpbtn',
+                            itemId: 'grpbtn',
                             handler: function (button, event) {
                                 me.onSave();
                             },
@@ -79,10 +79,13 @@ Ext.define('USM.view.groups.GroupWindow', {
                 success: function (f, a) {
                     msg.close();
                     me.destroy();
-                    var message = 'Group saved successfully.';
+                    var objResponseText = Ext.JSON.decode(a.response.responseText);
+                    var message = objResponseText['message'];
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
-                    if (Ext.getCmp('groupgridid') != undefined) {
-                        Ext.getCmp('groupgridid').store.reload();
+                    if (objResponseText['success'] == true) {
+                        if (Ext.getCmp('groupgridid') != undefined) {
+                            Ext.getCmp('groupgridid').store.reload();
+                        } 
                     }
                     return;
                 },

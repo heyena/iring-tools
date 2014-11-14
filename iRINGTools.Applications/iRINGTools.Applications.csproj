@@ -422,7 +422,9 @@
     <Content Include="Scripts\USM\view\roles\GroupRoleSelectionPanel.js" />
     <Content Include="Scripts\USM\view\SecurityGrid.js" />
     <Content Include="Scripts\USM\view\UserSecurityTabPanel.js" />
+    <Content Include="Scripts\USM\view\users\UserForm.js" />
     <Content Include="Scripts\USM\view\users\UserGrid.js" />
+    <Content Include="Scripts\USM\view\users\UserWindow.js" />
     <Content Include="Scripts\USM\view\Viewport.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />

@@ -30,7 +30,7 @@ Ext.define('USM.view.users.UserWindow', {
                         },
                         {
                             xtype: 'button',
-                            itemId:'usrbtn',
+                            itemId: 'usrbtn',
                             handler: function (button, event) {
                                 me.onSave();
                             },
@@ -78,10 +78,13 @@ Ext.define('USM.view.users.UserWindow', {
                 success: function (f, a) {
                     msg.close();
                     me.destroy();
-                    var message = 'User saved successfully.';
+                    var objResponseText = Ext.JSON.decode(a.response.responseText);
+                    var message = objResponseText['message'];
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
-                    if (Ext.getCmp('usergridid') != undefined) {
-                    Ext.getCmp('usergridid').store.reload();
+                    if (objResponseText['success'] == true) {
+                        if (Ext.getCmp('usergridid') != undefined) {
+                            Ext.getCmp('usergridid').store.reload();
+                        } 
                     }
                     return;
                 },
