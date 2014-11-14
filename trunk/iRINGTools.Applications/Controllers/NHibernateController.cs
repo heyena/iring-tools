@@ -315,7 +315,7 @@ namespace org.iringtools.web.controllers
                                     {
                                         {"columnName", dictProperty.columnName},
                                         {"propertyName", dictProperty.propertyName},
-                                        {"aliasDictionary",dictProperty.aliasDictionary.ContainsKey("COLUMN_NAME_IN") ? dictProperty.aliasDictionary["COLUMN_NAME_IN"] : null},
+                                        {"aliasDictionary",dictProperty.aliasDictionary != null && dictProperty.aliasDictionary.ContainsKey("COLUMN_NAME_IN") ? dictProperty.aliasDictionary["COLUMN_NAME_IN"] : null},
                                         {"dataType", dictProperty.dataType},
                                         {"dataLength", dictProperty.dataLength},
                                         {"isNullable", dictProperty.isNullable},

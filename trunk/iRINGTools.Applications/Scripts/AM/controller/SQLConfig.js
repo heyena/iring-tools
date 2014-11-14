@@ -493,7 +493,7 @@
             }
 
             var aliasDictionary;
-            if (objProps.aliasDictionary != "" || objProps.aliasDictionary != null) {
+            if (valName != null && objProps.aliasDictionary != "" && objProps.aliasDictionary != null) {
                 aliasDictionary = [{
                     "Key": "TABLE_NAME_IN",
                     "Value": valName
@@ -551,7 +551,7 @@
                 }
                 var aliasDictionary;
 
-                if (props.aliasDictionary != "" || props.aliasDictionary != null) {
+                if (valName != null && props.aliasDictionary != "" && props.aliasDictionary != null) {
                     aliasDictionary = [{
                         "Key": "COLUMN_NAME_IN",
                         "Value": valName
