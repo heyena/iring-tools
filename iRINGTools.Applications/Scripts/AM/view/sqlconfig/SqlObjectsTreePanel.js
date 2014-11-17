@@ -15,7 +15,7 @@ Ext.define('AM.view.sqlconfig.SqlObjectsTreePanel', {
                 actionMethods: {
                     read: 'POST'
                 },
-                url: 'NHibernate/ObjectsTree',
+                url: 'NHibernate/ObjectsTreeSql',
                 extraParams: {
                     scope: null,
                     app: null,
