@@ -1341,17 +1341,11 @@ namespace org.iringtools.adapter
                                             value = null;
                                         }
                                     }
-                                    else if (prop.dataType == DataType.Decimal)
+                                    else if (prop.dataType != DataType.String)
                                     {
                                         decimal decValue = 0;
                                         Decimal.TryParse(value.ToString(), out decValue);
                                         value = decValue;
-                                    }
-                                    else if (prop.dataType.ToString().Contains("Int"))
-                                    {
-                                        int nValue = 0;
-                                        int.TryParse(value.ToString(), out nValue);
-                                        value = nValue;
                                     }
                                 }
 

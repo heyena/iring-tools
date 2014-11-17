@@ -928,8 +928,7 @@ namespace org.iringtools.adapter.projection
                         value = Utility.ToXsdDate(value);
                     }
                     else if (propertyRole.dataType == "xsd:string" && propertyRole.dataLength > 0 &&
-                        value.Length > propertyRole.dataLength && propertyRole.dbDataType != "Decimal" &&
-                        !propertyRole.dbDataType.Contains("Int"))
+                        value.Length > propertyRole.dataLength && !isNumeric(propertyRole.dbDataType))
                     {
                         value = value.Substring(0, propertyRole.dataLength);
 
@@ -964,7 +963,7 @@ namespace org.iringtools.adapter.projection
                                 value = strSmallestIntegerPart + "." + strLength[1];
                                 Decimal.TryParse(value, out decDecimalValue);
                                 decDecimalValue = Math.Round(decDecimalValue, propertyRole.scale);
-                                value = Convert.ToString(decDecimalValue);
+                                value = decDecimalValue.ToString().Trim('0');
                             }
                             else
                             {
@@ -976,12 +975,24 @@ namespace org.iringtools.adapter.projection
                             value = String.Empty;
                         }
                     }
+                    //if integer type contains decimal value. Round the value to closest integer
                     else if (propertyRole.dbDataType != null && propertyRole.dbDataType.Contains("Int") && value.Length > 0 && value.Contains("."))
                     {
                         decimal decDecimalValue = 0;
                         Decimal.TryParse(value, out decDecimalValue);
                         decDecimalValue = Math.Round(decDecimalValue, 0); //Round to closest integer.
                         value = Convert.ToString(decDecimalValue);
+                    }
+                    //removes trailing zero after decimal.
+                    else if (propertyRole.dbDataType != null && isNumeric(propertyRole.dbDataType))
+                    {
+                        decimal decDecimalValue = 0;
+                        Decimal.TryParse(value, out decDecimalValue);
+                        value = Convert.ToString(decDecimalValue);
+                        if (value.Contains("."))
+                        {
+                            value = value.Trim('0');
+                        }
                     }
                 }
             }
@@ -997,6 +1008,23 @@ namespace org.iringtools.adapter.projection
 
             return value;
         }
+
+        private bool isNumeric(string strDataType)
+        {
+            if (strDataType != null && (strDataType.ToUpper() == "DECIMAL" ||
+                strDataType.ToUpper() == "SINGLE" ||
+                strDataType.ToUpper() == "DOUBLE" ||
+                strDataType.ToUpper().Contains("INT")))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
 
         private string GetReferenceRoleValue(RoleMap referenceRole)
         {
