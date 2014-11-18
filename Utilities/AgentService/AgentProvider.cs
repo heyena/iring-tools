@@ -102,7 +102,10 @@ namespace iRINGAgentService
                         _settings["ImpersonatedUser"] = _clientId;
                         _settings["ClientToken"] = clientToken;
                     }
-                    RefreshCache(project, app, dataObject, false);
+                    if (string.IsNullOrEmpty(dataObject))
+                        RefreshCache(project, app, false);
+                    else
+                        RefreshCache(project, app, dataObject, false);
                 }
                 else
                 {
