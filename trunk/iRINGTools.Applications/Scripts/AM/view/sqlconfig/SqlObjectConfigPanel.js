@@ -113,7 +113,7 @@ Ext.define('AM.view.sqlconfig.SqlObjectConfigPanel', {
             });
 
             selector.store.loadData(availItems);
-
+            selector.reset();
             me.getForm().setValues(this.record.raw.properties);
         }
         else {
