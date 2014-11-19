@@ -83,9 +83,21 @@ Ext.define('USM.view.permissions.PermissionWindow', {
                     var message = objResponseText['message'];
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     if (objResponseText['success'] == true) {
+                        var tabPanel = Ext.getCmp("maincontent");
                         if (Ext.getCmp('permissiongridid') != undefined) {
                             Ext.getCmp('permissiongridid').store.reload();
-                        } 
+                        }
+                        else {
+                            
+                            var gridPanel = Ext.create('USM.view.permissions.PermissionGrid', {
+                                title: 'Permissions',
+                                id: "permissiongridid",
+                                closable: true
+                            });
+                            tabPanel.add(gridPanel);
+                            gridPanel.store.reload();
+                        }
+                        tabPanel.setActiveTab(Ext.getCmp("permissiongridid"));
                     }
                     return;
                 },

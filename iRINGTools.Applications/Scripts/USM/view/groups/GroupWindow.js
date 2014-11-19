@@ -83,9 +83,22 @@ Ext.define('USM.view.groups.GroupWindow', {
                     var message = objResponseText['message'];
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     if (objResponseText['success'] == true) {
+                        var tabPanel = Ext.getCmp("maincontent");
                         if (Ext.getCmp('groupgridid') != undefined) {
                             Ext.getCmp('groupgridid').store.reload();
-                        } 
+                        }
+                        else {
+                            
+                            var gridPanel = Ext.create('USM.view.groups.GroupGrid', {
+                                title: 'Groups',
+                                id: "groupgridid",
+                                closable: true
+                            });
+                            tabPanel.add(gridPanel);
+                            gridPanel.store.reload();
+
+                        }
+                        tabPanel.setActiveTab(Ext.getCmp("groupgridid")); 
                     }
                     return;
                 },
