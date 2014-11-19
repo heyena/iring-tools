@@ -82,9 +82,20 @@ Ext.define('USM.view.roles.RoleWindow', {
                     var message = objResponseText['message'];
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     if (objResponseText['success'] == true) {
+                        var tabPanel = Ext.getCmp("maincontent");
                         if (Ext.getCmp('rolegridid') != undefined) {
                             Ext.getCmp('rolegridid').store.reload();
-                        } 
+                        }
+                        else {
+                            var gridPanel = Ext.create('USM.view.roles.RoleGrid', {
+                                title: 'Roles',
+                                id: "rolegridid",
+                                closable: true
+                            });
+                            tabPanel.add(gridPanel);
+                            gridPanel.store.reload();
+                        }
+                        tabPanel.setActiveTab(Ext.getCmp("rolegridid")); 
                     }
                     return;
                 },
