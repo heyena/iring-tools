@@ -13,7 +13,7 @@
             actionMethod: {
                 read: 'GET'
             },
-            autoLoad: true,
+            autoLoad: false,
             model: 'USM.model.GroupM',
             storeId: storeId,
             proxy: {

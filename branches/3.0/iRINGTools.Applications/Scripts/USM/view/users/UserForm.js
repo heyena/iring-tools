@@ -30,7 +30,8 @@ Ext.define('USM.view.users.UserForm', {
                     name: 'UserName',
                     anchor: '100%',
                     maxLength: 100,
-                    allowBlank: false
+                    allowBlank: false,
+                    vtype: 'alphanum'
                 },
                 {
                     xtype: 'textfield',

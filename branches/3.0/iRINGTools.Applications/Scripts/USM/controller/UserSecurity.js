@@ -182,6 +182,7 @@
         var form = win.down('userform');
         form.getForm().setValues(rec[0].data);
         form.getForm().findField('ActionType').setValue('EDIT');
+        form.getForm().findField('UserName').setReadOnly(true);
         win.show();
 
     },
@@ -277,6 +278,7 @@
         var form = win.down('groupform');
         form.getForm().setValues(rec[0].data);
         form.getForm().findField('ActionType').setValue('EDIT');
+        form.getForm().findField('GroupName').setReadOnly(true);
         win.show();
     },
 
@@ -318,6 +320,7 @@
         var form = win.down('roleform');
         form.getForm().setValues(rec[0].data);
         form.getForm().findField('ActionType').setValue('EDIT');
+        form.getForm().findField('RoleName').setReadOnly(true);
         win.show();
 
     },
@@ -359,6 +362,7 @@
         var form = win.down('permissionform');
         form.getForm().setValues(rec[0].data);
         form.getForm().findField('ActionType').setValue('EDIT');
+        form.getForm().findField('PermissionName').setReadOnly(true);
         win.show();
 
     },

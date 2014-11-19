@@ -46,6 +46,7 @@ Ext.define('USM.view.SecurityGrid', {
                     closable: true
                 });
                 tabPanel.add(gridPanel);
+                gridPanel.store.reload();
             }
             tabPanel.setActiveTab(Ext.getCmp("groupgridid"));
 
@@ -57,6 +58,7 @@ Ext.define('USM.view.SecurityGrid', {
                     closable: true
                 });
                 tabPanel.add(gridPanel);
+                gridPanel.store.reload();
             }
             tabPanel.setActiveTab(Ext.getCmp("usergridid"));
 
@@ -68,6 +70,7 @@ Ext.define('USM.view.SecurityGrid', {
                     closable: true
                 });
                 tabPanel.add(gridPanel);
+                gridPanel.store.reload();
             }
             tabPanel.setActiveTab(Ext.getCmp("rolegridid"));
 
