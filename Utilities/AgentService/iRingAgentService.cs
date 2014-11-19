@@ -245,10 +245,13 @@ namespace iRINGAgentService
             try
             {
                 settings = ConfigurationManager.AppSettings;
-                if (int.Parse(_configList[k].CachePageSize) > 0)
+                if (!string.IsNullOrEmpty(_configList[k].CachePageSize))
                 {
-                    settings.Set("cachePage", _configList[k].CachePageSize);
-                    settings.Set("CachePageSize", _configList[k].CachePageSize);
+                    if (int.Parse(_configList[k].CachePageSize) > 0)
+                    {
+                        settings.Set("cachePage", _configList[k].CachePageSize);
+                        settings.Set("CachePageSize", _configList[k].CachePageSize);
+                    }
                 }
 
                 adapterSettings = new AdapterSettings();
