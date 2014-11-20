@@ -77,7 +77,6 @@ namespace org.iringtools.library
           DataType.Int64,
           DataType.Single,
       };
-
             if (numericTypes.Contains(dataType))
             {
                 isNumeric = true;
