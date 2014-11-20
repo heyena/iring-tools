@@ -56,7 +56,6 @@ namespace org.iringtools.UserSecurity
         {
 
             Response response = new Response();
-            response.DateTimeStamp = DateTime.Now;
             response.Messages = new Messages();
             try
             {
@@ -65,7 +64,7 @@ namespace org.iringtools.UserSecurity
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (user == null || string.IsNullOrEmpty(user.UserName))
-                        response.Messages.Add("Please enter UserName.");
+                        PrepareErrorResponse(response, "Please enter UserName!");
                     else
                     {
                         NameValueList nvl = new NameValueList();
@@ -78,7 +77,19 @@ namespace org.iringtools.UserSecurity
                         nvl.Add(new ListItem() { Name = "@UserDesc", Value = user.UserDesc });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiUser", nvl);
-                        response.Messages.Add(output);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "User added successfully!");
+                                break;
+                            case "0":
+                                PrepareErrorResponse(response, "User with this name already exists!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
                     }
 
                 }
@@ -144,17 +155,35 @@ namespace org.iringtools.UserSecurity
         public Response DeleteUser(string userName)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<User>("spdUser @UserName = {0}, @SiteId = {1}", userName, _siteID);
+                    if (string.IsNullOrEmpty(userName))
+                        PrepareErrorResponse(response, "Please enter UserName!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdUser", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "User deleted successfully!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("User deleted successfully.");
             }
             catch (Exception ex)
             {
@@ -220,7 +249,6 @@ namespace org.iringtools.UserSecurity
         {
             
             Response response = new Response();
-            response.DateTimeStamp = DateTime.Now;
             response.Messages = new Messages();
             try
             {
@@ -238,7 +266,19 @@ namespace org.iringtools.UserSecurity
                         nvl.Add(new ListItem() { Name = "@RoleDesc", Value = role.RoleDesc });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiRole", nvl);
-                        response.Messages.Add(output);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "Role added successfully!");
+                                break;
+                            case "0":
+                                PrepareErrorResponse(response, "Role with this name already exists!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
                     }
 
                 }
@@ -297,18 +337,35 @@ namespace org.iringtools.UserSecurity
 
         public Response DeleteRole(int roleId)
         {
-            Response response = new Response();
 
+            Response response = new Response();
+            response.Messages = new Messages();
             try
             {
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<Role>("spdRoles @RoleId = {0}, @SiteId = {1}", roleId, _siteID);
-                }
+                    if (roleId == 0)
+                        PrepareErrorResponse(response, "Please enter RoleId!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@RoleId", Value = Convert.ToString(roleId) });
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Role deleted successfully.");
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdRoles", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "Role deleted successfully!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
+                }
             }
             catch (Exception ex)
             {
@@ -328,7 +385,6 @@ namespace org.iringtools.UserSecurity
         public Response InsertPermission(XDocument xml)
         {
             Response response = new Response();
-            response.DateTimeStamp = DateTime.Now;
             response.Messages = new Messages();
             try
             {
@@ -346,7 +402,19 @@ namespace org.iringtools.UserSecurity
                         nvl.Add(new ListItem() { Name = "@PermissionDesc", Value = permission.PermissionDesc });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiPermissions", nvl);
-                        response.Messages.Add(output);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "Permission added successfully!");
+                                break;
+                            case "0":
+                                PrepareErrorResponse(response, "Permission with this name already exists!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
                     }
 
                 }
@@ -406,17 +474,33 @@ namespace org.iringtools.UserSecurity
         public Response DeletePermission(int permissionId)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<Permission>("spdPermissions @PermissionId = {0}, @SiteId = {1}", permissionId, _siteID);
-                }
+                    if (permissionId == 0)
+                        PrepareErrorResponse(response, "Please enter PermissionId!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@PermissionId", Value = Convert.ToString(permissionId) });
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Permission deleted successfully.");
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdPermissions", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "Permission deleted successfully!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
+                }
             }
             catch (Exception ex)
             {
@@ -436,7 +520,6 @@ namespace org.iringtools.UserSecurity
         public Response InsertGroup(XDocument xml)
         {
             Response response = new Response();
-            response.DateTimeStamp = DateTime.Now;
             response.Messages = new Messages();
             try
             {
@@ -454,13 +537,24 @@ namespace org.iringtools.UserSecurity
                         nvl.Add(new ListItem() { Name = "@GroupDesc", Value = group.GroupDesc });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiGroups", nvl);
-                        response.Messages.Add(output);
+
+                        switch (output)
+                        { 
+                            case "1":
+                                PrepareSuccessResponse(response, "Group added successfully!");
+                                break;
+                            case "0":
+                                PrepareErrorResponse(response, "Group with this name already exists!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                        
                     }
 
                 }
 
-                
-                
             }
             catch (Exception ex)
             {
@@ -515,18 +609,35 @@ namespace org.iringtools.UserSecurity
 
         public Response DeleteGroup(int groupId)
         {
-            Response response = new Response();
 
+            Response response = new Response();
+            response.Messages = new Messages();
             try
             {
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<Group>("spdGroups @GroupId = {0}, @SiteId = {1}", groupId, _siteID);
-                }
+                    if (groupId == 0)
+                        PrepareErrorResponse(response, "Please enter GroupId!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@GroupId", Value = Convert.ToString(groupId) });
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Group deleted successfully.");
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdGroups", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "Group deleted successfully!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
+                }
             }
             catch (Exception ex)
             {
@@ -1102,5 +1213,25 @@ namespace org.iringtools.UserSecurity
 
             return response;
         }
+
+        #region Private Methods
+        private void PrepareErrorResponse(Response response, string errMsg)
+        {
+            Status status = new Status { Level = StatusLevel.Error };
+            status.Messages = new Messages { errMsg };
+            response.DateTimeStamp = DateTime.Now;
+            response.Level = StatusLevel.Error;
+            response.StatusList.Add(status);
+            
+        }
+        private void PrepareSuccessResponse(Response response, string errMsg)
+        {
+            Status status = new Status { Level = StatusLevel.Success };
+            status.Messages = new Messages { errMsg };
+            response.DateTimeStamp = DateTime.Now;
+            response.Level = StatusLevel.Success;
+            response.StatusList.Add(status);
+        }
+        #endregion
     }
 }

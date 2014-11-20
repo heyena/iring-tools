@@ -103,6 +103,9 @@ Ext.define('USM.view.users.UserWindow', {
                 failure: function (f, a) {
                     msg.close();
                     me.destroy();
+                    var objResponseText = Ext.JSON.decode(a.response.responseText);
+                    var message = objResponseText['message'];
+                    showDialog(400, 50, 'Error', message, Ext.Msg.OK, null);
                 }
             });
         } else {
