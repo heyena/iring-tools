@@ -201,11 +201,19 @@
                         UserName: userName
                     },
                     success: function (response, options) {
-                        var responseObj = Ext.JSON.decode(response.responseText);
-                        Ext.getCmp('viewportid').down('usergrid').store.reload();
+                        var objResponseText = Ext.JSON.decode(response.responseText);
+                        var message = objResponseText['message'];
+                        showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
+                        if (objResponseText['success'] == true) {
+                            Ext.getCmp('viewportid').down('usergrid').store.reload();
+                        }
                     },
 
-                    failure: function (response, options) { }
+                    failure: function (response, options) {
+                        var objResponseText = Ext.JSON.decode(response.responseText);
+                        var message = objResponseText['message'];
+                        showDialog(400, 50, 'Error', message, Ext.Msg.OK, null);
+                    }
                 });
             }
         });
@@ -295,12 +303,19 @@
                         GroupId: groupId
                     },
                     success: function (response, options) {
-                        var responseObj = Ext.JSON.decode(response.responseText);
-                        Ext.getCmp('viewportid').down('groupgrid').store.reload();
-
+                        var objResponseText = Ext.JSON.decode(response.responseText);
+                        var message = objResponseText['message'];
+                        showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
+                        if (objResponseText['success'] == true) {
+                            Ext.getCmp('viewportid').down('groupgrid').store.reload();
+                        }
                     },
 
-                    failure: function (response, options) { }
+                    failure: function (response, options) {
+                        var objResponseText = Ext.JSON.decode(response.responseText);
+                        var message = objResponseText['message'];
+                        showDialog(400, 50, 'Error', message, Ext.Msg.OK, null);
+                    }
                 });
             }
         });
@@ -338,11 +353,19 @@
                         RoleId: roleId
                     },
                     success: function (response, options) {
-                        var responseObj = Ext.JSON.decode(response.responseText);
-                        Ext.getCmp('viewportid').down('rolegrid').store.reload();
+                        var objResponseText = Ext.JSON.decode(response.responseText);
+                        var message = objResponseText['message'];
+                        showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
+                        if (objResponseText['success'] == true) {
+                            Ext.getCmp('viewportid').down('rolegrid').store.reload();
+                        }
                     },
 
-                    failure: function (response, options) { }
+                    failure: function (response, options) {
+                        var objResponseText = Ext.JSON.decode(response.responseText);
+                        var message = objResponseText['message'];
+                        showDialog(400, 50, 'Error', message, Ext.Msg.OK, null);
+                    }
                 });
             }
         });
@@ -380,11 +403,20 @@
                         PermissionId: permissionId
                     },
                     success: function (response, options) {
-                        var responseObj = Ext.JSON.decode(response.responseText);
-                        Ext.getCmp('viewportid').down('permissiongrid').store.reload();
+                        var objResponseText = Ext.JSON.decode(response.responseText);
+                        var message = objResponseText['message'];
+                        showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
+                        if (objResponseText['success'] == true) {
+                            Ext.getCmp('viewportid').down('permissiongrid').store.reload();
+                        }
                     },
 
-                    failure: function (response, options) { }
+                    failure: function (response, options) {
+                        var objResponseText = Ext.JSON.decode(response.responseText);
+                        var message = objResponseText['message'];
+                        showDialog(400, 50, 'Error', message, Ext.Msg.OK, null);
+
+                    }
                 });
             }
         });
