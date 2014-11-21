@@ -2,7 +2,7 @@
     extend: 'Ext.app.Controller',
 
     stores: ['DBProviderStore'],
-   
+
 
     views: [
         'directory.DirectoryPanel',
@@ -181,6 +181,7 @@
                 var keyConfigPanel = container.down('sqlkeyconfigpanel');
                 keyConfigPanel.setRecord(record);
                 container.getLayout().setActiveItem(keyConfigPanel);
+                //this.reload(container);
                 break;
             case 'properties':
                 var propSelPanel = container.down('sqlpropertyselectionpanel');
@@ -262,6 +263,7 @@
     onApplyObjectConfig: function (button, e) {
         var panel = button.up('sqlobjectconfigpanel');
         var treePanel = panel.up('sqlmainconfigpanel').down('sqlobjectstreepanel');
+
 
         var values = panel.getForm().getValues();
         var props = treePanel.getSelectionModel().getLastSelected().raw.properties;
@@ -557,13 +559,13 @@
                         "Value": valName
                     }]
                 }
-                if (props.isNullable == "on") {
-                    props.isNullable = true;
-                }
-                else {
-                    props.isNullable = false;
-                
-                }
+//                if (props.isNullable == "on") {
+//                    props.isNullable = true;
+//                }
+//                else {
+//                    props.isNullable = false;
+
+//                }
                 dataObject.dataProperties.push({
                     columnName: props.columnName,
                     propertyName: props.propertyName,
