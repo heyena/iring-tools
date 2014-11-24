@@ -156,7 +156,7 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
-                throw;
+                throw ex;
 
             }
             return items;
@@ -449,9 +449,9 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public void InsertGroupUsers(FormCollection form)
+        public Response InsertGroupUsers(FormCollection form)
         {
-
+            Response response = null;
             _logger.Debug("In Security Repository map users with group");
             try
             {
@@ -473,22 +473,22 @@ namespace iRINGTools.Web.Models
 
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
 
-                client.Post<UserGroups>("/insertGroupUsers?format=xml", userGroups, true);
+                response = client.Post<UserGroups,Response>("/insertGroupUsers?format=xml", userGroups, true);
                 _logger.Debug("Successfully called Security Service.");
 
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.ToString());
-                throw;
-
+                return PrepareErrorResponse(ex, ErrorMessages.errUSMSavePermission);
             }
+
+            return response;
 
         }
 
-        public void InsertUserGroups(FormCollection form)
+        public Response InsertUserGroups(FormCollection form)
         {
-
+            Response response = null;
             _logger.Debug("In Security Repository map groups with user");
             try
             {
@@ -510,16 +510,16 @@ namespace iRINGTools.Web.Models
 
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
 
-                client.Post<UserGroups>("/insertUserGroups?format=xml", userGroups, true);
+                response = client.Post<UserGroups,Response>("/insertUserGroups?format=xml", userGroups, true);
                 _logger.Debug("Successfully called Security Service.");
 
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.ToString());
-                throw;
-
+                return PrepareErrorResponse(ex, ErrorMessages.errUSMSavePermission);
             }
+
+            return response;
 
         }
 
@@ -537,7 +537,7 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
-                throw;
+                throw ex;
 
             }
             return items;

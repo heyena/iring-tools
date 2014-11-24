@@ -55,16 +55,14 @@ namespace org.iringtools.services
         public void InsertUsers(string format,Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+                format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<Users>(stream, format);
@@ -86,16 +84,14 @@ namespace org.iringtools.services
         public void UpdateUsers(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<Users>(stream, format);
@@ -117,16 +113,14 @@ namespace org.iringtools.services
         public void DeleteUser(string userName, string format)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     response = _userSecurityProvider.DeleteUser(userName);
@@ -149,7 +143,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Sites sites = _userSecurityProvider.GetSites();
                 _userSecurityProvider.FormatOutgoingMessage<Sites>(sites, format, true);
@@ -169,7 +163,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Site site = _userSecurityProvider.GetSite(siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Site>(site, format, true);
@@ -187,16 +181,14 @@ namespace org.iringtools.services
         public void InsertSites(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<Sites>(stream, format);
@@ -218,16 +210,14 @@ namespace org.iringtools.services
         public void UpdateSites(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<Sites>(stream, format);
@@ -249,16 +239,14 @@ namespace org.iringtools.services
         public void DeleteSite(int siteId, string format)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     response = _userSecurityProvider.DeleteSite(siteId);
@@ -281,7 +269,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Group group = _userSecurityProvider.GetGroupById(iGroupId);
                 _userSecurityProvider.FormatOutgoingMessage<Group>(group, format, true);
@@ -301,7 +289,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 User user = _userSecurityProvider.GetUserById(userId);
                 _userSecurityProvider.FormatOutgoingMessage<User>(user, format, true);
@@ -321,7 +309,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Roles roles = _userSecurityProvider.GetAllRoles();
                 _userSecurityProvider.FormatOutgoingMessage<Roles>(roles, format, true);
@@ -339,16 +327,14 @@ namespace org.iringtools.services
         public void InsertRoles(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<Roles>(stream, format);
@@ -370,16 +356,14 @@ namespace org.iringtools.services
         public void UpdateRoles(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<Roles>(stream, format);
@@ -401,16 +385,14 @@ namespace org.iringtools.services
         public void DeleteRole(int roleId, string format)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     response = _userSecurityProvider.DeleteRole(roleId);
@@ -432,16 +414,14 @@ namespace org.iringtools.services
         public void InsertPermissions(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<Permissions>(stream, format);
@@ -464,16 +444,14 @@ namespace org.iringtools.services
         public void UpdatePermissions(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<Permissions>(stream, format);
@@ -495,20 +473,16 @@ namespace org.iringtools.services
         public void DeletePermission(int permissionId, string format)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
-                {
                     response = _userSecurityProvider.DeletePermission(permissionId);
-                }
             }
             catch (Exception ex)
             {
@@ -527,7 +501,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Groups groups = _userSecurityProvider.GetAllGroups();
                 _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
@@ -545,16 +519,14 @@ namespace org.iringtools.services
         public void InsertGroups(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<Groups>(stream, format);
@@ -576,16 +548,14 @@ namespace org.iringtools.services
         public void UpdateGroups(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<Groups>(stream, format);
@@ -607,20 +577,16 @@ namespace org.iringtools.services
         public void DeleteGroup(int groupId, string format)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
-                {
                     response = _userSecurityProvider.DeleteGroup(groupId);
-                }
             }
             catch (Exception ex)
             {
@@ -639,7 +605,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Role role = _userSecurityProvider.GetRoleById(iroleId);
                 _userSecurityProvider.FormatOutgoingMessage<Role>(role, format, true);
@@ -659,7 +625,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Roles roles = _userSecurityProvider.GetSiteRoles(siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Roles>(roles, format, true);
@@ -679,7 +645,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 GroupRoles groupRoles = _userSecurityProvider.GetGroupRole(groupId, roleId);
                 _userSecurityProvider.FormatOutgoingMessage<GroupRoles>(groupRoles, format, true);
@@ -699,7 +665,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Groups groups = _userSecurityProvider.GetSiteGroups(siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
@@ -719,7 +685,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 UserGroups users = _userSecurityProvider.GetGroupUsers(groupId);
                 _userSecurityProvider.FormatOutgoingMessage<UserGroups>(users, format, true);
@@ -739,7 +705,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Users users = _userSecurityProvider.GetSiteUsers(siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Users>(users, format, true);
@@ -759,7 +725,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Permissions permissions = _userSecurityProvider.GetSitePermissions(siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Permissions>(permissions, format, true);
@@ -779,7 +745,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Groups groups = _userSecurityProvider.GetGroupsUser(userName, siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
@@ -799,7 +765,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Users users = _userSecurityProvider.GetGroupUser(groupId, userId);
                 _userSecurityProvider.FormatOutgoingMessage<Users>(users, format, true);
@@ -819,7 +785,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Roles roles = _userSecurityProvider.GetGroupRoles(groupId);
                 _userSecurityProvider.FormatOutgoingMessage<Roles>(roles, format, true);
@@ -839,7 +805,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Permissions permissions = _userSecurityProvider.GetRolePermissions(roleId);
                 _userSecurityProvider.FormatOutgoingMessage<Permissions>(permissions, format, true);
@@ -859,7 +825,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Permissions permissions = _userSecurityProvider.GetRolePermission(roleId, permissionId);
                 _userSecurityProvider.FormatOutgoingMessage<Permissions>(permissions, format, true);
@@ -879,7 +845,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 UserGroups userGroups = _userSecurityProvider.GetUserGroups(userName);
                 _userSecurityProvider.FormatOutgoingMessage<UserGroups>(userGroups, format, true);
@@ -898,16 +864,14 @@ namespace org.iringtools.services
         public void InsertGroupUsers(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<UserGroups>(stream, format);
@@ -929,16 +893,14 @@ namespace org.iringtools.services
         public void InsertUserGroups(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<UserGroups>(stream, format);
@@ -962,7 +924,7 @@ namespace org.iringtools.services
             try
             {
                 if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
+                 format = "xml"; 
 
                 Groups groups = _userSecurityProvider.GetRoleGroups(roleId);
                 _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
@@ -980,16 +942,14 @@ namespace org.iringtools.services
         public void InsertRoleGroups(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<GroupRoles>(stream, format);
@@ -1011,16 +971,14 @@ namespace org.iringtools.services
         public void InsertGroupRoles(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<GroupRoles>(stream, format);
@@ -1042,16 +1000,14 @@ namespace org.iringtools.services
         public void InsertRolePermissions(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+             format = "xml"; 
 
             Response response = new Response();
             try
             {
                 format = MapContentType(format);
                 if (format == "raw")
-                {
                     throw new Exception("");
-                }
                 else
                 {
                     XElement xElement = _userSecurityProvider.FormatIncomingMessage<RolePermissions>(stream, format);

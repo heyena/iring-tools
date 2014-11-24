@@ -127,14 +127,21 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
                         me.getForm().reset();
                         me.up('window').destroy();
                     }
-                    Ext.getCmp('usergridid').store.reload();
-                    var message = 'Selected Groups saved successfully.';
+                    
+                    var objResponseText = Ext.JSON.decode(a.response.responseText);
+                    var message = objResponseText['message'];
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
+//                    if (objResponseText['success'] == true) {
+//                        Ext.getCmp('usergridid').store.reload();     
+//                    }
                     return;
                 },
                 failure: function (f, a) {
                     msg.close();
                     me.up('window').destroy();
+                    var objResponseText = Ext.JSON.decode(a.response.responseText);
+                    var message = objResponseText['message'];
+                    showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                 }
             });
         } else {
@@ -177,9 +184,9 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
                     }
                     form.getForm().findField('selectedGroups').setValue(selArr);
                 }
-                
+
                 form.getForm().findField('userId').setValue(userId);
-                
+
             },
             failure: function (response, options) {
             }

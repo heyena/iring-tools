@@ -70,9 +70,19 @@ namespace org.iringtools.web.controllers
 
         public JsonResult getGroupUsers(FormCollection form)
         {
-            string iGroupId = form["GroupId"];
-            UserGroups userGroups = _repository.GetGroupUsers(iGroupId,"xml");
-            return Json(userGroups, JsonRequestBehavior.AllowGet);
+            try
+            {
+                string iGroupId = form["GroupId"];
+                UserGroups userGroups = _repository.GetGroupUsers(iGroupId, "xml");
+                return Json(userGroups, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroup, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public JsonResult getGroupById(FormCollection form)
@@ -272,21 +282,60 @@ namespace org.iringtools.web.controllers
 
         public JsonResult saveGroupUsers(FormCollection form)
         {
-            _repository.InsertGroupUsers(form);
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                Response response = _repository.InsertGroupUsers(form);
+
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroup, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+            
         }
 
         public JsonResult saveUserGroups(FormCollection form)
         {
-            _repository.InsertUserGroups(form);
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                Response response = _repository.InsertUserGroups(form);
+
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroup, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+            
         }
 
         public JsonResult getUserGroups(FormCollection form)
         {
-            string iUserId = form["UserName"];
-            Groups userGroups = _repository.GetUserGroups(iUserId, "xml");
-            return Json(userGroups, JsonRequestBehavior.AllowGet);
+            try
+            {
+                string userName = form["UserName"];
+                Groups userGroups = _repository.GetUserGroups(userName, "xml");
+                return Json(userGroups, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMDeleteUser, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet); 
+            }
         }
 
         public JsonResult saveRoleGroups(FormCollection form)
