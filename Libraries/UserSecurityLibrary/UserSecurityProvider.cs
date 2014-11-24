@@ -860,16 +860,24 @@ namespace org.iringtools.UserSecurity
 
         public UserGroups GetGroupUsers(int iGroupId)
         {
-            List<UserGroup> lstUser = new List<UserGroup>();
-
-            using (var dc = new DataContext(_connSecurityDb))
+            try
             {
-                lstUser = dc.ExecuteQuery<UserGroup>("spgGroupUsers @GroupId = {0}", iGroupId).ToList();
-            }
+                List<UserGroup> lstUser = new List<UserGroup>();
 
-            UserGroups usersG = new UserGroups();
-            usersG.AddRange(lstUser);
-            return usersG;
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    lstUser = dc.ExecuteQuery<UserGroup>("spgGroupUsers @GroupId = {0}", iGroupId).ToList();
+                }
+
+                UserGroups usersG = new UserGroups();
+                usersG.AddRange(lstUser);
+                return usersG;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting Group: " + ex);
+                throw ex;
+            }
         }
 
         public Users GetSiteUsers(int iSiteId)
@@ -902,16 +910,24 @@ namespace org.iringtools.UserSecurity
 
         public Groups GetGroupsUser(string userName, int siteId)
         {
-            List<Group> lstGroup = new List<Group>();
-
-            using (var dc = new DataContext(_connSecurityDb))
+            try
             {
-                lstGroup = dc.ExecuteQuery<Group>("spgGroupUser @UserName = {0}, @SiteId = {1}", userName, siteId).ToList();
-            }
+                List<Group> lstGroup = new List<Group>();
 
-            Groups groups = new Groups();
-            groups.AddRange(lstGroup);
-            return groups;
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    lstGroup = dc.ExecuteQuery<Group>("spgGroupUser @UserName = {0}, @SiteId = {1}", userName, siteId).ToList();
+                }
+
+                Groups groups = new Groups();
+                groups.AddRange(lstGroup);
+                return groups;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting Groups mapped with a user: " + ex);
+                throw ex;
+            }
         }
 
         public Users GetGroupUser(int iGroupId, int iUserId)
@@ -1043,19 +1059,29 @@ namespace org.iringtools.UserSecurity
         public Response InsertGroupUsers(XDocument xml)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
+
                 string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                nvl.Add(new ListItem() { Name = "@rawXML", Value = rawXml });
 
-                using (var dc = new DataContext(_connSecurityDb))
+                string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiGroupUsers", nvl);
+
+                switch (output)
                 {
-                    dc.ExecuteCommand("spiGroupUsers @rawXML = {0},@SiteId = {1}", rawXml,_siteID);
+                    case "1":
+                        PrepareSuccessResponse(response, "Users mapped with the group successfully!");
+                        break;
+                    case "0":
+                        PrepareSuccessResponse(response, "All users unmapped with the group successfully!");
+                        break;
+                    default:
+                        PrepareErrorResponse(response, output);
+                        break;
                 }
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Users added successfully.");
             }
             catch (Exception ex)
             {
@@ -1075,19 +1101,29 @@ namespace org.iringtools.UserSecurity
         public Response InsertUserGroups(XDocument xml)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
-                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                
+                    string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                    nvl.Add(new ListItem() { Name = "@rawXML", Value = rawXml });
 
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                    dc.ExecuteCommand("spiUserGroups @rawXML = {0},@SiteId = {1}", rawXml, _siteID);
-                }
+                    string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiUserGroups", nvl);
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Groups added successfully.");
+                    switch (output)
+                    {
+                        case "1":
+                            PrepareSuccessResponse(response, "Groups mapped with the user successfully!");
+                            break;
+                        case "0":
+                            PrepareSuccessResponse(response, "All groups unmapped with the user successfully!");
+                            break;
+                        default:
+                            PrepareErrorResponse(response, output);
+                            break;
+                    }
             }
             catch (Exception ex)
             {
