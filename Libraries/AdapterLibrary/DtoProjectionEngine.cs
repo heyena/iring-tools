@@ -992,6 +992,7 @@ namespace org.iringtools.adapter.projection
                         if (value.Contains("."))
                         {
                             value = value.Trim('0');
+                            value = value.Trim('.');
                         }
                     }
                 }
