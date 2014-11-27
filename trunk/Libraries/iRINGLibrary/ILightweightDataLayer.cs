@@ -445,6 +445,42 @@ namespace org.iringtools.library
                         }
                     }
                 }
+
+                //Extension Properties____Starts 
+                if (dataObject != null && objectType.extensionProperties != null)
+                {
+                    foreach (ExtensionProperty extentionProperty in objectType.extensionProperties)
+                    {
+                        try
+                        {
+                            if (extentionProperty.propertyName != null)
+                            {
+                                if (row.Table.Columns.Contains(extentionProperty.propertyName))
+                                {
+                                    object value = row[extentionProperty.propertyName];
+
+                                    if (value.GetType() == typeof(System.DBNull))
+                                    {
+                                        value = null;
+                                    }
+
+                                    dataObject.SetPropertyValue(extentionProperty.propertyName, value);
+                                }
+                                else
+                                {
+                                    _logger.Warn(String.Format("Value for column [{0}] not found in data row of table [{1}]",
+                                      extentionProperty.columnName, objectType.tableName));
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Error(string.Format("Error getting data row value: {0}", ex));
+                            throw ex;
+                        }
+                    }
+                }
+                //Extension Properties____Ends
             }
             else
             {
