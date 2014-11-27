@@ -415,6 +415,24 @@ namespace iRINGTools.Web.Models
                         columns.Add(column);
                         //}
                     }
+                    //Extension Properties_____Starts
+                    foreach (ExtensionProperty dataProp in dataObj.extensionProperties)
+                    {
+                        FieldViewModel field = new FieldViewModel();
+                        ColumnViewModel column = new ColumnViewModel();
+
+                        string fieldName = dataProp.propertyName;
+                        column.dataIndex = fieldName;
+                        column.text = fieldName;
+                        column.filterable = true;
+                        column.sortable = true;
+                        field.name = fieldName;
+                        field.type = ToExtJsType(dataProp.dataType);
+
+                        fields.Add(field);
+                        columns.Add(column);
+                    }
+                    //Extension Properties_____Ends
                 }
             }
 

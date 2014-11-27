@@ -193,6 +193,38 @@ namespace org.iringtools.adapter.projection
                   dataItem.properties.Add(dataProperty.propertyName, null);
                 }
               }
+                //Extension Properties____Starts
+              foreach (ExtensionProperty extensionProperty in dataObject.extensionProperties)
+              {
+                  object value = dataObj.GetPropertyValue(extensionProperty.propertyName);
+
+                  if (value != null)
+                  {
+                      if (extensionProperty.dataType == DataType.Char ||
+                            extensionProperty.dataType == DataType.DateTime ||
+                            extensionProperty.dataType == DataType.Date ||
+                            extensionProperty.dataType == DataType.String ||
+                            extensionProperty.dataType == DataType.TimeStamp)
+                      {
+                          string valueStr = Convert.ToString(value);
+
+                          if (extensionProperty.dataType == DataType.DateTime ||
+                              extensionProperty.dataType == DataType.Date)
+                              valueStr = Utility.ToXsdDateTime(valueStr);
+
+                          value = valueStr;
+                      }
+
+                      dataItem.properties.Add(extensionProperty.propertyName, value);
+                  }
+
+                  else if (showNullValue)
+                  {
+                      dataItem.properties.Add(extensionProperty.propertyName, null);
+                  }
+              }
+              //Extension Properties____Ends
+
 
               if (_settings["DisplayLinks"].ToLower() == "true")
               {
