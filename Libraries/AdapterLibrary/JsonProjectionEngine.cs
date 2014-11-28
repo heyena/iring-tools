@@ -194,35 +194,36 @@ namespace org.iringtools.adapter.projection
                 }
               }
                 //Extension Properties____Starts
-              foreach (ExtensionProperty extensionProperty in dataObject.extensionProperties)
-              {
-                  object value = dataObj.GetPropertyValue(extensionProperty.propertyName);
-
-                  if (value != null)
+              if (dataObject.extensionProperties != null)
+                  foreach (ExtensionProperty extensionProperty in dataObject.extensionProperties)
                   {
-                      if (extensionProperty.dataType == DataType.Char ||
-                            extensionProperty.dataType == DataType.DateTime ||
-                            extensionProperty.dataType == DataType.Date ||
-                            extensionProperty.dataType == DataType.String ||
-                            extensionProperty.dataType == DataType.TimeStamp)
+                      object value = dataObj.GetPropertyValue(extensionProperty.propertyName);
+
+                      if (value != null)
                       {
-                          string valueStr = Convert.ToString(value);
+                          if (extensionProperty.dataType == DataType.Char ||
+                                extensionProperty.dataType == DataType.DateTime ||
+                                extensionProperty.dataType == DataType.Date ||
+                                extensionProperty.dataType == DataType.String ||
+                                extensionProperty.dataType == DataType.TimeStamp)
+                          {
+                              string valueStr = Convert.ToString(value);
 
-                          if (extensionProperty.dataType == DataType.DateTime ||
-                              extensionProperty.dataType == DataType.Date)
-                              valueStr = Utility.ToXsdDateTime(valueStr);
+                              if (extensionProperty.dataType == DataType.DateTime ||
+                                  extensionProperty.dataType == DataType.Date)
+                                  valueStr = Utility.ToXsdDateTime(valueStr);
 
-                          value = valueStr;
+                              value = valueStr;
+                          }
+
+                          dataItem.properties.Add(extensionProperty.propertyName, value);
                       }
 
-                      dataItem.properties.Add(extensionProperty.propertyName, value);
+                      else if (showNullValue)
+                      {
+                          dataItem.properties.Add(extensionProperty.propertyName, null);
+                      }
                   }
-
-                  else if (showNullValue)
-                  {
-                      dataItem.properties.Add(extensionProperty.propertyName, null);
-                  }
-              }
               //Extension Properties____Ends
 
 
