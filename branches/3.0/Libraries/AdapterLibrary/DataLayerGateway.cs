@@ -1640,6 +1640,19 @@ else
         tableBuilder.AppendFormat("{0} {1} {2}{3}", columnName, dataType, nullable, PROP_SEPARATOR);
       }
 
+      if (objectType.extensionProperties != null)
+      {
+          foreach (ExtensionProperty prop in objectType.extensionProperties)
+          {
+              string columnName = "[" + prop.propertyName + "]";
+              string dataType = ToSQLType(prop);
+              string nullable = prop.isNullable ? "NULL" : "NOT NULL";
+
+              tableBuilder.AppendFormat("{0} {1} {2}{3}", columnName, dataType, nullable, PROP_SEPARATOR);
+          }
+      }
+
+
       tableBuilder.AppendFormat("[_hasContent_] bit NULL");
       tableBuilder.Append(")");
 
@@ -1701,6 +1714,62 @@ case DataType.String:
                     return "nvarchar(MAX)";
             }
         }
+
+    protected string ToSQLType(ExtensionProperty prop)
+    {
+        DataType dataType = prop.dataType;
+        switch (dataType)
+        {
+            case DataType.Boolean:
+                return "bit";
+
+            case DataType.Char:
+                return string.Format("varchar({0})", prop.dataLength);
+
+            case DataType.Byte:
+            case DataType.Int16:
+                return "smallint";
+
+            case DataType.Int32:
+                return "int";
+
+            case DataType.Int64:
+                return "bigint";
+
+            case DataType.Single:
+            case DataType.Double:
+                return "float";
+
+            case DataType.Decimal:
+                if (prop.precision == 0 && prop.scale == 0)
+                {
+                    prop.precision = 38;
+                    prop.scale = 19;
+                }
+                return string.Format("decimal({0},{1})", prop.precision, prop.scale);
+
+            case DataType.Date:
+                return "date";
+
+            case DataType.DateTime:
+                return "datetime";
+
+            case DataType.TimeStamp:
+                return "timestamp";
+
+            case DataType.String:
+                if (prop.dataLength == 0 || prop.dataLength > 4000)
+                {
+                    return "nvarchar(MAX)";
+                }
+                return string.Format("nvarchar({0})", prop.dataLength);
+
+            default:
+                return "nvarchar(MAX)";
+        }
+    }
+
+
         protected Response DoRefreshCacheWithIdentifier(string cacheId, DataObject objectType, int CachePageSize)
         {
             Response response = new Response();
