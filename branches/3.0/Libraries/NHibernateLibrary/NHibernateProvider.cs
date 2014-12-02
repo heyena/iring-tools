@@ -48,8 +48,6 @@ namespace org.iringtools.nhibernate
         private IKernel _kernel = null;
         private NHibernateSettings _settings = null;
 
-        public NHibernateProvider()
-        { }
         [Inject]
         public NHibernateProvider(NameValueCollection settings)
         {
@@ -69,6 +67,9 @@ namespace org.iringtools.nhibernate
 
             _settings["AppDataPath"] = path;
         }
+
+        internal NHibernateProvider()
+        { }
 
         #region public methods
         public Response Generate(string projectName, string applicationName)
@@ -378,30 +379,11 @@ namespace org.iringtools.nhibernate
 
                 foreach (object[] metadata in metadataList)
                 {
-                    string columnName = Convert.ToString(metadata[0]);
-                    string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[1]));
-                    int dataLength = Convert.ToInt32(metadata[2]);
                     bool isIdentity = Convert.ToBoolean(metadata[3]);
-                    string nullable = Convert.ToString(metadata[4]).ToUpper();
-                    bool isNullable = (nullable == "Y" || nullable == "TRUE" || nullable == "1");
                     string constraint = Convert.ToString(metadata[5]);
-                    int precision = (Convert.ToInt32(metadata[6])==null)?0:Convert.ToInt32(metadata[6]); //set precision= 0 if value is null
-                    int scale = (Convert.ToInt32(metadata[7]) == null) ? 0 : Convert.ToInt32(metadata[7]); //set scale= 0 if value is null
                     if (String.IsNullOrEmpty(constraint)) // process columns
                     {
-                        DataProperty column = new DataProperty()
-                        {
-                            columnName = columnName,
-                            dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-                            dataLength = dataLength,
-                            isNullable = isNullable,
-                            propertyName = Utility.ToSafeName(columnName),
-                            precision = precision,
-                            scale = scale,
-
-
-                        };
-
+                        DataProperty column = NewColumnInformation(metadata);
                         dataObject.dataProperties.Add(column);
                     }
                     else
@@ -416,16 +398,9 @@ namespace org.iringtools.nhibernate
                         {
                             keyType = KeyType.foreign;
                         }
-
-                        DataProperty key = new DataProperty()
-                        {
-                            columnName = columnName,
-                            dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-                            dataLength = dataLength,
-                            isNullable = isNullable,
-                            keyType = keyType,
-                            propertyName = Utility.ToSafeName(columnName),
-                        };
+                        DataProperty key = new DataProperty();
+                        key = NewColumnInformation(metadata);
+                        key.keyType = keyType;
                         dataObject.addKeyProperty(key);
                     }
                 }
@@ -500,37 +475,13 @@ namespace org.iringtools.nhibernate
 
                 foreach (object[] metadata in metadataList)
                 {
-                    string columnName = Convert.ToString(metadata[0]);
-                    string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[1]));
-                    int dataLength = Convert.ToInt32(metadata[2]); //* MSSQL returns just the part befor decimal.eg 4 for (6,2) and oracle returns max bit size.
                     bool isIdentity = Convert.ToBoolean(metadata[3]);
-                    string nullable = Convert.ToString(metadata[4]).ToUpper();
-                    //   bool isNullable = CheckNullable(dbProvider, nullable);
-                    bool isNullable = (nullable == "Y" || nullable == "TRUE" || nullable == "1");
-                    if (dataType == "Char" && dataLength > 1)
-                    {
-                        dataType = "String";
-                    }
                     string constraint = Convert.ToString(metadata[5]);
-                    int precision = (metadata[6] == null) ? 0 : Convert.ToInt32(metadata[6]); //total length of decimal number and set precision= 0 if value is null 
-                    int scale = (metadata[7] == null) ? 0 : Convert.ToInt32(metadata[7]); //length after decimal place and set precision= 0 if value is null    
-
                     if (String.IsNullOrEmpty(constraint)) // process columns
                     {
-                        DataProperty column = new DataProperty()
-                        {
-                            columnName = columnName,
-                            dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-                            dataLength = dataLength,
-                            isNullable = isNullable,
-                            propertyName = Utility.ToSafeName(columnName),
-                            precision = precision,
-                            scale = scale
-                        };
-
+                        DataProperty column = NewColumnInformation(metadata);
                         dataObject.dataProperties.Add(column);
                     }
-
                     else
                     {
                         KeyType keyType = KeyType.assigned;
@@ -543,26 +494,14 @@ namespace org.iringtools.nhibernate
                         {
                             keyType = KeyType.foreign;
                         }
-
-                        DataProperty key = new DataProperty()
-                        {
-                            columnName = columnName,
-                            dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-                            dataLength = dataLength,
-                            isNullable = isNullable,
-                            keyType = keyType,
-                            propertyName = Utility.ToSafeName(columnName),
-                            precision = precision,
-                            scale = scale
-                        };
-
+                        DataProperty key = new DataProperty();
+                        key = NewColumnInformation(metadata);
+                        key.keyType = keyType;
                         dataObject.addKeyProperty(key);
                     }
                 }
-
                 dataObjects.Add(dataObject);
             }
-
             session.Close();
 
             return dataObjects;
@@ -680,8 +619,7 @@ namespace org.iringtools.nhibernate
             return metaQuery;
         }
 
-        //gets column name, data type, max length, squence, nullable  and constrain type
-        // of the all the columns in a selected table.
+        //query to get important characteristics of all columns in the table
         private string GetTableMetaQuery(string dbProvider, string schemaName, string tableName)
         {
             string tableQuery = string.Empty;
@@ -690,7 +628,6 @@ namespace org.iringtools.nhibernate
             {
                 tableQuery = String.Format(@"
           select t1.table_name, t1.column_name, t1.data_type, t1.character_maximum_length as data_length, 
-          t1.NUMERIC_PRECISION as PRECISION , t1.NUMERIC_SCALE as SCALE
           t1.extra as is_auto_increment, t1.is_nullable, t1.column_key from information_schema.columns t1 
           left join information_schema.views t2 on t2.table_name = t1.table_name 
           where upper(t1.table_schema) = '{0}' and upper(t1.table_name) = '{1}'",
@@ -710,9 +647,8 @@ namespace org.iringtools.nhibernate
           and upper(schema_name(t1.schema_id)) = '{0}' and (upper(t1.name) = '{1}' or 
           upper(t1.object_id)= (SELECT  distinct object_id  FROM sys.columns AS c  
           CROSS APPLY ( SELECT name FROM sys.synonyms  WHERE name = '{1}'  AND OBJECT_ID([base_object_name]) = c.[object_id] ) AS x))",
-                  schemaName.ToUpper(), tableName.ToUpper());
+                 schemaName.ToUpper(), tableName.ToUpper());
             }
-
             else if (dbProvider.ToUpper().Contains("ORACLE"))
             {
                 tableQuery = string.Format(@"
@@ -725,8 +661,9 @@ namespace org.iringtools.nhibernate
           AND SUBSTR(t3.constraint_name, 0, 3) != 'SYS' LEFT JOIN all_constraints t4
           ON t4.constraint_name = t3.constraint_name AND t4.owner = t3.owner
           AND (t4.constraint_type = 'P' OR t4.constraint_type = 'R')
-          WHERE UPPER(t1.owner) = '{0}' AND (UPPER(t1.object_name)  = '{1}' OR UPPER(t1.object_name) in (select Table_Name from USER_SYNONYMS where SYNONYM_NAME='{1}'))  ORDER BY t2.column_name",
-                  schemaName.ToUpper(), tableName.ToUpper());
+          WHERE UPPER(t1.owner) = '{0}' AND (UPPER(t1.object_name)  = '{1}' OR UPPER(t1.object_name) in 
+          (select Table_Name from USER_SYNONYMS where SYNONYM_NAME='{1}'))  ORDER BY t2.column_name",
+                schemaName.ToUpper(), tableName.ToUpper());
             }
             else
             {
@@ -736,7 +673,7 @@ namespace org.iringtools.nhibernate
             return tableQuery;
         }
 
-        //provides NHibernate Dialect for respective DB.
+        // gets dialect for NHibernate.
         internal string GetDatabaseDialect(string dbProvider)
         {
             switch (dbProvider.ToUpper())
@@ -770,7 +707,6 @@ namespace org.iringtools.nhibernate
 
                 case "ORACLELITE":
                     return "NHibernate.Dialect.OracleLiteDialect";
-
                 case "MYSQL3":
                 case "MYSQL4":
                 case "MYSQL5":
@@ -781,6 +717,7 @@ namespace org.iringtools.nhibernate
             }
         }
 
+        //gets connection driver for NHibernate
         internal string GetConnectionDriver(string dbProvider)
         {
             if (dbProvider.ToUpper().Contains("MSSQL"))
@@ -874,6 +811,123 @@ namespace org.iringtools.nhibernate
                 throw ex;
             }
         }
+
+        /// <summary>
+        /// looks at the metadata array and assigns appropriate dataproperties.
+        /// Looks as the datatype provided by DB and if needed sets is to appropriate datatype.
+        /// </summary>
+        /// <param name="metadata">A set of metadata from DB(for each column in DB.)</param>
+        /// <returns>columnInformation with properties for a given object </returns>
+        private DataProperty NewColumnInformation(object[] metadata)
+        {
+            try
+            {
+                string columnName = Convert.ToString(metadata[0]);
+                string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[1]));
+                int dataLength = Convert.ToInt32(metadata[2]); //* MSSQL returns just the part befor decimal.eg 4 for (6,2) and oracle returns max bit size.
+                // if length of string is zero or DB data type is not varchar set it to 4000
+                if ((dataType == "String" && dataLength == 0) ||
+                    (metadata[1] != null && (Convert.ToString(metadata[1]).ToLower().Contains("varchar"))))
+                {
+                    dataLength = 4000;
+                }
+
+                if (dataType == "Char" && dataLength > 1)
+                {
+                    dataType = "String";
+                }
+                bool isIdentity = Convert.ToBoolean(metadata[3]);
+                string nullable = Convert.ToString(metadata[4]).ToUpper();
+                bool isNullable = (nullable == "Y" || nullable == "TRUE" || nullable == "1");
+                string constraint = Convert.ToString(metadata[5]);
+                int precision = 0;
+                int scale = 0;
+
+                if (dataType.Contains("Int"))
+                {
+                    precision = (metadata[6] == null) ? 38 : Convert.ToInt32(metadata[6]);
+                    scale = 0;
+                }
+
+                if (dataType == "Decimal")
+                {
+                    precision = (metadata[6] == null) ? 38 : Convert.ToInt32(metadata[6]); //total length of decimal number and set precision= 38(max) if value is null 
+                    scale = (metadata[7] == null) ? 19 : Convert.ToInt32(metadata[7]); //length after decimal place and set precision= 19(middle) if value is null    
+                    if (scale == 0)
+                    {
+                        dataType = SetNumericDataType(precision, scale);
+                        // if precision and scale  are 0,0. Set data type to max decimal.
+                        if (precision == 0)
+                        {
+                            dataType = "Decimal";
+                            precision = 38;
+                            scale = 19;
+                        }
+                    }
+                }
+
+                else if (dataType == "Single" || dataType == "Double")
+                {
+                    dataType = "Decimal";  //convert all float and double to decimal with max length.
+                    precision = 38;
+                    scale = 19;
+                }
+                DataProperty columnInformation = new DataProperty()
+                {
+                    columnName = columnName,
+                    dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+                    dataLength = dataLength,
+                    isNullable = isNullable,
+                    propertyName = Utility.ToSafeName(columnName),
+                    precision = precision,
+                    scale = scale,
+                };
+                return columnInformation;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(string.Format("Error in NewColumnInformation: {0}", ex));
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// sets numeric data type based on precision and scale.
+        /// </summary>
+        /// <param name="strDataType">data type as determined by SqlTypeToCSharpType utility class</param>
+        /// <param name="nPrecision">whole number before decimal</param>
+        /// <param name="nScale">fractional value after decimal</param>
+        /// <returns>numeric data type for SQL.</returns>
+        private string SetNumericDataType(int nPrecision, int nScale)
+        {
+            try
+            {
+                string strDataType = "Decimal";
+
+                if (nScale == 0)  //if scale =0 the number is integer. Set bigger datatype for fringe number.
+                {
+                    if (nPrecision <= 19 && nPrecision >= 10) //max val for int64 =-9223,372,036,854,775,807 to 9223,372,036,854,775,807
+                    {
+                        strDataType = "Int64";
+                    }
+                    else if (nPrecision < 10 && nPrecision >= 5) // max val for  int32= -2147483648 to +2147483647(10 digits)
+                    {
+                        strDataType = "Int32";
+                    }
+                    else if (nPrecision < 5) // max val for int16= -32768 to +32767(5 digits)
+                    {
+                        strDataType = "Int16";
+                    }
+                }
+                return strDataType;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(string.Format("Error in SetNumericDataType: {0}", ex));
+                throw ex;
+            }
+        }
+
         #endregion
     }
 }

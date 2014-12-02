@@ -55,7 +55,7 @@ namespace org.iringtools.nhibernate
         private List<DataObject> _dataObjects = null;
         private IndentedTextWriter _dataObjectWriter = null;
         private StringBuilder _dataObjectBuilder = null;
-        private NHibernateProvider _NHibernateProvider = new NHibernateProvider();
+        private NHibernateProvider _NHibernateProvider = null;
 
         public EntityGenerator(NHibernateSettings settings)
         {
@@ -586,8 +586,8 @@ namespace org.iringtools.nhibernate
                     if (dataType == DataType.Date || dataType == DataType.DateTime)
                     {
                         _dataObjectWriter.WriteLine(
-                            //string.Format("if (value == null || value.ToString() == string.Empty) {0} = null;", dataProperty.propertyName));
-                          string.Format("if (value == null || value.ToString() == string.Empty) {0} = DateTime.Today;", dataProperty.propertyName));
+                            //  string.Format("if (value == null || value.ToString() == string.Empty) {0} = null;", dataProperty.propertyName));
+                        string.Format("if (value == null || value.ToString() == string.Empty) {0} = DateTime.Today;", dataProperty.propertyName));
                         _dataObjectWriter.WriteLine("else ");
                     }
 
@@ -599,7 +599,14 @@ namespace org.iringtools.nhibernate
                     }
                     else if (dataPropertyIsNullable)
                     {
-                        _dataObjectWriter.WriteLine("{0} = Convert.To{1}(value);", dataProperty.propertyName, dataType);
+                        if (IsNumeric(dataType))
+                        {
+                            _dataObjectWriter.WriteLine("{0} = (value != null || value.ToString() != \"\") ? ({1}?)null :Convert.To{1}(value);", dataProperty.propertyName, dataType);
+                        }
+                        else
+                        {
+                            _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) :default({1});", dataProperty.propertyName, dataType);
+                        }
                     }
                     else
                     {
@@ -672,8 +679,11 @@ namespace org.iringtools.nhibernate
             try
             {
                 string dbProvider = provider.ToString();
-                driver = _NHibernateProvider.GetConnectionDriver(dbProvider);
-                dialect = _NHibernateProvider.GetDatabaseDialect(dbProvider);
+
+                NHibernateProvider _NHibernateProvider = new NHibernateProvider();
+                driver = Convert.ToString(_NHibernateProvider.GetConnectionDriver(dbProvider));
+                dialect = Convert.ToString(_NHibernateProvider.GetDatabaseDialect(dbProvider));
+
 
                 StringBuilder configBuilder = new StringBuilder();
                 XmlTextWriter configWriter = new XmlTextWriter(new StringWriter(configBuilder));

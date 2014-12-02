@@ -406,12 +406,12 @@ namespace org.iringtools.dxfr.manifest
         private int dataLengthField;
 
         private string valueField;
-        
-        private string dbDataTypeField;
 
         private int precisionField;
 
         private int scaleField;
+
+        private string dbDataTypeField;
 
         private org.iringtools.dxfr.manifest.Class classField;
 
@@ -521,7 +521,34 @@ namespace org.iringtools.dxfr.manifest
             }
         }
 
-          [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 8)]
+
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 8)]
+        public int precision
+        {
+            get
+            {
+                return this.precisionField;
+            }
+            set
+            {
+                this.precisionField = value;
+            }
+        }
+
+
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 9)]
+        public int scale
+        {
+            get
+            {
+                return this.scaleField;
+            }
+            set
+            {
+                this.scaleField = value;
+            }
+        }
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 10)]
         public string dbDataType
         {
             get
@@ -533,33 +560,6 @@ namespace org.iringtools.dxfr.manifest
                 this.dbDataTypeField = value;
             }
         }
-
-          [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 9)]
-          public int precision
-          {
-              get
-              {
-                  return this.precisionField;
-              }
-              set
-              {
-                  this.precisionField = value;
-              }
-          }
-
-
-          [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 10)]
-          public int scale
-          {
-              get
-              {
-                  return this.scaleField;
-              }
-              set
-              {
-                  this.scaleField = value;
-              }
-          }
 
     }
 
@@ -1139,6 +1139,8 @@ namespace org.iringtools.mapping
 
         private int scaleField;
 
+        private string dbDataTypeField;
+
         private org.iringtools.mapping.ClassMap classMapField;
 
         [System.Runtime.Serialization.DataMemberAttribute(Order = 0)]
@@ -1259,19 +1261,6 @@ namespace org.iringtools.mapping
         }
 
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 9)]
-        public int scale
-        {
-            get
-            {
-                return this.scaleField;
-            }
-            set
-            {
-                this.scaleField = value;
-            }
-        }
-
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 10)]
         public int precision
         {
             get
@@ -1284,6 +1273,31 @@ namespace org.iringtools.mapping
             }
         }
 
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 10)]
+        public int scale
+        {
+            get
+            {
+                return this.scaleField;
+            }
+            set
+            {
+                this.scaleField = value;
+            }
+        }
+
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 11)]
+        public string dbDataType
+        {
+            get
+            {
+                return this.dbDataTypeField;
+            }
+            set
+            {
+                this.dbDataTypeField = value;
+            }
+        }
 
     }
 
