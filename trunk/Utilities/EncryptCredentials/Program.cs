@@ -10,10 +10,11 @@ namespace org.ids_adi.iring.utility.encryption
 ///// EncryptCredentials.exe - iRING Credential Encryption Utility /////
 
 USAGE  EncryptCredentials username password [domain]
-
   username - name of user.
   passowrd - passowrd of user.
   domain   - (optional) domain od user.
+
+OR     EncryptCredentials string
 ";
 
     static void Main(string[] args)
@@ -41,6 +42,12 @@ USAGE  EncryptCredentials username password [domain]
         credentials.Encrypt();
 
         Console.WriteLine(credentials.encryptedToken);
+      }
+      else if (args.Length >= 1)
+      {
+        string value = args[0];
+        string encryptedValue = Encryption.EncryptString(value);
+        Console.WriteLine(encryptedValue);
       }
       else
       {
