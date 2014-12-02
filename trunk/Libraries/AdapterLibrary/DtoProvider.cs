@@ -1033,6 +1033,7 @@ namespace org.iringtools.adapter
                 dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
 
                 DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+                AddNewDataProperties(_graphMap, dataObject);
 
                 if (filter != null)
                 {
@@ -1109,7 +1110,7 @@ namespace org.iringtools.adapter
 
                     _graphMap = _mapping.FindGraphMap(graph);
                     DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
-
+                    AddNewDataProperties(_graphMap, dataObject);
                     List<DataTransferIndex> dataTrasferIndexList = dataTransferIndices.DataTransferIndexList;
                     List<string> identifiers = new List<string>();
 
@@ -1818,7 +1819,7 @@ namespace org.iringtools.adapter
                                                     roleMap.dataType = manifestRole.dataType;
                                                     roleMap.precision = manifestRole.precision;
                                                     roleMap.scale = manifestRole.scale;
-                                                    roleMap.dbDataType=manifestRole.dbDataType;
+                                                    roleMap.dbDataType = manifestRole.dbDataType;
                                                 }
 
                                                 break;
@@ -2137,5 +2138,44 @@ namespace org.iringtools.adapter
 
             return response;
         }
+
+        /// <summary>
+        /// Adds new data properties(dbDataType, precision  and scale) to graphMap from dataobject.
+        /// </summary>
+        /// <param name="_graphMap">GraphMap</param>
+        /// <param name="dataObject">DataObject</param>
+        private void AddNewDataProperties(GraphMap _graphMap, DataObject dataObject)
+        {
+            // adding dbDataType, precision and scale to graphMap with dataProperties.
+            foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
+            {
+                //find column name from roleMap.Use the column name to find DBdatatype, precision and scale from dataProperties.
+                if (classTemplateMap.templateMaps != null && dataObject != null)
+                {
+                    foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
+                    {
+                        foreach (RoleMap roleMap in templateMap.roleMaps)
+                        {
+                            if (roleMap.propertyName != null)
+                            {
+                                //string strTableName= roleMap.
+                                string strColumnName = roleMap.propertyName;
+                                strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
+
+                                DataProperty dataProperty = dataObject.dataProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
+                                if (dataProperty != null)
+                                {
+                                    roleMap.dbDataType = dataProperty.dataType.ToString();
+                                    roleMap.precision = Convert.ToInt16(dataProperty.precision);
+                                    roleMap.scale = Convert.ToInt16(dataProperty.scale);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 }

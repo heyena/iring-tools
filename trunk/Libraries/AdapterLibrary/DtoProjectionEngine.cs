@@ -964,6 +964,7 @@ namespace org.iringtools.adapter.projection
                                 Decimal.TryParse(value, out decDecimalValue);
                                 decDecimalValue = Math.Round(decDecimalValue, propertyRole.scale);
                                 value = decDecimalValue.ToString().Trim('0');
+                                value = value.Trim('.');
                             }
                             else
                             {
