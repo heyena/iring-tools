@@ -355,9 +355,12 @@ namespace org.iringtools.adapter
                                     strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
 
                                     DataProperty dataProperty = dataObject.dataProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
-                                    strDataType = dataProperty.dataType.ToString();
-                                    intPrecision = Convert.ToInt16(dataProperty.precision == null ? 0 : dataProperty.precision);
-                                    intScale = Convert.ToInt16(dataProperty.scale == null ? 0 : dataProperty.scale);
+                                    if (dataProperty != null)
+                                    {
+                                        strDataType = dataProperty.dataType.ToString();
+                                        intPrecision = Convert.ToInt16(dataProperty.precision);
+                                        intScale = Convert.ToInt16(dataProperty.scale);
+                                    }
                                 }
 
                                 //assign valus to the following nodes.
@@ -509,9 +512,9 @@ namespace org.iringtools.adapter
                 byte[] xmlbyte = DBManager.Instance.ExecuteBytesQuery(_connSecurityDb, "spgGraphBinary", nvl);
                 string bytesToXml = System.Text.Encoding.Default.GetString(xmlbyte);
                 mapping.Mapping _mapping = utility.Utility.Deserialize<mapping.Mapping>(bytesToXml, true); ;
-                          
+
                 DatabaseDictionary dataDictionary = dictionaryProvider.GetDBDictionary(appId);
-                
+
                 foreach (GraphMap graphMap in _mapping.graphMaps)
                 {
                     Graph manifestGraph = null;
@@ -1270,6 +1273,7 @@ namespace org.iringtools.adapter
                 dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
 
                 DataObject dataObject = _dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+                AddNewDataProperties(_graphMap, dataObject);
 
                 if (filter != null)
                 {
@@ -1313,8 +1317,8 @@ namespace org.iringtools.adapter
                      appId = string.Empty,
                    scopeName = string.Empty,
                   appName = string.Empty;
-                    
-                
+
+
 
                 graphName = Convert.ToString(dr["GraphName"]);
                 appId = Convert.ToString(dr["AppId"]);
@@ -1332,7 +1336,7 @@ namespace org.iringtools.adapter
 
                 byte[] xmlbyte = DBManager.Instance.ExecuteBytesQuery(_connSecurityDb, "spgGraphBinary", nvl);
                 string bytesToXml = System.Text.Encoding.Default.GetString(xmlbyte);
-                
+
                 //Reinitializing the values from database
                 _mapping = utility.Utility.Deserialize<mapping.Mapping>(bytesToXml, true); ;
                 _dictionary = dictionaryProvider.GetDataDictionary(appId);
@@ -1342,7 +1346,7 @@ namespace org.iringtools.adapter
                 {
                     throw new Exception("Graph [" + graphName + "] not found.");
                 }
-                
+
 
                 DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
                 dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
@@ -1389,7 +1393,7 @@ namespace org.iringtools.adapter
 
                 _graphMap = _mapping.FindGraphMap(graph);
                 DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
-
+                AddNewDataProperties(_graphMap, dataObject);
                 List<string> identifiers = new List<string> { id };
                 List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
 
@@ -2070,6 +2074,9 @@ namespace org.iringtools.adapter
                                                 {
                                                     roleMap.dataLength = manifestRole.dataLength;
                                                     roleMap.dataType = manifestRole.dataType;
+                                                    roleMap.precision = manifestRole.precision;
+                                                    roleMap.scale = manifestRole.scale;
+                                                    roleMap.dbDataType = manifestRole.dbDataType;
                                                 }
 
                                                 break;
@@ -2407,5 +2414,41 @@ namespace org.iringtools.adapter
             }
         }
 
+        /// <summary>
+        /// Adds new data properties(dbDataType, precision  and scale) to graphMap from dataobject.
+        /// </summary>
+        /// <param name="_graphMap">GraphMap</param>
+        /// <param name="dataObject">DataObject</param>
+        private void AddNewDataProperties(GraphMap _graphMap, DataObject dataObject)
+        {
+            // adding dbDataType, precision and scale to graphMap with dataProperties.
+            foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
+            {
+                //find column name from roleMap.Use the column name to find DBdatatype, precision and scale from dataProperties.
+                if (classTemplateMap.templateMaps != null && dataObject != null)
+                {
+                    foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
+                    {
+                        foreach (RoleMap roleMap in templateMap.roleMaps)
+                        {
+                            if (roleMap.propertyName != null)
+                            {
+                                //string strTableName= roleMap.
+                                string strColumnName = roleMap.propertyName;
+                                strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
+
+                                DataProperty dataProperty = dataObject.dataProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
+                                if (dataProperty != null)
+                                {
+                                    roleMap.dbDataType = dataProperty.dataType.ToString();
+                                    roleMap.precision = Convert.ToInt16(dataProperty.precision);
+                                    roleMap.scale = Convert.ToInt16(dataProperty.scale);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

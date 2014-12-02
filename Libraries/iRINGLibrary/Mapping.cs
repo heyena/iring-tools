@@ -417,7 +417,7 @@ namespace org.iringtools.legacy
 
         [DataMember(EmitDefaultValue = false, Order = 8)]
         public int numberOfDecimals { get; set; }
-        
+
         [DataMember(IsRequired = false, Order = 9)]
         public int precision { get; set; }
 
