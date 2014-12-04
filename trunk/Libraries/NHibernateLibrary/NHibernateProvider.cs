@@ -651,8 +651,10 @@ namespace org.iringtools.nhibernate
           AND SUBSTR(t3.constraint_name, 0, 3) != 'SYS' LEFT JOIN all_constraints t4
           ON t4.constraint_name = t3.constraint_name AND t4.owner = t3.owner
           AND (t4.constraint_type = 'P' OR t4.constraint_type = 'R')
-          WHERE UPPER(t1.owner) = '{0}' AND (UPPER(t1.object_name)  = '{1}' OR UPPER(t1.object_name) in 
-          (select Table_Name from USER_SYNONYMS where SYNONYM_NAME='{1}'))  ORDER BY t2.column_name",
+          WHERE (UPPER(t1.owner) = '{0}' OR UPPER(t1.owner) IN (select TABLE_OWNER from USER_SYNONYMS where SYNONYM_NAME='{1}'))  
+          AND (UPPER(t1.object_name)  = '{1}' 
+          OR UPPER(t1.object_name) IN (select Table_Name from USER_SYNONYMS where SYNONYM_NAME='{1}'))  
+          ORDER BY t2.column_name",
                 schemaName.ToUpper(), tableName.ToUpper());
             }
             else
@@ -815,8 +817,9 @@ namespace org.iringtools.nhibernate
                 string columnName = Convert.ToString(metadata[0]);
                 string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[1]));
                 int dataLength = Convert.ToInt32(metadata[2]); //* MSSQL returns just the part befor decimal.eg 4 for (6,2) and oracle returns max bit size.
+                // if length of string is zero or DB data type is not varchar set it to 4000
                 if ((dataType == "String" && dataLength == 0) ||
-                    (metadata[1] != null && (Convert.ToString(metadata[1]).ToLower() == "uniqueidentifier")))  // if length of string is zero set it to thousand.
+                    (metadata[1] != null && (!Convert.ToString(metadata[1]).ToLower().Contains("varchar"))))
                 {
                     dataLength = 4000;
                 }
