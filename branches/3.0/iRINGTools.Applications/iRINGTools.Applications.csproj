@@ -161,6 +161,7 @@
     <Compile Include="Models\RefDataRepository.cs" />
     <Compile Include="Models\SecurityRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Scripts\AM\controller\SQLConfig.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.html" />
@@ -382,6 +383,17 @@
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetPanel.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetTree.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetWindow.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlConnectionPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlKeyConfigPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlKeySelectionPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlMainConfigPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlObjectConfigPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlObjectsTreePanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlPropertyConfigPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlPropertySelectionPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlRelationshipConfigPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlRelationshipsPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlTableSelectionPanel.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />
     <Content Include="Scripts\extjs-4.1.1\ext-all-debug.js" />
     <Content Include="Scripts\Silverlight.js" />
@@ -501,7 +513,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>54690</DevelopmentServerPort>
+          <DevelopmentServerPort>63075</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:12345</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
