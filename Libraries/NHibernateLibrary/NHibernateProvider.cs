@@ -818,8 +818,8 @@ namespace org.iringtools.nhibernate
                 string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[1]));
                 int dataLength = Convert.ToInt32(metadata[2]); //* MSSQL returns just the part befor decimal.eg 4 for (6,2) and oracle returns max bit size.
                 // if length of string is zero or DB data type is not varchar set it to 4000
-                if ((dataType == "String" && dataLength == 0) ||
-                    (metadata[1] != null && (!Convert.ToString(metadata[1]).ToLower().Contains("varchar"))))
+                if (dataType == "String" && (dataLength == 0 ||
+                    (metadata[1] != null && (!Convert.ToString(metadata[1]).ToLower().Contains("varchar")))))
                 {
                     dataLength = 4000;
                 }
