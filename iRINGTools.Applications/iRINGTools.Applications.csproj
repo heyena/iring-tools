@@ -378,6 +378,8 @@
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetTree.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetWindow.js" />
     <Content Include="Scripts\AM\view\sqlconfig\SqlConnectionPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlExtenConfigPanel.js" />
+    <Content Include="Scripts\AM\view\sqlconfig\SqlExtensionMenu.js" />
     <Content Include="Scripts\AM\view\sqlconfig\SqlKeyConfigPanel.js" />
     <Content Include="Scripts\AM\view\sqlconfig\SqlKeySelectionPanel.js" />
     <Content Include="Scripts\AM\view\sqlconfig\SqlMainConfigPanel.js" />
