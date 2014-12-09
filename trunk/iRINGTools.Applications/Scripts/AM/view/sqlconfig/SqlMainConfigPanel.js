@@ -39,6 +39,8 @@ Ext.define('AM.view.sqlconfig.SqlMainConfigPanel', {
                     xtype: 'sqlrelationshipspanel'
                 }, {
                     xtype: 'sqlrelationshipconfigpanel'
+                }, {
+                    xtype: 'sqlextenconfigpanel'
                 }]
             }]
         });

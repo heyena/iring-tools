@@ -1,4 +1,7 @@
-﻿Ext.define('AM.controller.SQLConfig', {
+﻿var extnNodeDel;
+
+
+Ext.define('AM.controller.SQLConfig', {
     extend: 'Ext.app.Controller',
 
     stores: ['DBProviderStore'],
@@ -19,19 +22,19 @@
         'sqlconfig.SqlPropertySelectionPanel',
         'sqlconfig.SqlPropertyConfigPanel',
         'sqlconfig.SqlRelationshipsPanel',
-        'sqlconfig.SqlRelationshipConfigPanel'
+        'sqlconfig.SqlRelationshipConfigPanel',
+        'sqlconfig.SqlExtenConfigPanel',
+        'sqlconfig.SqlExtensionMenu'
+
     ],
 
-    refs: [
-    {
+    refs: [{
         ref: 'directoryTree',
         selector: 'viewport > directorypanel > directorytree'
-    },
-    {
+    }, {
         ref: 'contentPanel',
         selector: 'viewport > centerpanel > contentpanel'
-    },
-    {
+    }, {
         ref: 'searchPanel',
         selector: 'viewport > centerpanel > searchpanel'
     }],
@@ -39,10 +42,16 @@
     init: function (application) {
         var me = this;
         me.application.addEvents('sqlconfig');
-
+        var store = Ext.create('Ext.data.Store', {
+            fields: ['name'],
+            data: [{
+                name: ''
+            }]
+        });
         this.control({
             "sqlobjectstreepanel": {
-                itemclick: me.onTreeItemClick
+                itemclick: me.onTreeItemClick,
+                itemcontextmenu: me.showContextMenu
             },
             "sqlobjectstreepanel button[action=editconnection]": {
                 click: me.onEditConnection
@@ -76,6 +85,12 @@
             },
             "sqlrelationshipconfigpanel button[action=apply]": {
                 click: me.onApplyRelationshipConfig
+            },
+            "sqlextenconfigpanel button[action=apply]": {
+                click: me.onApplyExtenClick
+            },
+            "menuitem[action=deleteExtension]": {
+                click: me.deleteExten
             }
         });
 
@@ -102,12 +117,13 @@
         var configPanel = contentPanel.down('sqlmainconfigpanel[title=' + title + ']');
 
         if (!configPanel) {
-            var configPanel = Ext.widget('sqlmainconfigpanel', { title: title });
+            var configPanel = Ext.widget('sqlmainconfigpanel', {
+                title: title
+            });
             contentPanel.add(configPanel);
             contentPanel.setActiveTab(configPanel);
             me.reload(configPanel);
-        }
-        else {
+        } else {
             contentPanel.setActiveTab(configPanel);
         }
 
@@ -130,12 +146,13 @@
                     var connPanel = container.down('sqlconnectionpanel');
                     connPanel.setRecord(connInfo);
                     treePanel.getRootNode().expand();
-                }
-                else {
+                } else {
                     //var resp = Ext.decode(request.response.responseText);
                     var userMsg = operation.request.scope.reader.jsonData.message;
                     var detailMsg = operation.request.scope.reader.jsonData.stackTraceDescription;
-                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    var expPanel = Ext.widget('exceptionpanel', {
+                        title: 'Error Notification'
+                    });
                     Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                     Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                 }
@@ -188,15 +205,29 @@
                 propSelPanel.setRecord(record);
                 container.getLayout().setActiveItem(propSelPanel);
                 break;
+
+            case 'extension':
+                var extenConfigPanel = container.down('sqlextenconfigpanel');
+                extenConfigPanel.setRecord(record);
+                container.getLayout().setActiveItem(extenConfigPanel);
+                extenConfigPanel.form.reset();
+                break;
             case 'dataproperty':
                 var propConfigPanel = container.down('sqlpropertyconfigpanel');
                 propConfigPanel.setRecord(record);
                 container.getLayout().setActiveItem(propConfigPanel);
                 break;
+            case 'extensionproperty':
+                var extenConfigPanel1 = container.down('sqlextenconfigpanel');
+                extenConfigPanel1.setRecord(record);
+                container.getLayout().setActiveItem(extenConfigPanel1);
+                break;
             case 'relationships':
                 var data = [];
                 Ext.each(record.childNodes, function (node) {
-                    data.push({ name: node.data.text });
+                    data.push({
+                        name: node.data.text
+                    });
                 });
 
                 var relsPanel = container.down('sqlrelationshipspanel');
@@ -235,7 +266,9 @@
                     var resp = Ext.decode(action.response.responseText);
                     var userMsg = resp['message'];
                     var detailMsg = resp['stackTraceDescription'];
-                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    var expPanel = Ext.widget('exceptionpanel', {
+                        title: 'Error Notification'
+                    });
                     Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                     Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                 }
@@ -244,6 +277,7 @@
     },
 
     onApplyTableSelection: function (button, e) {
+
         var panel = button.up('sqltableselectionpanel');
         var configPanel = panel.up('sqlmainconfigpanel');
         var treePanel = configPanel.down('sqlobjectstreepanel');
@@ -283,6 +317,7 @@
         var dataProps = keysNode.parentNode.raw.properties.dataProperties;
         var keys = panel.getForm().findField('selectedKeys').getValue();
 
+
         keysNode.removeAll();
 
         Ext.each(keys, function (key) {
@@ -303,7 +338,7 @@
                     // remove from selected properties node
                     var propNode = propsNode.findChild('text', key);
                     if (propNode != null) {
-                        propsNode.removeChild(propNode);
+                    	propsNode.removeChild(propNode);
                     }
 
                     return;
@@ -322,6 +357,84 @@
         for (var field in values) {
             props[field] = values[field];
         }
+    },
+    onApplyExtenClick: function (button, e) {
+        var panel = button.up('sqlextenconfigpanel');
+        var treePanel = panel.up('sqlmainconfigpanel').down('sqlobjectstreepanel');
+        var extnNode = treePanel.getSelectionModel().getLastSelected();
+        var extnValues = panel.getForm().getValues();
+        var columnName = panel.getForm().findField('columnName').getValue();
+        var extnsNode = extnNode.parentNode.findChild('text', 'Extension');
+        var extnColumns;
+
+        //remove(with same column name) extensions
+        if (extnsNode == undefined)
+            extnsNode = extnNode.parentNode.parentNode.findChild('text', 'Extension');
+
+        var childNodes = extnsNode.childNodes;
+
+        var IsColumnAlreadyExitst = false;
+
+        Ext.each(childNodes, function (node, index) {
+            if (node.raw.text == columnName) {
+                Ext.Msg.alert('Extension with this column name already exists.');
+                IsColumnAlreadyExitst = true;
+
+            }
+        });
+
+        if (IsColumnAlreadyExitst == true)
+            return;
+
+        //end remove(with same column name) extensions
+
+        if (extnNode.raw.text == "Extension") {
+            extnColumns = extnNode.parentNode.raw.properties.extensionColoumn;
+
+        } else {
+
+            extnColumns = extnNode.parentNode.parentNode.raw.properties.extensionColoumn;
+
+        }
+
+
+
+        //converting array to objs(key,value)
+        Ext.each(extnValues, function (dataProp, index) {
+            var val = [];
+
+            var datPropTemp = dataProp;
+            var parm = dataProp.parameters;
+
+
+            Ext.each(parm, function (item, index) {
+                val.push({
+                    key: 'Parameter' + (index + 1),
+                    value: item
+                });
+            });
+
+            datPropTemp.parameters = val;
+
+            if (extnValues.columnName) {
+                // add to keys node
+                extnNode.appendChild({
+                    text: extnValues.columnName,
+                    type: 'extensionProperty',
+                    iconCls: 'treeExtension',
+                    leaf: true,
+                    properties: datPropTemp
+                });
+
+                // update keytype in data record
+                extnColumns.keyType = 'assigned';
+                panel.getForm().reset();
+                //return;
+            }
+
+
+        });
+
     },
 
     onApplyPropertySelection: function (button, e) {
@@ -442,6 +555,33 @@
         });
     },
 
+    //show contextmenu
+    showContextMenu: function (dataview, record, item, index, e, eOpts) {
+        var me = this;
+        var treePanel = dataview.up('sqlobjectstreepanel');
+        var container = treePanel.up('sqlmainconfigpanel').down('sqlobjectstreepanel');
+        var nodeType = record.raw.type.toLowerCase();
+        var extType = container.getSelectionModel().getLastSelected().childNodes.length;
+        extnNodeDel = container.getSelectionModel().getLastSelected().parentNode;
+        extnNodeDel.NodeToBeDeleted = container.getSelectionModel().getLastSelected();
+
+
+        if (extType !== null && nodeType == 'extensionproperty') {
+            var extenMenu = Ext.widget('sqlextensionmenu');
+            extenMenu.showAt(e.getXY());
+
+        }
+
+    },
+    //end show contextmenu
+
+    //delete extension
+
+    deleteExten: function (button, e) {
+        extnNodeDel.removeChild(extnNodeDel.NodeToBeDeleted)
+    },
+    //end delete extension
+
     onSave: function (button, e) {
         var me = this;
         var treePanel = button.up('sqlobjectstreepanel');
@@ -449,12 +589,10 @@
         var objectsNode = treePanel.getRootNode().firstChild;
         configPanel.setLoading();
         var connInfo = configPanel.down('sqlconnectionpanel').getForm().getValues();
-        var connStr = (connInfo.dbProvider.toLowerCase().indexOf('mssql') != -1)
-            ? 'Data Source=' + connInfo.dbServer + '\\' + connInfo.dbInstance + ';' + 'Initial Catalog=' +
-               connInfo.dbName + ';User ID=' + connInfo.dbUserName + ';Password=' + connInfo.dbPassword
-            : 'Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=' + connInfo.dbServer + ')(PORT=' +
-               connInfo.portNumber + '))(CONNECT_DATA=(' + connInfo.serName + '=' + connInfo.dbInstance +
-              ')));User Id=' + connInfo.dbUserName + ';Password=' + connInfo.dbPassword;
+        var connStr = (connInfo.dbProvider.toLowerCase().indexOf('mssql') != -1) ? 'Data Source=' + connInfo.dbServer + '\\' + connInfo.dbInstance + ';' + 'Initial Catalog=' +
+            connInfo.dbName + ';User ID=' + connInfo.dbUserName + ';Password=' + connInfo.dbPassword : 'Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=' + connInfo.dbServer + ')(PORT=' +
+            connInfo.portNumber + '))(CONNECT_DATA=(' + connInfo.serName + '=' + connInfo.dbInstance +
+            ')));User Id=' + connInfo.dbUserName + ';Password=' + connInfo.dbPassword;
 
         var dbDictionary = {
             provider: connInfo.dbProvider,
@@ -476,6 +614,7 @@
             var keyNodes = objectNode.findChild('text', 'Keys').childNodes;
             var propNodes = objectNode.findChild('text', 'Properties').childNodes;
             var relNodes = objectNode.findChild('text', 'Relationships').childNodes;
+            var extNodes = objectNode.findChild('text', 'Extension').childNodes;
 
 
             var valName;
@@ -510,6 +649,7 @@
                 keyDelimeter: objProps.keyDelimiter,
                 keyProperties: [],
                 dataProperties: [],
+                extensionProperties: [],
                 dataRelationships: [],
                 description: objProps.description
             };
@@ -517,7 +657,10 @@
             if (keyNodes.length == 0) {
                 valid = false;
                 var message = 'Object ' + objProps.objectName + ' does not have any keys configured.';
-                Ext.widget('messagepanel', { title: 'Configuration Error', msg: message });
+                Ext.widget('messagepanel', {
+                    title: 'Configuration Error',
+                    msg: message
+                });
                 return;
             }
 
@@ -559,13 +702,22 @@
                         "Value": valName
                     }]
                 }
-//                if (props.isNullable == "on") {
-//                    props.isNullable = true;
-//                }
-//                else {
-//                    props.isNullable = false;
 
-//                }
+                if (props.isNullable == "on") {
+                    props.isNullable = true;
+                } else {
+                    props.isNullable = false;
+
+                }
+
+                //                if (props.isNullable == "on") {
+                //                    props.isNullable = true;
+                //                }
+                //                else {
+                //                    props.isNullable = false;
+
+                //                }
+
                 dataObject.dataProperties.push({
                     columnName: props.columnName,
                     propertyName: props.propertyName,
@@ -606,17 +758,44 @@
                 dataObject.dataRelationships.push(relationship);
             });
 
+            //extention save
+            Ext.each(extNodes, function (extNode, index) {
+                var extVal = extNode.raw.properties;
+
+                dataObject.extensionProperties.push({
+                    columnName: extVal.columnName,
+                    propertyName: extVal.propertyName,
+                    dataType: extVal.dataType,
+                    dataLength: 0,
+                    isNullable: false,
+                    keyType: 0,
+                    precision: 0,
+                    scale: 0,
+                    definition: extVal.definition,
+                    parameters: []
+                });
+
+
+                var arr = extNode.raw.properties.parameters;
+                Ext.each(arr, function (val, index1) {
+                    dataObject.extensionProperties[index].parameters.push(val);
+                });
+
+            });
+
             dbDictionary.dataObjects.push(dataObject);
         });
+        //end extesion save
+
+
 
         if (!valid) {
             configPanel.setLoading(false);
-        }
-        else {
+        } else {
             Ext.Ajax.request({
                 url: 'NHibernate/SaveDBDictionary',
                 method: 'POST',
-                timeout: 300000,  // 5 min
+                timeout: 300000, // 5 min
                 params: {
                     scope: me.scope,
                     app: me.app
@@ -628,7 +807,9 @@
                     if (!result.success) {
                         var userMsg = result['message'];
                         var detailMsg = result['stackTraceDescription'];
-                        var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                        var expPanel = Ext.widget('exceptionpanel', {
+                            title: 'Error Notification'
+                        });
                         Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                         Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                         return;
@@ -646,10 +827,12 @@
                                 Ext.example.msg('Notification', 'Configuration saved successfully!');
                                 me.dirNode.expand();
                                 dirTree.view.refresh();
-                            }
-                            else {
+                            } else {
                                 var msg = operation.request.scope.reader.jsonData.message;
-                                Ext.widget('messagepanel', { title: 'Refresh Error', msg: msg });
+                                Ext.widget('messagepanel', {
+                                    title: 'Refresh Error',
+                                    msg: msg
+                                });
                             }
                         }
                     });
@@ -657,7 +840,10 @@
                 failure: function (response, request) {
                     configPanel.setLoading(false);
                     var msg = operation.request.scope.reader.jsonData.message;
-                    Ext.widget('messagepanel', { title: 'Save Error', msg: response.responseText });
+                    Ext.widget('messagepanel', {
+                        title: 'Save Error',
+                        msg: response.responseText
+                    });
                 }
             });
         }
