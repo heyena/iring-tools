@@ -29,7 +29,7 @@ Ext.define('AM.view.sqlconfig.SqlObjectConfigPanel', {
             {
                 xtype: 'combobox',
                 itemId: 'tableCombo',
-                fieldLabel: 'TABLE_NAME_IN',
+                fieldLabel: 'Table Name (Inbound)',
                 name: 'aliasDictionary',
                 displayField: 'name',
                 valueField: 'name',
