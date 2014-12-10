@@ -1,4 +1,4 @@
-﻿Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
+Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.sqlkeyconfigpanel',
     bodyStyle: 'background:#fff;padding:10px',
@@ -7,12 +7,6 @@
     record: null,
     initComponent: function () {
         var me = this;
-        var store = Ext.create('Ext.data.Store', {
-            fields: ['name'],
-            data: [{ name: ''}]
-        });
-
-
         var store = Ext.create('Ext.data.Store', {
             fields: ['name'],
             data: [{ name: ''}]
@@ -35,7 +29,7 @@
             {
                 xtype: 'combobox',
                 itemId: 'columnCombo',
-                fieldLabel: 'COLUMN_NAME_IN',
+                fieldLabel: 'Column Name (Inbound)',
                 name: 'aliasDictionary',
                 displayField: 'name',
                 valueField: 'name',

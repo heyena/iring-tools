@@ -1,4 +1,4 @@
-﻿Ext.define('AM.view.sqlconfig.SqlObjectConfigPanel', {
+Ext.define('AM.view.sqlconfig.SqlObjectConfigPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.sqlobjectconfigpanel',
 
@@ -29,7 +29,7 @@
             {
                 xtype: 'combobox',
                 itemId: 'tableCombo',
-                fieldLabel: 'TABLE_NAME_IN',
+                fieldLabel: 'Table Name (Inbound)',
                 name: 'aliasDictionary',
                 displayField: 'name',
                 valueField: 'name',
