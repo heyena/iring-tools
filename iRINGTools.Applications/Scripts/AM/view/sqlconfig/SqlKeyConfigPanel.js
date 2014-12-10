@@ -13,12 +13,6 @@ Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
         });
 
 
-        var store = Ext.create('Ext.data.Store', {
-            fields: ['name'],
-            data: [{ name: ''}]
-        });
-
-
         Ext.applyIf(me, {
             defaults: {
                 anchor: '100%',
@@ -35,14 +29,15 @@ Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
             {
                 xtype: 'combobox',
                 itemId: 'columnCombo',
-                fieldLabel: 'COLUMN_NAME_IN',
+                fieldLabel: 'Column Name (Inbound)',
                 name: 'aliasDictionary',
                 displayField: 'name',
                 valueField: 'name',
                 store: store,
                 queryMode: 'local',
                 readOnly: false,
-                allowBlank: true
+                allowBlank: true,
+                //autoLoad: true
             },
             {
                 fieldLabel: 'Property Name (editable)',
@@ -168,8 +163,11 @@ Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
                 });
 
                 selector.store.loadData(availItems);
+            
             }
             this.getForm().setValues(this.record.raw.properties);
+           // selector.store.sync(selector.store.loadData(availItems));
+
         }
         else {
             this.getForm().setValues(this.record);
