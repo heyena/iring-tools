@@ -20,14 +20,13 @@ namespace org.iringtools.utility
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(ConfigurationRepository));
         public static string server = string.Empty;
-        public static int portNumber = 0;
+        public static int portNumber  = 0;
         public static string userName = string.Empty;
         public static string password = string.Empty;
-        public static string groupDN = "ou=configurations,o=iringtools,dc=iringug,dc=org";
+        public static string groupDN  = string.Empty; //default "ou=configurations,o=iringtools,dc=iringug,dc=org";
         private static object _lockObj = new Object();
         public static List<Type> configTypes = new List<Type>(); //It will contain the type of objects which you want to
         // keep in LDAP.  
-
 
         public static void GetAppSettings()
         {
@@ -56,6 +55,14 @@ namespace org.iringtools.utility
                     string tmpPassword = props["password"];
                     string keyFile = ConfigurationManager.AppSettings["keyfile"];
                     password = EncryptionUtility.Decrypt(tmpPassword, keyFile);
+                    if (props.ContainsKey("groupDN"))
+                    {
+                        groupDN = props["groupDN"];
+                    }
+                    else
+                    {
+                        groupDN = "ou=configurations,o=iringtools,dc=iringug,dc=org";
+                    }
                 }
                 catch (Exception e)
                 {
@@ -389,9 +396,9 @@ namespace org.iringtools.utility
             {
                 _logger.Error("Error in getting security groups from LDAP server: " + ex);
             }
-            
+
             return lstgroups;
         }
     }
 }
-    
+
