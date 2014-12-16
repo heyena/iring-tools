@@ -106,6 +106,11 @@ namespace org.iringtools.library
         public static readonly string errUSMDeleteRole = "There is an error occured while Deleting Role";
         public static readonly string errUSMDeletePermission = "There is an error occured while sDeleting Permission";
 
+        public static readonly string errUSMGetAllGroups = "There is an error occured while getting all Groups";
+        public static readonly string errUSMGetAllUsers = "There is an error occured while getting all Users";
+        public static readonly string errUSMGetAllRoles = "There is an error occured while getting all Roles";
+        public static readonly string errUSMGetAllPermissions = "There is an error occured while getting all Permissions";
+
         #endregion
     }
 }

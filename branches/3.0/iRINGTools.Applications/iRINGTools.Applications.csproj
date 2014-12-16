@@ -305,6 +305,7 @@
     <Content Include="Scripts\AM\ux\plugin\GridPageSizer.js" />
     <Content Include="Scripts\AM\view\common\CenterPanel.js" />
     <Content Include="Scripts\AM\view\common\ContentPanel.js" />
+    <Content Include="Scripts\AM\view\common\ExceptionPanel.js" />
     <Content Include="Scripts\AM\view\common\MessagePanel.js" />
     <Content Include="Scripts\AM\view\common\PropertyPanel.js" />
     <Content Include="Scripts\AM\view\directory\ApplicationForm.js" />

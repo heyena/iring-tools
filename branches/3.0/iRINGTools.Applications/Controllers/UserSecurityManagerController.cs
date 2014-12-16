@@ -42,30 +42,67 @@ namespace org.iringtools.web.controllers
 
         public JsonResult getUsers()
         {
-         //Users user = _repository.GetAllUsers("json");
-            Users user = _repository.GetAllUsers("xml");
-            return Json(user, JsonRequestBehavior.AllowGet);
+            try
+            {
+                Users user = _repository.GetAllUsers("xml");
+                return Json(user, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetAllUsers, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public JsonResult getGroups()
         {
-         //   Groups groups = _repository.GetAllGroups("json");
-            Groups groups = _repository.GetAllGroups("xml");
-            return Json(groups, JsonRequestBehavior.AllowGet);
+            try
+            {
+                Groups groups = _repository.GetAllGroups("xml");
+                return Json(groups, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetAllGroups, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public JsonResult getPermissions()
         {
-            //Permissions permissions = _repository.GetAllPermissions("json");
-            Permissions permissions = _repository.GetAllPermissions("xml");
-            return Json(permissions, JsonRequestBehavior.AllowGet);
+            try
+            {
+                Permissions permissions = _repository.GetAllPermissions("xml");
+                return Json(permissions, JsonRequestBehavior.AllowGet);
+
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetAllPermissions, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public JsonResult getRoles()
         {
-          //  Roles roles = _repository.GetAllRoles("json");
-            Roles roles = _repository.GetAllRoles("xml");
-            return Json(roles, JsonRequestBehavior.AllowGet);
+            try
+            {
+                Roles roles = _repository.GetAllRoles("xml");
+                return Json(roles, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetAllRoles, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public JsonResult getGroupUsers(FormCollection form)
