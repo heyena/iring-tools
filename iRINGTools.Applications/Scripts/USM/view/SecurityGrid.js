@@ -46,7 +46,18 @@ Ext.define('USM.view.SecurityGrid', {
                     closable: true
                 });
                 tabPanel.add(gridPanel);
-                gridPanel.store.reload();
+                gridPanel.store.load({
+                    callback: function (records, operation, success) {
+                        //configPanel.setLoading(false);
+                        if (success) {
+                            //alert('success');
+                        }
+                        else {
+                            showDialog(400, 50, 'Error', operation.request.scope.reader.jsonData.message, Ext.Msg.OK, null);
+                            //alert('fail');
+                        }
+                    }
+                });
             }
             tabPanel.setActiveTab(Ext.getCmp("groupgridid"));
 
@@ -58,7 +69,18 @@ Ext.define('USM.view.SecurityGrid', {
                     closable: true
                 });
                 tabPanel.add(gridPanel);
-                gridPanel.store.reload();
+                gridPanel.store.load({
+                    callback: function (records, operation, success) {
+                        //configPanel.setLoading(false);
+                        if (success) {
+                            //alert('success');
+                        }
+                        else {
+                            showDialog(400, 50, 'Error', operation.request.scope.reader.jsonData.message, Ext.Msg.OK, null);
+                            //alert('fail');
+                        }
+                    }
+                });
             }
             tabPanel.setActiveTab(Ext.getCmp("usergridid"));
 
@@ -70,7 +92,18 @@ Ext.define('USM.view.SecurityGrid', {
                     closable: true
                 });
                 tabPanel.add(gridPanel);
-                gridPanel.store.reload();
+                gridPanel.store.load({
+                    callback: function (records, operation, success) {
+                        //configPanel.setLoading(false);
+                        if (success) {
+                            //alert('success');
+                        }
+                        else {
+                            showDialog(400, 50, 'Error', operation.request.scope.reader.jsonData.message, Ext.Msg.OK, null);
+                            //alert('fail');
+                        }
+                    }
+                });
             }
             tabPanel.setActiveTab(Ext.getCmp("rolegridid"));
 
@@ -82,7 +115,18 @@ Ext.define('USM.view.SecurityGrid', {
                     closable: true
                 });
                 tabPanel.add(gridPanel);
-                gridPanel.store.reload();
+                gridPanel.store.load({
+                    callback: function (records, operation, success) {
+                        //configPanel.setLoading(false);
+                        if (success) {
+                            //alert('success');
+                        }
+                        else {
+                            showDialog(400, 50, 'Error', operation.request.scope.reader.jsonData.message, Ext.Msg.OK, null);
+                            //alert('fail');
+                        }
+                    }
+                });
             }
             tabPanel.setActiveTab(Ext.getCmp("permissiongridid"));
         }
