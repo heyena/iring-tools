@@ -309,8 +309,10 @@ namespace org.iringtools.library
         [DataMember(IsRequired = false, Order = 9)]
         public string definition { get; set; }
 
-        [DataMember(IsRequired = false, Order = 10)]
-        public List<ExtensionParameter> parameters { get; set; }
+        //[[By Deepak 12-Dec14 Statrs
+        //[DataMember(IsRequired = false, Order = 10)]
+        //public List<ExtensionParameter> parameters { get; set; }
+        // Ends]]
     }
 
     [Serializable]
@@ -324,17 +326,18 @@ namespace org.iringtools.library
         public string value { get; set; }
     }
 
-    [Serializable]
-    [DataContract(Name = "parameter", Namespace = "http://www.iringtools.org/library")]
-    public class ExtensionParameter
-    {
-        [DataMember(IsRequired = false, Order = 0)]
-        public string key { get; set; }
+    //[[By Deepak 12-Dec14 Statrs
+    //[Serializable]
+    //[DataContract(Name = "parameter", Namespace = "http://www.iringtools.org/library")]
+    //public class ExtensionParameter
+    //{
+    //    [DataMember(IsRequired = false, Order = 0)]
+    //    public string key { get; set; }
 
-        [DataMember(IsRequired = false, Order = 1)]
-        public string value { get; set; }
-    }
-
+    //    [DataMember(IsRequired = false, Order = 1)]
+    //    public string value { get; set; }
+    //}
+    // Ends]]
 
     [Serializable]
     [DataContract(Name = "keyProperty", Namespace = "http://www.iringtools.org/library")]

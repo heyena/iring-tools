@@ -646,8 +646,8 @@ namespace org.iringtools.web.controllers
                                         {"showOnIndex", extProperty.showOnIndex},
                                         {"precision", extProperty.precision},
                                         {"scale", extProperty.scale},
-                                        {"definition", extProperty.definition},
-                                        {"parameters", extProperty.parameters}
+                                        {"definition", extProperty.definition}//[[By Deepak 12-Dec14,
+                                        //{"parameters", extProperty.parameters}//Ends]]
                                     };
 
                                 Node extensionPropertyNode = new Node()

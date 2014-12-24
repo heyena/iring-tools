@@ -11,14 +11,6 @@
     initComponent: function () {
         var me = this;
 
-        var store = Ext.create('Ext.data.Store', {
-            fields: ['name'],
-            data: [{
-                name: ''
-            }]
-        });
-
-
         Ext.applyIf(me, {
             defaults: {
                 anchor: '100%',
@@ -30,7 +22,9 @@
             items: [{
                 fieldLabel: 'Column Name',
                 name: 'columnName',
-                itemId: 'extncol'
+                itemId: 'extncolname',
+                readOnly: true
+
 
             }, {
                 fieldLabel: 'Property Name (editable)',
@@ -39,22 +33,29 @@
                 regex: /^[a-zA-Z_][a-zA-Z0-9_]*$/,
                 regexText: 'Value is invalid.'
             }, {
+                xtype: 'numberfield',
                 fieldLabel: 'Data Type',
                 name: 'dataType',
-                maskRe: /[0-9.]/,
-                allowBlank: false
+                allowBlank: false,
+                //value: 0,
+                maxValue:13,
+                minValue: 0,
+                emptyText: 'Please enter value from 0 to 13.'
 
             }, {
                 fieldLabel: 'Data Length',
                 name: 'dataLength',
-                readOnly: true
+                readOnly: true,
+                emptyText: '1000',
+
 
             }, {
                 xtype: 'checkboxfield',
                 fieldLabel: 'Nullable',
                 name: 'isNullable',
+                //checked: true,
                 readOnly: true
-                
+
 
             },
 
@@ -80,8 +81,10 @@
                     emptyText: '0',
                     readOnly: true
                 }, {
+                    xtype: 'textarea',
                     fieldLabel: 'Definition',
-                    name: 'definition'
+                    name: 'definition',
+                    id: 'def'
 
                 }, {
 
@@ -90,13 +93,27 @@
                     multiSelect: true,
                     itemId: 'paramCombo',
                     name: 'parameters',
-                    displayField: 'name',
-                    valueField: 'name',
-                    store: store,
-                    queryMode: 'local',
+                    hidden:true,
+                   // displayField: 'name',
+                   // valueField: 'name',
+                   // store: store,
+                   // queryMode: 'local',
                     //allowBlank: false,
-                    anchor: '40%'
+                    anchor: '40%',
 
+                    listeners: {
+                        select: function (combo, records, eOpts) {
+
+                            var defValues = "";
+                            Ext.each(records, function (item) {
+                                defValues += item.raw.name + ', ';
+                            });
+
+                            Ext.getCmp("def").setValue(defValues)
+                        }
+
+                    }
+                
                 }
             ],
             dockedItems: [{
@@ -134,63 +151,45 @@
         me.callParent(arguments);
     },
 
-    setRecord: function (record) {
+    setRecord: function (record, objectNode) {
         this.record = record;
+        this.objectNode = objectNode;
         this.loadValues();
-
     },
 
     loadValues: function () {
+
+
+   
+
         var me = this;
         if (me.record != null) {
-            var selector = me.down('#paramCombo');
 
-            var itemList;
+       
+            if (me.record.raw.type === 'extensionProperty') {
 
-            if (me.record.raw.type === 'extension') {
-                itemList = me.record.parentNode.raw.properties.extensionColoumn;
 
-                var availItems = [];
-                Ext.each(itemList, function (item) {
-                    availItems.push({
-                        name: item
-                    });
-                });
+                var propName = this.record.raw.properties.propertyName;
+                
 
-                selector.store.loadData(availItems);
+                if (propName == undefined) {
+                    me.getForm().reset();
+                     }
+
+
                 me.getForm().setValues(this.record.raw.properties);
-
-            } else if (me.record.raw.type === 'extensionProperty') {
-                itemList = me.record.parentNode.parentNode.raw.properties.extensionColoumn;
-                var availItems = [];
-                Ext.each(itemList, function (item) {
-                    availItems.push({
-                        name: item
-                    });
-                });
-
-                var params = this.record.raw.properties.parameters;
-                var data = this.record.raw.properties;
-
-                if (params[0].value != undefined) {
-                    var arr = [];
-                    Ext.each(params, function (item) {
-                        arr.push(item.value);
-                    });
-                    data.parameters = arr;
-                } else {
-                    data.parameters = params;
-                }
-
-                me.getForm().setValues(data);
             }
-
-
-
-
-        } else {
+        } 
+        else {
             me.getForm().setValues(this.record);
 
         }
+
+
     }
+
+
 });
+
+
+
