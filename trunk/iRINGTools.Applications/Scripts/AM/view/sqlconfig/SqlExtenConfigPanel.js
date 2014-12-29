@@ -15,7 +15,7 @@
             defaults: {
                 anchor: '100%',
                 xtype: 'textfield',
-                labelWidth: 160,
+                 labelWidth: 160,
                 allowBlank: true
                 //readOnly: true
             },
