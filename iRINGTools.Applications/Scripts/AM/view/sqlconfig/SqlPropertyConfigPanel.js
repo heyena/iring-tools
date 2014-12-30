@@ -139,7 +139,6 @@ Ext.define('AM.view.sqlconfig.SqlPropertyConfigPanel', {
 
     loadValues: function () {
         var me = this;
-
         if (me.record != null) {
             var selector = me.down('#columnCombo');
             var objectNodes = me.record.parentNode.parentNode.parentNode.childNodes;
@@ -148,22 +147,62 @@ Ext.define('AM.view.sqlconfig.SqlPropertyConfigPanel', {
                 if (item.raw.properties.tableName == me.record.parentNode.parentNode.raw.properties.aliasDictionary) return item;
             });
 
-
             if (aliasObject != null) {
-                var itemList = aliasObject.raw.properties.aliasDataProperties;
-
+                var itemList = aliasObject.findChild('text', 'Properties').childNodes;
                 var availItems = [];
-                Ext.each(itemList, function (item) {
-                    availItems.push({ name: item });
+
+                Ext.each(itemList, function (childNode) {
+                    availItems.push({ name: childNode.raw.properties.propertyName });
                 });
 
-                selector.store.loadData(availItems);
+                me.form.findField('aliasDictionary').getStore().loadData(availItems);
+                this.getForm().setValues(this.record.raw.properties);
+
+            }
+            else {
+                selector.store.reload();
+                this.getForm().setValues(this.record.raw.properties);
             }
 
-            this.getForm().setValues(this.record.raw.properties);
+
         }
         else {
             this.getForm().setValues(this.record);
         }
+
+
+
+//        if (me.record != null) {
+//            var selector = me.down('#columnCombo');
+//            var objectNodes = me.record.parentNode.parentNode.parentNode.childNodes;
+
+//            var aliasObject = Ext.Array.findBy(objectNodes, function (item, id) {
+//                if (item.raw.properties.tableName == me.record.parentNode.parentNode.raw.properties.aliasDictionary) return item;
+//            });
+
+
+//            if (aliasObject != null) {
+//                var itemList = aliasObject.raw.properties.aliasDataProperties;
+
+//                var availItems = [];
+//                Ext.each(itemList, function (item) {
+//                    availItems.push({ name: item });
+//                });
+
+////                if (PropertyDropDownItems.length > 0) {
+
+////                    selector.store.loadData(PropertyDropDownItems);
+////                } else {
+//                    selector.store.loadData(availItems);
+
+//                    selector.store.loadData(availItems);
+//               // }
+//            }
+
+//            this.getForm().setValues(this.record.raw.properties);
+//        }
+//        else {
+//            this.getForm().setValues(this.record);
+//        }
     }
 });
