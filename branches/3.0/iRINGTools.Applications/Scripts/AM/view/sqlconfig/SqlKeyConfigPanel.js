@@ -144,8 +144,7 @@ Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
 
     loadValues: function () {
         var me = this;
-
-        if (me.record != null) {
+            if (me.record != null) {
             var selector = me.down('#columnCombo');
             var objectNodes = me.record.parentNode.parentNode.parentNode.childNodes;
 
@@ -155,22 +154,72 @@ Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
 
 
             if (aliasObject != null) {
-                var itemList = aliasObject.raw.properties.keyProperties;
-
+             selector.store.reload();
+               // var itemList = aliasObject.raw.properties.keyProperties;
+                var itemList = aliasObject.findChild('text', 'Keys').childNodes;
                 var availItems = [];
-                Ext.each(itemList, function (item) {
-                    availItems.push({ name: item });
+
+                Ext.each(itemList, function (childNode) {
+                    availItems.push({ name: childNode.raw.properties.propertyName });
                 });
+              //  me.form.findField('aliasDictionary').setValue(store.getAt('0').get('id'));
+               // selector.store.remove(selector.store.getAt('0').get('name'));
+                me.form.findField('aliasDictionary').getStore().loadData(availItems);
+               this.getForm().setValues(this.record.raw.properties);
 
-                selector.store.loadData(availItems);
-            
+                //                var availItems = [];
+                //                Ext.each(itemList, function (item) {
+                //                    availItems.push({ name: item });
+                //                });
+
+                // selector.store.loadData(availItems);
             }
-            this.getForm().setValues(this.record.raw.properties);
-           // selector.store.sync(selector.store.loadData(availItems));
-
+            else
+             {
+                 selector.store.reload();
+                 this.getForm().setValues(this.record.raw.properties);
+            }
+           
         }
         else {
             this.getForm().setValues(this.record);
         }
+
+
+//        if (me.record != null) {
+//            var selector = me.down('#columnCombo');
+//            var objectNodes = me.record.parentNode.parentNode.parentNode.childNodes;
+
+//            var aliasObject = Ext.Array.findBy(objectNodes, function (item, id) {
+//                if (item.raw.properties.tableName == me.record.parentNode.parentNode.raw.properties.aliasDictionary) return item;
+//            });
+
+
+//            if (aliasObject != null) {
+//                var itemList = aliasObject.raw.properties.keyProperties;
+
+//                var availItems = [];
+//                Ext.each(itemList, function (item) {
+//                    availItems.push({ name: item });
+//                });
+
+//                  if (keyDropDownItems.length > 0) {
+//                
+//                selector.store.loadData(keyDropDownItems);
+//                } 
+//                else 
+//                {
+//                   selector.store.loadData(availItems);
+//                }
+//                
+//            
+//            }
+//            this.getForm().setValues(this.record.raw.properties);
+//           // selector.store.sync(selector.store.loadData(availItems));
+
+//        }
+//        else {
+//            this.getForm().setValues(this.record);
+//        }
     }
 });
