@@ -338,12 +338,24 @@ namespace org.iringtools.adapter
                                     string strColumnName = roleMap.propertyName;
                                     strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
 
+
                                     DataProperty dataProperty = dataObject.dataProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
+                                    ExtensionProperty extensionProperty = null;
                                     if (dataProperty != null)
                                     {
                                         strDataType = dataProperty.dataType.ToString();
                                         intPrecision = Convert.ToInt16(dataProperty.precision);
                                         intScale = Convert.ToInt16(dataProperty.scale);
+                                    }
+                                    else
+                                    {
+                                        extensionProperty = dataObject.extensionProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
+                                        if (extensionProperty != null)
+                                        {
+                                            strDataType = extensionProperty.dataType.ToString();
+                                            intPrecision = Convert.ToInt16(extensionProperty.precision);
+                                            intScale = Convert.ToInt16(extensionProperty.scale);
+                                        }
                                     }
                                 }
 
@@ -397,23 +409,42 @@ namespace org.iringtools.adapter
                                         }
 
                                         DataProperty dataProp = dataObj.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+                                        ExtensionProperty extensionProp = null;
                                         if (dataProp == null)
                                         {
-                                            throw new Exception("Property [" + roleMap.propertyName + "] does not exist in data dictionary.");
+                                            extensionProp = dataObj.extensionProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+                                            if (extensionProp == null)
+                                            {
+                                                throw new Exception("Property [" + roleMap.propertyName + "] does not exist in data dictionary.");
+                                            }
+                                            else
+                                            {
+                                                manifestRole.dataLength = extensionProp.dataLength;
+                                                if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
+                                                {
+                                                    if (extensionProp.dataType == DataType.Date)
+                                                        manifestRole.dataType = "xsd:date";
+                                                    else if (extensionProp.dataType == DataType.DateTime)
+                                                        manifestRole.dataType = "xsd:dateTime";
+                                                }
+                                            }
                                         }
-
-                                        manifestRole.dataLength = dataProp.dataLength;
-                                        if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
+                                        else
                                         {
-                                            if (dataProp.dataType == DataType.Date)
-                                                manifestRole.dataType = "xsd:date";
-                                            else if (dataProp.dataType == DataType.DateTime)
-                                                manifestRole.dataType = "xsd:dateTime";
-                                        }
 
-                                        if (dataObj.isKeyProperty(propertyName))
-                                        {
-                                            manifestTemplate.transferOption = TransferOption.Required;
+                                            manifestRole.dataLength = dataProp.dataLength;
+                                            if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
+                                            {
+                                                if (dataProp.dataType == DataType.Date)
+                                                    manifestRole.dataType = "xsd:date";
+                                                else if (dataProp.dataType == DataType.DateTime)
+                                                    manifestRole.dataType = "xsd:dateTime";
+                                            }
+
+                                            if (dataObj.isKeyProperty(propertyName))
+                                            {
+                                                manifestTemplate.transferOption = TransferOption.Required;
+                                            }
                                         }
                                     }
                                 }
