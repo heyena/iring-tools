@@ -77,6 +77,11 @@
     background-image: url(../img/relation.png) !important;
 }
 
+.x-tree-panel .x-grid-row .x-grid-cell-inner .treeExtension
+{
+    background-image: url(../img/extension.png) !important;
+}
+
 .x-tree-node-collapsed .folder
 {
     background-image: url(../img/folder-close.png);

@@ -410,13 +410,13 @@ namespace org.iringtools.web.controllers
                                     {
                                         nodeType = "async",
                                         type = "ExtensionNode",
-                                        iconCls = "treeRelation",
+                                        iconCls = "treeExtension",
                                         //type = isKeyProp ? "KeyDataPropertyNode" : "DataPropertyNode",
                                         //iconCls = isKeyProp ? "treeKey" : "treeProperty",
                                         id = context + "/" + dataObject.objectName + "/" + extension.columnName,
                                         text = extension.columnName,
                                         expanded = false,
-                                        leaf = false,
+                                        leaf = true,
                                         children = null,
                                         record = new
                                         {

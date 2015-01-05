@@ -190,6 +190,7 @@
     <Content Include="Content\img\class.png" />
     <Content Include="Content\img\document-properties.png" />
     <Content Include="Content\img\document-save.png" />
+    <Content Include="Content\img\extension.png" />
     <Content Include="Content\img\fade.png" />
     <Content Include="Content\img\file-mapping.png" />
     <Content Include="Content\img\16x16\filter.png" />
