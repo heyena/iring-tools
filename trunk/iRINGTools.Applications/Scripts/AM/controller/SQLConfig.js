@@ -688,10 +688,11 @@
 
                 if (props.isNullable == "on") {
                     props.isNullable = true;
-                } else {
-                    props.isNullable = false;
-
                 }
+//                } else {
+//                    props.isNullable = false;
+
+//                }
 
                 //                if (props.isNullable == "on") {
                 //                    props.isNullable = true;
