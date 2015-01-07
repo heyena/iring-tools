@@ -37,7 +37,8 @@
                 fieldLabel: 'Data Type',
                 name: 'dataType',
                 allowBlank: false,
-                //value: 0,
+                value: 11,
+                readOnly: true,
                 maxValue:13,
                 minValue: 0,
                 emptyText: 'Please enter value from 0 to 13.'
@@ -46,13 +47,14 @@
                 fieldLabel: 'Data Length',
                 name: 'dataLength',
                 readOnly: true,
+                value: 1000,
                 emptyText: '1000'
 
             }, {
                 xtype: 'checkboxfield',
                 fieldLabel: 'Nullable',
                 name: 'isNullable',
-                //checked: true,
+                checked: true,
                 readOnly: true
 
 
@@ -62,6 +64,7 @@
                     fieldLabel: 'Number of Decimals',
                     name: 'numberOfDecimals',
                     emptyText: '0',
+                    value: 0,
                     readOnly: true
 
                 }, {
@@ -73,11 +76,13 @@
                     fieldLabel: 'Precision',
                     name: 'precision',
                     emptyText: '0',
+                    value: 0,
                     readOnly: true
                 }, {
                     fieldLabel: 'Scale',
                     name: 'scale',
                     emptyText: '0',
+                    value: 0,
                     readOnly: true
                 }, {
                     xtype: 'textarea',
