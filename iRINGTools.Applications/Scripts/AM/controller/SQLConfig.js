@@ -752,7 +752,7 @@
                     propertyName: extVal.propertyName,
                     dataType: extVal.dataType,
                     dataLength: 1000,
-                    isNullable:false,
+                    isNullable:true,
                     keyType: 0,
                     precision: 0,
                     scale: 0,
