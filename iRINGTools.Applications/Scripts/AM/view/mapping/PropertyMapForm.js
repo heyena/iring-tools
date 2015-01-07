@@ -134,13 +134,13 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
             copy: false,
             overClass: 'over',
             notifyOver: function (dragSource, event, data) {
-                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
+                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'ExtensionNode')
                     return this.dropNotAllowed;
                 else
                     return this.dropAllowed;
             },
             notifyDrop: function (dragSource, event, data) {
-                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {
+                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'ExtensionNode') {
                     return false;
                 }
                 else {
@@ -149,8 +149,8 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
                     var propertyName = "";
                     var selNode = Ext.getCmp("directoryTreeID").down("directorytree").getSelectedNode();
                     if (selNode.parentNode.data.type == "RelationshipNode") {
-                         propertyName = propertyArr[propertyArr.length - 3] + '.' +propertyArr[propertyArr.length - 2] + '.' + propertyArr[propertyArr.length - 1];
-                    }else{
+                        propertyName = propertyArr[propertyArr.length - 3] + '.' + propertyArr[propertyArr.length - 2] + '.' + propertyArr[propertyArr.length - 1];
+                    } else {
                         propertyName = propertyArr[propertyArr.length - 2] + '.' + propertyArr[propertyArr.length - 1];
                     }
                     me.getForm().findField('propertyName').setValue(propertyName);
@@ -164,12 +164,13 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
                 }
             },
             notifyEnter: function (dd, e, data) {
-                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
+                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'ExtensionNode')
                     return this.dropNotAllowed;
                 else
                     return this.dropAllowed;
             }
         });
+  
     },
 
     onReset: function () {

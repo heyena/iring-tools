@@ -105,7 +105,7 @@ Ext.define('AM.view.mapping.MappingTree', {
         var modelType = data.records[0].data.type;
         var selNode = me.up('viewport').down('directorytree').getSelectedNode();
         var node = overModel;
-        if ((overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'DataPropertyNode') || (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'KeyDataPropertyNode')) {
+        if ((overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'DataPropertyNode') || (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'KeyDataPropertyNode') || (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'ExtensionNode')) {
             var dataObj = data.records[0].data.parentId.split('/');
             var propertyName = "";
             if (selNode.parentNode.data.type == "RelationshipNode") {
