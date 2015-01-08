@@ -33,15 +33,16 @@
                 regex: /^[a-zA-Z_][a-zA-Z0-9_]*$/,
                 regexText: 'Value is invalid.'
             }, {
-                xtype: 'numberfield',
+                //xtype: 'numberfield',
                 fieldLabel: 'Data Type',
                 name: 'dataType',
-                allowBlank: false,
-                value: 11,
                 readOnly: true,
-                maxValue:13,
-                minValue: 0,
-                emptyText: 'Please enter value from 0 to 13.'
+                value:11,
+                readOnly: true,
+                 //allowBlank: false,
+                //maxValue:13,
+                //minValue: 0,
+               // emptyText: 'Please enter value from 0 to 13.'
 
             }, {
                 fieldLabel: 'Data Length',
