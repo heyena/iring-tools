@@ -477,12 +477,6 @@
         var treePanel = panel.up('sqlmainconfigpanel').down('sqlobjectstreepanel');
 
         var values = panel.getForm().getValues();
-
-        if (values.isNullable == "on") {
-            values.isNullable = true;
-        } else {
-            values.isNullable = false;
-        }
         var props = treePanel.getSelectionModel().getLastSelected().raw.properties;
 
         for (var field in values) {
@@ -689,18 +683,6 @@
                 if (props.isNullable == "on") {
                     props.isNullable = true;
                 }
-//                } else {
-//                    props.isNullable = false;
-
-//                }
-
-                //                if (props.isNullable == "on") {
-                //                    props.isNullable = true;
-                //                }
-                //                else {
-                //                    props.isNullable = false;
-
-                //                }
 
                 dataObject.dataProperties.push({
                     columnName: props.columnName,
