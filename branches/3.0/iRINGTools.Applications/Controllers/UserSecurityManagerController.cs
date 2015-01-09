@@ -117,7 +117,7 @@ namespace org.iringtools.web.controllers
             catch (Exception e)
             {
                 _CustomErrorLog = new CustomErrorLog();
-                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroup, e, _logger);
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetUsersInAGroup, e, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -370,7 +370,7 @@ namespace org.iringtools.web.controllers
             catch (Exception e)
             {
                 _CustomErrorLog = new CustomErrorLog();
-                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMDeleteUser, e, _logger);
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetGroupsInAUser, e, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet); 
             }
         }
@@ -383,23 +383,57 @@ namespace org.iringtools.web.controllers
 
         public JsonResult getRoleGroups(FormCollection form)
         {
-            string iRoleId = form["RoleId"];
-            Groups userGroups = _repository.GetRoleGroups(iRoleId, "xml");
-            return Json(userGroups, JsonRequestBehavior.AllowGet);
+            try
+            {
+                string iRoleId = form["RoleId"];
+                Groups userGroups = _repository.GetRoleGroups(iRoleId, "xml");
+                return Json(userGroups, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetGroupsInARole, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+
+            
         }
 
         public JsonResult getGroupRoles(FormCollection form)
         {
-            string iGroupId = form["GroupId"];
-            Roles userGroups = _repository.GetGroupRoles(iGroupId, "xml");
-            return Json(userGroups, JsonRequestBehavior.AllowGet);
+            try
+            {
+                string iGroupId = form["GroupId"];
+                Roles userGroups = _repository.GetGroupRoles(iGroupId, "xml");
+                return Json(userGroups, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetRolesInAGroup, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+
+            
         }
 
         public JsonResult getRolePermissions(FormCollection form)
         {
-            string iGroupId = form["RoleId"];
-            Permissions rolePermissions = _repository.GetRolePermissions(iGroupId, "xml");
-            return Json(rolePermissions, JsonRequestBehavior.AllowGet);
+            try
+            {
+                string iGroupId = form["RoleId"];
+                Permissions rolePermissions = _repository.GetRolePermissions(iGroupId, "xml");
+                return Json(rolePermissions, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetPermissionsInARole, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+            
         }
 
         

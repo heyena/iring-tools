@@ -139,30 +139,34 @@
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
-                var win = new USM.view.permissions.PermissionSelectionPanelWindow({
-                    title: 'Add/Remove Permission to Role'
-                });
-                var form = win.down('permissionselectionpanel');
-                var grid = form.down("gridpanel");
-                var selArr = [];
-                form.getForm().findField('RoleId').setValue(roleId);
-                grid.store.loadData(responseObj);
-                //var store = grid.store;
-                //                grid.store.on('load', function (store, rec, val, eOpt) {
-                //                    if (responseObj != null || responseObj != "") {
-                //                        for (var i = 0; i < responseObj.length; i++) {
-                //                            var permId = responseObj[i].PermissionId;
-                //                            for (var j = 0; j < store.getCount(); j++) {
-                //                                var gPrmId = store.getAt(j).get("PermissionId");
+                if (responseObj.success == undefined) {
+                    var win = new USM.view.permissions.PermissionSelectionPanelWindow({
+                        title: 'Add/Remove Permission to Role'
+                    });
+                    var form = win.down('permissionselectionpanel');
+                    var grid = form.down("gridpanel");
+                    var selArr = [];
+                    form.getForm().findField('RoleId').setValue(roleId);
+                    grid.store.loadData(responseObj);
+                    //var store = grid.store;
+                    //                grid.store.on('load', function (store, rec, val, eOpt) {
+                    //                    if (responseObj != null || responseObj != "") {
+                    //                        for (var i = 0; i < responseObj.length; i++) {
+                    //                            var permId = responseObj[i].PermissionId;
+                    //                            for (var j = 0; j < store.getCount(); j++) {
+                    //                                var gPrmId = store.getAt(j).get("PermissionId");
 
-                //                                if (permId == gPrmId) {
-                //                                    store.getAt(j).set("chk", true);
-                //                                } 
-                //                            }
-                //                        }
-                //                    }
-                //                }, me);
-                win.show();
+                    //                                if (permId == gPrmId) {
+                    //                                    store.getAt(j).set("chk", true);
+                    //                                } 
+                    //                            }
+                    //                        }
+                    //                    }
+                    //                }, me);
+                    win.show();
+                } else {
+                    showDialog(400, 50, 'Error', responseObj.message, Ext.Msg.OK, null);
+                }
             },
             failure: function (response, options) { }
         });
@@ -470,20 +474,23 @@
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
 
+                if (responseObj.success == undefined) {
 
-
-                var selArr = [];
-                form.on('beforerender', function (form, ept) {
-                    if (responseObj != null) {
-                        for (var i = 0; i < responseObj.length; i++) {
-                            selArr.push(responseObj[i].UserId);
+                    var selArr = [];
+                    form.on('beforerender', function (form, ept) {
+                        if (responseObj != null) {
+                            for (var i = 0; i < responseObj.length; i++) {
+                                selArr.push(responseObj[i].UserId);
+                            }
+                            form.getForm().findField('selectedUsers').setValue(selArr);
                         }
-                        form.getForm().findField('selectedUsers').setValue(selArr);
-                    }
-                }, me);
+                    }, me);
 
-                form.getForm().findField('groupId').setValue(groupId);
-                win.show();
+                    form.getForm().findField('groupId').setValue(groupId);
+                    win.show();
+                } else {
+                    showDialog(400, 50, 'Error', responseObj.message, Ext.Msg.OK, null);
+                }
             },
             failure: function (response, options) { }
         });
@@ -518,24 +525,28 @@
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
-                var win = new USM.view.ItemSelectorWindow({
-                    form: Ext.widget('usergrpselectionpanel'),
-                    title: 'Add/Remove Groups to User'
-                });
-                var form = win.down('usergrpselectionpanel');
-                var selArr = [];
+                if (responseObj.success == undefined) {
+                    var win = new USM.view.ItemSelectorWindow({
+                        form: Ext.widget('usergrpselectionpanel'),
+                        title: 'Add/Remove Groups to User'
+                    });
+                    var form = win.down('usergrpselectionpanel');
+                    var selArr = [];
 
-                form.on('beforerender', function (form, ept) {
-                    if (responseObj != null) {
-                        for (var i = 0; i < responseObj.length; i++) {
-                            selArr.push(responseObj[i].GroupId);
+                    form.on('beforerender', function (form, ept) {
+                        if (responseObj != null) {
+                            for (var i = 0; i < responseObj.length; i++) {
+                                selArr.push(responseObj[i].GroupId);
+                            }
+                            form.getForm().findField('selectedGroups').setValue(selArr);
                         }
-                        form.getForm().findField('selectedGroups').setValue(selArr);
-                    }
 
-                }, me);
-                form.getForm().findField('userId').setValue(userId);
-                win.show();
+                    }, me);
+                    form.getForm().findField('userId').setValue(userId);
+                    win.show();
+                } else {
+                    showDialog(400, 50, 'Error', responseObj.message, Ext.Msg.OK, null);
+                }
             },
             failure: function (response, options) { }
         });
@@ -568,19 +579,22 @@
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
 
+                if (responseObj.success == undefined) {
+                    var selArr = [];
 
-                var selArr = [];
-
-                form.on('beforerender', function (form, ept) {
-                    if (responseObj != null || responseObj != "") {
-                        for (var i = 0; i < responseObj.length; i++) {
-                            selArr.push(responseObj[i].RoleId);
+                    form.on('beforerender', function (form, ept) {
+                        if (responseObj != null || responseObj != "") {
+                            for (var i = 0; i < responseObj.length; i++) {
+                                selArr.push(responseObj[i].RoleId);
+                            }
+                            form.getForm().findField('SelectedRoles').setValue(selArr);
                         }
-                        form.getForm().findField('SelectedRoles').setValue(selArr);
-                    }
-                }, me);
-                form.getForm().findField('GroupId').setValue(groupId);
-                win.show();
+                    }, me);
+                    form.getForm().findField('GroupId').setValue(groupId);
+                    win.show();
+                } else {
+                    showDialog(400, 50, 'Error', responseObj.message, Ext.Msg.OK, null);
+                }
             },
             failure: function (response, options) { }
         });
@@ -599,23 +613,27 @@
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
-                var win = new USM.view.ItemSelectorWindow({
-                    form: Ext.widget('grouproleselectionpanel'),
-                    title: 'Add/Remove Groups to Role'
-                });
-                var form = win.down('grouproleselectionpanel');
-                var selArr = [];
+                if (responseObj.success == undefined) {
+                    var win = new USM.view.ItemSelectorWindow({
+                        form: Ext.widget('grouproleselectionpanel'),
+                        title: 'Add/Remove Groups to Role'
+                    });
+                    var form = win.down('grouproleselectionpanel');
+                    var selArr = [];
 
-                form.on('beforerender', function (form, ept) {
-                    if (responseObj != null || responseObj != "") {
-                        for (var i = 0; i < responseObj.length; i++) {
-                            selArr.push(responseObj[i].GroupId);
+                    form.on('beforerender', function (form, ept) {
+                        if (responseObj != null || responseObj != "") {
+                            for (var i = 0; i < responseObj.length; i++) {
+                                selArr.push(responseObj[i].GroupId);
+                            }
+                            form.getForm().findField('SelectedGroups').setValue(selArr);
                         }
-                        form.getForm().findField('SelectedGroups').setValue(selArr);
-                    }
-                }, me);
-                form.getForm().findField('RoleId').setValue(roleId);
-                win.show();
+                    }, me);
+                    form.getForm().findField('RoleId').setValue(roleId);
+                    win.show();
+                } else {
+                    showDialog(400, 50, 'Error', responseObj.message, Ext.Msg.OK, null);
+                }
             },
             failure: function (response, options) { }
         });
