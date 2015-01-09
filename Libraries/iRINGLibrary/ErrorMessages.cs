@@ -111,6 +111,12 @@ namespace org.iringtools.library
         public static readonly string errUSMGetAllRoles = "There is an error occured while getting all Roles";
         public static readonly string errUSMGetAllPermissions = "There is an error occured while getting all Permissions";
 
+        public static readonly string errUSMGetUsersInAGroup = "There is an error occured while getting users in a group";
+        public static readonly string errUSMGetRolesInAGroup = "There is an error occured while getting roles in a group";
+        public static readonly string errUSMGetGroupsInAUser = "There is an error occured while getting groups in a user";
+        public static readonly string errUSMGetPermissionsInARole = "There is an error occured while getting permissions in a role";
+        public static readonly string errUSMGetGroupsInARole = "There is an error occured while getting groups in a role";
+
         #endregion
     }
 }
