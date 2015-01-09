@@ -39,11 +39,6 @@
                 readOnly: true,
                 value:11,
                 readOnly: true
-                 //allowBlank: false,
-                //maxValue:13,
-                //minValue: 0,
-               // emptyText: 'Please enter value from 0 to 13.'
-
             }, {
                 fieldLabel: 'Data Length',
                 name: 'dataLength',
