@@ -38,7 +38,7 @@
                 name: 'dataType',
                 readOnly: true,
                 value:11,
-                readOnly: true,
+                readOnly: true
                  //allowBlank: false,
                 //maxValue:13,
                 //minValue: 0,
