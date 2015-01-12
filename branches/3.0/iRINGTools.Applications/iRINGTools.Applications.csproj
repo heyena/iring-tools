@@ -426,6 +426,8 @@
     <Content Include="Scripts\USM\view\menus\UserMenu.js" />
     <Content Include="Scripts\USM\view\menus\UserSecurityMenu.js" />
     <Content Include="Scripts\USM\view\permissions\PermissionForm.js" />
+    <Content Include="Scripts\USM\view\permissions\PermissionSelectionPanel.js" />
+    <Content Include="Scripts\USM\view\permissions\PermissionSelectionPanelWindow.js" />
     <Content Include="Scripts\USM\view\permissions\PermissionWindow.js" />
     <Content Include="Scripts\USM\view\permissions\PermissionGrid.js" />
     <Content Include="Scripts\USM\view\roles\RoleGroupSelectionPanel.js" />

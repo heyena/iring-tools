@@ -117,6 +117,11 @@ namespace org.iringtools.library
         public static readonly string errUSMGetPermissionsInARole = "There is an error occured while getting permissions in a role";
         public static readonly string errUSMGetGroupsInARole = "There is an error occured while getting groups in a role";
 
+        public static readonly string errUSMSaveUsersInAGroup = "There is an error occured while saving users in a group";
+        public static readonly string errUSMSaveRolesInAGroup = "There is an error occured while saving roles in a group";
+        public static readonly string errUSMSavePermissionsInARole = "There is an error occured while saving permissions in a role";
+        public static readonly string errUSMSaveGroupsInARole = "There is an error occured while saving groups in a role";
+
         #endregion
     }
 }

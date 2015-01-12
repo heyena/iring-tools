@@ -479,7 +479,7 @@ namespace iRINGTools.Web.Models
             }
             catch (Exception ex)
             {
-                return PrepareErrorResponse(ex, ErrorMessages.errUSMSavePermission);
+                return PrepareErrorResponse(ex, ErrorMessages.errUSMSaveUsersInAGroup);
             }
 
             return response;
@@ -543,9 +543,9 @@ namespace iRINGTools.Web.Models
             return items;
         }
 
-        public void InsertRoleGroups(FormCollection form)
+        public Response InsertRoleGroups(FormCollection form)
         {
-
+            Response response = null;
             _logger.Debug("In Security Repository map groups with role");
             try
             {
@@ -567,16 +567,16 @@ namespace iRINGTools.Web.Models
 
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
 
-                client.Post<GroupRoles>("/insertRoleGroups?format=xml", userGroups, true);
+                response = client.Post<GroupRoles,Response>("/insertRoleGroups?format=xml", userGroups, true);
                 _logger.Debug("Successfully called Security Service.");
 
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.ToString());
-                throw;
-
+                return PrepareErrorResponse(ex, ErrorMessages.errUSMSaveGroupsInARole);
             }
+
+            return response;
 
         }
         public Groups GetRoleGroups(string roleId, string format)
@@ -599,9 +599,9 @@ namespace iRINGTools.Web.Models
             return items;
         }
 
-        public void InsertGroupRoles(FormCollection form)
+        public Response InsertGroupRoles(FormCollection form)
         {
-
+            Response response = null;
             _logger.Debug("In Security Repository map roles with group");
             try
             {
@@ -624,16 +624,16 @@ namespace iRINGTools.Web.Models
 
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
 
-                client.Post<GroupRoles>("/insertGroupRoles?format=xml", userGroups, true);
+                response = client.Post<GroupRoles, Response>("/insertGroupRoles?format=xml", userGroups, true);
                 _logger.Debug("Successfully called Security Service.");
 
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.ToString());
-                throw;
-
+                return PrepareErrorResponse(ex, ErrorMessages.errUSMSaveRolesInAGroup);
             }
+
+            return response;
 
         }
         public Roles GetGroupRoles(string groupId, string format)
@@ -689,9 +689,9 @@ namespace iRINGTools.Web.Models
             return allPermissions;
         }
 
-        public void InsertRolePermissions(FormCollection form)
+        public Response InsertRolePermissions(FormCollection form)
         {
-
+            Response response = null;
             _logger.Debug("In Security Repository map permissions with role");
             try
             {
@@ -712,16 +712,16 @@ namespace iRINGTools.Web.Models
 
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
 
-                client.Post<RolePermissions>("/insertRolePermissions?format=xml", userGroups, true);
+                response = client.Post<RolePermissions,Response>("/insertRolePermissions?format=xml", userGroups, true);
                 _logger.Debug("Successfully called Security Service.");
 
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.ToString());
-                throw;
-
+                return PrepareErrorResponse(ex, ErrorMessages.errUSMSavePermissionsInARole);
             }
+
+            return response;
 
         }
 
