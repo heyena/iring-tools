@@ -165,7 +165,7 @@ namespace iRINGTools.Web.Models
         public Group getGroupById(string iGroupId, string format)
         {
             Group item = null;
-            _logger.Debug("In SecurityRepository getAllGroups");
+            _logger.Debug("In SecurityRepository getGroupById");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
@@ -186,7 +186,7 @@ namespace iRINGTools.Web.Models
         {
             Response response = null;
 
-            _logger.Debug("In Security Repository Insert Users");
+            _logger.Debug("In Security Repository InsertUsers");
             try
             {
                 User user = new User { UserName = form["UserName"], UserFirstName = form["UserFirstName"], UserLastName = form["UserLastName"], UserEmail = form["UserEmail"], UserPhone = form["UserPhone"], UserDesc = form["UserDesc"] };
@@ -209,7 +209,7 @@ namespace iRINGTools.Web.Models
         public Response UpdateUsers(FormCollection form)
         {
             Response response = null;
-            _logger.Debug("In Security Repository Insert Users");
+            _logger.Debug("In Security Repository UpdateUsers");
             try
             {
                 User user = new User { UserId = Convert.ToInt32(form["UserId"]), UserName = form["UserName"], UserFirstName = form["UserFirstName"], UserLastName = form["UserLastName"], UserEmail = form["UserEmail"], UserPhone = form["UserPhone"], UserDesc = form["UserDesc"] };
@@ -232,7 +232,7 @@ namespace iRINGTools.Web.Models
         {
             Response response = null;
             User user = new User { UserName=userName };
-            _logger.Debug("In SecurityRepository getAllGroups");
+            _logger.Debug("In SecurityRepository DeleteUser");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
@@ -250,7 +250,7 @@ namespace iRINGTools.Web.Models
         {
             Response response = null;
 
-            _logger.Debug("In Security Repository Insert Group");
+            _logger.Debug("In Security Repository InsertGroup");
             try
             {
                 Group group = new Group { GroupName = form["GroupName"], GroupDesc = form["GroupDesc"]};
@@ -273,7 +273,7 @@ namespace iRINGTools.Web.Models
         public Response UpdateGroup(FormCollection form)
         {
             Response response = null;
-            _logger.Debug("In Security Repository Update Group");
+            _logger.Debug("In Security Repository UpdateGroup");
             try
             {
                 Group group = new Group { GroupId = Convert.ToInt32(form["GroupId"]), GroupName = form["GroupName"], GroupDesc = form["GroupDesc"] };
@@ -301,7 +301,7 @@ namespace iRINGTools.Web.Models
             Groups groups = new Groups();
             groups.Add(group1);
 
-            _logger.Debug("In SecurityRepository getAllGroups");
+            _logger.Debug("In SecurityRepository deleteGroup");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
@@ -321,7 +321,7 @@ namespace iRINGTools.Web.Models
         public Response InsertRole(FormCollection form)
         {
             Response response = null;
-            _logger.Debug("In Security Repository Insert Role");
+            _logger.Debug("In Security Repository InsertRole");
             try
             {
                 Role role = new Role { RoleName = form["RoleName"], RoleDesc = form["RoleDesc"] };
@@ -344,7 +344,7 @@ namespace iRINGTools.Web.Models
         public Response UpdateRole(FormCollection form)
         {
             Response response = null;
-            _logger.Debug("In Security Repository Update Group");
+            _logger.Debug("In Security Repository UpdateRole");
             try
             {
                 Role role = new Role { RoleId = Convert.ToInt32(form["RoleId"]), RoleName = form["RoleName"], RoleDesc = form["RoleDesc"] };
@@ -367,7 +367,7 @@ namespace iRINGTools.Web.Models
             Response response = null;
             Role role = new Role { RoleId = Convert.ToInt32(roleId) };
 
-            _logger.Debug("In SecurityRepository getAllGroups");
+            _logger.Debug("In SecurityRepository DeleteRole");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
@@ -386,7 +386,7 @@ namespace iRINGTools.Web.Models
         public Response InsertPermission(FormCollection form)
         {
             Response response = null;
-            _logger.Debug("In Security Repository Insert Role");
+            _logger.Debug("In Security Repository InsertPermission");
             try
             {
                 Permission premission = new Permission { PermissionName = form["PermissionName"], PermissionDesc = form["PermissionDesc"] };
@@ -410,7 +410,7 @@ namespace iRINGTools.Web.Models
         public Response UpdatePermission(FormCollection form)
         {
             Response response = null;
-            _logger.Debug("In Security Repository Update Group");
+            _logger.Debug("In Security Repository UpdatePermission");
             try
             {
                 Permission permission = new Permission { PermissionId = Convert.ToInt32(form["PermissionId"]), PermissionName = form["PermissionName"], PermissionDesc = form["PermissionDesc"] };
@@ -434,7 +434,7 @@ namespace iRINGTools.Web.Models
             Response response = null;
             Permission permission = new Permission { PermissionId = Convert.ToInt32(permissionId) };
 
-            _logger.Debug("In SecurityRepository getAllGroups");
+            _logger.Debug("In SecurityRepository DeletePermission");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
@@ -452,7 +452,7 @@ namespace iRINGTools.Web.Models
         public Response InsertGroupUsers(FormCollection form)
         {
             Response response = null;
-            _logger.Debug("In Security Repository map users with group");
+            _logger.Debug("In Security Repository InsertGroupUsers, insert users in group");
             try
             {
                 int groupId = Convert.ToInt32(form["GroupId"]);
@@ -489,7 +489,7 @@ namespace iRINGTools.Web.Models
         public Response InsertUserGroups(FormCollection form)
         {
             Response response = null;
-            _logger.Debug("In Security Repository map groups with user");
+            _logger.Debug("In Security Repository InsertUserGroups, insert groups in a user");
             try
             {
                 int userId = Convert.ToInt32(form["UserId"]);
@@ -546,7 +546,7 @@ namespace iRINGTools.Web.Models
         public Response InsertRoleGroups(FormCollection form)
         {
             Response response = null;
-            _logger.Debug("In Security Repository map groups with role");
+            _logger.Debug("In Security Repository InsertRoleGroups, insert groups in a role");
             try
             {
                 int roleId = Convert.ToInt32(form["RoleId"]);
@@ -602,7 +602,7 @@ namespace iRINGTools.Web.Models
         public Response InsertGroupRoles(FormCollection form)
         {
             Response response = null;
-            _logger.Debug("In Security Repository map roles with group");
+            _logger.Debug("In Security Repository InsertGroupRoles, insert roles in group");
             try
             {
                 int groupId = Convert.ToInt32(form["GroupId"]);
@@ -692,7 +692,7 @@ namespace iRINGTools.Web.Models
         public Response InsertRolePermissions(FormCollection form)
         {
             Response response = null;
-            _logger.Debug("In Security Repository map permissions with role");
+            _logger.Debug("In Security Repository InsertRolePermissions, insert permissions in role");
             try
             {
                 int roleId = Convert.ToInt32(form["RoleId"]);

@@ -72,7 +72,7 @@ namespace org.iringtools.services
             catch (Exception ex)
             {
                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveUser, ex, _logger);
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
@@ -101,7 +101,7 @@ namespace org.iringtools.services
             catch (Exception ex)
             {
                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveUser, ex, _logger);
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
@@ -344,7 +344,7 @@ namespace org.iringtools.services
             catch (Exception ex)
             {
                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveRole, ex, _logger);
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
@@ -373,7 +373,7 @@ namespace org.iringtools.services
             catch (Exception ex)
             {
                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveRole, ex, _logger);
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
@@ -431,7 +431,7 @@ namespace org.iringtools.services
             catch (Exception ex)
             {
                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUSMSavePermission, ex, _logger);
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
@@ -461,7 +461,7 @@ namespace org.iringtools.services
             catch (Exception ex)
             {
                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUSMSavePermission, ex, _logger);
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
@@ -536,7 +536,7 @@ namespace org.iringtools.services
             catch (Exception ex)
             {
                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroup, ex, _logger);
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);
@@ -565,7 +565,7 @@ namespace org.iringtools.services
             catch (Exception ex)
             {
                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroup, ex, _logger);
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
             PrepareResponse(ref response);

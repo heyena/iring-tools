@@ -197,7 +197,7 @@ namespace org.iringtools.web.controllers
             catch (Exception e)
             {
                 _CustomErrorLog = new CustomErrorLog();
-                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroup, e, _logger);
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveRole, e, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
         }
