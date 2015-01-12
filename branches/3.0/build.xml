@@ -264,5 +264,5 @@
   <Target Name="Build" DependsOnTargets="CoreBuild"/>
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild"/>
   
-  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages; Drop"/>
+  <Target Name="All" DependsOnTargets="Rebuild; CreatePackages; Drop"/>
 </Project>
