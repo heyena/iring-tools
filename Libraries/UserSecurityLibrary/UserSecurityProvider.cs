@@ -113,33 +113,46 @@ namespace org.iringtools.UserSecurity
         public Response UpdateUsers(XDocument xml)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
-                Users users = Utility.DeserializeDataContract<Users>(xml.ToString());
+                User user = Utility.DeserializeDataContract<Users>(xml.ToString()).FirstOrDefault();
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (User user in users)
+                    if (user == null || string.IsNullOrEmpty(user.UserName))
+                        PrepareErrorResponse(response, "Please enter UserName!");
+                    else
                     {
-                        if (user.UserId == null)
-                            throw new Exception("Please pass the user id in the json body which you want to  update.");
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@UserId", Value = Convert.ToString(user.UserId) });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = user.UserName });
+                        nvl.Add(new ListItem() { Name = "@UserFirstName", Value = user.UserFirstName });
+                        nvl.Add(new ListItem() { Name = "@UserLastName", Value = user.UserLastName });
+                        nvl.Add(new ListItem() { Name = "@UserEmail", Value = user.UserEmail });
+                        nvl.Add(new ListItem() { Name = "@UserPhone", Value = user.UserPhone });
+                        nvl.Add(new ListItem() { Name = "@UserDesc", Value = user.UserDesc });
 
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuUser", nvl);
 
-                        dc.ExecuteQuery<User>("spuUser @UserId = {0}, @SiteId = {1}, @UserName = {2}, @UserFirstName = {3}, " +
-                                              "@UserLastName = {4}, @UserEmail = {5}, @UserPhone = {6}, @UserDesc = {7}",
-                                              user.UserId, _siteID, user.UserName, user.UserFirstName, user.UserLastName,
-                                              user.UserEmail, user.UserPhone, user.UserDesc).ToList();
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "User udpated successfully!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
                     }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Users added successfully.");
             }
             catch (Exception ex)
             {
-                _logger.Error("Error adding Users: " + ex);
+                _logger.Error("Error updating User: " + ex);
 
                 Status status = new Status { Level = StatusLevel.Error };
                 status.Messages = new Messages { ex.Message };
@@ -150,6 +163,8 @@ namespace org.iringtools.UserSecurity
             }
 
             return response;
+
+           
         }
 
         public Response DeleteUser(string userName)
@@ -302,23 +317,38 @@ namespace org.iringtools.UserSecurity
         public Response UpdateRoles(XDocument xml)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
-                Roles roles = Utility.DeserializeDataContract<Roles>(xml.ToString());
+                Role role = Utility.DeserializeDataContract<Roles>(xml.ToString()).FirstOrDefault();
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Role role in roles)
+                    if (role == null || string.IsNullOrEmpty(role.RoleName))
+                        response.Messages.Add("Please enter RoleName.");
+                    else
                     {
-                        dc.ExecuteQuery<Role>("spuRoles @RoleId = {0}, @SiteId = {1}, @RoleName = {2}, @RoleDesc = {3}",
-                                                        role.RoleId, _siteID, role.RoleName, role.RoleDesc).ToList();
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@RoleId", Value = Convert.ToString(role.RoleId) });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@RoleName", Value = role.RoleName });
+                        nvl.Add(new ListItem() { Name = "@RoleDesc", Value = role.RoleDesc });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuRoles", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "Role updated successfully!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
                     }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Roles updated successfully.");
             }
             catch (Exception ex)
             {
@@ -333,6 +363,7 @@ namespace org.iringtools.UserSecurity
             }
 
             return response;
+            
         }
 
         public Response DeleteRole(int roleId)
@@ -438,23 +469,38 @@ namespace org.iringtools.UserSecurity
         public Response UpdatePermissions(XDocument xml)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
-                Permissions permissions = Utility.DeserializeDataContract<Permissions>(xml.ToString());
+                Permission permission = Utility.DeserializeDataContract<Permissions>(xml.ToString()).FirstOrDefault();
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Permission permission in permissions)
+                    if (permission == null || string.IsNullOrEmpty(permission.PermissionName))
+                        response.Messages.Add("Please enter PermissionName.");
+                    else
                     {
-                        dc.ExecuteQuery<Permission>("spuPermissions @SiteId = {0}, @PermissionId = {1}, @PermissionName = {2}, @PermissionDesc = {3}",
-                                                        _siteID, permission.PermissionId, permission.PermissionName, permission.PermissionDesc).ToList();
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@PermissionId", Value = Convert.ToString(permission.PermissionId) });
+                        nvl.Add(new ListItem() { Name = "@PermissionName", Value = permission.PermissionName });
+                        nvl.Add(new ListItem() { Name = "@PermissionDesc", Value = permission.PermissionDesc });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuPermissions", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "Permission updated successfully!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
                     }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Permissions updated successfully.");
             }
             catch (Exception ex)
             {
@@ -469,6 +515,7 @@ namespace org.iringtools.UserSecurity
             }
 
             return response;
+
         }
 
         public Response DeletePermission(int permissionId)
@@ -574,23 +621,39 @@ namespace org.iringtools.UserSecurity
         public Response UpdateGroups(XDocument xml)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
-                Groups groups = Utility.DeserializeDataContract<Groups>(xml.ToString());
+                Group group = Utility.DeserializeDataContract<Groups>(xml.ToString()).FirstOrDefault();
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    foreach (Group group in groups)
+                    if (group == null || string.IsNullOrEmpty(group.GroupName))
+                        response.Messages.Add("Please enter GroupName.");
+                    else
                     {
-                        dc.ExecuteQuery<Group>("spuGroups @SiteId = {0}, @GroupId = {1}, @GroupName = {2}, @GroupDesc = {3}",
-                                                        _siteID, group.GroupId, group.GroupName, group.GroupDesc).ToList();
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@GroupId", Value = Convert.ToString(group.GroupId) });
+                        nvl.Add(new ListItem() { Name = "@GroupName", Value = group.GroupName });
+                        nvl.Add(new ListItem() { Name = "@GroupDesc", Value = group.GroupDesc });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuGroups", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "Group updated successfully!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+
                     }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Groups updated successfully.");
             }
             catch (Exception ex)
             {
@@ -605,6 +668,7 @@ namespace org.iringtools.UserSecurity
             }
 
             return response;
+           
         }
 
         public Response DeleteGroup(int groupId)
