@@ -332,7 +332,7 @@ namespace org.iringtools.web.controllers
             catch (Exception e)
             {
                 _CustomErrorLog = new CustomErrorLog();
-                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroup, e, _logger);
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveUsersInAGroup, e, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
             
@@ -377,8 +377,23 @@ namespace org.iringtools.web.controllers
 
         public JsonResult saveRoleGroups(FormCollection form)
         {
-            _repository.InsertRoleGroups(form);
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                Response response = _repository.InsertRoleGroups(form);
+
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveGroupsInARole, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+
         }
 
         public JsonResult getRoleGroups(FormCollection form)
@@ -440,14 +455,45 @@ namespace org.iringtools.web.controllers
 
         public JsonResult saveGroupRoles(FormCollection form)
         {
-            _repository.InsertGroupRoles(form);
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+
+            try
+            {
+                Response response = _repository.InsertGroupRoles(form);
+
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSaveUsersInAGroup, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+
         }
 
         public JsonResult saveRolePermissions(FormCollection form)
         {
-            _repository.InsertRolePermissions(form);
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                Response response = _repository.InsertRolePermissions(form);
+
+                if (response.Level == StatusLevel.Success)
+                    return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { success = false, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMSavePermissionsInARole, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+            
         }
 
     }

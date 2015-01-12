@@ -135,7 +135,7 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
                     me.up('window').destroy();
                     var objResponseText = Ext.JSON.decode(a.response.responseText);
                     var message = objResponseText['message'];
-                    showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
+                    showDialog(400, 50, 'Error', message, Ext.Msg.OK, null);
                 }
             });
         } else {

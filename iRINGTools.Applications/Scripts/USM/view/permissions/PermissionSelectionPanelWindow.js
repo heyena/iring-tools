@@ -105,14 +105,17 @@ Ext.define('USM.view.permissions.PermissionSelectionPanelWindow', {
                     msg.close();
                     if(me.buttonType == 'save')
 						me.destroy();
-						
-                    var message = 'Group saved successfully.';
+                    var objResponseText = Ext.JSON.decode(a.response.responseText);
+                    var message = objResponseText['message'];
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     return;
                 },
                 failure: function (f, a) {
                     msg.close();
                     me.destroy();
+                    var objResponseText = Ext.JSON.decode(a.response.responseText);
+                    var message = objResponseText['message'];
+                    showDialog(400, 50, 'Error', message, Ext.Msg.OK, null);
                 }
             });
         } else {

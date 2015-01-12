@@ -1157,19 +1157,37 @@ namespace org.iringtools.UserSecurity
         public Response InsertRoleGroups(XDocument xml)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
                 string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                nvl.Add(new ListItem() { Name = "@rawXML", Value = rawXml });
 
-                using (var dc = new DataContext(_connSecurityDb))
+                string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiRoleGroups", nvl);
+
+                switch (output)
                 {
-                    dc.ExecuteCommand("spiRoleGroups @rawXML = {0},@SiteId = {1}", rawXml, _siteID);
+                    case "1":
+                        PrepareSuccessResponse(response, "Groups mapped with the role successfully!");
+                        break;
+                    case "0":
+                        PrepareSuccessResponse(response, "All groups unmapped with the role successfully!");
+                        break;
+                    default:
+                        PrepareErrorResponse(response, output);
+                        break;
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Groups added successfully.");
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    dc.ExecuteCommand("spiRoleGroups @rawXML = {0},@SiteId = {1}", rawXml, _siteID);
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Groups added successfully.");
             }
             catch (Exception ex)
             {
@@ -1189,19 +1207,30 @@ namespace org.iringtools.UserSecurity
         public Response InsertGroupRoles(XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
                 string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                nvl.Add(new ListItem() { Name = "@rawXML", Value = rawXml });
 
-                using (var dc = new DataContext(_connSecurityDb))
+                string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiGroupRoles", nvl);
+                
+                switch (output)
                 {
-                    dc.ExecuteCommand("spiGroupRoles @rawXML = {0},@SiteId = {1}", rawXml, _siteID);
+                    case "1":
+                        PrepareSuccessResponse(response, "Roles mapped with the group successfully!");
+                        break;
+                    case "0":
+                        PrepareSuccessResponse(response, "All roles unmapped with the group successfully!");
+                        break;
+                    default:
+                        PrepareErrorResponse(response, output);
+                        break;
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Roles added successfully.");
             }
             catch (Exception ex)
             {
@@ -1221,19 +1250,31 @@ namespace org.iringtools.UserSecurity
         public Response InsertRolePermissions(XDocument xml)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
                 string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
-                using (var dc = new DataContext(_connSecurityDb))
+
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                nvl.Add(new ListItem() { Name = "@rawXML", Value = rawXml });
+
+                string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiRolePermissions", nvl);
+
+                switch (output)
                 {
-                     dc.ExecuteCommand("spiRolePermissions @rawXML = {0},@SiteId = {1}", rawXml, _siteID);
+                    case "1":
+                        PrepareSuccessResponse(response, "Permissions mapped with the role successfully!");
+                        break;
+                    case "0":
+                        PrepareSuccessResponse(response, "All permissions unmapped with the role successfully!");
+                        break;
+                    default:
+                        PrepareErrorResponse(response, output);
+                        break;
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Permissions added successfully.");
             }
             catch (Exception ex)
             {

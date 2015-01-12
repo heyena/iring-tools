@@ -128,13 +128,17 @@ Ext.define('USM.view.roles.RoleGroupSelectionPanel', {
                         me.up('window').destroy();
                     }
                     //Ext.getCmp('groupgridid').store.reload();
-                    var message = 'Selected Roles to Group saved successfully.';
+                    var objResponseText = Ext.JSON.decode(a.response.responseText);
+                    var message = objResponseText['message'];
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
                     return;
                 },
                 failure: function (f, a) {
                     msg.close();
                     me.up('window').destroy();
+                    var objResponseText = Ext.JSON.decode(a.response.responseText);
+                    var message = objResponseText['message'];
+                    showDialog(400, 50, 'Error', message, Ext.Msg.OK, null);
                 }
             });
         } else {
