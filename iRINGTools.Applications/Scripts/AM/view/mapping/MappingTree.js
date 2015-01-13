@@ -111,7 +111,7 @@ Ext.define('AM.view.mapping.MappingTree', {
             if (selNode.parentNode.data.type == "RelationshipNode") {
                 propertyName = dataObj[dataObj.length - 2] + '.' + dataObj[dataObj.length - 1] + '.' + data.records[0].data.text;
             } else {
-                propertyName = dataObj[dataObj.length - 1] + '.' + data.records[0].data.text;
+                propertyName = dataObj[dataObj.length - 1] + '.' + data.records[0].data.property.Name;
             }
 
 
