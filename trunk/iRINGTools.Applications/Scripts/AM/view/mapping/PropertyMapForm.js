@@ -151,7 +151,8 @@ Ext.define('AM.view.mapping.PropertyMapForm', {
                     if (selNode.parentNode.data.type == "RelationshipNode") {
                         propertyName = propertyArr[propertyArr.length - 3] + '.' + propertyArr[propertyArr.length - 2] + '.' + propertyArr[propertyArr.length - 1];
                     } else {
-                        propertyName = propertyArr[propertyArr.length - 2] + '.' + propertyArr[propertyArr.length - 1];
+                        //   propertyName = propertyArr[propertyArr.length - 2] + '.' + propertyArr[propertyArr.length - 1];
+                        propertyName = propertyArr[propertyArr.length - 2] + '.' + data.records[0].data.property.Name
                     }
                     me.getForm().findField('propertyName').setValue(propertyName);
 
