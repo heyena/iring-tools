@@ -27,7 +27,7 @@ namespace NUnit.Tests
       _settings = new AdapterSettings();
 
       _baseDirectory = Directory.GetCurrentDirectory();
-      _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\App_Data"));
+      _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
       _settings["BaseDirectoryPath"] = _baseDirectory;
       Directory.SetCurrentDirectory(_baseDirectory);
 
