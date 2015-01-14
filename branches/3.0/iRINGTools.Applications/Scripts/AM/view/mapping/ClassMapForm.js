@@ -118,7 +118,7 @@ Ext.define('AM.view.mapping.ClassMapForm', {
             margin: '5 0 15 25',
             width: 100,
             name: 'delimeter',
-            value: '_',
+            value: '~',
             allowBlank: false
         },
         {
@@ -356,7 +356,7 @@ Ext.define('AM.view.mapping.ClassMapForm', {
         var classId = '';
         var classIndex = '0';
         var newEdit = 'NEW';
-        var delimeter = '_';
+        var delimeter = '~';
         /*if (record != null && record.classMap != null) {
             identifier = record.classMap.identifiers[0];
             if (record.classMap.identifiers.length > 1) {
