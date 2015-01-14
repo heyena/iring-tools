@@ -35,8 +35,9 @@ Ext.define('AM.view.nhconfig.ObjectConfigPanel', {
                 regexText: 'Value is invalid.'
             },
             {
-                fieldLabel: 'Key Delimiter',
-                name: 'keyDelimiter'
+                xType: 'textfield',
+                name: 'keyDelimiter',
+                fieldLabel: 'Key Delimiter'
             },
             {
                 fieldLabel: 'Description',
@@ -88,6 +89,9 @@ Ext.define('AM.view.nhconfig.ObjectConfigPanel', {
     },
 
     loadValues: function () {
+        var me = this;
+        var defaultDelimiterValue = "~";
         this.getForm().setValues(this.record);
+        me.getForm().findField('keyDelimiter').setValue(defaultDelimiterValue);
     }
 });
