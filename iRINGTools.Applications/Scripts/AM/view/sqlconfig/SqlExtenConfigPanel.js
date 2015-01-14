@@ -83,38 +83,39 @@
                 }, {
                     xtype: 'textarea',
                     fieldLabel: 'Definition',
-                    name: 'definition',
-                    id: 'def'
+                    name: 'definition'
+                   // id: 'def'
 
-                }, {
-
-                    xtype: 'checkboxlistcombo',
-                    fieldLabel: 'Parameters',
-                    multiSelect: true,
-                    itemId: 'paramCombo',
-                    name: 'parameters',
-                    hidden:true,
-                   // displayField: 'name',
-                   // valueField: 'name',
-                   // store: store,
-                   // queryMode: 'local',
-                    //allowBlank: false,
-                    anchor: '40%',
-
-                    listeners: {
-                        select: function (combo, records, eOpts) {
-
-                            var defValues = "";
-                            Ext.each(records, function (item) {
-                                defValues += item.raw.name + ', ';
-                            });
-
-                            Ext.getCmp("def").setValue(defValues)
-                        }
-
-                    }
-                
                 }
+//                , {
+
+//                    xtype: 'checkboxlistcombo',
+//                    fieldLabel: 'Parameters',
+//                    multiSelect: true,
+//                    itemId: 'paramCombo',
+//                    name: 'parameters',
+//                    hidden:true,
+//                   // displayField: 'name',
+//                   // valueField: 'name',
+//                   // store: store,
+//                   // queryMode: 'local',
+//                    //allowBlank: false,
+//                    anchor: '40%',
+
+//                    listeners: {
+//                        select: function (combo, records, eOpts) {
+
+//                            var defValues = "";
+//                            Ext.each(records, function (item) {
+//                                defValues += item.raw.name + ', ';
+//                            });
+
+//                            Ext.getCmp("def").setValue(defValues)
+//                        }
+
+//                    }
+                
+ //               }
             ],
             dockedItems: [{
                 xtype: 'toolbar',
@@ -158,21 +159,11 @@
     },
 
     loadValues: function () {
-
-
-   
-
         var me = this;
         if (me.record != null) {
-
-       
-            if (me.record.raw.type === 'extensionProperty') {
-
-
-                var propName = this.record.raw.properties.propertyName;
-                
-
-                if (propName == undefined) {
+        if (me.record.raw.type === 'extensionProperty') {
+        var propName = this.record.raw.properties.propertyName;   
+        if (propName == undefined) {
                     me.getForm().reset();
                      }
 
@@ -184,9 +175,7 @@
             me.getForm().setValues(this.record);
 
         }
-
-
-    }
+        }
 
 
 });
