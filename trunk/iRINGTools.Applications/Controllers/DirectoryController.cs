@@ -398,6 +398,8 @@ namespace org.iringtools.web.controllers
                                 nodes.Add(node);
                             }
                             //[[By Rohit 24-Dec-14 Starts
+                            if(dataObject.extensionProperties != null)
+                            {
                             if (dataObject.extensionProperties.Count > 0)
                             {
                                 foreach (ExtensionProperty extension in dataObject.extensionProperties)
@@ -435,6 +437,7 @@ namespace org.iringtools.web.controllers
                                     node.property.Add("Scale", extension.scale.ToString());
                                     nodes.Add(node);
                                 }
+                            }
                             }
                             // Ends]]
                             if (dataObject.dataRelationships.Count > 0)
