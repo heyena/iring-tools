@@ -48,8 +48,10 @@ Ext.define('AM.view.sqlconfig.SqlObjectConfigPanel', {
                 regexText: 'Value is invalid.'
             },
             {
-                fieldLabel: 'Key Delimiter',
-                name: 'keyDelimiter'
+
+                xType: 'textfield',
+                name: 'keyDelimiter',
+                fieldLabel: 'Key Delimiter'                
             },
             {
                 fieldLabel: 'Description',
@@ -102,6 +104,7 @@ Ext.define('AM.view.sqlconfig.SqlObjectConfigPanel', {
 
     loadValues: function () {
         var me = this;
+        var defaultDelimiterValue = "~";
 
         if (me.record != null) {
             var selector = me.down('#tableCombo');
@@ -115,9 +118,12 @@ Ext.define('AM.view.sqlconfig.SqlObjectConfigPanel', {
             selector.store.loadData(availItems);
             selector.reset();
             me.getForm().setValues(this.record.raw.properties);
+           
+
         }
         else {
             me.getForm().setValues(this.record);
         }
+        me.getForm().findField('keyDelimiter').setValue(defaultDelimiterValue);
     }
 });

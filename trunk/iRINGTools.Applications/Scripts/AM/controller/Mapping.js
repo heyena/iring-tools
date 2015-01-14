@@ -109,7 +109,7 @@ Ext.define('AM.controller.Mapping', {
         if (record)
             delimeter = record.classTemplateMaps[0].classMap.identifierDelimiter;
         else
-            delimeter = '_';
+            delimeter = '~';
 
         if (record) {
             identifier = record.classTemplateMaps[0].classMap.identifiers[0];
