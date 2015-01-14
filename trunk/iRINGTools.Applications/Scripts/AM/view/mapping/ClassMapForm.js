@@ -322,7 +322,9 @@ Ext.define('AM.view.mapping.ClassMapForm', {
         var form = me.getForm();
         var message;
         //if ((form.findField('identifier').getValue().trim() == 'Drop property node(s) here.' || form.findField('identifier').getValue().trim() == '') || (form.findField('className').getValue().trim() == 'Drop a class node here.' || form.findField('className').getValue().trim() == '')) {
-        if (((form.findField('identifier').getValue().indexOf('Drop property node(s) here.') >= 0) || form.findField('identifier').getValue == '') || ((form.findField('className').getValue().indexOf('Drop a class node here.') >= 0) || form.findField('className').getValue() == '')) {
+        //if (((form.findField('identifier').getValue().indexOf('Drop property node(s) here.') >= 0) || form.findField('identifier').getValue == '') || ((form.findField('className').getValue().indexOf('Drop a class node here.') >= 0) || form.findField('className').getValue() == '')) {
+        //FK - Regular expression to create trim functionality by replacing the the spaces.
+        if ((form.findField('identifier').getValue().replace(/^\s+|\s+$/g, '') == 'Drop property node(s) here.' || form.findField('identifier').getValue().replace(/^\s+|\s+$/g, '') == '') || (form.findField('className').getValue().replace(/^\s+|\s+$/g, '') == 'Drop a class node here.' || form.findField('className').getValue().replace(/^\s+|\s+$/g, '') == '')) {
             Ext.widget('messagepanel', { title: 'Warning', msg: 'Required fields can not be blank!' });
             return;
         }
