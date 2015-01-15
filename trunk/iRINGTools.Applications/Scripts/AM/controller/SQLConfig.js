@@ -733,7 +733,7 @@
                     columnName: extVal.columnName,
                     propertyName: extVal.propertyName,
                     dataType: extVal.dataType,
-                    dataLength: 1000,
+                    dataLength: extVal.dataLength,
                     isNullable:true,
                     keyType: 0,
                     precision: 0,

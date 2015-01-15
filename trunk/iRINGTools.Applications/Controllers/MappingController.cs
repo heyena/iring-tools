@@ -839,9 +839,16 @@ namespace org.iringtools.web.controllers
                 }
 
                 if (role.dataType.ToLower().StartsWith("xsd:") || role.type == RoleType.ObjectProperty
-                    || !string.IsNullOrEmpty(role.valueListName))
+             || !string.IsNullOrEmpty(role.valueListName))
                 {
-                    record["propertyName"] = role.propertyName;
+                    if (role.type == RoleType.FixedValue)
+                    {
+                        record["value"] = role.value;
+                    }
+                    else
+                    {
+                        record["propertyName"] = role.propertyName;
+                    }
                     if (!string.IsNullOrEmpty(role.valueListName))
                     {
                         record["valueListName"] = role.valueListName;
@@ -1059,7 +1066,7 @@ namespace org.iringtools.web.controllers
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
-               // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
                 _CustomErrorLog = new CustomErrorLog();
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIDeletegraphMap, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
@@ -1086,7 +1093,7 @@ namespace org.iringtools.web.controllers
                 string[] classCtx = classId.Split(',');
                 classId = classCtx[0];
                 int classIndex = Convert.ToInt16(form["classIndex"]);
-				string relatedObject = form["relatedObject"];
+                string relatedObject = form["relatedObject"];
                 string roleName = mappingCtx[mappingCtx.Length - 1];
                 int index = Convert.ToInt16(form["index"]);
                 Mapping mapping = GetMapping(scope, application);
@@ -1109,10 +1116,10 @@ namespace org.iringtools.web.controllers
                         //}
                         //else
                         //{
-	                        rMap.propertyName = propertyName;
-	                        rMap.type = RoleType.DataProperty;
-	                        rMap.valueListName = null;
-						//}
+                        rMap.propertyName = propertyName;
+                        rMap.type = RoleType.DataProperty;
+                        rMap.valueListName = null;
+                        //}
                     }
                     else
                     {
@@ -1373,7 +1380,7 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIDeleteValueList, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-               // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -1477,7 +1484,7 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIValueListMap, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-               // return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
+                // return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true, node = valueListMapNode }, JsonRequestBehavior.AllowGet);
@@ -1510,13 +1517,13 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIDeleteValueMap, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-              //  return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                //  return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult CopyValueLists(string targetScope, string targetApplication,string sourceScope, string sourceApplication, string valueList)
+        public ActionResult CopyValueLists(string targetScope, string targetApplication, string sourceScope, string sourceApplication, string valueList)
         {
             try
             {
@@ -1550,7 +1557,7 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUICopyValueList, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-               // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -1671,7 +1678,7 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIValueList, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-              //  return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
+                //  return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true, node = nodes }, JsonRequestBehavior.AllowGet);
