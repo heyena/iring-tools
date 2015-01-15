@@ -64,7 +64,7 @@ namespace org.iringtools.utility
     private string _appKey = String.Empty;
     private string _accessToken = String.Empty;
     private string _contentType = String.Empty;
-    private int _timeout = 120000;
+    private int _timeout = 300000;
 
     private const string NEW_LINE = "\r\n";
     private Encoding encoding = Encoding.UTF8;
