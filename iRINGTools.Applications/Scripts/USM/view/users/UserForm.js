@@ -60,7 +60,8 @@ Ext.define('USM.view.users.UserForm', {
                     fieldLabel: 'Phone',
                     anchor: '100%',
                     name: 'UserPhone',
-                    maxLength: 50
+                    regex: /^[0-9-]+$/,
+                    regexText: 'Please enter valid number.'
                 },
                 {
                     xtype: 'textfield',

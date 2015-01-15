@@ -168,16 +168,20 @@ Ext.define('USM.view.roles.GroupRoleSelectionPanel', {
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
-                var form = scope.up("itemselectorwindow").down('grouproleselectionpanel');
+                if (responseObj.success == undefined) {
+                    var form = scope.up("itemselectorwindow").down('grouproleselectionpanel');
 
-                var selArr = [];
-                if (responseObj != null) {
-                    for (var i = 0; i < responseObj.length; i++) {
-                        selArr.push(responseObj[i].GroupId);
+                    var selArr = [];
+                    if (responseObj != null) {
+                        for (var i = 0; i < responseObj.length; i++) {
+                            selArr.push(responseObj[i].GroupId);
+                        }
+                        form.getForm().findField('SelectedGroups').setValue(selArr);
                     }
-                    form.getForm().findField('SelectedGroups').setValue(selArr);
+                    form.getForm().findField('RoleId').setValue(roleId);
+                } else {
+                    showDialog(400, 50, 'Error', responseObj.message, Ext.Msg.OK, null);
                 }
-                form.getForm().findField('RoleId').setValue(roleId);
             },
 
             failure: function (response, options) {

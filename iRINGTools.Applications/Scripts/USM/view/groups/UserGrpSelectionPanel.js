@@ -127,13 +127,13 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
                         me.getForm().reset();
                         me.up('window').destroy();
                     }
-                    
+
                     var objResponseText = Ext.JSON.decode(a.response.responseText);
                     var message = objResponseText['message'];
                     showDialog(400, 50, 'Alert', message, Ext.Msg.OK, null);
-//                    if (objResponseText['success'] == true) {
-//                        Ext.getCmp('usergridid').store.reload();     
-//                    }
+                    //                    if (objResponseText['success'] == true) {
+                    //                        Ext.getCmp('usergridid').store.reload();     
+                    //                    }
                     return;
                 },
                 failure: function (f, a) {
@@ -173,20 +173,22 @@ Ext.define('USM.view.groups.UserGrpSelectionPanel', {
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
+                if (responseObj.success == undefined) {
+                    var form = scope.up("itemselectorwindow").down('usergrpselectionpanel');
 
-                var form = scope.up("itemselectorwindow").down('usergrpselectionpanel');
+                    var selArr = [];
 
-                var selArr = [];
-
-                if (responseObj != null) {
-                    for (var i = 0; i < responseObj.length; i++) {
-                        selArr.push(responseObj[i].GroupId);
+                    if (responseObj != null) {
+                        for (var i = 0; i < responseObj.length; i++) {
+                            selArr.push(responseObj[i].GroupId);
+                        }
+                        form.getForm().findField('selectedGroups').setValue(selArr);
                     }
-                    form.getForm().findField('selectedGroups').setValue(selArr);
+
+                    form.getForm().findField('userId').setValue(userId);
+                } else {
+                    showDialog(400, 50, 'Error', responseObj.message, Ext.Msg.OK, null);
                 }
-
-                form.getForm().findField('userId').setValue(userId);
-
             },
             failure: function (response, options) {
             }
