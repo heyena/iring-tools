@@ -43,8 +43,8 @@
                 fieldLabel: 'Data Length',
                 name: 'dataLength',
                 readOnly: true,
-                value: 1000,
-                emptyText: '1000'
+                value: 4000,
+                emptyText: '4000'
 
             }, {
                 xtype: 'checkboxfield',
@@ -84,6 +84,7 @@
                     xtype: 'textarea',
                     fieldLabel: 'Definition',
                     name: 'definition'
+                    
                    // id: 'def'
 
                 }
