@@ -42,7 +42,7 @@ Ext.define('USM.view.permissions.PermissionSelectionPanel', {
 			{
 			    xtype: 'container',
 			    autoScroll: true,
-                layout: 'fit',
+			    layout: 'fit',
 			    items: [{
 			        xtype: 'gridpanel',
 			        itemId: 'permgridid',
@@ -98,31 +98,34 @@ Ext.define('USM.view.permissions.PermissionSelectionPanel', {
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
-                var form = me;
-                var grid = me.down("gridpanel");
-                var selArr = [];
-                form.getForm().findField('RoleId').setValue(roleId);
-                grid.store.loadData(responseObj);
-                
-                //                grid.store.reload();
-                //                var store = grid.store;
-                //                store.on('load', function (store1, action) {
-                //                    if (responseObj != null || responseObj != "") {
-                //                        for (var j = 0; j < store1.getCount(); j++) {
-                //                            var gPrmId = store1.getAt(j).get("PermissionId");
-                //                            for (var i = 0; i < responseObj.length; i++) {
-                //                                var permId = responseObj[i].PermissionId;
+                if (responseObj.success == undefined) {
+                    var form = me;
+                    var grid = me.down("gridpanel");
+                    var selArr = [];
+                    form.getForm().findField('RoleId').setValue(roleId);
+                    grid.store.loadData(responseObj);
 
-                //                                if (permId === gPrmId) {
-                //                                    store1.getAt(j).set("chk", true);
-                //                                } else {
-                //                                    store1.getAt(j).set("chk", false);
-                //                                }
-                //                            }
-                //                        }
-                //                    }
-                //                });
+                    //                grid.store.reload();
+                    //                var store = grid.store;
+                    //                store.on('load', function (store1, action) {
+                    //                    if (responseObj != null || responseObj != "") {
+                    //                        for (var j = 0; j < store1.getCount(); j++) {
+                    //                            var gPrmId = store1.getAt(j).get("PermissionId");
+                    //                            for (var i = 0; i < responseObj.length; i++) {
+                    //                                var permId = responseObj[i].PermissionId;
 
+                    //                                if (permId === gPrmId) {
+                    //                                    store1.getAt(j).set("chk", true);
+                    //                                } else {
+                    //                                    store1.getAt(j).set("chk", false);
+                    //                                }
+                    //                            }
+                    //                        }
+                    //                    }
+                    //                });
+                } else {
+                    showDialog(400, 50, 'Error', responseObj.message, Ext.Msg.OK, null);
+                }
             },
             failure: function (response, options) {
             }

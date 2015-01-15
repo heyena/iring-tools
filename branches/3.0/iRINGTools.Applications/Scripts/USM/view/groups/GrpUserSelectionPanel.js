@@ -60,7 +60,7 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
                 }]
             }],
 
-           
+
             dockedItems: [
                 {
                     xtype: 'toolbar',
@@ -165,16 +165,20 @@ Ext.define('USM.view.groups.GrpUserSelectionPanel', {
             },
             success: function (response, options) {
                 var responseObj = Ext.JSON.decode(response.responseText);
-                var form = scope.up("itemselectorwindow").down('grpuserselectionpanel');
+                if (responseObj.success == undefined) {
+                    var form = scope.up("itemselectorwindow").down('grpuserselectionpanel');
 
-                var selArr = [];
-                if (responseObj != null) {
-                    for (var i = 0; i < responseObj.length; i++) {
-                        selArr.push(responseObj[i].UserId);
+                    var selArr = [];
+                    if (responseObj != null) {
+                        for (var i = 0; i < responseObj.length; i++) {
+                            selArr.push(responseObj[i].UserId);
+                        }
+                        form.getForm().findField('selectedUsers').setValue(selArr);
                     }
-                    form.getForm().findField('selectedUsers').setValue(selArr);
+                    form.getForm().findField('groupId').setValue(groupId);
+                } else {
+                    showDialog(400, 50, 'Error', responseObj.message, Ext.Msg.OK, null);
                 }
-                form.getForm().findField('groupId').setValue(groupId);
             },
 
             failure: function (response, options) {
