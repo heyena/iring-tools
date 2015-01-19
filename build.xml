@@ -207,7 +207,8 @@
   </Target>
 
   <Target Name="Test">
-    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test_reports\test-results.xml" />
+    <!--<NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test_reports\test-results.xml" />-->
+    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Tests\NUnit.Tests\NUnit.Tests.sln OutputXmlFile="test_reports\test-results.xml" />
   </Target>
 
   <Target Name="CreateDeployment">
