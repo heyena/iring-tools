@@ -207,8 +207,8 @@
   </Target>
 
   <Target Name="Test">
-    <!--<NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test_reports\test-results.xml" />-->
-    <Exec Command="$(NUnit-ToolPath)\nunit-console-x86.exe /nologo /noshadow Tests\NUnit.Tests\NUnit.Tests.sln /xml=@(TestResults)" />
+    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test_reports\test-results.xml" />
+    <!--<Exec Command="$(NUnit-ToolPath)\nunit-console-x86.exe /nologo /noshadow Tests\NUnit.Tests\NUnit.Tests.sln /xml=@(TestResults)" />-->
   </Target>
 
   <Target Name="CreateDeployment">
@@ -265,5 +265,5 @@
   <Target Name="Build" DependsOnTargets="CoreBuild"/>
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild"/>
   
-  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages; Drop"/>
+    <Target Name="All" DependsOnTargets="Rebuild; CreatePackages; Drop"/>
 </Project>
