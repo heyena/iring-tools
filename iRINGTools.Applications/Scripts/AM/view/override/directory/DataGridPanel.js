@@ -23,21 +23,28 @@ Ext.define('AM.view.override.directory.DataGridPanel', {
             plugins: [Ext.create('Ext.ux.plugin.GridPageSizer', { options: [25, 50, 100, 200] })]
         });
 
-//        var filters = {
-//            ftype: 'filters',
-//            local: false,
-//            remoteSort: true,
-//            encode: true
-//        };
-//		
-//		var quickFilter = {
-//			ftype : 'quickfilter'
-//		}; 
-		
-//        Ext.apply(me, {
-//            bbar: ptb,
-//            features: [filters, quickFilter]
-//        });
+        ////Removing filter from the header of AM
+        //        var filters = {
+        //            ftype: 'filters',
+        //            local: false,
+        //            remoteSort: true,
+        //            encode: true
+        //        };
+
+        var quickFilter = {
+            ftype: 'quickfilter'
+        };
+
+        //        Ext.apply(me, {
+        //            bbar: ptb,
+        //            features: [filters, quickFilter]
+        //        });
+
+        Ext.apply(me, {
+            bbar: ptb,
+            features: [quickFilter]
+        });
+
 
         me.callOverridden(arguments);
     }
