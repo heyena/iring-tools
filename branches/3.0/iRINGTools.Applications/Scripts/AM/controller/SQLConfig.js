@@ -19,19 +19,19 @@
         'sqlconfig.SqlPropertySelectionPanel',
         'sqlconfig.SqlPropertyConfigPanel',
         'sqlconfig.SqlRelationshipsPanel',
-        'sqlconfig.SqlRelationshipConfigPanel'
+        'sqlconfig.SqlRelationshipConfigPanel',
+        'sqlconfig.SqlExtenConfigPanel',
+         'sqlconfig.SqlExtensionPanel'
+
     ],
 
-    refs: [
-    {
+    refs: [{
         ref: 'directoryTree',
         selector: 'viewport > directorypanel > directorytree'
-    },
-    {
+    }, {
         ref: 'contentPanel',
         selector: 'viewport > centerpanel > contentpanel'
-    },
-    {
+    }, {
         ref: 'searchPanel',
         selector: 'viewport > centerpanel > searchpanel'
     }],
@@ -39,10 +39,16 @@
     init: function (application) {
         var me = this;
         me.application.addEvents('sqlconfig');
-
+        var store = Ext.create('Ext.data.Store', {
+            fields: ['name'],
+            data: [{
+                name: ''
+            }]
+        });
         this.control({
             "sqlobjectstreepanel": {
                 itemclick: me.onTreeItemClick
+                // itemcontextmenu: me.showContextMenu
             },
             "sqlobjectstreepanel button[action=editconnection]": {
                 click: me.onEditConnection
@@ -76,7 +82,15 @@
             },
             "sqlrelationshipconfigpanel button[action=apply]": {
                 click: me.onApplyRelationshipConfig
+            },
+
+            "sqlextensionpanel button[action=apply]": {
+                click: me.onApplyExtension
+            },
+            "sqlextenconfigpanel button[action=apply]": {
+                click: me.onApplyExtensionConfig
             }
+
         });
 
         application.on({
@@ -188,11 +202,33 @@
                 propSelPanel.setRecord(record);
                 container.getLayout().setActiveItem(propSelPanel);
                 break;
+
+            case 'extension':
+
+                var data = [];
+                Ext.each(record.childNodes, function (node) {
+                    data.push({
+                        columnName: node.data.text
+                    });
+                });
+                var extensionPanel = container.down('sqlextensionpanel');
+                extensionPanel.setRecord(data);
+                container.getLayout().setActiveItem(extensionPanel);
+                break;
             case 'dataproperty':
                 var propConfigPanel = container.down('sqlpropertyconfigpanel');
                 propConfigPanel.setRecord(record);
                 container.getLayout().setActiveItem(propConfigPanel);
                 break;
+
+            case 'extensionproperty':
+
+                var extenConfigPanel1 = container.down('sqlextenconfigpanel');
+                extenConfigPanel1.setRecord(record);
+                container.getLayout().setActiveItem(extenConfigPanel1);
+                // extenConfigPanel1.form.reset();
+                break;
+
             case 'relationships':
                 var data = [];
                 Ext.each(record.childNodes, function (node) {
@@ -283,6 +319,7 @@
         var dataProps = keysNode.parentNode.raw.properties.dataProperties;
         var keys = panel.getForm().findField('selectedKeys').getValue();
 
+
         keysNode.removeAll();
 
         Ext.each(keys, function (key) {
@@ -323,7 +360,84 @@
             props[field] = values[field];
         }
     },
+    onApplyExtension: function (button, e) {
+        var panel = button.up('sqlextensionpanel');
+        var treePanel = panel.up('sqlmainconfigpanel').down('sqlobjectstreepanel');
+        var extnNode = treePanel.getSelectionModel().getLastSelected();
+        var extnValues = panel.getForm().getValues();
+        var grid = panel.down('grid');
+        var datPropTemp;
 
+        var exts = grid.store.getRange();
+
+
+
+        // add new extensions
+        Ext.each(exts, function (extn) {
+            var extName = extn.data.columnName;
+            var extNewNode = extnNode.findChild('text', extName);
+
+            if (extNewNode == null) {
+                extnNode.appendChild({
+                    text: extName,
+                    type: "extensionProperty",
+                    iconCls: "treeExtension",
+
+                    leaf: true,
+                    properties: {
+                        columnName: extName,
+                        type: 'extension'
+
+                    }
+                });
+            }
+        });
+
+
+        // remove deleted extensions
+        for (var i = 0; i < extnNode.childNodes.length; i++) {
+            var node = extnNode.childNodes[i];
+            var found = false;
+
+            for (var j = 0; j < exts.length; j++) {
+                if (node.data.text === exts[j].data.columnName) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                extnNode.removeChild(node);
+                i--;
+            }
+        }
+
+
+    },
+
+
+    onApplyExtensionConfig: function (button, e) {
+        var panel = button.up('sqlextenconfigpanel');
+        var treePanel = panel.up('sqlmainconfigpanel').down('sqlobjectstreepanel');
+
+        var extnConfingValues = panel.getForm().getValues();
+
+        if (extnConfingValues.propertyName == undefined) {
+            alert("pls enter all values");
+
+        }
+
+
+
+        var extenProps = treePanel.getSelectionModel().getLastSelected().raw.properties;
+
+        for (var field in extnConfingValues) {
+            extenProps[field] = extnConfingValues[field];
+        }
+
+
+
+    },
     onApplyPropertySelection: function (button, e) {
         var panel = button.up('sqlpropertyselectionpanel');
         var treePanel = panel.up('sqlmainconfigpanel').down('sqlobjectstreepanel');
@@ -474,6 +588,7 @@
             var keyNodes = objectNode.findChild('text', 'Keys').childNodes;
             var propNodes = objectNode.findChild('text', 'Properties').childNodes;
             var relNodes = objectNode.findChild('text', 'Relationships').childNodes;
+            var extNodes = objectNode.findChild('text', 'Extension').childNodes;
 
 
             var valName;
@@ -508,6 +623,7 @@
                 keyDelimeter: objProps.keyDelimiter,
                 keyProperties: [],
                 dataProperties: [],
+                extensionProperties: [],
                 dataRelationships: [],
                 description: objProps.description
             };
@@ -603,9 +719,33 @@
 
                 dataObject.dataRelationships.push(relationship);
             });
+            //extention save
+            Ext.each(extNodes, function (extNode, index) {
+                var extVal = extNode.raw.properties;
 
+
+                dataObject.extensionProperties.push({
+                    columnName: extVal.columnName,
+                    propertyName: extVal.propertyName,
+                    dataType: extVal.dataType,
+                    dataLength: 1000,
+                    isNullable: true,
+                    keyType: 0,
+                    precision: 0,
+                    scale: 0,
+                    definition: extVal.definition
+                    //parameters: []
+                });
+
+
+
+            });
+
+            //extention save
             dbDictionary.dataObjects.push(dataObject);
         });
+
+         
 
         if (!valid) {
             configPanel.setLoading(false);

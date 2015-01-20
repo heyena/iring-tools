@@ -458,6 +458,17 @@ namespace org.iringtools.web.controllers
                             children = new List<Node>()
                         };
 
+                        //Extention Properties___Starts
+                        Node extensionPropertiesNode = new Node()
+                        {
+                            text = "Extension",
+                            type = "extension",
+                            iconCls = "folder",
+                            expanded = true,
+                            children = new List<Node>()
+                        };
+                        //Extention Properties___Ends
+
                         Node relationshipsNode = new Node()
                         {
                             text = "Relationships",
@@ -495,9 +506,9 @@ namespace org.iringtools.web.controllers
                             text = dbObject.tableName,
                             type = "dataObject",
                             iconCls = "treeObject",
-                            children = new List<Node>() { keyPropertiesNode, dataPropertiesNode, relationshipsNode },
+                            children = new List<Node>() { keyPropertiesNode, dataPropertiesNode, extensionPropertiesNode, relationshipsNode },
                             properties = new Dictionary<string, object>() { 
-                                {"keyProperties", keyPropertyNamesCollection}, {"dataProperties", dbObject.dataProperties}, {"aliasDataProperties", dataPropertyNamesCollection} 
+                                {"keyProperties", keyPropertyNamesCollection},{"dataProperties", dbObject.dataProperties}, {"aliasDataProperties", dataPropertyNamesCollection} 
                             }
                         };
 
@@ -620,7 +631,47 @@ namespace org.iringtools.web.controllers
                             }
                         }
 
+                        //Extension Properties___Starts
+                        if (dictObject!=null && dictObject.extensionProperties != null)
+                            foreach (ExtensionProperty extProperty in dictObject.extensionProperties)
+                            {
+                                Dictionary<string, object> properties = new Dictionary<string, object>()
+                                    {
+                                        {"columnName", extProperty.columnName},
+                                        {"propertyName", extProperty.propertyName},
+                                        {"dataType", extProperty.dataType},
+                                        {"dataLength", extProperty.dataLength},
+                                        {"isNullable", extProperty.isNullable},
+                                        {"keyType", extProperty.keyType},
+                                        {"showOnIndex", extProperty.showOnIndex},
+                                        {"precision", extProperty.precision},
+                                        {"scale", extProperty.scale},
+                                        {"definition", extProperty.definition}//[[By Deepak 12-Dec14,
+                                        //{"parameters", extProperty.parameters}//Ends]]
+                                    };
+
+                                Node extensionPropertyNode = new Node()
+                                {
+                                    text = extProperty.columnName,
+                                    type = "extensionProperty",
+                                    iconCls = "treeExtension",
+                                    leaf = true,
+                                    properties = properties
+                                };
+
+                                extensionPropertiesNode.children.Add(extensionPropertyNode);
+                            }
+
+
                         objectNodes.Add(dataObjectNode);
+
+                        List<string> extensionColoumn = new List<string>();
+                        foreach (var extension in dbObject.dataProperties)
+                        {
+                            extensionColoumn.Add(extension.columnName);
+                        }
+                        dataObjectNode.properties.Add("extensionColoumn", extensionColoumn);
+                        //Extension Properties___Ends
                     }
 
                     foreach (Node dataObjectNode in objectNodes)
@@ -640,6 +691,7 @@ namespace org.iringtools.web.controllers
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
         }
+
 
 
         public ActionResult SaveDBDictionary()
