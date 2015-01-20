@@ -457,7 +457,49 @@ namespace org.iringtools.web.controllers
                                 }
                                 nodes.Add(node);
                             }
+                            //[[By Rohit 24-Dec-14 Starts
+                            if(dataObject.extensionProperties != null)
+                            {
+                            if (dataObject.extensionProperties.Count > 0)
+                            {
+                                foreach (ExtensionProperty extension in dataObject.extensionProperties)
+                                {
+                                    //keyType = getExtensionType(extension.propertyName,dataObject.extensionProperties);
+                                    //dataType = extension.dataType.ToString();
 
+                                    //bool isKeyProp = dataObject.isKeyProperty(extension.propertyName);
+                                    JsonTreeNode node = new JsonTreeNode
+                                    {
+                                        nodeType = "async",
+                                        type = "ExtensionNode",
+                                        iconCls = "treeExtension",
+                                        //type = isKeyProp ? "KeyDataPropertyNode" : "DataPropertyNode",
+                                        //iconCls = isKeyProp ? "treeKey" : "treeProperty",
+                                        id = context + "/" + dataObject.objectName + "/" + extension.columnName,
+                                        text = extension.columnName,
+                                        expanded = false,
+                                        leaf = true,
+                                        children = null,
+                                        record = new
+                                        {
+                                            Name = extension.columnName,
+                                            //Keytype = keyType,
+                                            //Datatype = dataType
+
+
+                                        }
+                                    };
+                                    node.property = new Dictionary<string, string>();
+                                    node.property.Add("Name", extension.propertyName);
+                                    node.property.Add("Datatype", extension.dataType.ToString());
+                                    node.property.Add("Data Length", extension.dataLength.ToString());
+                                    node.property.Add("Precison", extension.precision.ToString());
+                                    node.property.Add("Scale", extension.scale.ToString());
+                                    nodes.Add(node);
+                                }
+                            }
+                            }
+                            // Ends]]
                             if (dataObject.dataRelationships.Count > 0)
                             {
                                 foreach (DataRelationship relation in dataObject.dataRelationships)

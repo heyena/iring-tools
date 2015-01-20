@@ -39,6 +39,12 @@
                     xtype: 'sqlrelationshipspanel'
                 }, {
                     xtype: 'sqlrelationshipconfigpanel'
+                },
+                {
+                    xtype: 'sqlextensionpanel'
+                },
+                {
+                    xtype: 'sqlextenconfigpanel'
                 }]
             }]
         });
