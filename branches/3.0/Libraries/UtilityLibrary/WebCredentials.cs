@@ -59,7 +59,8 @@ namespace org.iringtools.utility
             string credentials = userName + _delimiter + password;
             if ( domain != null && domain.Length > 0 )
                 credentials = credentials +_delimiter + domain;
-            encryptedToken = Encryption.EncryptString(credentials);
+            //encryptedToken = Encryption.EncryptString(credentials);
+            encryptedToken = EncryptionUtility.Encrypt(credentials);
             userName = null;
             password = null;
             domain = null;
@@ -68,7 +69,17 @@ namespace org.iringtools.utility
 
         public virtual void Decrypt()
         {
-            string credentials = Encryption.DecryptString(encryptedToken);
+            string credentials = string.Empty;
+
+            try
+            {
+                credentials = EncryptionUtility.Decrypt(encryptedToken);
+            }
+            catch
+            {
+                credentials = Encryption.DecryptString(encryptedToken);
+            }
+
             string[] credentialsArray = credentials.Split(_delimiterArray, StringSplitOptions.None);
 
             userName = credentialsArray[0];
