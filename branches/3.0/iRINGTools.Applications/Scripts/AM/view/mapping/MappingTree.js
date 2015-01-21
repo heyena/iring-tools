@@ -104,7 +104,7 @@ Ext.define('AM.view.mapping.MappingTree', {
         var graphName = tempArr[tempArr.length - 1];
         var modelType = data.records[0].data.type;
         var node = overModel;
-		if (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'DataPropertyNode') {
+        if ((overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'DataPropertyNode' )||(overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'ExtensionNode')) {
 			var dataObj = data.records[0].data.parentId.split('/');
 			var propertyName = dataObj[dataObj.length-1]+'.'+data.records[0].data.text;
 			var scope = pan.contextName;
@@ -153,7 +153,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                     me.setLoading(false);
                 }
             });
-		}else if (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'ClassNode') {
+        } else if (overModel.data.type == 'RoleMapNode' && data.records[0].data.type == 'ClassNode' ) {
             reference = data.records[0].data.record.Uri;
             label = data.records[0].data.record.Label;
             roleId = overModel.data.record.id;
