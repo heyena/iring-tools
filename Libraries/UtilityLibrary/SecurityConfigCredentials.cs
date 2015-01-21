@@ -34,7 +34,8 @@ namespace org.iringtools.utility
         {
             string conString = dataSource + _delimiter + initialCatalog + _delimiter + userId +_delimiter + password;
             
-            encryptedToken = Encryption.EncryptString(conString);
+            //encryptedToken = Encryption.EncryptString(conString);
+            encryptedToken = EncryptionUtility.Encrypt(conString);
             dataSource = null;
             initialCatalog = null;
             userId = null;
@@ -45,7 +46,17 @@ namespace org.iringtools.utility
 
         public virtual void Decrypt()
         {
-            string credentials = Encryption.DecryptString(encryptedToken);
+            string credentials = string.Empty;
+
+            try
+            {
+                credentials = EncryptionUtility.Decrypt(encryptedToken);
+            }
+            catch
+            {
+                credentials = Encryption.DecryptString(encryptedToken);
+            }
+
             string[] credentialsArray = credentials.Split(_delimiterArray, StringSplitOptions.None);
 
             dataSource = credentialsArray[0];
