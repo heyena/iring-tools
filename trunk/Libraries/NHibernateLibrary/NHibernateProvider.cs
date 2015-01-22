@@ -419,7 +419,6 @@ namespace org.iringtools.nhibernate
           string dbServer, string portNumber, string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string serName)
         {
             List<string> tableNames = new List<string>();
-
             try
             {
                 InitializeScope(projectName, applicationName);
@@ -449,52 +448,71 @@ namespace org.iringtools.nhibernate
           string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string serName)
         {
             List<DataObject> dataObjects = new List<DataObject>();
-            ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword, portNumber, serName);
-
-            foreach (string tableName in tableNames.Split(','))
+            bool bSynonym = false;
+            try
             {
-                DataObject dataObject = new DataObject()
+
+                ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword, portNumber, serName);
+
+                foreach (string tableName in tableNames.Split(','))
                 {
-                    tableName = tableName,
-                    objectName = Utility.ToSafeName(tableName)
-                };
-
-                string sql = GetTableMetaQuery(dbProvider, dbSchema, tableName);
-                ISQLQuery query = session.CreateSQLQuery(sql);
-                IList<object[]> metadataList = query.List<object[]>();
-
-                foreach (object[] metadata in metadataList)
-                {
-                    bool isIdentity = Convert.ToBoolean(metadata[3]);
-                    string constraint = Convert.ToString(metadata[5]);
-                    if (String.IsNullOrEmpty(constraint)) // process columns
+                    DataObject dataObject = new DataObject()
                     {
-                        DataProperty column = NewColumnInformation(metadata);
-                        dataObject.dataProperties.Add(column);
-                    }
-                    else
-                    {
-                        KeyType keyType = KeyType.assigned;
+                        tableName = tableName,
+                        objectName = Utility.ToSafeName(tableName)
+                    };
 
-                        if (isIdentity)
-                        {
-                            keyType = KeyType.identity;
-                        }
-                        else if (constraint.ToUpper() == "FOREIGN KEY" || constraint.ToUpper() == "R")
-                        {
-                            keyType = KeyType.foreign;
-                        }
-                        DataProperty key = new DataProperty();
-                        key = NewColumnInformation(metadata);
-                        key.keyType = keyType;
-                        dataObject.addKeyProperty(key);
+                    string checkForSyn = GetSynonymsCount(dbProvider, dbSchema, tableName);
+                    ISQLQuery synQuery = session.CreateSQLQuery(checkForSyn);
+                    foreach (string nSynCount in synQuery.List<string>())
+                    {
+                        bSynonym = true;
                     }
+
+                    string sql = GetTableMetaQuery(dbProvider, dbSchema, tableName, bSynonym);
+                    ISQLQuery query = session.CreateSQLQuery(sql);
+                    IList<object[]> metadataList = query.List<object[]>();
+
+                    foreach (object[] metadata in metadataList)
+                    {
+                        bool isIdentity = Convert.ToBoolean(metadata[3]);
+                        string constraint = Convert.ToString(metadata[5]);
+                        if (String.IsNullOrEmpty(constraint)) // process columns
+                        {
+                            DataProperty column = NewColumnInformation(metadata);
+                            dataObject.dataProperties.Add(column);
+                        }
+                        else
+                        {
+                            KeyType keyType = KeyType.assigned;
+
+                            if (isIdentity)
+                            {
+                                keyType = KeyType.identity;
+                            }
+                            else if (constraint.ToUpper() == "FOREIGN KEY" || constraint.ToUpper() == "R")
+                            {
+                                keyType = KeyType.foreign;
+                            }
+                            DataProperty key = new DataProperty();
+                            key = NewColumnInformation(metadata);
+                            key.keyType = keyType;
+                            dataObject.addKeyProperty(key);
+                        }
+                    }
+                    dataObjects.Add(dataObject);
                 }
-                dataObjects.Add(dataObject);
-            }
-            session.Close();
+                session.Close();
 
-            return dataObjects;
+                return dataObjects;
+            }
+
+            catch (Exception ex)
+            {
+                _logger.Error("Error in retrieving data from Database " + ex);
+                throw ex;
+            }
+
         }
 
         #endregion
@@ -610,7 +628,7 @@ namespace org.iringtools.nhibernate
         }
 
         //query to get important characteristics of all columns in the table
-        private string GetTableMetaQuery(string dbProvider, string schemaName, string tableName)
+        private string GetTableMetaQuery(string dbProvider, string schemaName, string tableName, bool bSyn = false)
         {
             string tableQuery = string.Empty;
 
@@ -625,7 +643,24 @@ namespace org.iringtools.nhibernate
             }
             else if (dbProvider.ToUpper().Contains("MSSQL"))
             {
-                tableQuery = String.Format(@"
+                if (bSyn == false)
+                {
+                    tableQuery = String.Format(@"
+          select t2.name as column_name, type_name(t2.user_type_id) as data_type, t2.max_length as data_length, 
+          t2.is_identity as is_identity, t2.is_nullable as is_nullable, t4.column_id as is_primary_key ,t2.precision as precision, t2.scale as scale
+          from sys.objects t1
+          inner join sys.columns t2 on t2.object_id = t1.object_id  
+          left join sys.index_columns t4 on t4.object_id = t1.object_id and t4.column_id = t2.column_id
+          left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
+          and t3.index_id = t4.index_id
+          where (upper(t1.type) = 'U' or upper(t1.type) = 'V' or upper(t1.type) = 'SN') 
+          and upper(schema_name(t1.schema_id)) = '{0}' and (upper(t1.name) = '{1}' )",
+                     schemaName.ToUpper(), tableName.ToUpper());
+                }
+
+                else
+                {
+                    tableQuery = String.Format(@"
           select t2.name as column_name, type_name(t2.user_type_id) as data_type, t2.max_length as data_length, 
           t2.is_identity as is_identity, t2.is_nullable as is_nullable, t4.column_id as is_primary_key ,t2.precision as precision, t2.scale as scale
           from sys.objects t1
@@ -637,11 +672,30 @@ namespace org.iringtools.nhibernate
           and upper(schema_name(t1.schema_id)) = '{0}' and (upper(t1.name) = '{1}' or 
           upper(t1.object_id)= (SELECT  distinct object_id  FROM sys.columns AS c  
           CROSS APPLY ( SELECT name FROM sys.synonyms  WHERE name = '{1}'  AND OBJECT_ID([base_object_name]) = c.[object_id] ) AS x))",
-                 schemaName.ToUpper(), tableName.ToUpper());
+                         schemaName.ToUpper(), tableName.ToUpper());
+                }
             }
             else if (dbProvider.ToUpper().Contains("ORACLE"))
             {
-                tableQuery = string.Format(@"
+                if (bSyn == false)
+                {
+                    tableQuery = string.Format(@"
+          SELECT t2.column_name, t2.data_type, t2.data_length, 
+          0 AS is_sequence, t2.nullable, t4.constraint_type,t2.DATA_PRECISION, t2.DATA_SCALE
+          FROM all_objects t1 INNER JOIN all_tab_cols t2
+          ON t2.table_name = t1.object_name AND t2.owner = t1.owner 
+          LEFT JOIN all_cons_columns t3 ON t3.table_name = t2.table_name
+          AND t3.column_name = t2.column_name AND t3.owner = t2.owner
+          AND SUBSTR(t3.constraint_name, 0, 3) != 'SYS' LEFT JOIN all_constraints t4
+          ON t4.constraint_name = t3.constraint_name AND t4.owner = t3.owner
+          AND (t4.constraint_type = 'P' OR t4.constraint_type = 'R')
+          WHERE (UPPER(t1.owner) = '{0}') AND (UPPER(t1.object_name)  = '{1}')  
+          ORDER BY t2.column_name",
+                schemaName.ToUpper(), tableName.ToUpper());
+                }
+                else
+                {
+                    tableQuery = string.Format(@"
           SELECT t2.column_name, t2.data_type, t2.data_length, 
           0 AS is_sequence, t2.nullable, t4.constraint_type,t2.DATA_PRECISION, t2.DATA_SCALE
           FROM all_objects t1 INNER JOIN all_tab_cols t2
@@ -655,7 +709,8 @@ namespace org.iringtools.nhibernate
           AND (UPPER(t1.object_name)  = '{1}' 
           OR UPPER(t1.object_name) IN (select Table_Name from USER_SYNONYMS where SYNONYM_NAME='{1}'))  
           ORDER BY t2.column_name",
-                schemaName.ToUpper(), tableName.ToUpper());
+                 schemaName.ToUpper(), tableName.ToUpper());
+                }
             }
             else
             {
@@ -663,6 +718,30 @@ namespace org.iringtools.nhibernate
             }
 
             return tableQuery;
+        }
+
+
+        //query to check if the given table is Synonym or not
+        private string GetSynonymsCount(string dbProvider, string schemaName, string tableName)
+        {
+            string strQuery = String.Empty;
+
+            if (dbProvider.ToUpper().Contains("MSSQL"))
+            {
+                strQuery = String.Format(@"
+         select distinct(name) from sys.synonyms where name='{0}'", tableName.ToUpper());
+            }
+            else if (dbProvider.ToUpper().Contains("ORACLE"))
+            {
+                strQuery = String.Format(@"
+          select distinct(TABLE_OWNER) from USER_SYNONYMS where SYNONYM_NAME='{0}'", tableName.ToUpper());
+            }
+            else
+            {
+                throw new Exception(string.Format("Database provider {0} not supported.", dbProvider));
+            }
+
+            return strQuery;
         }
 
         // gets dialect for NHibernate.
