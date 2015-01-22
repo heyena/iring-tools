@@ -36,7 +36,7 @@ Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
                 store: store,
                 queryMode: 'local',
                 readOnly: false,
-                allowBlank: true,
+                allowBlank: true
                 //autoLoad: true
             },
             {
