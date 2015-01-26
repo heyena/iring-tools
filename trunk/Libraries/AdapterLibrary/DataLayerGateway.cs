@@ -460,7 +460,9 @@ namespace org.iringtools.adapter
                         nRowCounter = (objCount <= page) ? objCount : page;
                         _logger.Debug(string.Format("Saving rows {0} to {1}  in memory for table {2}.", start, start + nRowCounter, strCachetable));
                         start += page;
+
                     }
+
 
                     SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
                     bulkCopy.DestinationTableName = tableName;
@@ -1887,14 +1889,24 @@ namespace org.iringtools.adapter
                             {
                                 DataRow newRow = table.NewRow();
 
+                                int indexCounter = 0;
                                 foreach (var pair in dataObj.Dictionary)
                                 {
-                                    if (pair.Value == null)
-                                        newRow[pair.Key] = DBNull.Value;
+                                    if ((objectType.dataProperties[indexCounter++].dataType.ToString()) == "String")
+                                    {
+                                        if (pair.Value == null)
+                                            newRow[pair.Key] = DBNull.Value;
+                                        else
+                                            newRow[pair.Key] = pair.Value;
+                                    }
                                     else
-                                        newRow[pair.Key] = pair.Value;
+                                    {
+                                        if (string.IsNullOrEmpty(pair.Value.ToString()))
+                                            newRow[pair.Key] = DBNull.Value;
+                                        else
+                                            newRow[pair.Key] = pair.Value;
+                                    }
                                 }
-
                                 if (dataObj.HasContent)
                                 {
                                     newRow[BaseLightweightDataLayer.HAS_CONTENT] = true;
