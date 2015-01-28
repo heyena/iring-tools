@@ -352,7 +352,6 @@ Ext.define('AM.view.mapping.ClassMapForm', {
 
         var me = this;
         var win = me.up('window');
-       // me.getForm().reset();
         me.getForm().findField('objectName').setValue('');
         me.getForm().findField('identifier').setValue('Drop property node(s) here.');
         me.down('#cmpcontainer').update('Drop property node(s) here.');
