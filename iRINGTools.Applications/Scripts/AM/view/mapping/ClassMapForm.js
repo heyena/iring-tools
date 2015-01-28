@@ -214,31 +214,15 @@ Ext.define('AM.view.mapping.ClassMapForm', {
                 else {
 
                     var ident = getLastXString(data.records[0].data.id, 1);
-                    var object = "";
-
-                    var key = ""; //key1+'.'+key2;
-                    var selNode = Ext.getCmp("directoryTreeID").down("directorytree").getSelectedNode();
-
-                    var propertyArr = data.records[0].data.id.split('/');
-                    if (selNode.parentNode.data.type == "RelationshipNode") {
-                        key = propertyArr[propertyArr.length - 3] + '.' + propertyArr[propertyArr.length - 2] + '.' + propertyArr[propertyArr.length - 1];
-                        object = propertyArr[propertyArr.length - 3] + '.' + propertyArr[propertyArr.length - 2];
-                    } else {
-                        key = propertyArr[propertyArr.length - 2] + '.' + propertyArr[propertyArr.length - 1];
-                        object = getLastXString(data.records[0].data.id, 2);
-                    }
+                    var object = getLastXString(data.records[0].data.id, 2);
+                    var key = object + '.' + ident; //key1+'.'+key2;
                     if (me.getForm().findField('identifier').getValue() != 'Drop property node(s) here.') {
 
                         var existingIdentifier = me.getForm().findField('identifier').getValue();
                         var objectName = me.getForm().findField('objectName').getValue();
-                        var tempObjName = "";
-                        if (existingIdentifier != '') {
-                            if (selNode.parentNode.data.type == "RelationshipNode") {
-                                tempObjName = existingIdentifier.split('.')[0] +'.'+ existingIdentifier.split('.')[1];
-                            } else {
-                                tempObjName = existingIdentifier.split('.')[0];
-                            }
 
+                        if (existingIdentifier != '') {
+                            var tempObjName = existingIdentifier.split('.')[0];
                             if (object != tempObjName) {
                                 //var message = 'Properties must root from the same data object as graph!';
                                 //showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
@@ -321,9 +305,19 @@ Ext.define('AM.view.mapping.ClassMapForm', {
         var win = me.up('window');
         var form = me.getForm();
         var message;
+
+//          if (form.findField('identifier').getValue() == 'Drop property node(s) here.' ||
+//		  form.findField('className').getValue() == 'Drop a class node here.') {
+//            //message = 'Required fields can not be blank!';
+//            //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+//            Ext.widget('messagepanel', { title: 'Warning', msg: 'Required fields can not be blank!' });
+//            return;
+
+
         //if ((form.findField('identifier').getValue().trim() == 'Drop property node(s) here.' || form.findField('identifier').getValue().trim() == '') || (form.findField('className').getValue().trim() == 'Drop a class node here.' || form.findField('className').getValue().trim() == '')) {
         //if (((form.findField('identifier').getValue().indexOf('Drop property node(s) here.') >= 0) || form.findField('identifier').getValue == '') || ((form.findField('className').getValue().indexOf('Drop a class node here.') >= 0) || form.findField('className').getValue() == '')) {
-        //FK - Regular expression to create trim functionality by replacing the the spaces.
+            //FK - Regular expression to create trim functionality by replacing the the spaces.
+        //comment by rohit
         if ((form.findField('identifier').getValue().replace(/^\s+|\s+$/g, '') == 'Drop property node(s) here.' || form.findField('identifier').getValue().replace(/^\s+|\s+$/g, '') == '') || (form.findField('className').getValue().replace(/^\s+|\s+$/g, '') == 'Drop a class node here.' || form.findField('className').getValue().replace(/^\s+|\s+$/g, '') == '')) {
             Ext.widget('messagepanel', { title: 'Warning', msg: 'Required fields can not be blank!' });
             return;
@@ -358,7 +352,7 @@ Ext.define('AM.view.mapping.ClassMapForm', {
 
         var me = this;
         var win = me.up('window');
-        me.getForm().reset();
+       // me.getForm().reset();
         me.getForm().findField('objectName').setValue('');
         me.getForm().findField('identifier').setValue('Drop property node(s) here.');
         me.down('#cmpcontainer').update('Drop property node(s) here.');
