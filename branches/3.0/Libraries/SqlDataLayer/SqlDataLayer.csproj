@@ -49,6 +49,9 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="SQLContentObject.cs" />
     <Compile Include="SqlDataLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
