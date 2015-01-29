@@ -339,7 +339,7 @@ namespace org.iringtools.adapter
                                     strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
 
 
-                                    DataProperty dataProperty = dataObject.dataProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
+                                    DataProperty dataProperty = dataObject.dataProperties.Where(x => x.propertyName == strColumnName).FirstOrDefault();
                                     ExtensionProperty extensionProperty = null;
                                     if (dataProperty != null)
                                     {
@@ -349,13 +349,21 @@ namespace org.iringtools.adapter
                                     }
                                     else
                                     {
-                                        extensionProperty = dataObject.extensionProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
-                                        if (extensionProperty != null)
+                                        if (dataObject.extensionProperties != null)
                                         {
-                                            strDataType = extensionProperty.dataType.ToString();
-                                            intPrecision = Convert.ToInt16(extensionProperty.precision);
-                                            intScale = Convert.ToInt16(extensionProperty.scale);
+                                            extensionProperty = dataObject.extensionProperties.Where(x => x.propertyName == strColumnName).FirstOrDefault();
+                                            if (extensionProperty != null)
+                                            {
+                                                strDataType = extensionProperty.dataType.ToString();
+                                                intPrecision = Convert.ToInt16(extensionProperty.precision);
+                                                intScale = Convert.ToInt16(extensionProperty.scale);
+                                            }
                                         }
+                                        else
+                                        {
+                                            _logger.Info("No Extension property in the dataObject ");
+                                        }
+                                       
                                     }
                                 }
 
