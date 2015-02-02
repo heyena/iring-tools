@@ -31,9 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\iRINGTools\trunk\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
+    <Reference Include="log4net">
+      <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Oracle.DataAccess, Version=4.112.3.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -41,7 +40,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="StaticDust.Configuration">
-      <HintPath>..\..\..\..\..\iRINGTools\trunk\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data.DataSetExtensions" />
