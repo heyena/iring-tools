@@ -49,12 +49,12 @@
                     xtype: 'grid',
                     forceFit: true,
                     store: {
-                        fields: ['columnName'],
+                        fields: ['propertyName'],
                         data: me.record
                     },
                     columns: [{
                         text: 'Name',
-                        dataIndex: 'columnName'
+                        dataIndex: 'propertyName'
                     }, {
                         xtype: 'actioncolumn',
                         text: 'Action',
@@ -116,7 +116,7 @@
 
         if (extName.length > 0) {
             var newRecord = {
-                columnName: extName
+                propertyName: extName
             };
             var store = form.down('grid').getStore();
             store.add(newRecord);
