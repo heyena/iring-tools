@@ -208,7 +208,7 @@
                 var data = [];
                 Ext.each(record.childNodes, function (node) {
                     data.push({
-                        columnName: node.data.text
+                        propertyName: node.data.text
                     });
                 });
                 var extensionPanel = container.down('sqlextensionpanel');
@@ -374,7 +374,7 @@
 
         // add new extensions
         Ext.each(exts, function (extn) {
-            var extName = extn.data.columnName;
+            var extName = extn.data.propertyName;
             var extNewNode = extnNode.findChild('text', extName);
 
             if (extNewNode == null) {
@@ -386,6 +386,8 @@
                     leaf: true,
                     properties: {
                         columnName: extName,
+                        propertyName: extName,
+                        dataType: 11,
                         type: 'extension'
 
                     }
@@ -400,7 +402,7 @@
             var found = false;
 
             for (var j = 0; j < exts.length; j++) {
-                if (node.data.text === exts[j].data.columnName) {
+                if (node.data.text === exts[j].data.propertyName) {
                     found = true;
                     break;
                 }
