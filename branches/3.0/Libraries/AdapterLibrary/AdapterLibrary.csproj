@@ -182,6 +182,10 @@
       <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
       <Name>SpreadsheetDatalayer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SqlDataLayer\SqlDataLayer.csproj">
+      <Project>{933AB6DA-C9FE-48AA-992D-5EDC194E541C}</Project>
+      <Name>SqlDataLayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UtilityLibrary\UtilityLibrary.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary</Name>
