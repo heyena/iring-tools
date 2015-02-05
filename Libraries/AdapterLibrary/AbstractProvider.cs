@@ -4167,6 +4167,13 @@ namespace org.iringtools.adapter
             DataLayer nhDataLayer = new DataLayer { Assembly = nhAssembly, Name = nhLibrary, Configurable = true };
             dataLayers.Add(nhDataLayer);
 
+            // Load SQL data layer
+            Type sqlType = typeof(SqlDataLayer);
+            string sqlLibrary = sqlType.Assembly.GetName().Name;
+            string sqlAssembly = string.Format("{0}, {1}", sqlType.FullName, sqlLibrary);
+            DataLayer sqlDataLayer = new DataLayer { Assembly = sqlAssembly, Name = sqlLibrary, Configurable = true };
+            dataLayers.Add(sqlDataLayer);
+
             // Load Spreadsheet data layer
             Type ssType = typeof(SpreadsheetDatalayer);
             string ssLibrary = ssType.Assembly.GetName().Name;
