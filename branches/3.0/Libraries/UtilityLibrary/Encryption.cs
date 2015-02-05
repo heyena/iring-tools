@@ -10,7 +10,7 @@ namespace org.iringtools.utility
     {
         private static string _cypherWord = "nx6qknaNiHLO9JxNN2RHUbeRy+fhrO8LVy72ZV33DVclmuOpdaU5AgOMCCvO+SNo2GM3csiRB6kNfKlRkECE2Ah+6O2W5WRiCuiXWxFSmQE=";
 
-        [Obsolete("Use EncryptionUtility.Decrpyt(string cipherText) Method")]
+        [Obsolete("Use EncryptionUtility.Decrypt(string cipherText) Method")]
         public static string DecryptString(string encryptedValue)
         {
             RijndaelManaged rijndaelCipher;
