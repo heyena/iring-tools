@@ -963,8 +963,8 @@ namespace org.iringtools.adapter.projection
                                 value = strSmallestIntegerPart + "." + strLength[1];
                                 Decimal.TryParse(value, out decDecimalValue);
                                 decDecimalValue = Math.Round(decDecimalValue, propertyRole.scale);
-                                value = decDecimalValue.ToString().Trim('0');
-                                value = value.Trim('.');
+                                value = decDecimalValue.ToString().TrimEnd('0');
+                                value = value.TrimEnd('.');
                             }
                             else
                             {
