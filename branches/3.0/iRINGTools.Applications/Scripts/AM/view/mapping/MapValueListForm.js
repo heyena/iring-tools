@@ -147,20 +147,20 @@ Ext.define('AM.view.mapping.MapValueListForm', {
             copy: false,
             overClass: 'over',
             notifyEnter: function (dd, e, data) {
-                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
+                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'ExtensionNode')
                     return this.dropNotAllowed;
                 else
                     return this.dropAllowed;
             },
 
             notifyOver: function (dragSource, event, data) {
-                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
+                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'ExtensionNode')
                     return this.dropNotAllowed;
                 else
                     return this.dropAllowed;
             },
             notifyDrop: function (dd, e, data) {
-                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {
+                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'ExtensionNode') {
                     return false;
                 }
                 else {
