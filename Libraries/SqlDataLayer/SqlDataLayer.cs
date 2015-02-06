@@ -214,14 +214,14 @@
 
                             foreach (DataProperty eachDataProperty in dataObjectToBeUsedForGet.dataProperties)
                             {
-                                serializableDataObject.SetPropertyValue(eachDataProperty.propertyName, eachDataRowFromGet[eachDataProperty.propertyName]);
+                                serializableDataObject.SetPropertyValue(eachDataProperty.propertyName, eachDataRowFromGet[eachDataProperty.columnName]);
                             }
 
                             if (dataObjectToBeUsedForGet.extensionProperties != null && dataObjectToBeUsedForGet.extensionProperties.Count > 0)
                             {
                                 foreach (ExtensionProperty eachExtensionProperty in dataObjectToBeUsedForGet.extensionProperties)
                                 {
-                                    serializableDataObject.SetPropertyValue(eachExtensionProperty.propertyName, eachDataRowFromGet[eachExtensionProperty.propertyName]);
+                                    serializableDataObject.SetPropertyValue(eachExtensionProperty.propertyName, eachDataRowFromGet[eachExtensionProperty.columnName]);
                                 }
                             }
 
@@ -277,7 +277,7 @@
 
                             for (int i = 0; i < columnValues.Length; i++)
                             {
-                                columnNamesInWhereClause.Append(objectType.keyProperties[i].keyPropertyName + " = " + columnValues[i] + " AND ");
+                                columnNamesInWhereClause.Append(objectType.dataProperties.Find(prop => prop.propertyName == objectType.keyProperties[i].keyPropertyName).columnName + " = " + columnValues[i] + " AND ");
                             }
 
                             columnNamesInWhereClause.Remove(columnNamesInWhereClause.Length - 4, 4);
@@ -354,7 +354,7 @@
 
                     foreach (KeyProperty eachKeyProperty in dataObjectToBeUsedForGet.keyProperties)
                     {
-                        getIdQuery.Append(eachKeyProperty.keyPropertyName + ",");
+                        getIdQuery.Append(dataObjectToBeUsedForGet.dataProperties.Find(prop => prop.propertyName == eachKeyProperty.keyPropertyName).columnName + ",");
                     }
 
                     getIdQuery = getIdQuery.Remove(getIdQuery.ToString().LastIndexOf(","), 1);
@@ -370,7 +370,7 @@
 
                         foreach (KeyProperty eachKeyProperty in dataObjectToBeUsedForGet.keyProperties)
                         {
-                            serializableDataObject.SetPropertyValue(eachKeyProperty.keyPropertyName, eachDataRow[eachKeyProperty.keyPropertyName]);
+                            serializableDataObject.SetPropertyValue(eachKeyProperty.keyPropertyName, eachDataRow[dataObjectToBeUsedForGet.dataProperties.Find(prop => prop.propertyName == eachKeyProperty.keyPropertyName).columnName]);
                         }
 
                         listOfSerializableDataObjects.Add(serializableDataObject);
@@ -423,7 +423,9 @@
                     {
                         foreach (KeyValuePair<string, object> eachDictionaryEntry in eachIdentifier.Dictionary)
                         {
-                            getPageQuery.Append(eachDictionaryEntry.Key + "= '" + eachDictionaryEntry.Value + "' AND ");
+                            string columnName = objectType.dataProperties.Find(dProp => dProp.propertyName == eachDictionaryEntry.Key).columnName;
+
+                            getPageQuery.Append(columnName + "= '" + eachDictionaryEntry.Value + "' AND ");
                         }
 
                         getPageQuery = getPageQuery.Remove(getPageQuery.ToString().LastIndexOf("AND"), 4);
@@ -452,14 +454,14 @@
 
                             foreach (DataProperty eachDataProperty in dataObjectToBeUsedForGet.dataProperties)
                             {
-                                serializableDataObject.SetPropertyValue(eachDataProperty.propertyName, eachDataRowFromGet[eachDataProperty.propertyName]);
+                                serializableDataObject.SetPropertyValue(eachDataProperty.propertyName, eachDataRowFromGet[eachDataProperty.columnName]);
                             }
 
                             if (dataObjectToBeUsedForGet.extensionProperties != null && dataObjectToBeUsedForGet.extensionProperties.Count > 0)
                             {
                                 foreach (ExtensionProperty eachExtensionProperty in dataObjectToBeUsedForGet.extensionProperties)
                                 {
-                                    serializableDataObject.SetPropertyValue(eachExtensionProperty.propertyName, eachDataRowFromGet[eachExtensionProperty.propertyName]);
+                                    serializableDataObject.SetPropertyValue(eachExtensionProperty.propertyName, eachDataRowFromGet[eachExtensionProperty.columnName]);
                                 }
                             }
 
@@ -706,16 +708,10 @@
                 {
                     StringBuilder defintion = new StringBuilder(eachExtensionProperty.definition);
 
-                    //TODO: Remove code and underlying functions used in final release
-                    //foreach (ExtensionParameter eachParameter in eachExtensionProperty.parameters)
-                    //{
-                    //    string eachParameterKey = eachParameter.key;
-                    //    string eachParameterValue = eachParameter.value;
-
-                    //    RecursivelyReplaceParametersWithValuesInDefinition(ref extensionPropertyList, ref defintion, ref eachParameterKey, ref eachParameterValue);
-                    //}
-
-                    extensionPropertiesQuery.Append(", (" + defintion + ") AS " + eachExtensionProperty.columnName);
+                    if (defintion.Length > 0)
+                    {
+                        extensionPropertiesQuery.Append(", (" + defintion + ") AS " + eachExtensionProperty.columnName);
+                    }
                 }
 
                 return extensionPropertiesQuery.ToString();
@@ -742,37 +738,6 @@
             }
 
         }
-
-        /// <summary>
-        /// Replaces extension properties parameters in the definition with their proper value
-        /// </summary>
-        /// <param name="extensionPropertyList">List of extension properties</param>
-        /// <param name="defintion">extension property definition</param>
-        /// <param name="eachParameterKey">Paramater name</param>
-        /// <param name="eachParameterValue">Parameter value</param>
-        //private void RecursivelyReplaceParametersWithValuesInDefinition(ref List<ExtensionProperty> extensionPropertyList, ref StringBuilder defintion, ref string eachParameterKey, ref string eachParameterValue)
-        //{
-        //    string internalEachParameterKey = eachParameterKey;
-        //    string internalEachParameterValue = eachParameterValue;
-        //    ExtensionProperty internalExtensionProperty = extensionPropertyList.Find(extProp => extProp.columnName == internalEachParameterValue);
-
-        //    if (internalExtensionProperty != null)
-        //    {
-        //        defintion.Replace(eachParameterKey, internalExtensionProperty.definition);
-
-        //        foreach (ExtensionParameter eachParameter in internalExtensionProperty.parameters)
-        //        {
-        //            string internalExtensionPropertyKey = eachParameter.key;
-        //            string internalExtensionPropertyValue = eachParameter.value;
-
-        //            RecursivelyReplaceParametersWithValuesInDefinition(ref extensionPropertyList, ref defintion, ref internalExtensionPropertyKey, ref internalExtensionPropertyValue);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        defintion.Replace(eachParameterKey, eachParameterValue);
-        //    }
-        //}
 
         /// <summary>
         /// Sets the response object after POST of SerializableDataObject
@@ -882,7 +847,7 @@
                 //Preparing columns and parameters names string
                 foreach (KeyValuePair<string, object> columnDetails in serializableDataObject.Dictionary)
                 {
-                    DataProperty postDataProperty = postDataObject.dataProperties.Find(dProp => dProp.columnName == columnDetails.Key);
+                    DataProperty postDataProperty = postDataObject.dataProperties.Find(dProp => dProp.propertyName == columnDetails.Key);
 
                     if (postDataProperty != null)
                     {
@@ -892,7 +857,7 @@
                         }
                         else
                         {
-                            columnNamesWithValues.Append(columnDetails.Key + " = " + dbParameterDictionary[dbTypeName] + columnDetails.Key + ", ");
+                            columnNamesWithValues.Append(postDataProperty.columnName + " = " + dbParameterDictionary[dbTypeName] + postDataProperty.columnName + ", ");
                         }
                     }
                     else
@@ -904,7 +869,7 @@
                 //Preparing parameters names string used in WHERE clause
                 foreach (KeyProperty columnDetails in postDataObject.keyProperties)
                 {
-                    DataProperty postDataProperty = postDataObject.dataProperties.Find(dProp => dProp.columnName == columnDetails.keyPropertyName);
+                    DataProperty postDataProperty = postDataObject.dataProperties.Find(dProp => dProp.propertyName == columnDetails.keyPropertyName);
 
                     if (postDataProperty != null)
                     {
@@ -914,7 +879,7 @@
                         }
                         else
                         {
-                            columnsInWhereClause.Append(columnDetails.keyPropertyName + " = " + dbParameterDictionary[dbTypeName] + columnDetails.keyPropertyName + " AND ");
+                            columnsInWhereClause.Append(postDataProperty.columnName + " = " + dbParameterDictionary[dbTypeName] + postDataProperty.columnName + " AND ");
                         }
                     }
                     else
@@ -978,7 +943,7 @@
                 //Preparing columns and parameters names string
                 foreach (KeyValuePair<string, object> columnDetails in serializableDataObject.Dictionary)
                 {
-                    DataProperty postDataProperty = postDataObject.dataProperties.Find(dProp => dProp.columnName == columnDetails.Key);
+                    DataProperty postDataProperty = postDataObject.dataProperties.Find(dProp => dProp.propertyName == columnDetails.Key);
 
                     if (postDataProperty != null)
                     {
@@ -989,8 +954,8 @@
                         }
                         else
                         {
-                            columnNames.Append(columnDetails.Key + ", ");
-                            parameterNames.Append(dbParameterDictionary[dbTypeName] + columnDetails.Key + ", ");
+                            columnNames.Append(postDataProperty.columnName + ", ");
+                            parameterNames.Append(dbParameterDictionary[dbTypeName] + postDataProperty.columnName + ", ");
                         }
                     }
                     else
@@ -1162,7 +1127,7 @@
 
                     for (int i = 0; i < columnValues.Length; i++)
                     {
-                        DataProperty columnDataproperty = objectType.dataProperties.Find(col => col.columnName == objectType.keyProperties[i].keyPropertyName);
+                        DataProperty columnDataproperty = objectType.dataProperties.Find(col => col.propertyName == objectType.keyProperties[i].keyPropertyName);
 
                         if (columnDataproperty != null)
                         {
@@ -1175,7 +1140,7 @@
                             }
                             else
                             {
-                                columnName = columnDataproperty.propertyName;
+                                columnName = columnDataproperty.columnName;
                             }
 
                             //Handling null values for DELETE command
@@ -1202,7 +1167,7 @@
                 {
                     foreach (KeyValuePair<string, object> columnDetails in serializableDataObject.Dictionary)
                     {
-                        DataProperty columnDataproperty = objectType.dataProperties.Find(col => col.columnName == columnDetails.Key);
+                        DataProperty columnDataproperty = objectType.dataProperties.Find(col => col.propertyName == columnDetails.Key);
 
                         if (columnDataproperty != null)
                         {
@@ -1215,7 +1180,7 @@
                             }
                             else
                             {
-                                columnName = columnDetails.Key;
+                                columnName = columnDataproperty.columnName;
                             }
 
                             //Adding parameters based on database type

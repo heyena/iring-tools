@@ -10,7 +10,7 @@
     using System.Data;
 
     /// <summary>
-    /// 
+    /// Class implementing IContentObject interface so it can be used in SQL data layer
     /// </summary>
     public class SQLContentObject : IContentObject
     {
@@ -20,7 +20,7 @@
         {
             foreach (DataProperty eachDataProperty in dataObject.dataProperties)
             {
-                properties.Add(eachDataProperty.propertyName, dataTable.Rows[0][eachDataProperty.propertyName]);
+                properties.Add(eachDataProperty.propertyName, dataTable.Rows[0][eachDataProperty.columnName]);
             }
 
             Content = new MemoryStream(streamLength);
