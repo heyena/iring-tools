@@ -27,6 +27,13 @@ Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
                 name: 'columnName'
             },
             {
+                fieldLabel: 'Property Name (editable)',
+                name: 'propertyName',
+                readOnly: false,
+                regex: /^[a-zA-Z_][a-zA-Z0-9_]*$/,
+                regexText: 'Value is invalid.'
+            },
+            {
                 xtype: 'combobox',
                 itemId: 'columnCombo',
                 fieldLabel: 'Column Name (Inbound)',
@@ -38,13 +45,6 @@ Ext.define('AM.view.sqlconfig.SqlKeyConfigPanel', {
                 readOnly: false,
                 allowBlank: true
                 //autoLoad: true
-            },
-            {
-                fieldLabel: 'Property Name (editable)',
-                name: 'propertyName',
-                readOnly: false,
-                regex: /^[a-zA-Z_][a-zA-Z0-9_]*$/,
-                regexText: 'Value is invalid.'
             },
             {
                 fieldLabel: 'Data Type',

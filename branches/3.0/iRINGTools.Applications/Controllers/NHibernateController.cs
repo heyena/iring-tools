@@ -267,11 +267,11 @@ namespace org.iringtools.web.controllers
                             }
                         }
 
-                        foreach (DataProperty dbProperty in dbObject.dataProperties)
+                        foreach (DataProperty dbProperty in dictObject.dataProperties)
                         {
                             if (dictObject != null)
                             {
-                                DataProperty dictProperty = dictObject.dataProperties.Find(x => x.columnName == dbProperty.columnName);
+                                DataProperty dictProperty = dictObject.dataProperties.Find(x => x.propertyName == dbProperty.propertyName);
 
                                 if (dictProperty != null)   // property has been configured
                                 {
@@ -295,11 +295,11 @@ namespace org.iringtools.web.controllers
 
                                     bool isKey = false;
 
-                                    if (dictObject.isKeyProperty(dictProperty.columnName))
+                                    if (dictObject.isKeyProperty(dictProperty.propertyName))
                                     {
                                         Node keyPropertyNode = new Node()
                                         {
-                                            text = dictProperty.columnName,
+                                            text = dictProperty.propertyName,
                                             type = "keyProperty",
                                             iconCls = "treeKey",
                                             leaf = true,
@@ -313,7 +313,7 @@ namespace org.iringtools.web.controllers
                                     {
                                         Node dataPropertyNode = new Node()
                                         {
-                                            text = dictProperty.columnName,
+                                            text = dictProperty.propertyName,
                                             type = "dataProperty",
                                             iconCls = "treeProperty",
                                             leaf = true,
@@ -491,11 +491,11 @@ namespace org.iringtools.web.controllers
 
                                 if (commonProperties == null)
                                 {
-                                    dataPropertyNamesCollection.Add(dProp.columnName);
+                                    dataPropertyNamesCollection.Add(dProp.propertyName);
                                 }
                                 else
                                 {
-                                    keyPropertyNamesCollection.Add(dProp.columnName);
+                                    keyPropertyNamesCollection.Add(dProp.propertyName);
                                 }
                             }
                         }
@@ -571,11 +571,11 @@ namespace org.iringtools.web.controllers
                             }
                         }
 
-                        foreach (DataProperty dbProperty in dbObject.dataProperties)
+                        if (dictObject != null && dictObject.dataProperties != null && dictObject.dataProperties.Count > 0)
                         {
-                            if (dictObject != null)
+                            foreach (DataProperty dictProperty in dictObject.dataProperties)
                             {
-                                DataProperty dictProperty = dictObject.dataProperties.Find(x => x.columnName == dbProperty.columnName);
+                                //DataProperty dictProperty = dictObject.dataProperties.Find(x => x.propertyName == dbProperty.propertyName);
 
                                 if (dictProperty != null)   // property has been configured
                                 {
@@ -600,11 +600,11 @@ namespace org.iringtools.web.controllers
 
                                     bool isKey = false;
 
-                                    if (dictObject.isKeyProperty(dictProperty.columnName))
+                                    if (dictObject.isKeyProperty(dictProperty.propertyName))
                                     {
                                         Node keyPropertyNode = new Node()
                                         {
-                                            text = dictProperty.columnName,
+                                            text = dictProperty.propertyName,
                                             type = "keyProperty",
                                             iconCls = "treeKey",
                                             leaf = true,
@@ -618,7 +618,7 @@ namespace org.iringtools.web.controllers
                                     {
                                         Node dataPropertyNode = new Node()
                                         {
-                                            text = dictProperty.columnName,
+                                            text = dictProperty.propertyName,
                                             type = "dataProperty",
                                             iconCls = "treeProperty",
                                             leaf = true,
@@ -632,7 +632,7 @@ namespace org.iringtools.web.controllers
                         }
 
                         //Extension Properties___Starts
-                        if (dictObject!=null && dictObject.extensionProperties != null)
+                        if (dictObject != null && dictObject.extensionProperties != null && dictObject.extensionProperties.Count > 0)
                             foreach (ExtensionProperty extProperty in dictObject.extensionProperties)
                             {
                                 Dictionary<string, object> properties = new Dictionary<string, object>()
@@ -652,7 +652,7 @@ namespace org.iringtools.web.controllers
 
                                 Node extensionPropertyNode = new Node()
                                 {
-                                    text = extProperty.columnName,
+                                    text = extProperty.propertyName,
                                     type = "extensionProperty",
                                     iconCls = "treeExtension",
                                     leaf = true,
@@ -662,13 +662,12 @@ namespace org.iringtools.web.controllers
                                 extensionPropertiesNode.children.Add(extensionPropertyNode);
                             }
 
-
                         objectNodes.Add(dataObjectNode);
 
                         List<string> extensionColoumn = new List<string>();
                         foreach (var extension in dbObject.dataProperties)
                         {
-                            extensionColoumn.Add(extension.columnName);
+                            extensionColoumn.Add(extension.propertyName);
                         }
                         dataObjectNode.properties.Add("extensionColoumn", extensionColoumn);
                         //Extension Properties___Ends
@@ -691,8 +690,6 @@ namespace org.iringtools.web.controllers
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
         }
-
-
 
         public ActionResult SaveDBDictionary()
         {

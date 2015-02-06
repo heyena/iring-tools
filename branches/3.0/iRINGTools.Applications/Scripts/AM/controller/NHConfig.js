@@ -286,7 +286,7 @@ Ext.define('AM.controller.NHConfig', {
 
         Ext.each(keys, function (key) {
             Ext.each(dataProps, function (dataProp) {
-                if (dataProp.columnName === key) {
+                if (dataProp.propertyName === key) {
                     // add to keys node
                     keysNode.appendChild({
                         text: key,
@@ -335,7 +335,7 @@ Ext.define('AM.controller.NHConfig', {
 
         Ext.each(props, function (prop) {
             Ext.each(dataProps, function (dataProp) {
-                if (dataProp.columnName === prop) {
+                if (dataProp.propertyName === prop) {
                     // add to properties node
                     propsNode.appendChild({
                         text: prop,

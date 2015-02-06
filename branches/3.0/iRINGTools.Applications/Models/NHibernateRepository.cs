@@ -297,7 +297,7 @@ namespace org.iringtools.web.Models
 
                         var keyPropertyNode = new JsonTreeNode()
                         {
-                            text = dataProperty.columnName,
+                            text = dataProperty.propertyName,
                             type = "keyProperty",
                             properties = properties,
                             iconCls = "treeKey",
@@ -310,7 +310,7 @@ namespace org.iringtools.web.Models
                     {
                         var dataPropertyNode = new JsonTreeNode()
                         {
-                            text = dataProperty.columnName,
+                            text = dataProperty.propertyName,
                             type = "dataProperty",
                             iconCls = "treeProperty",
                             leaf = true,
@@ -376,7 +376,7 @@ namespace org.iringtools.web.Models
         //          {
         //            tempPropertyNode = propertiesNode.children[j];
 
-        //            if (tempPropertyNode.text.ToLower() == tempDataProperty.columnName.ToLower())
+        //            if (tempPropertyNode.text.ToLower() == tempDataProperty.propertyName.ToLower())
         //            {
         //              hasProperty = true;
 
@@ -430,7 +430,7 @@ namespace org.iringtools.web.Models
         //          if (!hasProperty)
         //            for (int j = 0; j < hiddenRootNode.children.Count; j++)
         //            {
-        //              if (hiddenRootNode.children[j].text.ToLower() == tempDataProperty.columnName.ToLower())
+        //              if (hiddenRootNode.children[j].text.ToLower() == tempDataProperty.propertyName.ToLower())
         //              {
         //                hasProperty = true;
         //                if (!HasShown(shownProperty, hiddenRootNode.children[j].text.ToLower()))
@@ -486,7 +486,7 @@ namespace org.iringtools.web.Models
         //              };
 
         //            JsonTreeNode dataPropertyNode = new JsonTreeNode();
-        //            dataPropertyNode.text = tempDataProperty.columnName;
+        //            dataPropertyNode.text = tempDataProperty.propertyName;
         //            dataPropertyNode.type = "DATAPROPERTY";
         //            dataPropertyNode.id = dataPropertyNode.id + "/" + dataPropertyNode.text;
         //            dataPropertyNode.identifier = dataPropertyNode.id;
@@ -520,7 +520,7 @@ namespace org.iringtools.web.Models
         //            {
         //              if (dataObject.keyProperties[ij].keyPropertyName.ToLower() == dataObject.dataProperties[ikk].propertyName.ToLower())
         //              {
-        //                if (keysNode.children[k].text.ToLower() == dataObject.dataProperties[ikk].columnName.ToLower())
+        //                if (keysNode.children[k].text.ToLower() == dataObject.dataProperties[ikk].propertyName.ToLower())
         //                {
         //                  keysNode.children[k].text = dataObject.keyProperties[ij].keyPropertyName;
         //                  keysNode.children[k].properties["propertyName"] = dataObject.keyProperties[ij].keyPropertyName;
@@ -658,7 +658,7 @@ namespace org.iringtools.web.Models
         {
             if (dataObject == null)
                 return "";
-            return dataObject.dataProperties.FirstOrDefault(p => p.columnName.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase)).columnName;
+            return dataObject.dataProperties.FirstOrDefault(p => p.propertyName.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase)).columnName;
         }
 
         private static Boolean HasShown(IEnumerable<string> shownArray, string text)

@@ -351,10 +351,10 @@ namespace org.iringtools.adapter
                                 //find column name from roleMap.Use the column name to find DBdatatype, precision and scale from dataProperties.
                                 if (roleMap.propertyName != null && dataObject != null)
                                 {
-                                    string strColumnName = roleMap.propertyName;
-                                    strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
+                                    string strPropertyName = roleMap.propertyName;
+                                    strPropertyName = strPropertyName.Substring(strPropertyName.LastIndexOf('.') + 1);
 
-                                    DataProperty dataProperty = dataObject.dataProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
+                                    DataProperty dataProperty = dataObject.dataProperties.Where(x => x.propertyName == strPropertyName).FirstOrDefault();
                                     if (dataProperty != null)
                                     {
                                         strDataType = dataProperty.dataType.ToString();
@@ -2434,10 +2434,10 @@ namespace org.iringtools.adapter
                             if (roleMap.propertyName != null)
                             {
                                 //string strTableName= roleMap.
-                                string strColumnName = roleMap.propertyName;
-                                strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
+                                string strPropertyName = roleMap.propertyName;
+                                strPropertyName = strPropertyName.Substring(strPropertyName.LastIndexOf('.') + 1);
 
-                                DataProperty dataProperty = dataObject.dataProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
+                                DataProperty dataProperty = dataObject.dataProperties.Where(x => x.propertyName == strPropertyName).FirstOrDefault();
                                 if (dataProperty != null)
                                 {
                                     roleMap.dbDataType = dataProperty.dataType.ToString();
