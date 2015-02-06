@@ -88,7 +88,7 @@
             Ext.each(itemList, function (item) {
                 var found = false;
                 Ext.each(keysNode.childNodes, function (key) {
-                    if (key.raw.properties.columnName == item.columnName) {
+                    if (key.raw.properties.propertyName == item.propertyName) {
                         found = true;
                         return;
                     }

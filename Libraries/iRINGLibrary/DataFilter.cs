@@ -145,7 +145,7 @@ namespace org.iringtools.library
                 {
                     dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propName.ToUpper());
 
-                    orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
+                    orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.propertyName);
                     whereClause.Append(orderStatement + ",");
                 }
                 whereClause.Remove(whereClause.ToString().LastIndexOf(","), 1);
@@ -154,7 +154,7 @@ namespace org.iringtools.library
             {
                 dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
 
-                orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
+                orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.propertyName);
                 whereClause.Append(orderStatement);
             }
           }
@@ -301,7 +301,7 @@ namespace org.iringtools.library
       }
 
       DataType propertyType = dataProperty.dataType;
-      string columnName = dataProperty.columnName;
+      string columnName = dataProperty.propertyName;
       string qualColumnName = String.Empty;
 
       if (expression.IsCaseSensitive || IsNumeric(dataProperty.dataType) || dataProperty.dataType == DataType.DateTime)

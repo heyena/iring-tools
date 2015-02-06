@@ -324,7 +324,7 @@
 
         Ext.each(keys, function (key) {
             Ext.each(dataProps, function (dataProp) {
-                if (dataProp.columnName === key) {
+                if (dataProp.propertyName === key) {
                     // add to keys node
                     keysNode.appendChild({
                         text: key,
@@ -356,10 +356,24 @@
         var values = panel.getForm().getValues();
         var props = treePanel.getSelectionModel().getLastSelected().raw.properties;
 
+        if (values.propertyName == undefined || values.propertyName == "") {
+            Ext.Msg.alert('Error', 'Please enter all values');
+            return;
+        }
+
+        var keysNode = treePanel.getSelectionModel().getLastSelected();
+
         for (var field in values) {
+            if (props['propertyName'] != values['propertyName']) {
+                if (keysNode != null) {
+                    keysNode.set("text", values['propertyName']);
+                }
+            }
+
             props[field] = values[field];
         }
     },
+
     onApplyExtension: function (button, e) {
         var panel = button.up('sqlextensionpanel');
         var treePanel = panel.up('sqlmainconfigpanel').down('sqlobjectstreepanel');
@@ -388,6 +402,7 @@
                         columnName: extName,
                         propertyName: extName,
                         dataType: 11,
+                        definition: '\'Give some meaningful definition here\'',
                         type: 'extension'
 
                     }
@@ -424,22 +439,25 @@
 
         var extnConfingValues = panel.getForm().getValues();
 
-        if (extnConfingValues.propertyName == undefined) {
-            alert("pls enter all values");
-
+        if (extnConfingValues.propertyName == undefined || extnConfingValues.propertyName == "" || extnConfingValues.definition == undefined || extnConfingValues.definition == "") {
+            Ext.Msg.alert('Error', 'Please enter all values');
+            return;
         }
-
-
 
         var extenProps = treePanel.getSelectionModel().getLastSelected().raw.properties;
+        var keysNode = treePanel.getSelectionModel().getLastSelected();
 
         for (var field in extnConfingValues) {
+            if (extenProps['propertyName'] != extnConfingValues['propertyName']) {
+                if (keysNode != null) {
+                    keysNode.set("text", extnConfingValues['propertyName']);
+                }
+            }
+
             extenProps[field] = extnConfingValues[field];
         }
-
-
-
     },
+
     onApplyPropertySelection: function (button, e) {
         var panel = button.up('sqlpropertyselectionpanel');
         var treePanel = panel.up('sqlmainconfigpanel').down('sqlobjectstreepanel');
@@ -450,7 +468,7 @@
 
         Ext.each(props, function (prop) {
             Ext.each(dataProps, function (dataProp) {
-                if (dataProp.columnName === prop) {
+                if (dataProp.propertyName === prop) {
                     // add to properties node
                     propsNode.appendChild({
                         text: prop,
@@ -471,14 +489,27 @@
 
         var values = panel.getForm().getValues();
 
+        if (values.propertyName == undefined || values.propertyName == "") {
+            Ext.Msg.alert('Error', 'Please enter all values');
+            return;
+        }
+
         if (values.isNullable == "on") {
             values.isNullable = true;
         } else {
             values.isNullable = false;
         }
+
         var props = treePanel.getSelectionModel().getLastSelected().raw.properties;
+        var keysNode = treePanel.getSelectionModel().getLastSelected();
 
         for (var field in values) {
+            if (props['propertyName'] != values['propertyName']) {
+                if (keysNode != null) {
+                    keysNode.set("text", values['propertyName']);
+                }
+            }
+
             props[field] = values[field];
         }
     },
@@ -675,13 +706,13 @@
                         "Value": valName
                     }]
                 }
-                                if (props.isNullable == "on") {
-                                    props.isNullable = true;
-                                }
-                                else {
-                                    props.isNullable = false;
+                if (props.isNullable == "on") {
+                    props.isNullable = true;
+                }
+                else {
+                    props.isNullable = false;
 
-                                }
+                }
                 dataObject.dataProperties.push({
                     columnName: props.columnName,
                     propertyName: props.propertyName,
@@ -747,7 +778,7 @@
             dbDictionary.dataObjects.push(dataObject);
         });
 
-         
+
 
         if (!valid) {
             configPanel.setLoading(false);

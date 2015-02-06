@@ -84,7 +84,8 @@
                 }, {
                     xtype: 'textarea',
                     fieldLabel: 'Definition',
-                    name: 'definition'
+                    name: 'definition',
+                    allowBlank: false
                     //itemId: 'def'
 
                 }, {

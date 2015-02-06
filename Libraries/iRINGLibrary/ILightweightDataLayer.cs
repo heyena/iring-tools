@@ -424,7 +424,7 @@ namespace org.iringtools.library
                                 else
                                 {
                                     _logger.Warn(String.Format("Value for column [{0}] not found in data row of table [{1}]",
-                                      objectProperty.columnName, objectType.tableName));
+                                      objectProperty.propertyName, objectType.tableName));
                                 }
                             }
                         }
@@ -459,7 +459,7 @@ namespace org.iringtools.library
                         else
                         {
                             _logger.Warn(String.Format("Value for column [{0}] not found in data row of table [{1}]",
-                              extentionProperty.columnName, objectType.tableName));
+                              extentionProperty.propertyName, objectType.tableName));
                         }
                     }
                 }

@@ -1195,7 +1195,7 @@ namespace iRINGTools.Web.Models
 
                         JsonTreeNode keyPropertyNode = new JsonTreeNode()
                         {
-                            text = dataProperty.columnName,
+                            text = dataProperty.propertyName,
                             type = "keyProperty",
                             iconCls = "treeKey",
                             leaf = true,
@@ -1208,7 +1208,7 @@ namespace iRINGTools.Web.Models
                     {
                         JsonTreeNode dataPropertyNode = new JsonTreeNode()
                         {
-                            text = dataProperty.columnName,
+                            text = dataProperty.propertyName,
                             type = "dataProperty",
                             iconCls = "treeProperty",
                             leaf = true,

@@ -475,14 +475,14 @@ namespace org.iringtools.web.controllers
                                         iconCls = "treeExtension",
                                         //type = isKeyProp ? "KeyDataPropertyNode" : "DataPropertyNode",
                                         //iconCls = isKeyProp ? "treeKey" : "treeProperty",
-                                        id = context + "/" + dataObject.objectName + "/" + extension.columnName,
-                                        text = extension.columnName,
+                                        id = context + "/" + dataObject.objectName + "/" + extension.propertyName,
+                                        text = extension.propertyName,
                                         expanded = false,
                                         leaf = true,
                                         children = null,
                                         record = new
                                         {
-                                            Name = extension.columnName,
+                                            Name = extension.propertyName,
                                             //Keytype = keyType,
                                             //Datatype = dataType
 
