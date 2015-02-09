@@ -80,7 +80,9 @@ namespace org.iringtools.adapter
                 key.Equals("MultiGetDTIs") ||
                 key.Equals("MultiGetDTOs") ||
                 key.Equals("MultiPostDTOs") ||
-                key.Equals("MaxThreads"))
+                key.Equals("MaxThreads") ||
+                key.Equals("CachePageSize"))
+                
             {
               string format = settings[key].ToString();
               this[key] = format;
