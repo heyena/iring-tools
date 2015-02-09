@@ -36,8 +36,7 @@
     </Reference>
     <Reference Include="Oracle.DataAccess, Version=4.112.3.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Required DLLs\Oracle.DataAccess.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\ExternalBinaries\Oracle\64-Bit\Oracle.DataAccess.dll</HintPath>
     </Reference>
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
@@ -54,9 +53,6 @@
     <Compile Include="SQLContentObject.cs" />
     <Compile Include="SqlDataLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Required DLLs\Oracle.DataAccess.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\iRINGLibrary\iRINGLibrary.csproj">
