@@ -28,7 +28,11 @@
 //            model: 'AM.model.DirectoryModel',
 //            storeId: 'directorytreestore',
 //            root: {
-//                expanded: true
+//                expanded: true,
+//                type: 'ScopesNode',
+//                iconCls: 'scopes',
+//                text: 'Scopes',
+//                security: ''
 //            },
 //            proxy: {
 //                type: 'ajax',
@@ -37,7 +41,7 @@
 //                },
 //                extraParams: {
 //                    id: null,
-//                    type: 'RootNode',
+//                    type: 'ScopesNode',
 //                    contextName: null,
 //                    endpoint: null,
 //                    baseUrl: null,
@@ -70,10 +74,10 @@ Ext.define('AM.store.DirectoryTreeStore', {
             model: 'AM.model.DirectoryModel',
             storeId: 'directorytreestore',
             root: {
-                expanded: true,
-                type: 'ScopesNode',
-                iconCls: 'scopes',
-                text: 'Scopes',
+                expanded: false,
+                type: 'RootNode',
+                iconCls: 'root',
+                text: 'Root',
                 security: ''
             },
             proxy: {
@@ -83,7 +87,7 @@ Ext.define('AM.store.DirectoryTreeStore', {
                 },
                 extraParams: {
                     id: null,
-                    type: 'ScopesNode',
+                    type: 'RootNode',
                     contextName: null,
                     endpoint: null,
                     baseUrl: null,

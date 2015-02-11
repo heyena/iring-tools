@@ -57,7 +57,13 @@ Ext.define('AM.controller.Directory', {
         'directory.VirtualPropertyGrid',
         'directory.VirtualPropertyWindow',
         'menus.VirtualPropertyMenu',
-		'common.ExceptionPanel'
+		'common.ExceptionPanel',
+        'menus.RootMenu',
+        'directory.RootPopUpForm',
+        'directory.RootPopUpWindow',
+        'menus.NewFolderMenu'
+        
+        
     ],
 
     refs: [
@@ -138,6 +144,70 @@ Ext.define('AM.controller.Directory', {
         }
     },
 
+    //root
+    newFolder: function(item, e, eOpts){
+    
+       var me = this;
+        var path, state, context, description, wintitle, displayName;
+        var tree = me.getDirTree();
+        var node = tree.getSelectedNode();
+        context = node.data.record.context;
+
+        if (node.parentNode) {
+            path = node.internalId;
+        } else {
+            path = '';
+        }
+
+        var conf = {
+            id: 'tab-' + node.data.id,
+            iconCls: 'folder'
+        };
+
+       var win = Ext.widget('rootpopupWindow',conf);
+       var form = win.down('form');
+       form.node = node;
+
+       //TODO: Need it later
+        if (item.itemId == 'editFolder' && node.data.record !== undefined) {
+            var name = node.data.record.Name;
+            win.title = 'Edit Folder';
+            var state = 'edit';
+
+        } else {
+            var name = '';
+            var state = 'new';
+            win.title = 'Add Folder';
+        }
+
+        win.on('save', function () {
+            win.destroy();
+            tree.view.refresh();
+            tree.expandPath(tree.getRootNode().getPath());
+            var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
+            detailGrid.setSource({});
+        }, me);
+
+        win.on('cancel', function () {
+            win.destroy();
+        }, me);
+
+        if (utilsObj.isSecEnable == "False") {
+            form.getForm().findField('permissions').hide();
+        }
+
+        form.getForm().findField('path').setValue(path);
+        form.getForm().findField('state').setValue(state);
+        form.getForm().findField('oldContext').setValue(context);
+        form.getForm().findField('name').setValue(name);
+        form.getForm().findField('displayName').setValue(displayName);
+        form.getForm().findField('contextName').setValue(name);
+        form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
+
+        win.show();       
+    },
+
+     //end root
     newOrEditScope: function (item, e, eOpts) {
 
         var me = this;
@@ -573,6 +643,9 @@ Ext.define('AM.controller.Directory', {
             } else if (obj.type === "ScopeNode") {
                 var scopeMenu = Ext.widget('scopemenu');
                 scopeMenu.showAt(e.getXY());
+            } else if (obj.type === "RootNode") {
+                var rootMenu = Ext.widget('rootmenu');
+                rootMenu.showAt(e.getXY());
             } else if (obj.type === "ApplicationNode") {
                 var applicationMenu = Ext.widget('applicationmenu');
                 applicationMenu.showAt(e.getXY());
@@ -1418,7 +1491,10 @@ Ext.define('AM.controller.Directory', {
             },
             "button[action=saveDataFilter]": {
                 click: this.saveDataFilter
-            }
+            },
+            "menuitem[action=newFolder]": {
+                click: this.newFolder
+            },
         });
     },
 

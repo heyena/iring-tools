@@ -16,6 +16,7 @@ using System.Runtime.Serialization;
 using System.Xml.Linq;
 using System.Web.Script.Serialization;
 using System.Xml;
+using org.iringtools.applicationConfig;
 
 namespace org.iringtools.web.controllers
 {
@@ -50,24 +51,35 @@ namespace org.iringtools.web.controllers
 
                 switch (form["type"])
                 {
-
                     case "RootNode":
                         {
+                            string userName = "apandey1";
+                            string parentFolderId = "caa7fc0d-37de-4e44-afb8-8af8dd7e294c";
+                            int siteId = 1;
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                            Folders folders = _repository.GetFolder(userName, parentFolderId, siteId);
 
-                            JsonTreeNode node = new JsonTreeNode
+                            foreach (Folder folder in folders)
                             {
-                                nodeType = "async",
-                                type = "GroupsNode",
-                                //iconCls = "folder",
-                                id = "groupsnode",
-                                text = "Groups",
-                                expanded = false,
-                                leaf = false,
-                                children = null
-                            };
-                            nodes.Add(node);
+                                JsonTreeNode node = new JsonTreeNode
+                                {
+                                    nodeType = "async",
+                                    type = "FolderNode",
+                                    iconCls = "folder",
+                                    id = folder.FolderId.ToString(),
+                                    text = folder.FolderName,
+                                    expanded = false,
+                                    leaf = false,
+                                    children = null,
+                                    record = folder
+                                };
+
+                                node.property = new Dictionary<string, string>();
+                                node.property.Add("Display Name", folder.FolderName);
+                                nodes.Add(node);
+                            }
+
                             return Json(nodes, JsonRequestBehavior.AllowGet);
                         }
                     case "GroupsNode":
@@ -274,7 +286,7 @@ namespace org.iringtools.web.controllers
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-                            foreach (ValueListMap valueList in mapping.valueListMaps)
+                            foreach (org.iringtools.mapping.ValueListMap valueList in mapping.valueListMaps)
                             {
                                 JsonTreeNode node = new JsonTreeNode
                                 {
@@ -304,7 +316,7 @@ namespace org.iringtools.web.controllers
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
                             Mapping mapping = GetMapping(scopeName, applicationName);
-                            ValueListMap valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
+                            org.iringtools.mapping.ValueListMap valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
 
                             foreach (var valueMap in valueListMap.valueMaps)
                             {
@@ -458,46 +470,46 @@ namespace org.iringtools.web.controllers
                                 nodes.Add(node);
                             }
                             //[[By Rohit 24-Dec-14 Starts
-                            if(dataObject.extensionProperties != null)
+                            if (dataObject.extensionProperties != null)
                             {
-                            if (dataObject.extensionProperties.Count > 0)
-                            {
-                                foreach (ExtensionProperty extension in dataObject.extensionProperties)
+                                if (dataObject.extensionProperties.Count > 0)
                                 {
-                                    //keyType = getExtensionType(extension.propertyName,dataObject.extensionProperties);
-                                    //dataType = extension.dataType.ToString();
-
-                                    //bool isKeyProp = dataObject.isKeyProperty(extension.propertyName);
-                                    JsonTreeNode node = new JsonTreeNode
+                                    foreach (ExtensionProperty extension in dataObject.extensionProperties)
                                     {
-                                        nodeType = "async",
-                                        type = "ExtensionNode",
-                                        iconCls = "treeExtension",
-                                        //type = isKeyProp ? "KeyDataPropertyNode" : "DataPropertyNode",
-                                        //iconCls = isKeyProp ? "treeKey" : "treeProperty",
-                                        id = context + "/" + dataObject.objectName + "/" + extension.propertyName,
-                                        text = extension.propertyName,
-                                        expanded = false,
-                                        leaf = true,
-                                        children = null,
-                                        record = new
+                                        //keyType = getExtensionType(extension.propertyName,dataObject.extensionProperties);
+                                        //dataType = extension.dataType.ToString();
+
+                                        //bool isKeyProp = dataObject.isKeyProperty(extension.propertyName);
+                                        JsonTreeNode node = new JsonTreeNode
                                         {
-                                            Name = extension.propertyName,
-                                            //Keytype = keyType,
-                                            //Datatype = dataType
+                                            nodeType = "async",
+                                            type = "ExtensionNode",
+                                            iconCls = "treeExtension",
+                                            //type = isKeyProp ? "KeyDataPropertyNode" : "DataPropertyNode",
+                                            //iconCls = isKeyProp ? "treeKey" : "treeProperty",
+                                            id = context + "/" + dataObject.objectName + "/" + extension.propertyName,
+                                            text = extension.propertyName,
+                                            expanded = false,
+                                            leaf = true,
+                                            children = null,
+                                            record = new
+                                            {
+                                                Name = extension.propertyName,
+                                                //Keytype = keyType,
+                                                //Datatype = dataType
 
 
-                                        }
-                                    };
-                                    node.property = new Dictionary<string, string>();
-                                    node.property.Add("Name", extension.propertyName);
-                                    node.property.Add("Datatype", extension.dataType.ToString());
-                                    node.property.Add("Data Length", extension.dataLength.ToString());
-                                    node.property.Add("Precison", extension.precision.ToString());
-                                    node.property.Add("Scale", extension.scale.ToString());
-                                    nodes.Add(node);
+                                            }
+                                        };
+                                        node.property = new Dictionary<string, string>();
+                                        node.property.Add("Name", extension.propertyName);
+                                        node.property.Add("Datatype", extension.dataType.ToString());
+                                        node.property.Add("Data Length", extension.dataLength.ToString());
+                                        node.property.Add("Precison", extension.precision.ToString());
+                                        node.property.Add("Scale", extension.scale.ToString());
+                                        nodes.Add(node);
+                                    }
                                 }
-                            }
                             }
                             // Ends]]
                             if (dataObject.dataRelationships.Count > 0)
@@ -720,13 +732,13 @@ namespace org.iringtools.web.controllers
 
                 if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
                 {
-                    
+
                     //scopeName = form["displayName"];
-                    scopeName = form["internalName"];  
-                  //  success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
+                    scopeName = form["internalName"];
+                    //  success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
                     success = _repository.AddScope(form["internalName"], form["description"], form["cacheDBConnStr"], form["permissions"], form["displayName"]);
 
-                   
+
                 }
                 else
                 {
@@ -761,6 +773,81 @@ namespace org.iringtools.web.controllers
                 node.property.Add("Display Name", scope.DisplayName);
                 node.property.Add("Description", scope.Description);
                 nodes.Add(node);
+
+                return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
+                // return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.ToString());
+                if (e.InnerException != null)
+                {
+                    string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
+                    var jsonSerialiser = new JavaScriptSerializer();
+                    CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+                    return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    _CustomErrorLog = new CustomErrorLog();
+                    _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUIScope, e, _logger);
+                    return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
+
+            }
+
+        }
+
+        public JsonResult Root(FormCollection form)
+        {
+            try
+            {
+                string userName = "apandey1";
+                string success = String.Empty;
+                string folderName = string.Empty;
+                string parentFolderId = "caa7fc0d-37de-4e44-afb8-8af8dd7e294c";
+                int siteId = 1;
+
+                if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
+                {
+                    folderName = form["displayName"];
+                    success = _repository.AddFolder(userName, folderName, parentFolderId, siteId, form["permissions"]);
+                }
+                else
+                {
+                    folderName = form["contextName"];
+                    success = _repository.UpdateFolder(folderName, form["permissions"]);
+                }
+                if (success.Trim().Contains("Error"))
+                {
+                    _CustomErrorLog = new CustomErrorLog();
+                    _CustomError = _CustomErrorLog.getErrorResponse(success);
+
+                    return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
+
+                List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                Folders folders = _repository.GetFolder(userName, parentFolderId, siteId);
+
+                foreach (Folder folder in folders)
+                {
+                    JsonTreeNode node = new JsonTreeNode
+                    {
+                        nodeType = "async",
+                        type = "FolderNode",
+                        iconCls = "folder",
+                        id = folder.FolderId.ToString(),
+                        text = folder.FolderName,
+                        expanded = false,
+                        leaf = false,
+                        children = null,
+                        record = folder
+                    };
+
+                    node.property = new Dictionary<string, string>();
+                    node.property.Add("Display Name", folder.FolderName);
+                    nodes.Add(node);
+                }
 
                 return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
                 // return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -1119,15 +1206,15 @@ namespace org.iringtools.web.controllers
         {
             string keyName = string.Format("{0}.{1}.{2}", scope, app, graph);
 
-            DataFilter filter = (DataFilter)Session[keyName];
+            org.iringtools.library.DataFilter filter = (org.iringtools.library.DataFilter)Session[keyName];
 
             if (filter == null)
             {
-                filter = new DataFilter();
+                filter = new org.iringtools.library.DataFilter();
                 _repository.GetFilterFile(ref filter, keyName);
             }
 
-            JsonContainer<DataFilter> container = new JsonContainer<DataFilter>();
+            JsonContainer<org.iringtools.library.DataFilter> container = new JsonContainer<org.iringtools.library.DataFilter>();
             container.items = filter;
             container.success = true;
             container.total = filter.Expressions.Count + filter.OrderExpressions.Count;
@@ -1139,7 +1226,7 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-                DataFilter gridDataFilter = new DataFilter();
+                org.iringtools.library.DataFilter gridDataFilter = new org.iringtools.library.DataFilter();
 
                 int expCount = Convert.ToInt16(form["exprCount"]);
                 int oeExpCount = Convert.ToInt16(form["oeExprCount"]);
@@ -1147,7 +1234,7 @@ namespace org.iringtools.web.controllers
                 int ec = 1;
                 while (ec <= expCount)
                 {
-                    Expression expression = new Expression();
+                    org.iringtools.library.Expression expression = new org.iringtools.library.Expression();
 
                     if (!string.IsNullOrEmpty(form["openGroupCount_" + ec]))
                         expression.OpenGroupCount = Convert.ToInt16(form["openGroupCount_" + ec]);
@@ -1159,9 +1246,9 @@ namespace org.iringtools.web.controllers
                         expression.RelationalOperator = (RelationalOperator)Enum.Parse(typeof(RelationalOperator), form["relationalOperator_" + ec]);
 
                     if (!string.IsNullOrEmpty(form["value_" + ec]))
-                        expression.Values = new Values() { form["value_" + ec] };
+                        expression.Values = new org.iringtools.library.Values() { form["value_" + ec] };
                     else
-                        expression.Values = new Values() { string.Empty };
+                        expression.Values = new org.iringtools.library.Values() { string.Empty };
 
                     if (!string.IsNullOrEmpty(form["logicalOperator_" + ec]))
                         expression.LogicalOperator = (LogicalOperator)Enum.Parse(typeof(LogicalOperator), form["logicalOperator_" + ec]);
@@ -1180,7 +1267,7 @@ namespace org.iringtools.web.controllers
                             string.IsNullOrEmpty(form["OESortOrder_" + oec])))
                     {
                         gridDataFilter.OrderExpressions.Add(
-                         new OrderExpression()
+                         new org.iringtools.library.OrderExpression()
                          {
                              PropertyName = form["OEProName_" + oec],
                              SortOrder = (SortOrder)Enum.Parse(typeof(SortOrder), form["OESortOrder_" + oec]),
@@ -1255,6 +1342,4 @@ namespace org.iringtools.web.controllers
         }
         #endregion
     }
-
 }
-
