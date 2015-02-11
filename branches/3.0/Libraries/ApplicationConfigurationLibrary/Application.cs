@@ -162,7 +162,7 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "folder", Namespace = "http://www.iringtools.org/library")]
     public class Folder
     {
-        Folder()
+        public Folder()
         {
             permissions = new Permissions();
             groups = new Groups();
