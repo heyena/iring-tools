@@ -354,6 +354,7 @@
     <Content Include="Scripts\AM\view\menus\GraphMenu.js" />
     <Content Include="Scripts\AM\view\menus\GraphsMenu.js" />
     <Content Include="Scripts\AM\view\menus\GroupAdminScopesMenu.js" />
+    <Content Include="Scripts\AM\view\menus\NewFolderMenu.js" />
     <Content Include="Scripts\AM\view\menus\NoLdapScopesMenu.js" />
     <Content Include="Scripts\AM\view\menus\RolemapMenu.js" />
     <Content Include="Scripts\AM\view\menus\RootAdminScopesMenu.js" />

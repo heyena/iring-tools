@@ -54,11 +54,10 @@ namespace org.iringtools.web.controllers
                     case "RootNode":
                         {
                             string userName = "apandey1";
-                            string parentFolderId = "caa7fc0d-37de-4e44-afb8-8af8dd7e294c";
                             int siteId = 1;
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            Folders folders = _repository.GetFolders(userName, parentFolderId, siteId);
+                            Folders folders = _repository.GetFolders(userName, form["id"], siteId);
 
                             foreach (Folder folder in folders)
                             {
@@ -85,12 +84,11 @@ namespace org.iringtools.web.controllers
                     case "FolderNode":
                         {
                             string userName = "apandey1";
-                            string parentFolderId = "caa7fc0d-37de-4e44-afb8-8af8dd7e294c";
                             int siteId = 1;
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            Folders folders = _repository.GetFolders(userName, parentFolderId, siteId);
-                            org.iringtools.applicationConfig.Context context = _repository.GetContext(userName, parentFolderId, siteId);
+                            Folders folders = _repository.GetFolders(userName, form["node"], siteId);
+                            org.iringtools.applicationConfig.Contexts contexts = _repository.GetContexts(userName, form["node"], siteId);
 
                             foreach (Folder folder in folders)
                             {
@@ -112,19 +110,19 @@ namespace org.iringtools.web.controllers
                                 nodes.Add(node);
                             }
 
-                            if (context != null)
+                            foreach (org.iringtools.applicationConfig.Context context in contexts)
                             {
                                 JsonTreeNode node = new JsonTreeNode
                                     {
                                         nodeType = "async",
                                         type = "ContextNode",
                                         iconCls = "context",
-                                        id = context.FolderId.ToString(),
+                                        id = context.ContextId.ToString(),
                                         text = context.DisplayName,
                                         expanded = false,
                                         leaf = false,
                                         children = null,
-                                        record = context
+                                        record = contexts
                                     };
 
                                 node.property = new Dictionary<string, string>();
@@ -913,7 +911,7 @@ namespace org.iringtools.web.controllers
                 string userName = "apandey1";
                 string success = String.Empty;
                 string folderName = string.Empty;
-                string parentFolderId = "caa7fc0d-37de-4e44-afb8-8af8dd7e294c";
+                string parentFolderId = form["id"];
                 int siteId = 1;
 
                 if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))

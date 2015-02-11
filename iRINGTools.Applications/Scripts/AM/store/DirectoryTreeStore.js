@@ -74,6 +74,7 @@ Ext.define('AM.store.DirectoryTreeStore', {
             model: 'AM.model.DirectoryModel',
             storeId: 'directorytreestore',
             root: {
+                id: 'caa7fc0d-37de-4e44-afb8-8af8dd7e294c',
                 expanded: false,
                 type: 'RootNode',
                 iconCls: 'root',
@@ -86,7 +87,7 @@ Ext.define('AM.store.DirectoryTreeStore', {
                     read: 'POST'
                 },
                 extraParams: {
-                    id: null,
+                    id: 'caa7fc0d-37de-4e44-afb8-8af8dd7e294c',
                     type: 'RootNode',
                     contextName: null,
                     endpoint: null,
