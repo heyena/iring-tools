@@ -58,7 +58,7 @@ namespace org.iringtools.web.controllers
                             int siteId = 1;
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            Folders folders = _repository.GetFolder(userName, parentFolderId, siteId);
+                            Folders folders = _repository.GetFolders(userName, parentFolderId, siteId);
 
                             foreach (Folder folder in folders)
                             {
@@ -82,6 +82,114 @@ namespace org.iringtools.web.controllers
 
                             return Json(nodes, JsonRequestBehavior.AllowGet);
                         }
+                    case "FolderNode":
+                        {
+                            string userName = "apandey1";
+                            string parentFolderId = "caa7fc0d-37de-4e44-afb8-8af8dd7e294c";
+                            int siteId = 1;
+
+                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                            Folders folders = _repository.GetFolders(userName, parentFolderId, siteId);
+                            org.iringtools.applicationConfig.Context context = _repository.GetContext(userName, parentFolderId, siteId);
+
+                            foreach (Folder folder in folders)
+                            {
+                                JsonTreeNode node = new JsonTreeNode
+                                {
+                                    nodeType = "async",
+                                    type = "FolderNode",
+                                    iconCls = "folder",
+                                    id = folder.FolderId.ToString(),
+                                    text = folder.FolderName,
+                                    expanded = false,
+                                    leaf = false,
+                                    children = null,
+                                    record = folder
+                                };
+
+                                node.property = new Dictionary<string, string>();
+                                node.property.Add("Display Name", folder.FolderName);
+                                nodes.Add(node);
+                            }
+
+                            if (context != null)
+                            {
+                                JsonTreeNode node = new JsonTreeNode
+                                    {
+                                        nodeType = "async",
+                                        type = "ContextNode",
+                                        iconCls = "context",
+                                        id = context.FolderId.ToString(),
+                                        text = context.DisplayName,
+                                        expanded = false,
+                                        leaf = false,
+                                        children = null,
+                                        record = context
+                                    };
+
+                                node.property = new Dictionary<string, string>();
+                                node.property.Add("Display Name", context.DisplayName);
+                                nodes.Add(node);
+                            }
+
+                            return Json(nodes, JsonRequestBehavior.AllowGet);
+                        }
+                    case "ContextNode":
+                        //{
+                            //string userName = "apandey1";
+                            //string parentFolderId = "caa7fc0d-37de-4e44-afb8-8af8dd7e294c";
+                            //int siteId = 1;
+
+                            //List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                            //org.iringtools.applicationConfig.Context contexts = _repository.GetContext(form["node"]);
+
+                            //foreach (Application application in contexts.Applications)
+                            //{
+                            //    ApplicationSettings appSettings = _repository.GetApplicationSettings(contexts.Name, application.Name);
+                            //    application.applicationSettings = appSettings;
+
+                            //    DataLayer dataLayer = _repository.GetDataLayer(contexts.Name, application.Name);
+
+                            //    if (dataLayer != null)
+                            //    {
+                            //        JsonTreeNode node = new JsonTreeNode
+                            //        {
+                            //            nodeType = "async",
+                            //            type = "ApplicationNode",
+                            //            iconCls = "application",
+                            //            id = contexts.Name + "/" + application.Name,
+                            //            text = application.DisplayName,
+                            //            expanded = false,
+                            //            leaf = false,
+                            //            children = null,
+                            //            record = new
+                            //            {
+                            //                Name = application.Name,
+                            //                DisplayName = application.DisplayName,
+                            //                Description = application.Description,
+                            //                DataLayer = dataLayer.Name,
+                            //                Assembly = dataLayer.Assembly,
+                            //                Configuration = application.Configuration,
+                            //                CacheImportURI = application.CacheInfo == null ? "" : application.CacheInfo.ImportURI,
+                            //                CacheTimeout = application.CacheInfo == null ? "" : Convert.ToString(application.CacheInfo.Timeout),
+                            //                PermissionGroups = application.PermissionGroup
+                            //            }
+                            //        };
+
+                            //        node.property = new Dictionary<string, string>();
+                            //        node.property.Add("Internal Name", application.Name);
+                            //        node.property.Add("Display Name", application.DisplayName);
+                            //        node.property.Add("Description", application.Description);
+                            //        node.property.Add("Data Layer", dataLayer.Name);
+                            //        node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
+
+                            //        nodes.Add(node);
+                            //    }
+                            //}
+
+                            //ActionResult result = Json(nodes, JsonRequestBehavior.AllowGet);
+                            //return result;
+                        //}
                     case "GroupsNode":
                         {
 
@@ -827,7 +935,7 @@ namespace org.iringtools.web.controllers
                 }
 
                 List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                Folders folders = _repository.GetFolder(userName, parentFolderId, siteId);
+                Folders folders = _repository.GetFolders(userName, parentFolderId, siteId);
 
                 foreach (Folder folder in folders)
                 {
