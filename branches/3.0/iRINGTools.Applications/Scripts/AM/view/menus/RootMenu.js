@@ -24,7 +24,7 @@ Ext.define('AM.view.menus.RootMenu', {
             items: [
         {
             xtype: 'menuitem',
-            action: 'newFolder',
+            action: 'newOrEditFolder',
             itemId: 'newFolder',
             icon: 'Content/img/16x16/document-new.png',
             text: 'New Folder'

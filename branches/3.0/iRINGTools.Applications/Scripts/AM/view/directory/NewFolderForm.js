@@ -16,31 +16,22 @@
 Ext.define('AM.view.directory.NewFolderForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.newfolderform',
-
-    requires: [
-    'AM.view.directory.DataLayerCombo',
-    'Ext.ux.form.CheckboxListCombo'
-  ],
-
-    record: '',
+    requires: ['Ext.ux.form.CheckboxListCombo'],
     node: '',
-    border: true,
     bodyStyle: 'padding:10px 5px 0',
-    method: 'POST',
-    url: 'directory/application',
+    //url: 'directory/Root',
 
     initComponent: function () {
         var me = this;
 
         me.initialConfig = Ext.apply({
-            method: 'POST',
-            url: 'directory/application'
+            //url: 'directory/Root'
         }, me.initialConfig);
 
         Ext.applyIf(me, {
             defaults: {
-                msgTarget: 'side',
-                anchor: '100%'
+                anchor: '100%',
+                msgTarget: 'side'
             },
             dockedItems: [
         {
@@ -68,223 +59,173 @@ Ext.define('AM.view.directory.NewFolderForm', {
         }
       ],
             items: [
-        {
-            xtype: 'hiddenfield',
-            name: 'oldAssembly'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'assembly'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'scope'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'application'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'name'
-        },
-        {
-            xtype: 'hiddenfield',
-            itemId: 'state',
-            name: 'state'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'path'
-        },
-        {
-            xtype: 'textfield',
-            fieldLabel: 'Display Name23',
-            name: 'displayName',
-            allowBlank: false
-        },
-        {
-            xtype: 'textfield',
-            fieldLabel: 'Internal Name',
-            name: 'internalName',
-            allowBlank: false
-        },
-        {
-            xtype: 'textareafield',
-            fieldLabel: 'Description',
-            name: 'description'
-        },
-        {
-            xtype: 'textfield',
-            disabled: true,
-            hidden: true,
-            fieldLabel: 'Context Name',
-            name: 'context'
-        },
-        {
-            xtype: 'datalayercombo',
-            value: ''
-        },
-        {
-            xtype: 'textfield',
-            fieldLabel: 'Cache ImportURI',
-            name: 'cacheImportURI'
-        },
-        {
-            xtype: 'textfield',
-            fieldLabel: 'Cache Timeout (in minutes)',
-            name: 'cacheTimeout'
-        },
-        {
-            xtype: 'checkboxlistcombo',
-            width: 180,
-            multiSelect: true,
-            itemId: 'permissionitem',
-            fieldLabel: 'Permissions:',
-            labelSeparator: '',
-            emptyText: '',
-            allowBlank: true,
-            name: 'permissions',
-            displayField: 'permission',
-            autoSelect: false,
-            queryMode: 'remote',
-            store: 'PermissionsS',
-            valueField: 'permission'
-
-        },
-        {
-            xtype: 'container',
-            layout: {
-                align: 'stretch',
-                type: 'hbox'
-            },
-            items: [
             {
-                xtype: 'label',
-                flex: 1,
-                style: {
-                    font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
+                xtype: 'hiddenfield',
+                name: 'path'
+            },
+            {
+                xtype: 'hiddenfield',
+                name: 'state'
+            },
+            {
+                xtype: 'hiddenfield',
+                name: 'oldContext'
+            },
+            {
+                xtype: 'hiddenfield',
+                name: 'name'
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: 'Display Name',
+                name: 'displayName',
+                allowBlank: false
+            },
+            {
+                xtype: 'hiddenfield',
+                itemId: 'contextname',
+                name: 'contextName'
+            },
+            {
+                xtype: 'checkboxlistcombo',
+                width: 180,
+                multiSelect: true,
+                itemId: 'permissionitem',
+                fieldLabel: 'Permissions:',
+                labelSeparator: '',
+                emptyText: '',
+                allowBlank: true,
+                name: 'permissions',
+                displayField: 'permission',
+                autoSelect: false,
+                queryMode: 'remote',
+                store: 'PermissionsS',
+                valueField: 'permission',
+                hidden: true
+                /*store: new TIP.store.RepositoryStore({
+                proxy: {
+                type: 'ajax',
+                url: 'getRepositories',
+                reader: {
+                type: 'json'
                 },
-                text: 'Settings:'
-            },
-            {
-                xtype: 'label',
-                flex: 1,
-                style: {
-                    font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
-                },
-                text: 'Name'
-            },
-            {
-                xtype: 'label',
-                flex: 1.5,
-                style: {
-                    font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
-                },
-                text: 'Value'
-            },
-            {
-                xtype: 'button',
-                action: 'addsettings',
-                width: 50,
-                text: 'Add',
-                tooltip: 'Click to Add settings'
+                extraParams:{
+                isReadOnly : true
+                }
+                }
+                }),
+                ,
+                listeners: {
+                beforequery : function(qe, eopt){
+                var me  = this;
+                me.store.reload();
+                me.store.on('beforeload', function(store, action) {
+                var params = store.proxy.extraParams;
+                params.isReadOnly = true;
+                }, me);
+                }
+                }*/
             }
           ]
-        },
-        {
-            xtype: 'fieldset',
-            border: false,
-            height: 200,
-            id: 'settingfieldset',
-            autoScroll: true
-        }
-      ]
         });
 
         me.callParent(arguments);
     },
-
     onSave: function () {
         var me = this;
         var win = me.up('window');
-        var endpointName = me.getForm().findField('displayName').getValue();
-        var scope = me.getForm().findField('scope').getValue();
+        var form = me.getForm();
+        var folderName = form.findField('displayName').getValue();
+        var state = form.findField('state').getValue();
+        var contextNameField = form.findField('contextName');
         var node = me.node;
-        var dlCombo = me.down('combo');
-        var state = me.getForm().findField('state').getValue();
 
-        if (state != 'edit')
-            me.getForm().findField('name').setValue(endpointName);
-        /////////////////////////////////////
-        if (scope != endpointName) {
-            /*if (ifExistSibling(endpointName, that.node, that.state)) {
-            showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
-            return;
-            }*/
+        //form.findField('contextName').setValue(folderName);
+        //    var context = form.findField('contextCombo').getValue();
+        //contextNameField.setValue(context);
 
-            me.getForm().submit({
+        if (state == 'new')
+            form.findField('name').setValue(folderName);
+
+        //        if (form.findField('cacheDBConnStr').getValue() == this.cacheConnStrTpl)
+        //            form.findField('cacheDBConnStr').setValue('');
+
+        node.eachChild(function (n) {
+            if (n.data.text == folderName) {
+                if (state == 'new') {
+                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Folder name \"' + folderName + '\" already exists.' });
+                    //showDialog(400, 100, 'Warning', 'Scope name \"' + folderName + '\" already exists.', Ext.Msg.OK, null);
+                    return;
+                }
+            }
+        });
+
+        if (form.isValid()) {
+            form.submit({
                 waitMsg: 'Saving Data...',
                 success: function (response, request) {
-                    Ext.example.msg('Notification', 'Application saved successfully!');
+                    Ext.example.msg('Notification', 'Folder saved successfully!');
                     win.fireEvent('save', me);
                     var parentNode = node.parentNode;
-                    if (node.data.type == 'FolderNode') {
-                        var nodeIndex = node.childNodes.length;
-                        node.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]);
-                    } else if (node.data.type == 'ScopeNode') {
+                    if (parentNode == undefined && node.data.text == 'Root') {
+                        var nodeIndex = node.lastChild.data.index + 1;
+
+                        var nodeToAdd;
+
+                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
+                            var isNodePresent = false;
+
+                            Ext.each(node.childNodes, function (existingNode) {
+                                if (existingNode.id == 'AM.model.DirectoryModel-' + newNode.id) {
+                                    isNodePresent = true;
+                                    return false;
+                                }
+                            });
+
+                            if (!isNodePresent) {
+                                nodeToAdd = newNode;
+                                return false;
+                            }
+                        });
+
+                        node.insertChild(nodeIndex, nodeToAdd);
+
+                    } else {
                         var nodeIndex = parentNode.indexOf(node);
                         parentNode.removeChild(node);
                         parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]);
                     }
                     me.setLoading(false);
-                    //Ext.ComponentQuery.query('directorytree')[0].onReload();
+                    //                    win.fireEvent('save', me);
+                    //                    node.firstChild.expand();
+                    //                    node.expandChildren();
+                    //                    Ext.ComponentQuery.query('directorytree')[0].onReload();
                 },
                 failure: function (response, request) {
+                    /*if (response.items != undefined && response.items[3].value !== undefined) {
+                    var rtext = response.items[3].value;
+                    Ext.widget('messagepanel', { title: 'Error saving folder changes', msg: 'Changes of ' + rtext + ' are not saved.'});
+                    return;
+                    }*/
+                    //Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});
                     var resp = Ext.decode(request.response.responseText);
-
                     var userMsg = resp['message'];
                     var detailMsg = resp['stackTraceDescription'];
                     var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
                     Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                     Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+
                 }
             });
+        } else {
+            Ext.widget('messagepanel', { title: 'Warning', msg: 'Please give folder name.' });
+            return;
         }
-        else {
-            //var message = 'Scope & Application name cannot be same!';
-            Ext.widget('messagepanel', { title: 'Warning', msg: 'Scope & Application name cannot be same!' });
-            //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-        }
-
-        ////////////////////////////////////
-        /*(me.getForm().isValid()){
-        me.getForm().submit({
-        waitMsg: 'Saving Data...',
-        success: function (response, request) {
-
-        win.fireEvent('save', me);
-        Ext.ComponentQuery.query('directorytree')[0].onReload();
-        },
-        failure: function (response, request) {
-        var message = 'Error saving changes!';
-        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-        return;
-        }
-        });
-        }else
-        {
-        var message = 'Please fill the required data';
-        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-        return;
-        }
-        */
     },
 
     onReset: function () {
         var me = this;
         var win = me.up('window');
-        win.fireEvent('Cancel', me);
+        win.fireEvent('cancel', me);
     }
-
 });
