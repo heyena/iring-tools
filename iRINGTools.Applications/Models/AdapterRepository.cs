@@ -17,6 +17,8 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.ServiceModel.Web;
+using org.iringtools.applicationConfig;
+using org.iringtools.UserSecurity;
 
 
 namespace iRINGTools.Web.Models
@@ -32,6 +34,7 @@ namespace iRINGTools.Web.Models
         protected string _dataServiceUri = null;
         protected string _hibernateServiceUri = null;
         protected string _referenceDataServiceUri = null;
+        protected string _applicationConfigurationServiceUri = null;
         protected string _servicesBasePath = string.Empty;
 
         public IDictionary<string, string> AuthHeaders { get; set; }
@@ -61,6 +64,10 @@ namespace iRINGTools.Web.Models
             _referenceDataServiceUri = _settings["RefDataServiceUri"];
             if (_referenceDataServiceUri.EndsWith("/"))
                 _referenceDataServiceUri = _referenceDataServiceUri.Remove(_referenceDataServiceUri.Length - 1);
+
+            _applicationConfigurationServiceUri = _settings["ApplicationConfigServiceUri"];
+            if (_applicationConfigurationServiceUri.EndsWith("/"))
+                _applicationConfigurationServiceUri = _applicationConfigurationServiceUri.Remove(_applicationConfigurationServiceUri.Length - 1);
 
             if (!string.IsNullOrEmpty(_settings["BaseDirectoryPath"]) && _settings["BaseDirectoryPath"].Contains("Applications"))
             {
@@ -173,7 +180,7 @@ namespace iRINGTools.Web.Models
             {
                 _logger.Error(ex.ToString());
                 throw;
-               // throw ex;
+                // throw ex;
             }
 
             return obj;
@@ -206,14 +213,14 @@ namespace iRINGTools.Web.Models
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 PermissionGroups lstgroup = client.Get<PermissionGroups>("/groups");
 
-               dicSecuritygroups = new List<Dictionary<string, string>>();
-               Dictionary<string, string> dicobj = null;
-               foreach (string group in lstgroup)
-               {
-                   dicobj = new Dictionary<string, string>();
-                   dicobj.Add("permission", group);
-                   dicSecuritygroups.Add(dicobj);
-               }
+                dicSecuritygroups = new List<Dictionary<string, string>>();
+                Dictionary<string, string> dicobj = null;
+                foreach (string group in lstgroup)
+                {
+                    dicobj = new Dictionary<string, string>();
+                    dicobj.Add("permission", group);
+                    dicSecuritygroups.Add(dicobj);
+                }
             }
             catch (Exception ex)
             {
@@ -242,18 +249,18 @@ namespace iRINGTools.Web.Models
             return nvlobj;
         }
 
-        public void SaveFilterFile(DataFilter filter, string fileName)
+        public void SaveFilterFile(org.iringtools.library.DataFilter filter, string fileName)
         {
             string filterPath = String.Format("{0}filter.{1}.xml", _servicesBasePath + _settings["AppDataPath"], fileName);
-            Utility.Write<DataFilter>(filter, filterPath, true);
+            Utility.Write<org.iringtools.library.DataFilter>(filter, filterPath, true);
         }
 
-        public void GetFilterFile(ref DataFilter filter, string fileName)
+        public void GetFilterFile(ref org.iringtools.library.DataFilter filter, string fileName)
         {
             string filterPath = String.Format("{0}filter.{1}.xml", _servicesBasePath + _settings["AppDataPath"], fileName);
             if (File.Exists(filterPath))
             {
-                filter = Utility.Read<DataFilter>(filterPath, true);
+                filter = Utility.Read<org.iringtools.library.DataFilter>(filterPath, true);
             }
         }
 
@@ -295,12 +302,31 @@ namespace iRINGTools.Web.Models
             {
                 _logger.Error(ex.ToString());
                 throw;
-                              
+
             }
 
-           
+
 
             return scope;
+        }
+
+        public Folders GetFolder(string userName, string parentFolderId, int siteId)
+        {
+            Folders folders = null;
+
+            try
+            {
+                WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
+                folders = client.Get<Folders>(String.Format("/folders/{0}?siteId={1}&parentFolderId={2}&format=xml", userName, siteId, Guid.Parse(parentFolderId)));
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+            return folders;
         }
 
         public DataDictionary GetDictionary(string scopeName, string applicationName)
@@ -525,7 +551,7 @@ namespace iRINGTools.Web.Models
           };
                 }
 
-                WebHttpClient client = CreateWebClient(_adapterServiceUri); 
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 obj = client.Post<ScopeProject>("/scopes", scope, true);
             }
 
@@ -584,6 +610,54 @@ namespace iRINGTools.Web.Models
                 _logger.Error(ex.ToString());
                 throw;
             }
+
+            return obj;
+        }
+
+        public string UpdateFolder(string displayName, string permissions)
+        {
+            string obj = null;
+
+            //try
+            //{
+            //    List<Permission> groups = new List<Permission>();
+                
+            //    if (permissions.Contains(","))
+            //    {
+            //        string[] arrstring = permissions.Split(',');
+
+            //        for(int i = 0; i < arrstring.Length; i++)
+            //        {
+            //            Permission tempPermission = new Permission();
+            //            tempPermission.PermissionName = arrstring[i];
+            //            groups.Add(tempPermission);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Permission tempPermission = new Permission();
+            //        tempPermission.PermissionName = permissions;
+            //        groups.Add(tempPermission);
+            //    }
+
+            //    Folder folder = new Folder()
+            //    {
+            //        FolderName = oldName,
+            //        permissions = new Permissions()
+            //    };
+
+            //    if (!string.IsNullOrEmpty(permissions))
+            //        folder.permissions.AddRange(groups);
+
+            //    string uri = string.Format("/root/{0}", oldName);
+            //    WebHttpClient client = CreateWebClient(_adapterServiceUri);
+            //    obj = client.Post<Folder>(uri, folder, true);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.Error(ex.ToString());
+            //    throw;
+            //}
 
             return obj;
         }
@@ -798,7 +872,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                
+
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 client.Timeout = timeout;
 
@@ -843,7 +917,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-               
+
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 client.Timeout = 3600000;
 
@@ -887,7 +961,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                
+
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
                 client.Timeout = timeout;
 
@@ -1059,7 +1133,7 @@ namespace iRINGTools.Web.Models
             return client.Post<Request, List<string>>(uri, request, true);
         }
 
-        public List<DataObject> GetDBObjects(string scope, string app, 
+        public List<DataObject> GetDBObjects(string scope, string app,
             Dictionary<string, string> conElts, List<string> tableNames)
         {
             string uri = String.Format("/{0}/{1}/objects", scope, app);
@@ -1195,7 +1269,7 @@ namespace iRINGTools.Web.Models
 
                         JsonTreeNode keyPropertyNode = new JsonTreeNode()
                         {
-                            text = dataProperty.propertyName,
+                            text = dataProperty.columnName,
                             type = "keyProperty",
                             iconCls = "treeKey",
                             leaf = true,
@@ -1208,7 +1282,7 @@ namespace iRINGTools.Web.Models
                     {
                         JsonTreeNode dataPropertyNode = new JsonTreeNode()
                         {
-                            text = dataProperty.propertyName,
+                            text = dataProperty.columnName,
                             type = "dataProperty",
                             iconCls = "treeProperty",
                             leaf = true,
@@ -1233,7 +1307,7 @@ namespace iRINGTools.Web.Models
                 Response response = client.Get<Response>("/generate");
                 return response;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.Error(e.ToString());
                 return PrepareErrorResponse(e, ErrorMessages.errUIRegenAll);
@@ -1311,6 +1385,63 @@ namespace iRINGTools.Web.Models
 
             return obj;
         }
-      
+
+        public string AddFolder(string userName, string name, string parentFolderId, int siteId, string permissions)
+        {
+            string obj = null;
+
+            try
+            {
+                #region TODO
+                // TODO: Need to create it dynamically at runtime
+                List<Permission> permissionsList = new List<Permission>();
+                
+                Group tempGroup = new Group();
+                tempGroup.Active = 1;
+                tempGroup.GroupDesc = "Admin Group";
+                tempGroup.GroupId = 47;
+                tempGroup.GroupName = "Administrator";
+                tempGroup.SiteId = 1;
+
+                if (permissions.Contains(","))
+                {
+                    string[] arrstring = permissions.Split(',');
+
+                    for(int i = 0; i < arrstring.Length; i++)
+                        permissionsList.Add(new Permission() { PermissionName = arrstring[i] });
+                }
+                else
+                {
+                    permissionsList.Add(new Permission() { PermissionName = permissions });
+                }
+
+                #endregion
+
+                Folder folder = new Folder()
+                {
+                    FolderName = name,
+                    ParentFolderId = Guid.Parse(parentFolderId),
+                    SiteId = siteId,
+                    permissions = new Permissions(),
+                    groups = new Groups()
+                };
+
+                folder.groups.Add(tempGroup);
+
+                if (string.IsNullOrEmpty(permissions))
+                    folder.permissions.AddRange(permissionsList);
+
+                WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
+                obj = client.Post<Folder>(String.Format("/insertFolder/{0}?format=xml", userName), folder, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+            }
+
+            return obj;
+        }
+
     }
 }

@@ -47,7 +47,7 @@
 {
     background: url('../img/image_add.png') no-repeat 0 0 !important;
 }
-.x-tree-panel .x-grid-row .x-grid-cell-inner .scopes
+.x-tree-panel .x-grid-row .x-grid-cell-inner .root
 {
     background-image: url("../img/internet-web-browser.png") !important;
 }
@@ -216,7 +216,10 @@
     color: #00df00;
 }
 
-
+.folder
+{
+    background-image: url(../img/folder.png);
+}
 
 .headerLnkBlack
 {

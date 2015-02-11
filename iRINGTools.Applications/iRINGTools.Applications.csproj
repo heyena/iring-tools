@@ -328,6 +328,8 @@
     <Content Include="Scripts\AM\view\directory\GraphMapWindow.js" />
     <Content Include="Scripts\AM\view\directory\ImportCacheForm.js" />
     <Content Include="Scripts\AM\view\directory\ImportCacheWindow.js" />
+    <Content Include="Scripts\AM\view\directory\RootPopUpForm.js" />
+    <Content Include="Scripts\AM\view\directory\RootPopUpWindow.js" />
     <Content Include="Scripts\AM\view\directory\ScopeForm.js" />
     <Content Include="Scripts\AM\view\directory\ScopeWindow.js" />
     <Content Include="Scripts\AM\view\directory\VirtualPropertyForm.js" />
@@ -355,6 +357,7 @@
     <Content Include="Scripts\AM\view\menus\NoLdapScopesMenu.js" />
     <Content Include="Scripts\AM\view\menus\RolemapMenu.js" />
     <Content Include="Scripts\AM\view\menus\RootAdminScopesMenu.js" />
+    <Content Include="Scripts\AM\view\menus\RootMenu.js" />
     <Content Include="Scripts\AM\view\menus\ScopeMenu.js" />
     <Content Include="Scripts\AM\view\menus\ScopesMenu.js" />
     <Content Include="Scripts\AM\view\menus\TemplatemapMenu.js" />
@@ -465,6 +468,10 @@
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Libraries\ApplicationConfigurationLibrary\ApplicationConfigurationLibrary.csproj">
+      <Project>{F9971D9C-4D1E-4E5C-A5D3-E7A2989C42D1}</Project>
+      <Name>ApplicationConfigurationLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary</Name>
