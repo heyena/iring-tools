@@ -15,7 +15,7 @@
 
 Ext.define('AM.view.menus.NewFolderMenu', {
     extend: 'Ext.menu.Menu',
-    alias: 'widget.newfoldermenu',
+    alias: 'widget.foldermenu',
 
     initComponent: function () {
         var me = this;
@@ -24,7 +24,7 @@ Ext.define('AM.view.menus.NewFolderMenu', {
             items: [
         {
             xtype: 'menuitem',
-            //action: 'newFolderlatest',
+            action: 'newFolder',
             itemId: 'editfolder',
             icon: 'Content/img/16x16/edit.png',
             text: 'New Folder'

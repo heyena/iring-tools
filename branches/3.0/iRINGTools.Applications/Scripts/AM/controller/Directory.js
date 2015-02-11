@@ -196,6 +196,7 @@ Ext.define('AM.controller.Directory', {
             form.getForm().findField('permissions').hide();
         }
 
+        form.getForm().findField('id').setValue(node.data.id);
         form.getForm().findField('path').setValue(path);
         form.getForm().findField('state').setValue(state);
         form.getForm().findField('oldContext').setValue(context);
@@ -645,6 +646,9 @@ Ext.define('AM.controller.Directory', {
                 scopeMenu.showAt(e.getXY());
             } else if (obj.type === "RootNode") {
                 var rootMenu = Ext.widget('rootmenu');
+                rootMenu.showAt(e.getXY());
+            } else if (obj.type === "FolderNode") {
+                var rootMenu = Ext.widget('foldermenu');
                 rootMenu.showAt(e.getXY());
             } else if (obj.type === "ApplicationNode") {
                 var applicationMenu = Ext.widget('applicationmenu');
@@ -1494,7 +1498,7 @@ Ext.define('AM.controller.Directory', {
             },
             "menuitem[action=newFolder]": {
                 click: this.newFolder
-            },
+            }
         });
     },
 

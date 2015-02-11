@@ -58,7 +58,11 @@ Ext.define('AM.view.directory.RootPopUpForm', {
           ]
         }
       ],
-            items: [
+        items: [
+            {
+                xtype: 'hiddenfield',
+                name: 'id'
+            },
             {
                 xtype: 'hiddenfield',
                 name: 'path'
@@ -167,7 +171,8 @@ Ext.define('AM.view.directory.RootPopUpForm', {
                     Ext.example.msg('Notification', 'Folder saved successfully!');
                     win.fireEvent('save', me);
                     var parentNode = node.parentNode;
-                    if (parentNode == undefined && node.data.text == 'Root') {
+
+//                    if (parentNode == undefined && node.data.text == 'Root') {
                         var nodeIndex = node.lastChild.data.index + 1;
 
                         var nodeToAdd;
@@ -190,11 +195,12 @@ Ext.define('AM.view.directory.RootPopUpForm', {
 
                         node.insertChild(nodeIndex, nodeToAdd);
 
-                    } else {
-                        var nodeIndex = parentNode.indexOf(node);
-                        parentNode.removeChild(node);
-                        parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]);
-                    }
+                       //Might be required in update of folder
+//                    } else {
+//                        var nodeIndex = parentNode.indexOf(node);
+//                        parentNode.removeChild(node);
+//                        parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]);
+//                    }
                     me.setLoading(false);
                     //                    win.fireEvent('save', me);
                     //                    node.firstChild.expand();
