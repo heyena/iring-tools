@@ -310,7 +310,7 @@ namespace iRINGTools.Web.Models
             return scope;
         }
 
-        public Folders GetFolder(string userName, string parentFolderId, int siteId)
+        public Folders GetFolders(string userName, string parentFolderId, int siteId)
         {
             Folders folders = null;
 
@@ -1442,6 +1442,24 @@ namespace iRINGTools.Web.Models
 
             return obj;
         }
+        
+        internal org.iringtools.applicationConfig.Context GetContext(string userName, string parentFolderId, int siteId)
+        {
+            org.iringtools.applicationConfig.Context context = null;
 
+            try
+            {
+                WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
+                context = client.Get<org.iringtools.applicationConfig.Context>(String.Format("/contexts/{0}?siteId={1}&folderId={2}&format=xml", userName, siteId, Guid.Parse(parentFolderId)));
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+
+            return context;
+        }
     }
 }
