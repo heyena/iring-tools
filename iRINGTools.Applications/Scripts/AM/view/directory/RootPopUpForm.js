@@ -172,7 +172,7 @@ Ext.define('AM.view.directory.RootPopUpForm', {
                     win.fireEvent('save', me);
                     var parentNode = node.parentNode;
 
-//                    if (parentNode == undefined && node.data.text == 'Root') {
+                    if (state == 'new') {
                         var nodeIndex = node.lastChild.data.index + 1;
 
                         var nodeToAdd;
@@ -196,11 +196,28 @@ Ext.define('AM.view.directory.RootPopUpForm', {
                         node.insertChild(nodeIndex, nodeToAdd);
 
                        //Might be required in update of folder
-//                    } else {
-//                        var nodeIndex = parentNode.indexOf(node);
-//                        parentNode.removeChild(node);
-//                        parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]);
-//                    }
+                    } else {
+                        var nodeIndex = parentNode.indexOf(node);
+                        parentNode.removeChild(node);
+
+                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
+                            var isNodePresent = false;
+
+                            Ext.each(node.childNodes, function (existingNode) {
+                                if (existingNode.id == 'AM.model.DirectoryModel-' + newNode.id) {
+                                    isNodePresent = true;
+                                    return false;
+                                }
+                            });
+
+                            if (!isNodePresent) {
+                                nodeToAdd = newNode;
+                                return false;
+                            }
+                        });
+
+                        parentNode.insertChild(nodeIndex, nodeToAdd);
+                    }
                     me.setLoading(false);
                     //                    win.fireEvent('save', me);
                     //                    node.firstChild.expand();

@@ -13,7 +13,7 @@
 * Do NOT hand edit this file.
 */
 
-Ext.define('AM.view.menus.NewFolderMenu', {
+Ext.define('AM.view.menus.FolderMenu', {
     extend: 'Ext.menu.Menu',
     alias: 'widget.foldermenu',
 
@@ -24,14 +24,15 @@ Ext.define('AM.view.menus.NewFolderMenu', {
             items: [
         {
             xtype: 'menuitem',
-            action: 'newFolder',
-            itemId: 'editfolder',
+            action: 'newOrEditFolder',
+            itemId: 'newFolder',
             icon: 'Content/img/16x16/edit.png',
             text: 'New Folder'
         },
         {
             xtype: 'menuitem',
-            //action: 'deletescope',
+            action: 'newOrEditFolder',
+            itemId: 'editFolder',
             icon: 'Content/img/16x16/delete.png',
             text: 'Edit Folder'
         },

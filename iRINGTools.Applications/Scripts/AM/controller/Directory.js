@@ -61,7 +61,7 @@ Ext.define('AM.controller.Directory', {
         'menus.RootMenu',
         'directory.RootPopUpForm',
         'directory.RootPopUpWindow',
-        'menus.NewFolderMenu'
+        'menus.FolderMenu'
         
         
     ],
@@ -145,7 +145,7 @@ Ext.define('AM.controller.Directory', {
     },
 
     //root
-    newFolder: function(item, e, eOpts){
+    onNewOrEditFolder: function(item, e, eOpts){
     
        var me = this;
         var path, state, context, description, wintitle, displayName;
@@ -648,8 +648,8 @@ Ext.define('AM.controller.Directory', {
                 var rootMenu = Ext.widget('rootmenu');
                 rootMenu.showAt(e.getXY());
             } else if (obj.type === "FolderNode") {
-                var rootMenu = Ext.widget('foldermenu');
-                rootMenu.showAt(e.getXY());
+                var folderMenu = Ext.widget('foldermenu');
+                folderMenu.showAt(e.getXY());
             } else if (obj.type === "ApplicationNode") {
                 var applicationMenu = Ext.widget('applicationmenu');
                 applicationMenu.showAt(e.getXY());
@@ -1496,8 +1496,8 @@ Ext.define('AM.controller.Directory', {
             "button[action=saveDataFilter]": {
                 click: this.saveDataFilter
             },
-            "menuitem[action=newFolder]": {
-                click: this.newFolder
+            "menuitem[action=newOrEditFolder]": {
+                click: this.onNewOrEditFolder
             }
         });
     },

@@ -23,10 +23,10 @@ Ext.define('AM.view.directory.NewFolderWindow', {
   ],
 
     border: false,
-    height: 265,
-    width: 467,
-    minHeight: 265,
-    minWidth: 250,
+    height: 110,
+    width: 430,
+    minHeight: 100,
+    minWidth: 280,
     layout: {
         type: 'fit'
     },
