@@ -189,6 +189,21 @@ namespace org.iringtools.library
             return dataProperties.FirstOrDefault(c => c.propertyName == keyPropertyName);
         }
 
+        public List<DataProperty> GetKeyDataProperties()
+        {
+          List<DataProperty> keyDataProperties = new List<DataProperty>();
+
+          foreach (KeyProperty keyProperty in keyProperties)
+          {
+            DataProperty keyDataProperty = getKeyProperty(keyProperty.keyPropertyName);
+
+            if (keyDataProperty != null)
+              keyDataProperties.Add(keyDataProperty);
+          }
+
+          return keyDataProperties;
+        }
+
         public bool deleteProperty(DataProperty dataProperty)
         {
             foreach (DataProperty property in dataProperties)

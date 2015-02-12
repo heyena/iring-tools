@@ -146,16 +146,25 @@ namespace org.iringtools.adapter
             {
                 if (_lwDataLayer != null)
                 {
+                    _logger.Info("DataLayer Class: LightWeight");
+
                     dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
                 }
                 if (_lwDataLayer2 != null)
                 {
+
+                  _logger.Info("DataLayer Class: LightWeight2");
+
                     dictionary = _lwDataLayer2.Dictionary(refresh, objectType, out filter);
                 }
                 else if (_dataLayer != null)
                 {
+                    _logger.Info("DataLayer Class: Legacy");
+
                     if (refresh)
                     {
+                      _logger.Info("Refreshing Dictionary");
+
                         if (!string.IsNullOrEmpty(objectType))
                         {
                             Response response = ((IDataLayer2)_dataLayer).Refresh(objectType);
@@ -213,6 +222,7 @@ namespace org.iringtools.adapter
 
             try
             {
+
                 _dictionary = GetDictionary(updateDictionary);
                 cacheId = CheckCache();
 

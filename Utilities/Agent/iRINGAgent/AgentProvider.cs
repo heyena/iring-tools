@@ -75,7 +75,18 @@ namespace org.iringtools.agent
                     _settings["ImpersonatedUser"] = _clientId;
                     _settings["ClientToken"] = clientToken;
                   }
-                  RefreshCache(task.Project, task.App, false);
+
+                  string doRefresh = _settings["RefreshDictionary"].ToString();
+
+                  _logger.Info("RefreshDictionary Flag: " + doRefresh);
+
+                  if (doRefresh.ToLower() == "true")
+                  {
+                    RefreshCache(task.Project, task.App, true);
+                  } else
+                  {
+                    RefreshCache(task.Project, task.App, false);
+                  }
                 }
                 else if (task.TaskType.ToLower().Equals("exchange"))
                 {
