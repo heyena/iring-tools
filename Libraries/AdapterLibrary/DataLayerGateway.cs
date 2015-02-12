@@ -1851,12 +1851,24 @@ namespace org.iringtools.adapter
                         {
                             DataRow newRow = table.NewRow();
 
+                            int indexCounter = 0;
                             foreach (var pair in dataObj.Dictionary)
                             {
-                                if (pair.Value == null)
-                                    newRow[pair.Key] = DBNull.Value;
+                                if (indexCounter < objectType.dataProperties.Count() && (objectType.dataProperties[indexCounter++].dataType.ToString()) == "String")
+                                {
+                                    if (pair.Value == null)
+                                        newRow[pair.Key] = DBNull.Value;
+                                    else
+                                        newRow[pair.Key] = pair.Value;
+                                }
                                 else
-                                    newRow[pair.Key] = pair.Value;
+                                {
+                                    if (string.IsNullOrEmpty(pair.Value.ToString()))
+                                        newRow[pair.Key] = DBNull.Value;
+                                    else
+                                        newRow[pair.Key] = pair.Value;
+                                }
+
                             }
 
                             if (dataObj.HasContent)
@@ -1892,7 +1904,7 @@ namespace org.iringtools.adapter
                                 int indexCounter = 0;
                                 foreach (var pair in dataObj.Dictionary)
                                 {
-                                    if ((objectType.dataProperties[indexCounter++].dataType.ToString()) == "String")
+                                    if (indexCounter < objectType.dataProperties.Count() && (objectType.dataProperties[indexCounter++].dataType.ToString()) == "String")
                                     {
                                         if (pair.Value == null)
                                             newRow[pair.Key] = DBNull.Value;
@@ -1906,6 +1918,7 @@ namespace org.iringtools.adapter
                                         else
                                             newRow[pair.Key] = pair.Value;
                                     }
+
                                 }
                                 if (dataObj.HasContent)
                                 {
