@@ -58,7 +58,7 @@ Ext.define('AM.view.directory.RootPopUpForm', {
           ]
         }
       ],
-        items: [
+            items: [
             {
                 xtype: 'hiddenfield',
                 name: 'id'
@@ -173,7 +173,11 @@ Ext.define('AM.view.directory.RootPopUpForm', {
                     var parentNode = node.parentNode;
 
                     if (state == 'new') {
-                        var nodeIndex = node.lastChild.data.index + 1;
+                        var nodeIndex = 0;
+
+                        if (node.lastChild != null) {
+                            nodeIndex = node.lastChild.data.index + 1;
+                        }
 
                         var nodeToAdd;
 
@@ -195,7 +199,7 @@ Ext.define('AM.view.directory.RootPopUpForm', {
 
                         node.insertChild(nodeIndex, nodeToAdd);
 
-                       //Might be required in update of folder
+                        //Might be required in update of folder
                     } else {
                         var nodeIndex = parentNode.indexOf(node);
                         parentNode.removeChild(node);

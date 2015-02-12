@@ -17,6 +17,7 @@ using System.Xml.Linq;
 using System.Web.Script.Serialization;
 using System.Xml;
 using org.iringtools.applicationConfig;
+using org.iringtools.UserSecurity;
 
 namespace org.iringtools.web.controllers
 {
@@ -57,7 +58,7 @@ namespace org.iringtools.web.controllers
                             int siteId = 1;
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            Folders folders = _repository.GetFolders(userName, form["id"], siteId);
+                            Folders folders = _repository.GetFolders(userName, Guid.Parse(form["id"]), siteId);
 
                             foreach (Folder folder in folders)
                             {
@@ -87,7 +88,7 @@ namespace org.iringtools.web.controllers
                             int siteId = 1;
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            Folders folders = _repository.GetFolders(userName, form["node"], siteId);
+                            Folders folders = _repository.GetFolders(userName, Guid.Parse(form["node"]), siteId);
                             org.iringtools.applicationConfig.Contexts contexts = _repository.GetContexts(userName, form["node"], siteId);
 
                             foreach (Folder folder in folders)
@@ -910,20 +911,60 @@ namespace org.iringtools.web.controllers
             {
                 string userName = "apandey1";
                 string success = String.Empty;
-                string folderName = string.Empty;
-                string parentFolderId = form["id"];
+                string folderName = form["displayName"];
+                Guid folderId = !String.IsNullOrEmpty(form["node"]) ? Guid.Parse(form["node"]) : Guid.Empty;
+                Guid parentFolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
                 int siteId = 1;
 
-                if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
+                #region TODO
+                // TODO: Need to create it dynamically at runtime
+                List<Permission> permissionsList = new List<Permission>();
+
+                Group tempGroup = new Group();
+                tempGroup.Active = 1;
+                tempGroup.GroupDesc = "Admin Group";
+                tempGroup.GroupId = 47;
+                tempGroup.GroupName = "Administrator";
+                tempGroup.SiteId = 1;
+
+                if (form["permissions"].Contains(","))
                 {
-                    folderName = form["displayName"];
-                    success = _repository.AddFolder(userName, folderName, parentFolderId, siteId, form["permissions"]);
+                    string[] arrstring = form["permissions"].Split(',');
+
+                    for (int i = 0; i < arrstring.Length; i++)
+                        permissionsList.Add(new Permission() { PermissionName = arrstring[i] });
                 }
                 else
                 {
-                    folderName = form["contextName"];
-                    success = _repository.UpdateFolder(folderName, form["permissions"]);
+                    permissionsList.Add(new Permission() { PermissionName = form["permissions"] });
                 }
+
+                #endregion
+
+                Folder tempFolder = new Folder()
+                {
+                    FolderId = folderId,
+                    FolderName = folderName,
+                    ParentFolderId = parentFolderId,
+                    SiteId = siteId,
+                    permissions = new Permissions(),
+                    groups = new Groups()
+                };
+
+                tempFolder.groups.Add(tempGroup);
+
+                if (string.IsNullOrEmpty(form["permissions"]))
+                    tempFolder.permissions.AddRange(permissionsList);
+
+                if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
+                {
+                    success = _repository.AddFolder(userName, tempFolder);
+                }
+                else
+                {
+                    success = _repository.UpdateFolder(userName, tempFolder);
+                }
+
                 if (success.Trim().Contains("Error"))
                 {
                     _CustomErrorLog = new CustomErrorLog();

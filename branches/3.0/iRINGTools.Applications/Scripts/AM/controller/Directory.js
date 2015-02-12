@@ -154,17 +154,18 @@ Ext.define('AM.controller.Directory', {
         context = node.data.record.context;
 
         if (node.parentNode) {
-            path = node.internalId;
+            path = node.parentNode.internalId;
         } else {
             path = '';
         }
 
-        var conf = {
-            id: 'tab-' + node.data.id,
-            iconCls: 'folder'
-        };
+//        var conf = {
+//            id: 'tab-' + node.data.id,
+//            iconCls: 'folder'
+//        };
 
-       var win = Ext.widget('rootpopupWindow',conf);
+        //       var win = Ext.widget('rootpopupWindow',conf);
+        var win = Ext.widget('rootpopupWindow');
        var form = win.down('form');
        form.node = node;
 
@@ -196,7 +197,7 @@ Ext.define('AM.controller.Directory', {
             form.getForm().findField('permissions').hide();
         }
 
-        form.getForm().findField('id').setValue(node.data.id);
+        form.getForm().findField('id').setValue(node.internalId);
         form.getForm().findField('path').setValue(path);
         form.getForm().findField('state').setValue(state);
         form.getForm().findField('oldContext').setValue(context);
