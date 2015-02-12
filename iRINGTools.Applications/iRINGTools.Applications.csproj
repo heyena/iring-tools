@@ -313,6 +313,7 @@
     <Content Include="Scripts\AM\view\directory\ApplicationWindow.js" />
     <Content Include="Scripts\AM\view\directory\AvailBaseUrlCombo.js" />
     <Content Include="Scripts\AM\view\directory\ContextCombo.js" />
+    <Content Include="Scripts\AM\view\directory\ContextWindow.js" />
     <Content Include="Scripts\AM\view\directory\DataGridPanel.js" />
     <Content Include="Scripts\AM\view\directory\DataLayerCombo.js" />
     <Content Include="Scripts\AM\view\directory\DataLayerForm.js" />
@@ -328,6 +329,7 @@
     <Content Include="Scripts\AM\view\directory\GraphMapWindow.js" />
     <Content Include="Scripts\AM\view\directory\ImportCacheForm.js" />
     <Content Include="Scripts\AM\view\directory\ImportCacheWindow.js" />
+    <Content Include="Scripts\AM\view\directory\ContextForm.js" />
     <Content Include="Scripts\AM\view\directory\RootPopUpForm.js" />
     <Content Include="Scripts\AM\view\directory\RootPopUpWindow.js" />
     <Content Include="Scripts\AM\view\directory\ScopeForm.js" />

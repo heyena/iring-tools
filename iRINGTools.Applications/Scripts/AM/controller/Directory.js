@@ -61,9 +61,11 @@ Ext.define('AM.controller.Directory', {
         'menus.RootMenu',
         'directory.RootPopUpForm',
         'directory.RootPopUpWindow',
-        'menus.FolderMenu'
-        
-        
+        'menus.FolderMenu',
+        'directory.ContextForm',
+        'directory.ContextWindow',
+
+
     ],
 
     refs: [
@@ -102,7 +104,7 @@ Ext.define('AM.controller.Directory', {
         if (operation.node !== null) {
             var operationNode = operation.node.data;
             var params = store.proxy.extraParams;
-          if (operationNode.type !== null)
+            if (operationNode.type !== null)
                 params.type = operationNode.type;
 
             if (operationNode.record !== null && operationNode.record.Related !== null)
@@ -145,9 +147,9 @@ Ext.define('AM.controller.Directory', {
     },
 
     //root
-    onNewOrEditFolder: function(item, e, eOpts){
-    
-       var me = this;
+    onNewOrEditFolder: function (item, e, eOpts) {
+
+        var me = this;
         var path, state, context, description, wintitle, displayName;
         var tree = me.getDirTree();
         var node = tree.getSelectedNode();
@@ -209,7 +211,60 @@ Ext.define('AM.controller.Directory', {
         win.show();       
     },
 
-     //end root
+    //end root
+
+    // newContext
+    newContext: function (item, e, eOpts) {
+       
+        var me = this;
+        var path, state, context, description, wintitle, displayName;
+        var tree = me.getDirTree();
+        var node = tree.getSelectedNode();
+        var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
+        context = node.data.record.context;
+
+        if (node.parentNode) {
+            path = node.internalId;
+        } else {
+            path = '';
+        }
+
+        var conf = {
+            id: 'tab-' + node.data.id,
+            title: wintitle,
+            iconCls: 'tabsScope'
+        };
+        var win = Ext.widget('contextwindow', conf);
+        var form = win.down('form');
+        // form.node = node;
+
+
+        //TODO: Need it later
+        if (item.itemId == 'editFolder' && node.data.record !== undefined) {
+            var name = node.data.record.Name;
+            win.title = 'Edit Context';
+            var state = 'edit';
+
+        } else {
+            var name = '';
+            var state = 'new';
+            win.title = 'Add Context';
+        }
+
+        win.on('save', function () {
+            win.destroy();
+            tree.view.refresh();
+            tree.expandPath(tree.getRootNode().getPath());
+            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+            detailGrid.setSource({});
+        }, me);
+
+        win.on('cancel', function () {
+            win.destroy();
+        }, me);
+        win.show();
+    },
+    // end newContext
     newOrEditScope: function (item, e, eOpts) {
 
         var me = this;
@@ -540,20 +595,20 @@ Ext.define('AM.controller.Directory', {
                     params.start = (store.currentPage - 1) * store.pageSize;
                     params.limit = store.pageSize;
                 }
-                
+
                 params.app = endpointName; //node.parentNode.parentNode.data.property.Name;
                 params.scope = contextName; //node.parentNode.parentNode.parentNode.data.property.Name ;
                 params.graph = graph;
-//                if (checkboxForGrid) {
-//                    params.limit = 100000;
-//                    store.pageSize = 100;
-//                    //store.buffered = true;
-//                    //store.leadingBufferZone = 300;
-//                    //gridPanel.verticalScrollerType = 'paginggridscroller';
-//                    //gridPanel.loadMask = true;
-//                    if (gridPanel.dockedItems.length >= 2)
-//                        gridPanel.dockedItems.removeAt(1);
-//                }
+                //                if (checkboxForGrid) {
+                //                    params.limit = 100000;
+                //                    store.pageSize = 100;
+                //                    //store.buffered = true;
+                //                    //store.leadingBufferZone = 300;
+                //                    //gridPanel.verticalScrollerType = 'paginggridscroller';
+                //                    //gridPanel.loadMask = true;
+                //                    if (gridPanel.dockedItems.length >= 2)
+                //                        gridPanel.dockedItems.removeAt(1);
+                //                }
             }, me);
 
             gridProxy.on('exception', function (proxy, response, operation) {
@@ -675,22 +730,22 @@ Ext.define('AM.controller.Directory', {
             } else if (obj.type === "DataObjectsNode") {
                 var graphMenu = Ext.widget('appdatarefreshmenu');
 
-//                if (node.data.property["Data Mode"] == "Live") {
-//                    if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
-//                        graphMenu.items.map['switchToCached'].setVisible(true);
-//                        graphMenu.items.map['switchToLive'].setVisible(false);
-//                        graphMenu.items.map['showCacheInfo'].setVisible(false);
-//                    }
-//                    	
-//                } else if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
-//                    graphMenu.items.map['switchToCached'].setVisible(false);
-//                    graphMenu.items.map['switchToLive'].setVisible(true);
-//                    graphMenu.items.map['showCacheInfo'].setVisible(true);
-//                    	
-//                } else if (node.parentNode.data.property["LightweightDataLayer"] == "Yes") {
-//                    graphMenu.items.map['switchToCached'].setVisible(false);
-//                    graphMenu.items.map['switchToLive'].setVisible(false);
-//                    graphMenu.items.map['showCacheInfo'].setVisible(true);
+                //                if (node.data.property["Data Mode"] == "Live") {
+                //                    if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
+                //                        graphMenu.items.map['switchToCached'].setVisible(true);
+                //                        graphMenu.items.map['switchToLive'].setVisible(false);
+                //                        graphMenu.items.map['showCacheInfo'].setVisible(false);
+                //                    }
+                //                    	
+                //                } else if (node.parentNode.data.property["LightweightDataLayer"] == "No") {
+                //                    graphMenu.items.map['switchToCached'].setVisible(false);
+                //                    graphMenu.items.map['switchToLive'].setVisible(true);
+                //                    graphMenu.items.map['showCacheInfo'].setVisible(true);
+                //                    	
+                //                } else if (node.parentNode.data.property["LightweightDataLayer"] == "Yes") {
+                //                    graphMenu.items.map['switchToCached'].setVisible(false);
+                //                    graphMenu.items.map['switchToLive'].setVisible(false);
+                //                    graphMenu.items.map['showCacheInfo'].setVisible(true);
                 //                }
 
 
@@ -1499,6 +1554,9 @@ Ext.define('AM.controller.Directory', {
             },
             "menuitem[action=newOrEditFolder]": {
                 click: this.onNewOrEditFolder
+            },
+            "menuitem[action=newcontext]": {
+                click: this.newContext
             }
         });
     },
