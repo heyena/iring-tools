@@ -104,6 +104,7 @@
     dirNode: null,
     scope: '',
     app: '',
+    dataview: null,
 
     onSQLConfig: function (dirNode) {
         var me = this;
@@ -171,6 +172,7 @@
 
     onTreeItemClick: function (dataview, record, item, index, e, eOpts) {
         var me = this;
+        this.dataview = dataview;
         var treePanel = dataview.up('sqlobjectstreepanel');
         var container = treePanel.up('sqlmainconfigpanel').down('#configcontainer');
         var nodeType = record.raw.type.toLowerCase();
@@ -188,7 +190,7 @@
                 break;
             case 'keys':
                 var keySelPanel = container.down('sqlkeyselectionpanel');
-                keySelPanel.setRecord(record);
+                keySelPanel.setRecord(record, dataview);
                 container.getLayout().setActiveItem(keySelPanel);
                 break;
             case 'keyproperty':
@@ -204,7 +206,6 @@
                 break;
 
             case 'extension':
-
                 var data = [];
                 Ext.each(record.childNodes, function (node) {
                     data.push({
@@ -246,6 +247,8 @@
                 break;
         }
     },
+
+
 
     onConnect: function (button, e) {
         var me = this;
@@ -319,8 +322,29 @@
         var dataProps = keysNode.parentNode.raw.properties.dataProperties;
         var keys = panel.getForm().findField('selectedKeys').getValue();
 
-
         keysNode.removeAll();
+
+        //hg
+        var extensionProperties = [];
+        var objectsNode = treePanel.getRootNode().firstChild;
+        Ext.each(objectsNode.childNodes, function (objectNode) {
+            var extNodes = objectNode.findChild('text', 'Extension').childNodes;
+
+            Ext.each(extNodes, function (extNode, index) {
+                var extVal = extNode.raw.properties;
+                extensionProperties.push({
+                    columnName: extVal.columnName,
+                    propertyName: extVal.propertyName,
+                    dataType: extVal.dataType,
+                    dataLength: 1000,
+                    isNullable: true,
+                    keyType: 0,
+                    precision: 0,
+                    scale: 0,
+                    definition: extVal.definition
+                });
+            });
+        });
 
         Ext.each(keys, function (key) {
             Ext.each(dataProps, function (dataProp) {
@@ -346,6 +370,32 @@
                     return;
                 }
             });
+
+            //hg
+            Ext.each(extensionProperties, function (extProp) {
+                if (extProp.columnName === key) {
+                    // add to keys node
+                    keysNode.appendChild({
+                        text: key,
+                        type: 'keyProperty',
+                        iconCls: 'treeKey',
+                        leaf: true,
+                        properties: extProp
+                    });
+
+                    // update keytype in data record
+                    extProp.keyType = 'assigned';
+
+                    // remove from selected properties node
+                    var propNode = propsNode.findChild('text', key);
+                    if (propNode != null) {
+                        propsNode.removeChild(propNode);
+                    }
+
+                    return;
+                }
+            });
+            //
         });
     },
 
