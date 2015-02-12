@@ -631,7 +631,8 @@ namespace iRINGTools.Web.Models
 
             return obj;
         }
-
+      //  /scopes/{scope}/delete
+    //   /deleteFolder/{folderId}?format={format}
         public string DeleteScope(string name)
         {
             string obj = null;
@@ -650,6 +651,28 @@ namespace iRINGTools.Web.Models
 
             return obj;
         }
+
+
+        //delete folder
+        public string DeleteFolder(Folder folder)
+        {
+            string obj = null;
+
+            try
+            {
+                WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
+                obj = client.Delete<Folder>(String.Format("/deleteFolder/{0}?format=xml", folder.FolderId), folder, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+            }
+
+            return obj;
+        }
+
+        //
 
         public string AddApplication(string scopeName, ScopeApplication application)
         {

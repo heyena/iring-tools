@@ -1255,6 +1255,95 @@ namespace org.iringtools.web.controllers
             }
         }
 
+        //delete folder
+        public JsonResult DeleteFolder(FormCollection form)
+        {
+            try
+            {
+                string userName = "apandey1";
+                string success = String.Empty;
+                string folderName = form["nodename"];
+                Guid folderId = !String.IsNullOrEmpty(form["nodeid"]) ? Guid.Parse(form["nodeid"]) : Guid.Empty;
+                Guid parentFolderId = !String.IsNullOrEmpty(form["parentnodeid"]) ? Guid.Parse(form["parentnodeid"]) : Guid.Empty;
+
+                //var js = new JavaScriptSerializer();
+                //var jss = js.Deserialize<object>(form["data"]);
+
+                //MemoryStream stream = new MemoryStream();
+                //StreamWriter writer = new StreamWriter(stream);
+                //writer.Write(form["data"]);
+                //writer.Flush();
+
+                //var jss1 = Utility.DeserializeFromStreamJson<Folder>(stream, true);
+                
+                int siteId = 1;
+
+                #region TODO
+                // TODO: Need to create it dynamically at runtime
+                List<Permission> permissionsList = new List<Permission>();
+
+                Group tempGroup = new Group();
+                tempGroup.Active = 1;
+                tempGroup.GroupDesc = "Admin Group";
+                tempGroup.GroupId = 47;
+                tempGroup.GroupName = "Administrator";
+                tempGroup.SiteId = 1;
+
+                //if (form["permissions"].Contains(","))
+                //{
+                //    string[] arrstring = form["permissions"].Split(',');
+
+                //    for (int i = 0; i < arrstring.Length; i++)
+                //        permissionsList.Add(new Permission() { PermissionName = arrstring[i] });
+                //}
+                //else
+                //{
+                //    permissionsList.Add(new Permission() { PermissionName = form["permissions"] });
+                //}
+
+                #endregion
+
+                Folder tempFolder = new Folder()
+                {
+                    FolderId = folderId,
+                    FolderName = folderName,
+                    ParentFolderId = parentFolderId,
+                    SiteId = siteId,
+                    permissions = new Permissions(),
+                    groups = new Groups()
+                };
+
+                tempFolder.groups.Add(tempGroup);
+
+                //if (string.IsNullOrEmpty(form["permissions"]))
+                //foreach(Permission per in jss.permissions)
+                //    tempFolder.permissions.Add(per);
+
+                success = _repository.DeleteFolder(tempFolder);
+              
+                if (success.Trim().Contains("Error"))
+                {
+                    _CustomErrorLog = new CustomErrorLog();
+                    _CustomError = _CustomErrorLog.getErrorResponse(success);
+                    return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.ToString());
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUIDeleteScope, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        //
+
+
         public JsonResult DeleteApplication(FormCollection form)
         {
             try

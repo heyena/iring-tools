@@ -26,20 +26,20 @@ Ext.define('AM.view.menus.FolderMenu', {
             xtype: 'menuitem',
             action: 'newOrEditFolder',
             itemId: 'newFolder',
-            icon: 'Content/img/16x16/edit.png',
+            icon: 'Content/img/16x16/document-new.png',
             text: 'New Folder'
         },
         {
             xtype: 'menuitem',
             action: 'newOrEditFolder',
             itemId: 'editFolder',
-            icon: 'Content/img/16x16/delete.png',
+            icon: 'Content/img/16x16/edit.png',
             text: 'Edit Folder'
         },
          {
             xtype: 'menuitem',
-            //action: 'neweditendpoint',
-            icon: 'Content/img/16x16/document-new.png',
+            action: 'deleteFolder',
+            icon: 'Content/img/16x16/delete.png',
             text: 'Delete Folder'
         },
         {
