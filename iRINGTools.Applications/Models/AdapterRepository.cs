@@ -310,14 +310,14 @@ namespace iRINGTools.Web.Models
             return scope;
         }
 
-        public Folders GetFolders(string userName, string parentFolderId, int siteId)
+        public Folders GetFolders(string userName, Guid parentFolderId, int siteId)
         {
             Folders folders = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
-                folders = client.Get<Folders>(String.Format("/folders/{0}?siteId={1}&parentFolderId={2}&format=xml", userName, siteId, Guid.Parse(parentFolderId)));
+                folders = client.Get<Folders>(String.Format("/folders/{0}?siteId={1}&parentFolderId={2}&format=xml", userName, siteId, parentFolderId));
             }
             catch (Exception ex)
             {
@@ -614,50 +614,20 @@ namespace iRINGTools.Web.Models
             return obj;
         }
 
-        public string UpdateFolder(string displayName, string permissions)
+        public string UpdateFolder(string userName, Folder updatedFolder)
         {
             string obj = null;
 
-            //try
-            //{
-            //    List<Permission> groups = new List<Permission>();
-                
-            //    if (permissions.Contains(","))
-            //    {
-            //        string[] arrstring = permissions.Split(',');
-
-            //        for(int i = 0; i < arrstring.Length; i++)
-            //        {
-            //            Permission tempPermission = new Permission();
-            //            tempPermission.PermissionName = arrstring[i];
-            //            groups.Add(tempPermission);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        Permission tempPermission = new Permission();
-            //        tempPermission.PermissionName = permissions;
-            //        groups.Add(tempPermission);
-            //    }
-
-            //    Folder folder = new Folder()
-            //    {
-            //        FolderName = oldName,
-            //        permissions = new Permissions()
-            //    };
-
-            //    if (!string.IsNullOrEmpty(permissions))
-            //        folder.permissions.AddRange(groups);
-
-            //    string uri = string.Format("/root/{0}", oldName);
-            //    WebHttpClient client = CreateWebClient(_adapterServiceUri);
-            //    obj = client.Post<Folder>(uri, folder, true);
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.Error(ex.ToString());
-            //    throw;
-            //}
+            try
+            {
+                WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
+                obj = client.Put<Folder>(String.Format("/updateFolder/{0}?format=xml", userName), updatedFolder, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+            }
 
             return obj;
         }
@@ -1386,53 +1356,14 @@ namespace iRINGTools.Web.Models
             return obj;
         }
 
-        public string AddFolder(string userName, string name, string parentFolderId, int siteId, string permissions)
+        public string AddFolder(string userName, Folder newFolder)
         {
             string obj = null;
 
             try
             {
-                #region TODO
-                // TODO: Need to create it dynamically at runtime
-                List<Permission> permissionsList = new List<Permission>();
-                
-                Group tempGroup = new Group();
-                tempGroup.Active = 1;
-                tempGroup.GroupDesc = "Admin Group";
-                tempGroup.GroupId = 47;
-                tempGroup.GroupName = "Administrator";
-                tempGroup.SiteId = 1;
-
-                if (permissions.Contains(","))
-                {
-                    string[] arrstring = permissions.Split(',');
-
-                    for(int i = 0; i < arrstring.Length; i++)
-                        permissionsList.Add(new Permission() { PermissionName = arrstring[i] });
-                }
-                else
-                {
-                    permissionsList.Add(new Permission() { PermissionName = permissions });
-                }
-
-                #endregion
-
-                Folder folder = new Folder()
-                {
-                    FolderName = name,
-                    ParentFolderId = Guid.Parse(parentFolderId),
-                    SiteId = siteId,
-                    permissions = new Permissions(),
-                    groups = new Groups()
-                };
-
-                folder.groups.Add(tempGroup);
-
-                if (string.IsNullOrEmpty(permissions))
-                    folder.permissions.AddRange(permissionsList);
-
                 WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
-                obj = client.Post<Folder>(String.Format("/insertFolder/{0}?format=xml", userName), folder, true);
+                obj = client.Post<Folder>(String.Format("/insertFolder/{0}?format=xml", userName), newFolder, true);
             }
             catch (Exception ex)
             {
