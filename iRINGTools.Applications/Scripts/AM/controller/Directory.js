@@ -63,9 +63,7 @@ Ext.define('AM.controller.Directory', {
         'directory.RootPopUpWindow',
         'menus.FolderMenu',
         'directory.ContextForm',
-        'directory.ContextWindow',
-
-
+        'directory.ContextWindow'
     ],
 
     refs: [
@@ -161,17 +159,17 @@ Ext.define('AM.controller.Directory', {
             path = '';
         }
 
-//        var conf = {
-//            id: 'tab-' + node.data.id,
-//            iconCls: 'folder'
-//        };
+        //        var conf = {
+        //            id: 'tab-' + node.data.id,
+        //            iconCls: 'folder'
+        //        };
 
         //       var win = Ext.widget('rootpopupWindow',conf);
         var win = Ext.widget('rootpopupWindow');
-       var form = win.down('form');
-       form.node = node;
+        var form = win.down('form');
+        form.node = node;
 
-       //TODO: Need it later
+        //TODO: Need it later
         if (item.itemId == 'editFolder' && node.data.record !== undefined) {
             var name = node.data.record.Name;
             win.title = 'Edit Folder';
@@ -187,7 +185,7 @@ Ext.define('AM.controller.Directory', {
             win.destroy();
             tree.view.refresh();
             tree.expandPath(tree.getRootNode().getPath());
-            var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
+            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
             detailGrid.setSource({});
         }, me);
 
@@ -208,14 +206,64 @@ Ext.define('AM.controller.Directory', {
         form.getForm().findField('contextName').setValue(name);
         form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
 
-        win.show();       
+        win.show();
     },
 
     //end root
 
+
+    //Delete folder
+    onDeleteFolder: function (item, e, eOpts) {
+        var me = this;
+        var tree = this.getDirTree();
+        var parent, path;
+        var node = tree.getSelectedNode();
+
+        Ext.Ajax.request({
+            url: 'directory/DeleteFolder',
+            form: me.form,
+            method: 'POST',
+            params: {
+                nodedetails: node.data,
+                jsonData: node.data,
+                data: JSON.stringify(node.data.record),
+                contentType: 'application/json',
+                'nodeid': node.internalId,
+                'parentnodeid': node.parentNode.internalId,
+                'nodename': node.data.record.FolderName
+            },
+            success: function (response, request) {
+                var resp = Ext.decode(response.responseText);
+                if (resp.success) {
+                    var parentNode = node.parentNode;
+                    parentNode.removeChild(node);
+                    tree.getSelectionModel().select(parentNode);
+                    tree.view.refresh();
+                } else {
+                    var userMsg = resp['message'];
+                    var detailMsg = resp['stackTraceDescription'];
+                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+                }
+
+                //tree.onReload();
+            },
+            failure: function (response, request) {
+                var resp = Ext.decode(response.responseText);
+                var userMsg = resp['message'];
+                var detailMsg = resp['stackTraceDescription'];
+                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+            }
+        });
+    },
+
+
     // newContext
     newContext: function (item, e, eOpts) {
-       
+
         var me = this;
         var path, state, context, description, wintitle, displayName;
         var tree = me.getDirTree();
@@ -265,6 +313,8 @@ Ext.define('AM.controller.Directory', {
         win.show();
     },
     // end newContext
+
+    //
     newOrEditScope: function (item, e, eOpts) {
 
         var me = this;
@@ -318,7 +368,7 @@ Ext.define('AM.controller.Directory', {
             win.destroy();
             tree.view.refresh();
             tree.expandPath(tree.getRootNode().getPath());
-            var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
+            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
             detailGrid.setSource({});
         }, me);
 
@@ -416,8 +466,8 @@ Ext.define('AM.controller.Directory', {
             var cacheImportURI = node.data.record.CacheImportURI;
             var cacheTimeout = node.data.record.CacheTimeout;
             var permission = node.data.record.PermissionGroups;
-            var internalName = node.data.record.Name; 
-           
+            var internalName = node.data.record.Name;
+
             form.getForm().findField('internalName').setReadOnly(true);
         } else {
             var wintitle = 'Add Application';
@@ -432,7 +482,7 @@ Ext.define('AM.controller.Directory', {
         win.on('save', function () {
             win.close();
             tree.view.refresh();
-			var detailGrid = tree.up('panel').down('propertypanel');//.down('gridview');
+            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
             detailGrid.setSource({});
         }, me);
 
@@ -1554,6 +1604,9 @@ Ext.define('AM.controller.Directory', {
             },
             "menuitem[action=newOrEditFolder]": {
                 click: this.onNewOrEditFolder
+            },
+            "menuitem[action=deleteFolder]": {
+                click: this.onDeleteFolder
             },
             "menuitem[action=newcontext]": {
                 click: this.newContext
