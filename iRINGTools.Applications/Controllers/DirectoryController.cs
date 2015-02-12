@@ -912,8 +912,6 @@ namespace org.iringtools.web.controllers
                 string userName = "apandey1";
                 string success = String.Empty;
                 string folderName = form["displayName"];
-                Guid folderId = !String.IsNullOrEmpty(form["node"]) ? Guid.Parse(form["node"]) : Guid.Empty;
-                Guid parentFolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
                 int siteId = 1;
 
                 #region TODO
@@ -943,9 +941,7 @@ namespace org.iringtools.web.controllers
 
                 Folder tempFolder = new Folder()
                 {
-                    FolderId = folderId,
                     FolderName = folderName,
-                    ParentFolderId = parentFolderId,
                     SiteId = siteId,
                     permissions = new Permissions(),
                     groups = new Groups()
@@ -958,10 +954,18 @@ namespace org.iringtools.web.controllers
 
                 if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
                 {
+
+                    tempFolder.FolderId = !String.IsNullOrEmpty(form["node"]) ? Guid.Parse(form["node"]) : Guid.Empty;
+                    tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
+
                     success = _repository.AddFolder(userName, tempFolder);
                 }
                 else
                 {
+
+                    tempFolder.FolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
+                    tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["path"]) ? Guid.Parse(form["path"]) : Guid.Empty;
+
                     success = _repository.UpdateFolder(userName, tempFolder);
                 }
 
@@ -974,7 +978,7 @@ namespace org.iringtools.web.controllers
                 }
 
                 List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                Folders folders = _repository.GetFolders(userName, parentFolderId, siteId);
+                Folders folders = _repository.GetFolders(userName, tempFolder.ParentFolderId, siteId);
 
                 foreach (Folder folder in folders)
                 {
