@@ -14,12 +14,12 @@
 * Do NOT hand edit this file.
 */
 
-Ext.define('AM.view.directory.RootPopUpWindow', {
+Ext.define('AM.view.directory.FolderWindow', {
     extend: 'Ext.window.Window',
-    alias: 'widget.rootpopupWindow',
+    alias: 'widget.folderWindow',
 
     requires: [
-    'AM.view.directory.RootPopUpForm'
+    'AM.view.directory.FolderForm'
   ],
     border: false,
     height: 110,
@@ -44,7 +44,7 @@ Ext.define('AM.view.directory.RootPopUpWindow', {
         Ext.applyIf(me, {
             items: [
         {
-            xtype: 'RootPopUpForm'
+            xtype: 'FolderForm'
         }
       ]
         });

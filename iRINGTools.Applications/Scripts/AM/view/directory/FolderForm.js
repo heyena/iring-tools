@@ -13,9 +13,9 @@
 * Do NOT hand edit this file.
 */
 
-Ext.define('AM.view.directory.RootPopUpForm', {
+Ext.define('AM.view.directory.FolderForm', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.RootPopUpForm',
+    alias: 'widget.FolderForm',
     requires: ['Ext.ux.form.CheckboxListCombo'],
     node: '',
     bodyStyle: 'padding:10px 5px 0',
