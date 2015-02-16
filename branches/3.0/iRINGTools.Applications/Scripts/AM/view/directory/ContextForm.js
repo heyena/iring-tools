@@ -18,19 +18,17 @@ Ext.define('AM.view.directory.ContextForm', {
     alias: 'widget.contextform',
     requires: ['Ext.ux.form.CheckboxListCombo'],
     node: '',
-    //height: 250,
-    //width: 400,
     border: 2,
     bodyPadding: 10,
     bodyStyle: 'padding:10px 5px 0',
-    url: 'directory/Scope',
+    url: 'directory/Context',
     cacheConnStrTpl: 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}',
 
     initComponent: function () {
         var me = this;
 
         me.initialConfig = Ext.apply({
-           url: 'directory/Scope'
+            url: 'directory/Context'
         }, me.initialConfig);
 
         Ext.applyIf(me, {
@@ -119,29 +117,6 @@ Ext.define('AM.view.directory.ContextForm', {
                 store: 'PermissionsS',
                 valueField: 'permission',
                 hidden:true
-                /*store: new TIP.store.RepositoryStore({
-                proxy: {
-                type: 'ajax',
-                url: 'getRepositories',
-                reader: {
-                type: 'json'
-                },
-                extraParams:{
-                isReadOnly : true
-                }
-                }
-                }),
-                ,
-                listeners: {
-                beforequery : function(qe, eopt){
-                var me  = this;
-                me.store.reload();
-                me.store.on('beforeload', function(store, action) {
-                var params = store.proxy.extraParams;
-                params.isReadOnly = true;
-                }, me);
-                }
-                }*/
             }
           ]
         });
