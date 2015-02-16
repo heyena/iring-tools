@@ -26,40 +26,39 @@ Ext.define('AM.view.directory.RootPopUpForm', {
 
         me.initialConfig = Ext.apply({
             url: 'directory/Root'
-        }, me.initialConfig);
+        },
+
+        me.initialConfig);
 
         Ext.applyIf(me, {
             defaults: {
                 anchor: '100%',
                 msgTarget: 'side'
             },
-            dockedItems: [
-        {
-            xtype: 'toolbar',
-            dock: 'bottom',
-            items: [
-            {
-                xtype: 'tbfill'
-            },
-            {
-                xtype: 'button',
-                handler: function (button, event) {
-                    me.onSave();
+
+            dockedItems: [{
+                xtype: 'toolbar',
+                dock: 'bottom',
+                items: [{
+                    xtype: 'tbfill'
                 },
-                text: 'Ok'
-            },
-            {
-                xtype: 'button',
-                handler: function (button, event) {
-                    me.onReset();
+                {
+                    xtype: 'button',
+                    handler: function (button, event) {
+                        me.onSave();
+                    },
+                    text: 'Ok'
                 },
-                text: 'Cancel'
-            }
-          ]
-        }
-      ],
-            items: [
-            {
+                {
+                    xtype: 'button',
+                    handler: function (button, event) {
+                        me.onReset();
+                    },
+                    text: 'Cancel'
+                }]
+            }],
+
+            items: [{
                 xtype: 'hiddenfield',
                 name: 'id'
             },
@@ -106,35 +105,12 @@ Ext.define('AM.view.directory.RootPopUpForm', {
                 store: 'PermissionsS',
                 valueField: 'permission',
                 hidden: false
-                /*store: new TIP.store.RepositoryStore({
-                proxy: {
-                type: 'ajax',
-                url: 'getRepositories',
-                reader: {
-                type: 'json'
-                },
-                extraParams:{
-                isReadOnly : true
-                }
-                }
-                }),
-                ,
-                listeners: {
-                beforequery : function(qe, eopt){
-                var me  = this;
-                me.store.reload();
-                me.store.on('beforeload', function(store, action) {
-                var params = store.proxy.extraParams;
-                params.isReadOnly = true;
-                }, me);
-                }
-                }*/
-            }
-          ]
+            }]
         });
 
         me.callParent(arguments);
     },
+
     onSave: function () {
         var me = this;
         var win = me.up('window');
@@ -144,21 +120,13 @@ Ext.define('AM.view.directory.RootPopUpForm', {
         var contextNameField = form.findField('contextName');
         var node = me.node;
 
-        //form.findField('contextName').setValue(folderName);
-        //    var context = form.findField('contextCombo').getValue();
-        //contextNameField.setValue(context);
-
         if (state == 'new')
             form.findField('name').setValue(folderName);
-
-        //        if (form.findField('cacheDBConnStr').getValue() == this.cacheConnStrTpl)
-        //            form.findField('cacheDBConnStr').setValue('');
 
         node.eachChild(function (n) {
             if (n.data.text == folderName) {
                 if (state == 'new') {
                     Ext.widget('messagepanel', { title: 'Warning', msg: 'Folder name \"' + folderName + '\" already exists.' });
-                    //showDialog(400, 100, 'Warning', 'Scope name \"' + folderName + '\" already exists.', Ext.Msg.OK, null);
                     return;
                 }
             }
@@ -167,6 +135,7 @@ Ext.define('AM.view.directory.RootPopUpForm', {
         if (form.isValid()) {
             form.submit({
                 waitMsg: 'Saving Data...',
+
                 success: function (response, request) {
                     Ext.example.msg('Notification', 'Folder saved successfully!');
                     win.fireEvent('save', me);
@@ -198,9 +167,8 @@ Ext.define('AM.view.directory.RootPopUpForm', {
                         });
 
                         node.insertChild(nodeIndex, nodeToAdd);
-
-                        //Might be required in update of folder
-                    } else {
+                    }
+                    else {
                         var nodeIndex = parentNode.indexOf(node);
                         parentNode.removeChild(node);
 
@@ -223,28 +191,19 @@ Ext.define('AM.view.directory.RootPopUpForm', {
                         parentNode.insertChild(nodeIndex, nodeToAdd);
                     }
                     me.setLoading(false);
-                    //                    win.fireEvent('save', me);
-                    //                    node.firstChild.expand();
-                    //                    node.expandChildren();
-                    //                    Ext.ComponentQuery.query('directorytree')[0].onReload();
                 },
+
                 failure: function (response, request) {
-                    /*if (response.items != undefined && response.items[3].value !== undefined) {
-                    var rtext = response.items[3].value;
-                    Ext.widget('messagepanel', { title: 'Error saving folder changes', msg: 'Changes of ' + rtext + ' are not saved.'});
-                    return;
-                    }*/
-                    //Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});
                     var resp = Ext.decode(request.response.responseText);
                     var userMsg = resp['message'];
                     var detailMsg = resp['stackTraceDescription'];
                     var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
                     Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                     Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-
                 }
             });
-        } else {
+        }
+        else {
             Ext.widget('messagepanel', { title: 'Warning', msg: 'Please give folder name.' });
             return;
         }
