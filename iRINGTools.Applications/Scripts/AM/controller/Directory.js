@@ -59,8 +59,8 @@ Ext.define('AM.controller.Directory', {
         'menus.VirtualPropertyMenu',
 		'common.ExceptionPanel',
         'menus.RootMenu',
-        'directory.RootPopUpForm',
-        'directory.RootPopUpWindow',
+        'directory.FolderForm',
+        'directory.FolderWindow',
         'menus.FolderMenu',
         'directory.ContextForm',
         'directory.ContextWindow'
@@ -165,13 +165,14 @@ Ext.define('AM.controller.Directory', {
         //        };
 
         //       var win = Ext.widget('rootpopupWindow',conf);
-        var win = Ext.widget('rootpopupWindow');
+        var win = Ext.widget('folderWindow');
         var form = win.down('form');
         form.node = node;
 
         //TODO: Need it later
         if (item.itemId == 'editFolder' && node.data.record !== undefined) {
             var name = node.data.record.Name;
+            var displayName =node.data.record.FolderName;
             win.title = 'Edit Folder';
             var state = 'edit';
 
@@ -310,6 +311,16 @@ Ext.define('AM.controller.Directory', {
         win.on('cancel', function () {
             win.destroy();
         }, me);
+        form.getForm().findField('path').setValue(path);
+        form.getForm().findField('state').setValue(state);
+        form.getForm().findField('oldContext').setValue(context);
+        form.getForm().findField('description').setValue(description);
+        form.getForm().findField('name').setValue(name);
+      //  form.getForm().findField('internalName').setValue(internalName);
+        form.getForm().findField('displayName').setValue(displayName);
+        form.getForm().findField('contextName').setValue(name);
+        form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
+
         win.show();
     },
     // end newContext
