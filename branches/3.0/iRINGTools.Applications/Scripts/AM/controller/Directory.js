@@ -172,7 +172,7 @@ Ext.define('AM.controller.Directory', {
         //TODO: Need it later
         if (item.itemId == 'editFolder' && node.data.record !== undefined) {
             var name = node.data.record.Name;
-            var displayName =node.data.record.FolderName;
+            var displayName = node.data.record.FolderName;
             win.title = 'Edit Folder';
             var state = 'edit';
 
@@ -273,7 +273,7 @@ Ext.define('AM.controller.Directory', {
         context = node.data.record.context;
 
 
-       
+
 
 
         if (node.parentNode) {
@@ -289,7 +289,7 @@ Ext.define('AM.controller.Directory', {
         };
         var win = Ext.widget('contextwindow', conf);
         var form = win.down('form');
-         form.node = node;
+        form.node = node;
 
 
         //TODO: Need it later
@@ -320,7 +320,7 @@ Ext.define('AM.controller.Directory', {
         form.getForm().findField('oldContext').setValue(context);
         form.getForm().findField('description').setValue(description);
         form.getForm().findField('name').setValue(name);
-     //   form.getForm().findField('internalName').setValue(internalName);
+        //   form.getForm().findField('internalName').setValue(internalName);
         form.getForm().findField('displayName').setValue(displayName);
         form.getForm().findField('contextName').setValue(name);
         form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
@@ -1516,6 +1516,10 @@ Ext.define('AM.controller.Directory', {
     refreshScopes: function (item, e, eOpts) {
         this.getDirTree().onReload();
     },
+    onRefreshRoot: function (item, e, eOpts) {
+        this.getDirTree().onReload();
+    },
+
 
     init: function (application) {
         Ext.QuickTips.init();
@@ -1625,7 +1629,11 @@ Ext.define('AM.controller.Directory', {
             },
             "menuitem[action=newcontext]": {
                 click: this.newContext
+            },
+            "menuitem[action=refreshRoot]": {
+                click: this.onRefreshRoot
             }
+
         });
     },
 
