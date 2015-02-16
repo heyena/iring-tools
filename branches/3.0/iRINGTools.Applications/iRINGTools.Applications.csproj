@@ -330,8 +330,8 @@
     <Content Include="Scripts\AM\view\directory\ImportCacheForm.js" />
     <Content Include="Scripts\AM\view\directory\ImportCacheWindow.js" />
     <Content Include="Scripts\AM\view\directory\ContextForm.js" />
-    <Content Include="Scripts\AM\view\directory\RootPopUpForm.js" />
-    <Content Include="Scripts\AM\view\directory\RootPopUpWindow.js" />
+    <Content Include="Scripts\AM\view\directory\FolderForm.js" />
+    <Content Include="Scripts\AM\view\directory\FolderWindow.js" />
     <Content Include="Scripts\AM\view\directory\ScopeForm.js" />
     <Content Include="Scripts\AM\view\directory\ScopeWindow.js" />
     <Content Include="Scripts\AM\view\directory\VirtualPropertyForm.js" />
