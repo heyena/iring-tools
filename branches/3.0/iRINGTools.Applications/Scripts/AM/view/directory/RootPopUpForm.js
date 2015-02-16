@@ -207,7 +207,7 @@ Ext.define('AM.view.directory.RootPopUpForm', {
                         Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
                             var isNodePresent = false;
 
-                            Ext.each(node.childNodes, function (existingNode) {
+                            Ext.each(parentNode.childNodes, function (existingNode) {
                                 if (existingNode.id == 'AM.model.DirectoryModel-' + newNode.id) {
                                     isNodePresent = true;
                                     return false;
