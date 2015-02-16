@@ -272,6 +272,10 @@ Ext.define('AM.controller.Directory', {
         var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
         context = node.data.record.context;
 
+
+       
+
+
         if (node.parentNode) {
             path = node.internalId;
         } else {
@@ -285,7 +289,7 @@ Ext.define('AM.controller.Directory', {
         };
         var win = Ext.widget('contextwindow', conf);
         var form = win.down('form');
-        // form.node = node;
+         form.node = node;
 
 
         //TODO: Need it later
@@ -316,7 +320,7 @@ Ext.define('AM.controller.Directory', {
         form.getForm().findField('oldContext').setValue(context);
         form.getForm().findField('description').setValue(description);
         form.getForm().findField('name').setValue(name);
-      //  form.getForm().findField('internalName').setValue(internalName);
+     //   form.getForm().findField('internalName').setValue(internalName);
         form.getForm().findField('displayName').setValue(displayName);
         form.getForm().findField('contextName').setValue(name);
         form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
