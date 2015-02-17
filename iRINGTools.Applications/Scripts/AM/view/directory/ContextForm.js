@@ -83,6 +83,11 @@ Ext.define('AM.view.directory.ContextForm', {
                 fieldLabel: 'Display Name',
                 name: 'displayName',
                 allowBlank: false
+            }, {
+                xtype: 'textfield',
+                fieldLabel: 'Internal Name',
+                name: 'internalName',
+                allowBlank: false
             },
            
             {
@@ -141,8 +146,7 @@ Ext.define('AM.view.directory.ContextForm', {
 
         if (form.findField('cacheDBConnStr').getValue() == this.cacheConnStrTpl)
             form.findField('cacheDBConnStr').setValue('');
-
-        node.eachChild(function (n) {
+               node.eachChild(function (n) {
             if (n.data.text == folderName) {
                 if (state == 'new') {
                     Ext.widget('messagepanel', { title: 'Warning', msg: 'Scope name \"' + folderName + '\" already exists.' });
