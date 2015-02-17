@@ -64,6 +64,10 @@ Ext.define('AM.view.directory.ContextForm', {
             items: [
             {
                 xtype: 'hiddenfield',
+                name: 'id'
+            },
+            {
+                xtype: 'hiddenfield',
                 name: 'path'
             },
             {
@@ -88,8 +92,7 @@ Ext.define('AM.view.directory.ContextForm', {
                 fieldLabel: 'Internal Name',
                 name: 'internalName',
                 allowBlank: false
-            },
-           
+            },           
             {
                 xtype: 'hiddenfield',
                 itemId: 'contextname',
@@ -137,20 +140,13 @@ Ext.define('AM.view.directory.ContextForm', {
         var state = form.findField('state').getValue();
         var contextNameField = form.findField('contextName');
         var node = me.node;
-        //form.findField('contextName').setValue(folderName);
-        //    var context = form.findField('contextCombo').getValue();
-        //contextNameField.setValue(context);
-
-        //if(state == 'new')
-        //form.findField('name').setValue(folderName);
 
         if (form.findField('cacheDBConnStr').getValue() == this.cacheConnStrTpl)
             form.findField('cacheDBConnStr').setValue('');
                node.eachChild(function (n) {
             if (n.data.text == folderName) {
                 if (state == 'new') {
-                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Scope name \"' + folderName + '\" already exists.' });
-                    //showDialog(400, 100, 'Warning', 'Scope name \"' + folderName + '\" already exists.', Ext.Msg.OK, null);
+                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Context name \"' + folderName + '\" already exists.' });
                     return;
                 }
             }
@@ -160,30 +156,32 @@ Ext.define('AM.view.directory.ContextForm', {
             form.submit({
                 waitMsg: 'Saving Data...',
                 success: function (response, request) {
-                    Ext.example.msg('Notification', 'Scope saved successfully!');
+                    Ext.example.msg('Notification', 'Context saved successfully!');
                     win.fireEvent('save', me);
-                    var parentNode = node.parentNode;
-                    if (parentNode == undefined && node.data.text == 'Scopes') {
-                        var nodeIndex = 0; //node.lastChild.data.index+1;
-                        node.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]);
-                    } else {
-                        var nodeIndex = parentNode.indexOf(node);
-                        parentNode.removeChild(node);
-                        parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]);
+
+                    var currentNode;
+
+                    if (state == 'new') {
+                        currentNode = node;
                     }
+                    else {
+                        currentNode = node.parentNode;
+                    }
+
+                    while (currentNode.firstChild) {
+                        currentNode.removeChild(currentNode.firstChild);
+                    }
+
+                    var index = 0;
+
+                    Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
+                        currentNode.insertChild(index, newNode);
+                        index++;
+                    });
+
                     me.setLoading(false);
-                    //win.fireEvent('save', me);
-                    //node.firstChild.expand();
-                    //node.expandChildren();
-                    //Ext.ComponentQuery.query('directorytree')[0].onReload();
                 },
                 failure: function (response, request) {
-                    /*if (response.items != undefined && response.items[3].value !== undefined) {
-                    var rtext = response.items[3].value;
-                    Ext.widget('messagepanel', { title: 'Error saving folder changes', msg: 'Changes of ' + rtext + ' are not saved.'});
-                    return;
-                    }*/
-                    //Ext.widget('messagepanel', { title: 'Warning', msg: 'Error saving changes!'});
                     var resp = Ext.decode(request.response.responseText);
                     var userMsg = resp['message'];
                     var detailMsg = resp['stackTraceDescription'];
@@ -193,9 +191,9 @@ Ext.define('AM.view.directory.ContextForm', {
 
                 }
             });
-        } else {
+        }
+        else {
             Ext.widget('messagepanel', { title: 'Warning', msg: 'Please complete all required fields.' });
-            //showDialog(400, 100, 'Warning', 'Please complete all required fields...', Ext.Msg.OK, null);
             return;
         }
     },
@@ -204,8 +202,5 @@ Ext.define('AM.view.directory.ContextForm', {
         var me = this;
         var win = me.up('window');
         win.fireEvent('cancel', me);
-
-
     }
-
 });

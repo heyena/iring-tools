@@ -62,6 +62,7 @@ Ext.define('AM.controller.Directory', {
         'directory.FolderForm',
         'directory.FolderWindow',
         'menus.FolderMenu',
+        'menus.ContextMenu',
         'directory.ContextForm',
         'directory.ContextWindow'
     ],
@@ -159,17 +160,10 @@ Ext.define('AM.controller.Directory', {
             path = '';
         }
 
-        //        var conf = {
-        //            id: 'tab-' + node.data.id,
-        //            iconCls: 'folder'
-        //        };
-
-        //       var win = Ext.widget('rootpopupWindow',conf);
         var win = Ext.widget('folderWindow');
         var form = win.down('form');
         form.node = node;
 
-        //TODO: Need it later
         if (item.itemId == 'editFolder' && node.data.record !== undefined) {
             var name = node.data.record.Name;
             var displayName = node.data.record.FolderName;
@@ -211,27 +205,26 @@ Ext.define('AM.controller.Directory', {
     },
 
     //end root
-
-
+    
     //Delete folder
     onDeleteFolder: function (item, e, eOpts) {
         var me = this;
         var tree = this.getDirTree();
         var parent, path;
         var node = tree.getSelectedNode();
-
+        
         Ext.Ajax.request({
-            url: 'directory/DeleteFolder',
+            url: 'directory/Folder',
             form: me.form,
             method: 'POST',
             params: {
                 nodedetails: node.data,
                 jsonData: node.data,
-                data: JSON.stringify(node.data.record),
                 contentType: 'application/json',
                 'nodeid': node.internalId,
                 'parentnodeid': node.parentNode.internalId,
-                'nodename': node.data.record.FolderName
+                'nodename': node.data.record.FolderName,
+                'state': 'delete'
             },
             success: function (response, request) {
                 var resp = Ext.decode(response.responseText);
@@ -247,8 +240,6 @@ Ext.define('AM.controller.Directory', {
                     Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                     Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                 }
-
-                //tree.onReload();
             },
             failure: function (response, request) {
                 var resp = Ext.decode(response.responseText);
@@ -262,8 +253,8 @@ Ext.define('AM.controller.Directory', {
     },
 
 
-    // newContext
-    newContext: function (item, e, eOpts) {
+    // onNewOrEditContext
+    onNewOrEditContext: function (item, e, eOpts) {
 
         var me = this;
         var path, state, context, description, wintitle, displayName;
@@ -272,12 +263,8 @@ Ext.define('AM.controller.Directory', {
         var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
         context = node.data.record.context;
 
-
-
-
-
         if (node.parentNode) {
-            path = node.internalId;
+            path = node.parentNode.internalId;
         } else {
             path = '';
         }
@@ -291,9 +278,7 @@ Ext.define('AM.controller.Directory', {
         var form = win.down('form');
         form.node = node;
 
-
-        //TODO: Need it later
-        if (item.itemId == 'editFolder' && node.data.record !== undefined) {
+        if (item.itemId == 'editContext' && node.data.record !== undefined) {
             var name = node.data.record.Name;
             win.title = 'Edit Context';
             var state = 'edit';
@@ -315,19 +300,66 @@ Ext.define('AM.controller.Directory', {
         win.on('cancel', function () {
             win.destroy();
         }, me);
+
+        form.getForm().findField('id').setValue(node.internalId);
         form.getForm().findField('path').setValue(path);
         form.getForm().findField('state').setValue(state);
         form.getForm().findField('oldContext').setValue(context);
         form.getForm().findField('description').setValue(description);
         form.getForm().findField('name').setValue(name);
-        //   form.getForm().findField('internalName').setValue(internalName);
         form.getForm().findField('displayName').setValue(displayName);
         form.getForm().findField('contextName').setValue(name);
         form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
 
         win.show();
     },
-    // end newContext
+    // end onNewOrEditContext
+
+    //Delete context
+    onDeleteContext: function (item, e, eOpts) {
+        var me = this;
+        var tree = this.getDirTree();
+        var parent, path;
+        var node = tree.getSelectedNode();
+
+        Ext.Ajax.request({
+            url: 'directory/Context',
+            form: me.form,
+            method: 'POST',
+            params: {
+                nodedetails: node.data,
+                jsonData: node.data,
+                contentType: 'application/json',
+                'nodeid': node.internalId,
+                'parentnodeid': node.parentNode.internalId,
+                'nodename': node.data.record.FolderName,
+                'state': 'delete'
+            },
+            success: function (response, request) {
+                var resp = Ext.decode(response.responseText);
+                if (resp.success) {
+                    var parentNode = node.parentNode;
+                    parentNode.removeChild(node);
+                    tree.getSelectionModel().select(parentNode);
+                    tree.view.refresh();
+                } else {
+                    var userMsg = resp['message'];
+                    var detailMsg = resp['stackTraceDescription'];
+                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+                }
+            },
+            failure: function (response, request) {
+                var resp = Ext.decode(response.responseText);
+                var userMsg = resp['message'];
+                var detailMsg = resp['stackTraceDescription'];
+                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+            }
+        });
+    },
 
     //
     newOrEditScope: function (item, e, eOpts) {
@@ -488,7 +520,7 @@ Ext.define('AM.controller.Directory', {
             var wintitle = 'Add Application';
             var state = '';
             var application = '';
-            var context = node.data.record.Name;
+            var context = node.data.text;
             var path = node.internalId;
         }
 
@@ -771,6 +803,9 @@ Ext.define('AM.controller.Directory', {
             } else if (obj.type === "FolderNode") {
                 var folderMenu = Ext.widget('foldermenu');
                 folderMenu.showAt(e.getXY());
+            } else if (obj.type === "ContextNode") {
+                var contextMenu = Ext.widget('contextmenu');
+                contextMenu.showAt(e.getXY());
             } else if (obj.type === "ApplicationNode") {
                 var applicationMenu = Ext.widget('applicationmenu');
                 applicationMenu.showAt(e.getXY());
@@ -1627,8 +1662,11 @@ Ext.define('AM.controller.Directory', {
             "menuitem[action=deleteFolder]": {
                 click: this.onDeleteFolder
             },
-            "menuitem[action=newcontext]": {
-                click: this.newContext
+            "menuitem[action=newOrEditContext]": {
+                click: this.onNewOrEditContext
+            },
+            "menuitem[action=deleteContext]": {
+                click: this.onDeleteContext
             },
             "menuitem[action=refreshRoot]": {
                 click: this.onRefreshRoot

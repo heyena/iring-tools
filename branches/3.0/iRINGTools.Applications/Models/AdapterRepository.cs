@@ -34,7 +34,6 @@ namespace iRINGTools.Web.Models
         protected string _dataServiceUri = null;
         protected string _hibernateServiceUri = null;
         protected string _referenceDataServiceUri = null;
-        protected string _applicationConfigurationServiceUri = null;
         protected string _servicesBasePath = string.Empty;
 
         public IDictionary<string, string> AuthHeaders { get; set; }
@@ -65,10 +64,6 @@ namespace iRINGTools.Web.Models
             if (_referenceDataServiceUri.EndsWith("/"))
                 _referenceDataServiceUri = _referenceDataServiceUri.Remove(_referenceDataServiceUri.Length - 1);
 
-            _applicationConfigurationServiceUri = _settings["ApplicationConfigServiceUri"];
-            if (_applicationConfigurationServiceUri.EndsWith("/"))
-                _applicationConfigurationServiceUri = _applicationConfigurationServiceUri.Remove(_applicationConfigurationServiceUri.Length - 1);
-
             if (!string.IsNullOrEmpty(_settings["BaseDirectoryPath"]) && _settings["BaseDirectoryPath"].Contains("Applications"))
             {
                 _servicesBasePath = _settings["BaseDirectoryPath"].Replace("Applications", "Services");
@@ -77,7 +72,7 @@ namespace iRINGTools.Web.Models
 
         public HttpSessionStateBase Session { get; set; }
 
-        protected WebHttpClient CreateWebClient(string baseUri)
+        protected internal WebHttpClient CreateWebClient(string baseUri)
         {
             WebHttpClient client = null;
 
@@ -308,25 +303,6 @@ namespace iRINGTools.Web.Models
 
 
             return scope;
-        }
-
-        public Folders GetFolders(string userName, Guid parentFolderId, int siteId)
-        {
-            Folders folders = null;
-
-            try
-            {
-                WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
-                folders = client.Get<Folders>(String.Format("/folders/{0}?siteId={1}&parentFolderId={2}&format=xml", userName, siteId, parentFolderId));
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                throw;
-
-            }
-
-            return folders;
         }
 
         public DataDictionary GetDictionary(string scopeName, string applicationName)
@@ -614,25 +590,6 @@ namespace iRINGTools.Web.Models
             return obj;
         }
 
-        public string UpdateFolder(string userName, Folder updatedFolder)
-        {
-            string obj = null;
-
-            try
-            {
-                WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
-                obj = client.Put<Folder>(String.Format("/updateFolder/{0}?format=xml", userName), updatedFolder, true);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                throw;
-            }
-
-            return obj;
-        }
-      //  /scopes/{scope}/delete
-    //   /deleteFolder/{folderId}?format={format}
         public string DeleteScope(string name)
         {
             string obj = null;
@@ -651,28 +608,6 @@ namespace iRINGTools.Web.Models
 
             return obj;
         }
-
-
-        //delete folder
-        public string DeleteFolder(Folder folder)
-        {
-            string obj = null;
-
-            try
-            {
-                WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
-                obj = client.Delete<Folder>(String.Format("/deleteFolder/{0}?format=xml", folder.FolderId), folder, true);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                throw;
-            }
-
-            return obj;
-        }
-
-        //
 
         public string AddApplication(string scopeName, ScopeApplication application)
         {
@@ -1377,43 +1312,6 @@ namespace iRINGTools.Web.Models
             }
 
             return obj;
-        }
-
-        public string AddFolder(string userName, Folder newFolder)
-        {
-            string obj = null;
-
-            try
-            {
-                WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
-                obj = client.Post<Folder>(String.Format("/insertFolder/{0}?format=xml", userName), newFolder, true);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                throw;
-            }
-
-            return obj;
-        }
-        
-        internal org.iringtools.applicationConfig.Contexts GetContexts(string userName, string parentFolderId, int siteId)
-        {
-            org.iringtools.applicationConfig.Contexts contexts = null;
-
-            try
-            {
-                WebHttpClient client = CreateWebClient(_applicationConfigurationServiceUri);
-                contexts = client.Get<org.iringtools.applicationConfig.Contexts>(String.Format("/contexts/{0}?siteId={1}&folderId={2}&format=xml", userName, siteId, Guid.Parse(parentFolderId)));
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                throw;
-
-            }
-
-            return contexts;
         }
     }
 }

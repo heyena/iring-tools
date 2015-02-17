@@ -23,10 +23,15 @@ namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
     {
+        // TODO: Need to get it at runtime
+        string userName = "apandey1";
+        int siteId = 1;
+
         private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
         private CustomError _CustomError = null;
         private CustomErrorLog _CustomErrorLog = null;
         private AdapterRepository _repository;
+        private ApplicationConfigurationRepository _appConfigRepository;
         private string _keyFormat = "Mapping.{0}.{1}";
 
         public DirectoryController() : this(new AdapterRepository()) { }
@@ -36,6 +41,8 @@ namespace org.iringtools.web.controllers
         {
             _repository = repository;
             _repository.AuthHeaders = _authHeaders;
+
+            _appConfigRepository = new ApplicationConfigurationRepository(_repository);
         }
 
         public ActionResult Index()
@@ -50,15 +57,12 @@ namespace org.iringtools.web.controllers
                 _logger.Debug("GetNode type: " + form["type"]);
                 _repository.Session = Session;
 
-                string userName = "apandey1";
-                int siteId = 1;
-
                 switch (form["type"])
                 {
                     case "RootNode":
                         {
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            Folders folders = _repository.GetFolders(userName, Guid.Parse(form["id"]), siteId);
+                            Folders folders = _appConfigRepository.GetFolders(userName, Guid.Parse(form["id"]), siteId);
 
                             foreach (Folder folder in folders)
                             {
@@ -84,102 +88,55 @@ namespace org.iringtools.web.controllers
                         }
                     case "FolderNode":
                         {
-                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            Folders folders = _repository.GetFolders(userName, Guid.Parse(form["node"]), siteId);
-                            org.iringtools.applicationConfig.Contexts contexts = _repository.GetContexts(userName, form["node"], siteId);
-
-                            foreach (Folder folder in folders)
-                            {
-                                JsonTreeNode node = new JsonTreeNode
-                                {
-                                    nodeType = "async",
-                                    type = "FolderNode",
-                                    iconCls = "folder",
-                                    id = folder.FolderId.ToString(),
-                                    text = folder.FolderName,
-                                    expanded = false,
-                                    leaf = false,
-                                    children = null,
-                                    record = folder
-                                };
-
-                                node.property = new Dictionary<string, string>();
-                                node.property.Add("Display Name", folder.FolderName);
-                                nodes.Add(node);
-                            }
-
-                            foreach (org.iringtools.applicationConfig.Context context in contexts)
-                            {
-                                JsonTreeNode node = new JsonTreeNode
-                                    {
-                                        nodeType = "async",
-                                        type = "ContextNode",
-                                        iconCls = "context",
-                                        id = context.ContextId.ToString(),
-                                        text = context.DisplayName,
-                                        expanded = false,
-                                        leaf = false,
-                                        children = null,
-                                        record = contexts
-                                    };
-
-                                node.property = new Dictionary<string, string>();
-                                node.property.Add("Display Name", context.DisplayName);
-                                nodes.Add(node);
-                            }
+                            List<JsonTreeNode> nodes = PopulateFolderNode(Guid.Parse(form["node"]));
 
                             return Json(nodes, JsonRequestBehavior.AllowGet);
                         }
                     case "ContextNode":
                         {
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            org.iringtools.applicationConfig.Contexts contexts = _repository.GetContexts(userName, form["node"], siteId);
 
-                            org.iringtools.applicationConfig.Context context = contexts.Find(con => con.ContextId == Guid.Parse(form["id"]));
+                            string scopeName = form["text"];
+                            org.iringtools.applicationConfig.Applications applications = _appConfigRepository.GetApplications(userName, Guid.Parse(form["node"]), siteId);
 
-                            foreach (Application application in context.Applications)
+                            foreach (Application application in applications)
                             {
-                                //ApplicationSettings appSettings = _repository.GetApplicationSettings(contexts.Name, application.Name);
-                                //application.applicationSettings = appSettings;
+                                //DataLayer dataLayer = _repository.GetDataLayer(scopeName, application.InternalName);
 
-                                DataLayer dataLayer = _repository.GetDataLayer(context.DisplayName, application.DisplayName);
-
-                                if (dataLayer != null)
-                                {
+                                //if (dataLayer != null)
+                                //{
                                     JsonTreeNode node = new JsonTreeNode
                                     {
                                         nodeType = "async",
                                         type = "ApplicationNode",
                                         iconCls = "application",
-                                        id = context.DisplayName + "/" + application.DisplayName,
+                                        id = scopeName + "/" + application.InternalName,
                                         text = application.DisplayName,
                                         expanded = false,
                                         leaf = false,
                                         children = null,
                                         record = new
                                         {
-                                            Name = application.DisplayName,
+                                            Name = application.InternalName,
                                             DisplayName = application.DisplayName,
                                             Description = application.Description,
-                                            DataLayer = dataLayer.Name,
-                                            Assembly = dataLayer.Assembly,
-                                            applicationSettings = application.applicationSettings,
-                                            //CacheImportURI = application.CacheInfo == null ? "" : application.CacheInfo.ImportURI,
-                                            //CacheTimeout = application.CacheInfo == null ? "" : Convert.ToString(application.CacheInfo.Timeout),
-                                            //PermissionGroups = application.PermissionGroup
+                                            DataLayer = application.Assembly,
+                                            Assembly = application.Assembly,
+                                            ApplicationSettings = application.applicationSettings,
+                                            PermissionGroups = application.permissions
                                         }
                                     };
 
                                     node.property = new Dictionary<string, string>();
-                                    node.property.Add("Internal Name", application.DisplayName);
+                                    node.property.Add("Internal Name", application.InternalName);
                                     node.property.Add("Display Name", application.DisplayName);
                                     node.property.Add("Description", application.Description);
-                                    node.property.Add("Data Layer", dataLayer.Name);
-                                    node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
+                                    node.property.Add("Data Layer", application.Assembly);
+                                    //node.property.Add("LightweightDataLayer", application.IsLightweight ? "Yes" : "No");
 
                                     nodes.Add(node);
                                 }
-                            }
+                            //}
 
                             ActionResult result = Json(nodes, JsonRequestBehavior.AllowGet);
                             return result;
@@ -222,7 +179,6 @@ namespace org.iringtools.web.controllers
                             nodes.Add(node);
                             return Json(nodes, JsonRequestBehavior.AllowGet);
                         }
-
 
                     case "ScopesNode":
                         {
@@ -759,6 +715,54 @@ namespace org.iringtools.web.controllers
             }
         }
 
+        private List<JsonTreeNode> PopulateFolderNode(Guid folderId)
+        {
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+            Folders folders = _appConfigRepository.GetFolders(userName, folderId, siteId);
+            org.iringtools.applicationConfig.Contexts contexts = _appConfigRepository.GetContexts(userName, folderId, siteId);
+
+            foreach (Folder folder in folders)
+            {
+                JsonTreeNode node = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = "FolderNode",
+                    iconCls = "folder",
+                    id = folder.FolderId.ToString(),
+                    text = folder.FolderName,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = folder
+                };
+
+                node.property = new Dictionary<string, string>();
+                node.property.Add("Display Name", folder.FolderName);
+                nodes.Add(node);
+            }
+
+            foreach (org.iringtools.applicationConfig.Context context in contexts)
+            {
+                JsonTreeNode node = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = "ContextNode",
+                    iconCls = "context",
+                    id = context.ContextId.ToString(),
+                    text = context.DisplayName,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = contexts
+                };
+
+                node.property = new Dictionary<string, string>();
+                node.property.Add("Display Name", context.DisplayName);
+                nodes.Add(node);
+            }
+            return nodes;
+        }
+
         public ActionResult DataLayers()
         {
             try
@@ -900,18 +904,15 @@ namespace org.iringtools.web.controllers
 
         }
 
-        public JsonResult Root(FormCollection form)
+        public JsonResult Folder(FormCollection form)
         {
             try
             {
-                string userName = "apandey1";
                 string success = String.Empty;
                 string folderName = form["displayName"];
-                int siteId = 1;
 
                 #region TODO
                 // TODO: Need to create it dynamically at runtime
-                List<Permission> permissionsList = new List<Permission>();
 
                 Group tempGroup = new Group();
                 tempGroup.Active = 1;
@@ -919,18 +920,6 @@ namespace org.iringtools.web.controllers
                 tempGroup.GroupId = 47;
                 tempGroup.GroupName = "Administrator";
                 tempGroup.SiteId = 1;
-
-                if (form["permissions"].Contains(","))
-                {
-                    string[] arrstring = form["permissions"].Split(',');
-
-                    for (int i = 0; i < arrstring.Length; i++)
-                        permissionsList.Add(new Permission() { PermissionName = arrstring[i] });
-                }
-                else
-                {
-                    permissionsList.Add(new Permission() { PermissionName = form["permissions"] });
-                }
 
                 #endregion
 
@@ -944,24 +933,25 @@ namespace org.iringtools.web.controllers
 
                 tempFolder.groups.Add(tempGroup);
 
-                if (string.IsNullOrEmpty(form["permissions"]))
-                    tempFolder.permissions.AddRange(permissionsList);
-
                 if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
                 {
-
-                    tempFolder.FolderId = !String.IsNullOrEmpty(form["node"]) ? Guid.Parse(form["node"]) : Guid.Empty;
                     tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
 
-                    success = _repository.AddFolder(userName, tempFolder);
+                    success = _appConfigRepository.AddFolder(userName, tempFolder);
                 }
-                else
+                else if (form["state"] == "edit")
                 {
-
                     tempFolder.FolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
                     tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["path"]) ? Guid.Parse(form["path"]) : Guid.Empty;
 
-                    success = _repository.UpdateFolder(userName, tempFolder);
+                    success = _appConfigRepository.UpdateFolder(userName, tempFolder);
+                }
+                else
+                {
+                    tempFolder.FolderId = !String.IsNullOrEmpty(form["nodeid"]) ? Guid.Parse(form["nodeid"]) : Guid.Empty;
+                    tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["parentnodeid"]) ? Guid.Parse(form["parentnodeid"]) : Guid.Empty;
+
+                    success = _appConfigRepository.DeleteFolder(tempFolder);
                 }
 
                 if (success.Trim().Contains("Error"))
@@ -972,31 +962,9 @@ namespace org.iringtools.web.controllers
                     return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
                 }
 
-                List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                Folders folders = _repository.GetFolders(userName, tempFolder.ParentFolderId, siteId);
-
-                foreach (Folder folder in folders)
-                {
-                    JsonTreeNode node = new JsonTreeNode
-                    {
-                        nodeType = "async",
-                        type = "FolderNode",
-                        iconCls = "folder",
-                        id = folder.FolderId.ToString(),
-                        text = folder.FolderName,
-                        expanded = false,
-                        leaf = false,
-                        children = null,
-                        record = folder
-                    };
-
-                    node.property = new Dictionary<string, string>();
-                    node.property.Add("Display Name", folder.FolderName);
-                    nodes.Add(node);
-                }
+                List<JsonTreeNode> nodes = PopulateFolderNode(tempFolder.ParentFolderId);
 
                 return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
-                // return Json(new { success = true }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
@@ -1024,23 +992,53 @@ namespace org.iringtools.web.controllers
             try
             {
                 string success = String.Empty;
-                string scopeName = string.Empty;
+                string contextName = form["displayName"];
 
-                if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
+                #region TODO
+                // TODO: Need to create it dynamically at runtime
+                Group tempGroup = new Group();
+                tempGroup.Active = 1;
+                tempGroup.GroupDesc = "Admin Group";
+                tempGroup.GroupId = 47;
+                tempGroup.GroupName = "Administrator";
+                tempGroup.SiteId = 1;
+
+                #endregion
+
+                applicationConfig.Context tempContext = new applicationConfig.Context()
                 {
+                    DisplayName = contextName,
+                    InternalName = form["internalName"],
+                    Description = form["description"],
+                    CacheConnStr = form["cacheDBConnStr"],
+                    SiteId = siteId,
+                    permissions = new Permissions(),
+                    groups = new Groups()
+                };
 
-                    //scopeName = form["displayName"];
-                    scopeName = form["internalName"];
-                    //  success = _repository.AddScope(form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
-                    success = _repository.AddScope(form["internalName"], form["description"], form["cacheDBConnStr"], form["permissions"], form["displayName"]);
+                tempContext.groups.Add(tempGroup);
 
-
-                }
-                else
+                if (form["state"] == "new")
                 {
-                    scopeName = form["contextName"];
-                    success = _repository.UpdateScope(form["contextName"], form["displayName"], form["description"], form["cacheDBConnStr"], form["permissions"]);
+                    tempContext.FolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
+
+                    success = _appConfigRepository.AddContext(userName, tempContext);
                 }
+                else if (form["state"] == "edit")
+                {
+                    tempContext.ContextId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
+                    tempContext.FolderId = !String.IsNullOrEmpty(form["path"]) ? Guid.Parse(form["path"]) : Guid.Empty;
+
+                    success = _appConfigRepository.UpdateContext(userName, tempContext);
+                }
+                else if (form["state"] == "delete")
+                {
+                    tempContext.ContextId = !String.IsNullOrEmpty(form["nodeid"]) ? Guid.Parse(form["nodeid"]) : Guid.Empty;
+                    tempContext.FolderId = !String.IsNullOrEmpty(form["parentnodeid"]) ? Guid.Parse(form["parentnodeid"]) : Guid.Empty;
+
+                    success = _appConfigRepository.DeleteContext(tempContext);
+                }
+
                 if (success.Trim().Contains("Error"))
                 {
                     _CustomErrorLog = new CustomErrorLog();
@@ -1049,29 +1047,9 @@ namespace org.iringtools.web.controllers
                     return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
                 }
 
-                List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                ScopeProject scope = _repository.GetScope(scopeName);
-                JsonTreeNode node = new JsonTreeNode
-                {
-                    nodeType = "async",
-                    type = "ScopeNode",
-                    iconCls = "scope",
-                    id = scope.Name,
-                    text = scope.DisplayName,
-                    expanded = false,
-                    leaf = false,
-                    children = null,
-                    record = scope
-                };
-
-                node.property = new Dictionary<string, string>();
-                node.property.Add("Internal Name", scope.Name);
-                node.property.Add("Display Name", scope.DisplayName);
-                node.property.Add("Description", scope.Description);
-                nodes.Add(node);
+                List<JsonTreeNode> nodes = PopulateFolderNode(tempContext.FolderId);
 
                 return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
-                // return Json(new { success = true }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
@@ -1120,9 +1098,6 @@ namespace org.iringtools.web.controllers
 
                 for (int i = 0; i < form.AllKeys.Length; i++)
                 {
-                    //if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && 
-                    //  form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val"
-                    //  && form.GetKey(i).ToLower() != "cacheimporturi" && form.GetKey(i).ToLower() != "cachetimeout")
                     if (form.GetKey(i).ToLower().StartsWith("key"))
                     {
                         String key = form[i];
@@ -1159,15 +1134,48 @@ namespace org.iringtools.web.controllers
                     CacheInfo = cacheInfo,
                     PermissionGroup = new PermissionGroups()
                 };
+
                 if (!string.IsNullOrEmpty(permissions))
                     application.PermissionGroup.AddRange(groups);
 
+
+                #region TODO
+                // TODO: Need to create it dynamically at runtime
+                Group tempGroup = new Group();
+                tempGroup.Active = 1;
+                tempGroup.GroupDesc = "Admin Group";
+                tempGroup.GroupId = 47;
+                tempGroup.GroupName = "Administrator";
+                tempGroup.SiteId = 1;
+
+                #endregion
+
+                Application tempApplication = new Application()
+                {
+                    DisplayName = form["displayName"],//form["Name"],
+                    InternalName = form["internalName"],
+                    Description = form["Description"],
+                    Assembly = form["assembly"],
+                    DXFRUrl = "http://localhost:56789/dxfr",
+                    SiteId = siteId,
+                    permissions = new Permissions(),
+                    groups = new Groups()
+                };
+
+                tempApplication.groups.Add(tempGroup);
+
                 if (String.IsNullOrEmpty(form["Application"]))
                 {
+                    tempApplication.ContextId = Guid.Parse(form["path"]);
+
+                    success = _appConfigRepository.AddApplication(userName, tempApplication);
+
                     success = _repository.AddApplication(scopeName, application);
                 }
                 else
                 {
+                    success = _appConfigRepository.UpdateApplication(userName, tempApplication);
+
                     success = _repository.UpdateApplication(scopeName, form["Application"], application);
                 }
                 if (success.Trim().Contains("Error"))
@@ -1304,6 +1312,216 @@ namespace org.iringtools.web.controllers
             }
         }
 
+        //public JsonResult Application(FormCollection form)
+        //{
+        //    try
+        //    {
+        //        string success = String.Empty;
+        //        string scopeName = form["Scope"];
+        //        string cacheImportURI = form["cacheImportURI"];
+        //        long cacheTimeout = String.IsNullOrWhiteSpace(form["cacheTimeout"]) ? 0 : Convert.ToInt64(form["cacheTimeout"]);
+        //        string permissions = form["permissions"];
+
+        //        library.Configuration configuration = new Configuration
+        //        {
+        //            AppSettings = new AppSettings
+        //            {
+        //                Settings = new List<Setting>()
+        //            }
+        //        };
+
+        //        CacheInfo cacheInfo = new CacheInfo
+        //        {
+        //            ImportURI = cacheImportURI,
+        //            Timeout = cacheTimeout
+        //        };
+
+        //        for (int i = 0; i < form.AllKeys.Length; i++)
+        //        {
+        //            //if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && 
+        //            //  form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val"
+        //            //  && form.GetKey(i).ToLower() != "cacheimporturi" && form.GetKey(i).ToLower() != "cachetimeout")
+        //            if (form.GetKey(i).ToLower().StartsWith("key"))
+        //            {
+        //                String key = form[i];
+        //                if (i + 1 < form.AllKeys.Length)
+        //                {
+        //                    String value = form[i + 1];
+        //                    configuration.AppSettings.Settings.Add(new Setting()
+        //                    {
+        //                        Key = key,
+        //                        Value = value
+        //                    });
+        //                }
+        //            }
+        //        }
+
+        //        List<string> groups = new List<string>();
+        //        if (permissions.Contains(","))
+        //        {
+        //            string[] arrstring = permissions.Split(',');
+        //            groups = new List<string>(arrstring);
+        //        }
+        //        else
+        //        {
+        //            groups.Add(permissions);
+        //        }
+
+        //        ScopeApplication application = new ScopeApplication()
+        //        {
+        //            DisplayName = form["displayName"],//form["Name"],
+        //            Name = form["internalName"],
+        //            Description = form["Description"],
+        //            Assembly = form["assembly"],
+        //            Configuration = configuration,
+        //            CacheInfo = cacheInfo,
+        //            PermissionGroup = new PermissionGroups()
+        //        };
+        //        if (!string.IsNullOrEmpty(permissions))
+        //            application.PermissionGroup.AddRange(groups);
+
+        //        if (String.IsNullOrEmpty(form["Application"]))
+        //        {
+        //            success = _repository.AddApplication(scopeName, application);
+        //        }
+        //        else
+        //        {
+        //            success = _repository.UpdateApplication(scopeName, form["Application"], application);
+        //        }
+        //        if (success.Trim().Contains("Error"))
+        //        {
+        //            _CustomErrorLog = new CustomErrorLog();
+        //            _CustomError = _CustomErrorLog.getErrorResponse(success);
+        //            return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+        //        }
+
+        //        //string applicationName = form["Application"];
+        //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+        //        ScopeProject scope = _repository.GetScope(scopeName);
+        //        ScopeApplication app = (from apps in scope.Applications
+        //                                where apps.Name == application.Name
+        //                                select apps).FirstOrDefault();
+
+        //        Configuration config = _repository.GetConfig(scope.Name, app.Name);
+        //        app.Configuration = config;
+
+        //        DataLayer dataLayer = _repository.GetDataLayer(scope.Name, app.Name);
+
+        //        if (dataLayer != null)
+        //        {
+        //            JsonTreeNode node = new JsonTreeNode
+        //            {
+        //                nodeType = "async",
+        //                type = "ApplicationNode",//"appNode",
+        //                iconCls = "application",
+        //                id = scope.Name + "/" + app.Name,
+        //                text = app.DisplayName,
+        //                expanded = false,
+        //                leaf = false,
+        //                children = null,
+        //                record = new
+        //                {
+        //                    Name = app.Name,
+        //                    DisplayName = app.DisplayName,
+        //                    Description = app.Description,
+        //                    DataLayer = dataLayer.Name,
+        //                    Assembly = dataLayer.Assembly,
+        //                    Configuration = app.Configuration,
+        //                    CacheImportURI = app.CacheInfo == null ? "" : app.CacheInfo.ImportURI,
+        //                    CacheTimeout = app.CacheInfo == null ? "" : Convert.ToString(app.CacheInfo.Timeout),
+        //                    PermissionGroups = app.PermissionGroup
+        //                }
+        //            };
+
+        //            node.property = new Dictionary<string, string>();
+        //            node.property.Add("Internal Name", app.Name);
+        //            node.property.Add("Display Name", app.DisplayName);
+        //            node.property.Add("Description", app.Description);
+        //            node.property.Add("Data Layer", dataLayer.Name);
+        //            node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
+
+
+        //            JsonTreeNode dataObjectsNode = new JsonTreeNode
+        //            {
+        //                nodeType = "async",
+        //                type = "DataObjectsNode",
+        //                iconCls = "folder",
+        //                id = scopeName + "/" + app.Name + "/DataObjects",
+        //                text = "Data Objects",
+        //                expanded = false,
+        //                leaf = false,
+        //                children = null,
+        //                property = new Dictionary<string, string>()
+        //            };
+
+        //            if (scope != null)
+        //            {
+        //                ScopeApplication scopeapplication = scope.Applications.Find(x => x.Name.ToLower() == app.Name.ToLower());
+
+        //                if (scopeapplication != null)
+        //                {
+        //                    dataObjectsNode.property.Add("Data Mode", scopeapplication.DataMode.ToString());
+        //                }
+        //            }
+
+        //            JsonTreeNode graphsNode = new JsonTreeNode
+        //            {
+        //                nodeType = "async",
+        //                type = "GraphsNode",
+        //                iconCls = "folder",
+        //                id = scopeName + "/" + app.Name + "/Graphs",
+        //                text = "Graphs",
+        //                expanded = false,
+        //                leaf = false,
+        //                children = null
+        //            };
+
+        //            JsonTreeNode ValueListsNode = new JsonTreeNode
+        //            {
+        //                nodeType = "async",
+        //                type = "ValueListsNode",
+        //                iconCls = "folder",
+        //                id = scopeName + "/" + app.Name + "/ValueLists",
+        //                text = "ValueLists",
+        //                expanded = false,
+        //                leaf = false,
+        //                children = null
+        //            };
+
+        //            if (node.children == null)
+        //                node.children = new List<JsonTreeNode>();
+        //            node.children.Add(dataObjectsNode);
+        //            node.children.Add(graphsNode);
+        //            node.children.Add(ValueListsNode);
+
+        //            nodes.Add(node);
+        //        }
+
+        //        return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
+        //        //JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        //        //return result;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.Error(e.ToString());
+        //        if (e.InnerException != null)
+        //        {
+        //            string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
+        //            var jsonSerialiser = new JavaScriptSerializer();
+        //            CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+        //            return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+        //        }
+        //        else
+        //        {
+        //            _CustomErrorLog = new CustomErrorLog();
+        //            _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errAddUIApplication, e, _logger);
+        //            return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
+        //        }
+        //    }
+        //}
+
         public JsonResult DeleteScope(FormCollection form)
         {
             try
@@ -1329,65 +1547,6 @@ namespace org.iringtools.web.controllers
             }
         }
 
-        //delete folder
-        public JsonResult DeleteFolder(FormCollection form)
-        {
-            try
-            {
-                string userName = "apandey1";
-                string success = String.Empty;
-                string folderName = form["nodename"];
-                Guid folderId = !String.IsNullOrEmpty(form["nodeid"]) ? Guid.Parse(form["nodeid"]) : Guid.Empty;
-                Guid parentFolderId = !String.IsNullOrEmpty(form["parentnodeid"]) ? Guid.Parse(form["parentnodeid"]) : Guid.Empty;
-
-                int siteId = 1;
-
-                #region TODO
-                // TODO: Need to create it dynamically at runtime
-                List<Permission> permissionsList = new List<Permission>();
-
-                Group tempGroup = new Group();
-                tempGroup.Active = 1;
-                tempGroup.GroupDesc = "Admin Group";
-                tempGroup.GroupId = 47;
-                tempGroup.GroupName = "Administrator";
-                tempGroup.SiteId = 1;
-
-                #endregion
-
-                Folder tempFolder = new Folder()
-                {
-                    FolderId = folderId,
-                    FolderName = folderName,
-                    ParentFolderId = parentFolderId,
-                    SiteId = siteId,
-                    permissions = new Permissions(),
-                    groups = new Groups()
-                };
-
-                tempFolder.groups.Add(tempGroup);
-
-                success = _repository.DeleteFolder(tempFolder);
-              
-                if (success.Trim().Contains("Error"))
-                {
-                    _CustomErrorLog = new CustomErrorLog();
-                    _CustomError = _CustomErrorLog.getErrorResponse(success);
-                    return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
-                }
-
-                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e.ToString());
-                _CustomErrorLog = new CustomErrorLog();
-                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUIDeleteScope, e, _logger);
-                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
-            }
-        }
-        
         public JsonResult DeleteApplication(FormCollection form)
         {
             try

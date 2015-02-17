@@ -44,7 +44,7 @@ Ext.define('AM.view.menus.FolderMenu', {
         },
         {
             xtype: 'menuitem',
-            action: 'newcontext',
+            action: 'newOrEditContext',
             icon: 'Content/img/16x16/document-new.png',
             text: 'New Context'
         }
