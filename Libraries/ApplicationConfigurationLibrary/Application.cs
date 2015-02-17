@@ -20,7 +20,7 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "context", Namespace = "http://www.iringtools.org/library")]
     public class Context
     {
-        Context()
+        public Context()
         {
             permissions = new Permissions();
             groups = new Groups();
@@ -41,25 +41,21 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "cacheConnstr", Order = 4, EmitDefaultValue = false)]
         public string CacheConnStr { get; set; }
 
-        [DataMember(Name = "applications", Order = 5, EmitDefaultValue = false)]
-        public Applications Applications { get; set; }
-
-        [DataMember(Name = "siteId", Order = 6, EmitDefaultValue = false)]
+        [DataMember(Name = "siteId", Order = 5, EmitDefaultValue = false)]
         public int SiteId { get; set; }
 
-        [DataMember(Name = "active", Order = 7, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 6, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "folderId", Order = 8, EmitDefaultValue = false)]
+        [DataMember(Name = "folderId", Order = 7, EmitDefaultValue = false)]
         public Guid FolderId { get; set; }
 
-        [DataMember(Name = "permissions", Order = 9, EmitDefaultValue = false)]
+        [DataMember(Name = "permissions", Order = 8, EmitDefaultValue = false)]
         public Permissions permissions { get; set; }
 
-        [DataMember(Name = "groups", Order = 10, EmitDefaultValue = false)]
+        [DataMember(Name = "groups", Order = 9, EmitDefaultValue = false)]
         public Groups groups { get; set; }
     }
-
 
     [CollectionDataContract(Name = "applications", Namespace = "http://www.iringtools.org/library", ItemName = "application")]
     public class Applications : List<Application>
@@ -70,7 +66,7 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "application", Namespace = "http://www.iringtools.org/library")]
     public class Application
     {
-        Application()
+        public Application()
         {
             permissions = new Permissions();
             applicationSettings = new ApplicationSettings();
@@ -114,7 +110,6 @@ namespace org.iringtools.applicationConfig
         public Groups groups { get; set; }
     }
 
-
     [CollectionDataContract(Name = "graphs", Namespace = "http://www.iringtools.org/library", ItemName = "graph")]
     public class Graphs : List<Graph>
     {
@@ -155,7 +150,6 @@ namespace org.iringtools.applicationConfig
         public Groups groups { get; set; }
     }
 
-
     [CollectionDataContract(Name = "folders", Namespace = "http://www.iringtools.org/library", ItemName = "folder")]
     public class Folders : List<Folder>
     {
@@ -192,7 +186,6 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "groups", Order = 6, EmitDefaultValue = false)]
         public Groups groups { get; set; }
     }
-
 
     [CollectionDataContract(Name = "exchanges", Namespace = "http://www.iringtools.org/library", ItemName = "exchange")]
     public class Exchanges : List<Exchange>
@@ -258,7 +251,6 @@ namespace org.iringtools.applicationConfig
         public Groups groups { get; set; }
     }
 
-
     /// <summary>
     /// These below defined classes are corresponding to the Application access tables.
     /// </summary>
@@ -284,7 +276,6 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
         public Byte Active { get; set; }
     }
-
 
     [CollectionDataContract(Name = "commodities", Namespace = "http://www.iringtools.org/library", ItemName = "commodity")]
     public class Commodities : List<Commodity>
@@ -338,7 +329,6 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "value", Order = 1, EmitDefaultValue = false)]
         public string Value { get; set; }
     }
-
 
     [CollectionDataContract(Name = "dataFilters", Namespace = "http://www.iringtools.org/data/filter", ItemName = "dataFilter")]
     public class DataFilters : List<DataFilter>

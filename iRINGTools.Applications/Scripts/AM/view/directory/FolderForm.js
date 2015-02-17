@@ -19,13 +19,13 @@ Ext.define('AM.view.directory.FolderForm', {
     requires: ['Ext.ux.form.CheckboxListCombo'],
     node: '',
     bodyStyle: 'padding:10px 5px 0',
-    url: 'directory/Root',
+    url: 'directory/Folder',
 
     initComponent: function () {
         var me = this;
 
         me.initialConfig = Ext.apply({
-            url: 'directory/Root'
+            url: 'directory/Folder'
         },
 
         me.initialConfig);
@@ -139,57 +139,27 @@ Ext.define('AM.view.directory.FolderForm', {
                 success: function (response, request) {
                     Ext.example.msg('Notification', 'Folder saved successfully!');
                     win.fireEvent('save', me);
-                    var parentNode = node.parentNode;
+
+                    var currentNode;
 
                     if (state == 'new') {
-                        var nodeIndex = 0;
-
-                        if (node.lastChild != null) {
-                            nodeIndex = node.lastChild.data.index + 1;
-                        }
-
-                        var nodeToAdd;
-
-                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
-                            var isNodePresent = false;
-
-                            Ext.each(node.childNodes, function (existingNode) {
-                                if (existingNode.id == 'AM.model.DirectoryModel-' + newNode.id) {
-                                    isNodePresent = true;
-                                    return false;
-                                }
-                            });
-
-                            if (!isNodePresent) {
-                                nodeToAdd = newNode;
-                                return false;
-                            }
-                        });
-
-                        node.insertChild(nodeIndex, nodeToAdd);
+                        currentNode = node;
                     }
                     else {
-                        var nodeIndex = parentNode.indexOf(node);
-                        parentNode.removeChild(node);
-
-                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
-                            var isNodePresent = false;
-
-                            Ext.each(parentNode.childNodes, function (existingNode) {
-                                if (existingNode.id == 'AM.model.DirectoryModel-' + newNode.id) {
-                                    isNodePresent = true;
-                                    return false;
-                                }
-                            });
-
-                            if (!isNodePresent) {
-                                nodeToAdd = newNode;
-                                return false;
-                            }
-                        });
-
-                        parentNode.insertChild(nodeIndex, nodeToAdd);
+                        currentNode = node.parentNode;
                     }
+
+                    while (currentNode.firstChild) {
+                        currentNode.removeChild(currentNode.firstChild);
+                    }
+
+                    var index = 0;
+
+                    Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
+                        currentNode.insertChild(index, newNode);
+                        index++;
+                    });
+
                     me.setLoading(false);
                 },
 

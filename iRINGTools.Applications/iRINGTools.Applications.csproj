@@ -146,8 +146,10 @@
     <Compile Include="Helpers\Tree.cs" />
     <Compile Include="Helpers\TreeNode.cs" />
     <Compile Include="Models\AdapterRepository.cs" />
+    <Compile Include="Models\ApplicationConfigurationRepository.cs" />
     <Compile Include="Models\FacadeRepository.cs" />
     <Compile Include="Models\FileRepository.cs" />
+    <Compile Include="Models\IApplicationConfigurationRepository.cs" />
     <Compile Include="Models\IFacadeRepository.cs" />
     <Compile Include="Models\IFileRepository.cs" />
     <Compile Include="Models\IGridRepository.cs" />
@@ -353,6 +355,7 @@
     <Content Include="Scripts\AM\view\menus\AppDataRefreshMenu.js" />
     <Content Include="Scripts\AM\view\menus\ApplicationMenu.js" />
     <Content Include="Scripts\AM\view\menus\ClassmapMenu.js" />
+    <Content Include="Scripts\AM\view\menus\ContextMenu.js" />
     <Content Include="Scripts\AM\view\menus\GraphMenu.js" />
     <Content Include="Scripts\AM\view\menus\GraphsMenu.js" />
     <Content Include="Scripts\AM\view\menus\GroupAdminScopesMenu.js" />
