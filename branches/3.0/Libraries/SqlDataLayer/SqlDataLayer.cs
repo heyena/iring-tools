@@ -40,6 +40,11 @@
         string dbTypeName = string.Empty;
 
         /// <summary>
+        /// Variable to hold name of the schema to be used in database
+        /// </summary>
+        string schemaName = string.Empty;
+
+        /// <summary>
         /// Database dictionary object
         /// </summary>
         DatabaseDictionary databaseDictionary;
@@ -197,7 +202,7 @@
                     string composeExtensionPropertiesQuery = ExtenstionPropertiesAsQuery(dataObjectToBeUsedForGet);
 
                     //Executing GET operation to fetch data
-                    DataTable getDataTable = ExecuteGetDatabaseQuery("SELECT " + dataObjectToBeUsedForGet.tableName + ".* " + composeExtensionPropertiesQuery + " FROM " + dataObjectToBeUsedForGet.tableName);
+                    DataTable getDataTable = ExecuteGetDatabaseQuery("SELECT " + dataObjectToBeUsedForGet.tableName + ".* " + composeExtensionPropertiesQuery + " FROM schemaName." + dataObjectToBeUsedForGet.tableName);
 
                     if (getDataTable != null)
                     {
@@ -283,7 +288,7 @@
                             columnNamesInWhereClause.Remove(columnNamesInWhereClause.Length - 4, 4);
 
                             //Executing GET operation to fetch data
-                            DataTable getDataTable = ExecuteGetDatabaseQuery("SELECT " + "*" + " FROM " + dataObjectToBeUsedForGet.tableName + " WHERE " + columnNamesInWhereClause);
+                            DataTable getDataTable = ExecuteGetDatabaseQuery("SELECT " + "*" + " FROM schemaName." + dataObjectToBeUsedForGet.tableName + " WHERE " + columnNamesInWhereClause);
 
                             int columnNumber = 0;
 
@@ -359,7 +364,7 @@
 
                     getIdQuery = getIdQuery.Remove(getIdQuery.ToString().LastIndexOf(","), 1);
 
-                    getIdQuery.Append(" FROM " + objectType.tableName);
+                    getIdQuery.Append(" FROM schemaName." + objectType.tableName);
 
                     //Executing GET operation to fetch identifiers
                     DataTable dataTableContainingIdentifiers = ExecuteGetDatabaseQuery(getIdQuery.ToString());
@@ -416,7 +421,7 @@
 
                     string composeExtensionPropertiesQuery = ExtenstionPropertiesAsQuery(dataObjectToBeUsedForGet);
 
-                    getPageQuery.Append("SELECT " + dataObjectToBeUsedForGet.tableName + ".* " + composeExtensionPropertiesQuery + " FROM " + dataObjectToBeUsedForGet.tableName + " WHERE ( (");
+                    getPageQuery.Append("SELECT " + dataObjectToBeUsedForGet.tableName + ".* " + composeExtensionPropertiesQuery + " FROM schemaName." + dataObjectToBeUsedForGet.tableName + " WHERE ( (");
 
                     //Preparing query for GET operation
                     foreach (SerializableDataObject eachIdentifier in identifiers)
@@ -805,7 +810,7 @@
                 }
 
                 //Preparing DELETE query
-                string postSqlQuery = "DELETE FROM " + postTableName + " WHERE " + columnsInWhereClause;
+                string postSqlQuery = "DELETE FROM schemaName." + postTableName + " WHERE " + columnsInWhereClause;
 
                 //Executing POST operation
                 int noOfRowsPosted = ExecutePostDatabaseQuery(postDataObject, serializableDataObject, postSqlQuery, true);
@@ -901,7 +906,7 @@
                 }
 
                 //Preparing UPDATE query
-                string postSqlQuery = "UPDATE " + postTableName + " SET " + columnNamesWithValues + " WHERE " + columnsInWhereClause;
+                string postSqlQuery = "UPDATE schemaName." + postTableName + " SET " + columnNamesWithValues + " WHERE " + columnsInWhereClause;
 
                 //Executing POST operation
                 int noOfRowsPosted = ExecutePostDatabaseQuery(postDataObject, serializableDataObject, postSqlQuery, false);
@@ -977,7 +982,7 @@
                 }
 
                 //Preparing INSERT query
-                string postSqlQuery = "INSERT INTO " + postTableName + " (" + columnNames + ") VALUES (" + parameterNames + ")";
+                string postSqlQuery = "INSERT INTO schemaName." + postTableName + " (" + columnNames + ") VALUES (" + parameterNames + ")";
 
                 //Executing POST operation
                 int noOfRowsPosted = ExecutePostDatabaseQuery(postDataObject, serializableDataObject, postSqlQuery, false);
@@ -1031,6 +1036,8 @@
                 {
                     _sqlDatalayerDBConnection.Open();
                 }
+
+                schemaName = databaseDictionary.SchemaName;
             }
             else
             {
@@ -1049,6 +1056,8 @@
             {
                 //Opening database connection
                 OpenDBConnection();
+
+                getSqlQuery = getSqlQuery.Replace("schemaName", schemaName);
 
                 //Creating command objects based on database type
                 if (dbTypeName == "Oracle")
@@ -1102,6 +1111,8 @@
         {
             try
             {
+                postSqlQuery = postSqlQuery.Replace("schemaName", schemaName);
+
                 //Creating command objects based on database type
                 if (dbTypeName == "Oracle")
                 {
