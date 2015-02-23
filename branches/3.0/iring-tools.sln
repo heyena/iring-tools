@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserSecurityLibrary", "Libr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlDataLayer", "Libraries\SqlDataLayer\SqlDataLayer.csproj", "{933AB6DA-C9FE-48AA-992D-5EDC194E541C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlToDbMigrationUtility", "Utilities\XmlToDbMigrationUtility\XmlToDbMigrationUtility.csproj", "{30CA20A1-6D3D-40D0-991E-7AC2590B5AFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -593,6 +595,7 @@ Global
 		{098F8975-31CC-420F-81C5-14DB5FC4AEB3} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{8641B552-54AE-4531-A9C2-ECB2500EA03D} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{1CD0D19A-05B7-4251-9F2C-703EE1ECB874} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
+		{30CA20A1-6D3D-40D0-991E-7AC2590B5AFC} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = C:\Enterprise Library
