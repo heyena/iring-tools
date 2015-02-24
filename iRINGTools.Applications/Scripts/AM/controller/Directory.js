@@ -7,7 +7,8 @@ Ext.define('AM.controller.Directory', {
         'DynamicModel',
         'FileDownloadModel',
         'VirtualPropertyModel',
-        'PermissionsM'
+        'PermissionsM',
+        'ResourceGroupModel'
     ],
 
     stores: [
@@ -15,7 +16,8 @@ Ext.define('AM.controller.Directory', {
         'DataLayerStore',
         'FileDownloadStore',
         'VirtualPropertyStore',
-        'PermissionsS'
+        'PermissionsS',
+        'ResourceGroupStore'
     ],
 
     views: [
@@ -169,6 +171,7 @@ Ext.define('AM.controller.Directory', {
             var displayName = node.data.record.FolderName;
             win.title = 'Edit Folder';
             var state = 'edit';
+//            form.getForm().findField('ResourceGroups').setValue(node.data.record.groups);
 
         } else {
             var name = '';
@@ -188,9 +191,9 @@ Ext.define('AM.controller.Directory', {
             win.destroy();
         }, me);
 
-        if (utilsObj.isSecEnable == "False") {
-            form.getForm().findField('permissions').hide();
-        }
+//        if (utilsObj.isSecEnable == "False") {
+//            form.getForm().findField('permissions').hide();
+//        }
 
         form.getForm().findField('id').setValue(node.internalId);
         form.getForm().findField('path').setValue(path);
@@ -199,7 +202,6 @@ Ext.define('AM.controller.Directory', {
         form.getForm().findField('name').setValue(name);
         form.getForm().findField('displayName').setValue(displayName);
         form.getForm().findField('contextName').setValue(name);
-        form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
 
         win.show();
     },
@@ -257,7 +259,7 @@ Ext.define('AM.controller.Directory', {
     onNewOrEditContext: function (item, e, eOpts) {
 
         var me = this;
-        var path, state, context, description, wintitle, displayName;
+        var path, state, context, description, wintitle, displayName, internalName;
         var tree = me.getDirTree();
         var node = tree.getSelectedNode();
         var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
@@ -279,7 +281,11 @@ Ext.define('AM.controller.Directory', {
         form.node = node;
 
         if (item.itemId == 'editContext' && node.data.record !== undefined) {
-            var name = node.data.record.Name;
+           // var name = node.data.record.Name;
+            displayName = node.data.record.DisplayName;
+            internalName = node.data.record.InternalName;
+            description = node.data.record.Description;
+
             win.title = 'Edit Context';
             var state = 'edit';
 
@@ -308,8 +314,9 @@ Ext.define('AM.controller.Directory', {
         form.getForm().findField('description').setValue(description);
         form.getForm().findField('name').setValue(name);
         form.getForm().findField('displayName').setValue(displayName);
+        form.getForm().findField('internalName').setValue(internalName);
         form.getForm().findField('contextName').setValue(name);
-        form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
+//        form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
 
         win.show();
     },
