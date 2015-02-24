@@ -24,14 +24,16 @@ namespace org.iringtools.web.controllers
     public class DirectoryController : BaseController
     {
         // TODO: Need to get it at runtime
-        string userName = "apandey1";
+        string userName = "vmallire";
         int siteId = 1;
+        Groups groupsToGenerate = new Groups();
 
         private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
         private CustomError _CustomError = null;
         private CustomErrorLog _CustomErrorLog = null;
         private AdapterRepository _repository;
         private ApplicationConfigurationRepository _appConfigRepository;
+        private SecurityRepository _securityRepository = new SecurityRepository();
         private string _keyFormat = "Mapping.{0}.{1}";
 
         public DirectoryController() : this(new AdapterRepository()) { }
@@ -43,6 +45,8 @@ namespace org.iringtools.web.controllers
             _repository.AuthHeaders = _authHeaders;
 
             _appConfigRepository = new ApplicationConfigurationRepository(_repository);
+
+            groupsToGenerate = _securityRepository.GetUserGroups(userName, siteId, "xml");
         }
 
         public ActionResult Index()
@@ -753,7 +757,7 @@ namespace org.iringtools.web.controllers
                     expanded = false,
                     leaf = false,
                     children = null,
-                    record = contexts
+                    record = context
                 };
 
                 node.property = new Dictionary<string, string>();
@@ -911,27 +915,13 @@ namespace org.iringtools.web.controllers
                 string success = String.Empty;
                 string folderName = form["displayName"];
 
-                #region TODO
-                // TODO: Need to create it dynamically at runtime
-
-                Group tempGroup = new Group();
-                tempGroup.Active = 1;
-                tempGroup.GroupDesc = "Admin Group";
-                tempGroup.GroupId = 47;
-                tempGroup.GroupName = "Administrator";
-                tempGroup.SiteId = 1;
-
-                #endregion
-
                 Folder tempFolder = new Folder()
                 {
                     FolderName = folderName,
-                    SiteId = siteId,
-                    permissions = new Permissions(),
-                    groups = new Groups()
+                    SiteId = siteId
                 };
 
-                tempFolder.groups.Add(tempGroup);
+                tempFolder.groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
 
                 if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
                 {
@@ -994,17 +984,6 @@ namespace org.iringtools.web.controllers
                 string success = String.Empty;
                 string contextName = form["displayName"];
 
-                #region TODO
-                // TODO: Need to create it dynamically at runtime
-                Group tempGroup = new Group();
-                tempGroup.Active = 1;
-                tempGroup.GroupDesc = "Admin Group";
-                tempGroup.GroupId = 47;
-                tempGroup.GroupName = "Administrator";
-                tempGroup.SiteId = 1;
-
-                #endregion
-
                 applicationConfig.Context tempContext = new applicationConfig.Context()
                 {
                     DisplayName = contextName,
@@ -1016,7 +995,7 @@ namespace org.iringtools.web.controllers
                     groups = new Groups()
                 };
 
-                tempContext.groups.Add(tempGroup);
+                tempContext.groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
 
                 if (form["state"] == "new")
                 {
@@ -1779,6 +1758,21 @@ namespace org.iringtools.web.controllers
 
             return keyType;
         }
+
+        private List<Group> GetSelectedGroups(string groups)
+        {
+            List<Group> tempGroups = new List<Group>();
+
+            string[] groupArray = groups.Split(',');
+
+            for (int i = 0; i < groupArray.Length; i++)
+            {
+                tempGroups.Add(groupsToGenerate.Find(gr => gr.GroupId.ToString() == groupArray[i]));
+            }
+
+            return tempGroups;
+        }
+
         #endregion
     }
 }

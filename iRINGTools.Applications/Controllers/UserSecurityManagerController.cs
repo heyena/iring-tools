@@ -359,13 +359,20 @@ namespace org.iringtools.web.controllers
             
         }
 
-        public JsonResult getUserGroups(FormCollection form)
+        public ActionResult getUserGroups()
         {
             try
             {
-                string userName = form["UserName"];
-                Groups userGroups = _repository.GetUserGroups(userName, "xml");
-                return Json(userGroups, JsonRequestBehavior.AllowGet);
+                string userName = "vmallire";
+                int siteId = 1;
+                Groups userGroups = _repository.GetUserGroups(userName, siteId, "xml");
+
+                JsonContainer<Groups> container = new JsonContainer<Groups>();
+                container.items = userGroups;
+                container.success = true;
+                container.total = userGroups.Count;
+
+                return Json(container, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
