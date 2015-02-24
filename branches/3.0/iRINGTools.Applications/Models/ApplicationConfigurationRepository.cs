@@ -20,22 +20,6 @@ namespace iRINGTools.Web.Models
 
         string applicationConfigurationServiceUri = null;
 
-        //internal ApplicationConfigurationRepository()
-        //{
-        //    NameValueCollection settings = ConfigurationManager.AppSettings;
-        //    serviceSettings.AppendSettings(settings);
-
-        //    proxyHost = settings["ProxyHost"];
-        //    proxyPort = settings["ProxyPort"];
-
-        //    applicationConfigurationServiceUri = settings["ApplicationConfigServiceUri"];
-
-        //    if (applicationConfigurationServiceUri.EndsWith("/"))
-        //    {
-        //        applicationConfigurationServiceUri = applicationConfigurationServiceUri.Remove(applicationConfigurationServiceUri.Length - 1);
-        //    }
-        //}
-
         internal ApplicationConfigurationRepository(AdapterRepository _adapter)
         {
             adapter = _adapter;

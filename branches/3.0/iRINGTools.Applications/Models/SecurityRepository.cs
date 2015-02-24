@@ -523,14 +523,14 @@ namespace iRINGTools.Web.Models
 
         }
 
-        public Groups GetUserGroups(string userName, string format)
+        public Groups GetUserGroups(string userName, int siteId, string format)
         {
             Groups items = null;
             _logger.Debug("In SecurityRepository GetUserGroups");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                items = client.Get<Groups>("/groupsUser?userName=" + userName + "&siteId=1&format=" + format);
+                items = client.Get<Groups>("/groupsUser?userName=" + userName + "&siteId=" + siteId + "&format=" + format);
 
                 _logger.Debug("Successfully called Security Service.");
             }
