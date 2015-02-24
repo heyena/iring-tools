@@ -239,6 +239,7 @@
     <Content Include="Scripts\AM\model\ProviderModel.js" />
     <Content Include="Scripts\AM\model\RelationModel.js" />
     <Content Include="Scripts\AM\model\RelationNameModel.js" />
+    <Content Include="Scripts\AM\model\ResourceGroupModel.js" />
     <Content Include="Scripts\AM\model\SearchModel.js" />
     <Content Include="Scripts\AM\model\SpreadsheetModel.js" />
     <Content Include="Scripts\AM\model\TableSelectModel.js" />
@@ -259,6 +260,7 @@
     <Content Include="Scripts\AM\store\RelatedObjectStore.js" />
     <Content Include="Scripts\AM\store\RelationsStore.js" />
     <Content Include="Scripts\AM\store\RelationStore.js" />
+    <Content Include="Scripts\AM\store\ResourceGroupStore.js" />
     <Content Include="Scripts\AM\store\SearchCmbStore.js" />
     <Content Include="Scripts\AM\store\SearchStore.js" />
     <Content Include="Scripts\AM\store\SpreadsheetStore.js" />
