@@ -22,7 +22,7 @@ Ext.define('AM.view.directory.ContextWindow', {
   ],
 
     border: false,
-    height: 265,
+    height: 300,
     width: 467,
     minHeight: 265,
     minWidth: 250,

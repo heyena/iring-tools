@@ -57,7 +57,6 @@ Ext.define('AM.view.directory.FolderForm', {
                     text: 'Cancel'
                 }]
             }],
-
             items: [{
                 xtype: 'hiddenfield',
                 name: 'id'
@@ -93,18 +92,14 @@ Ext.define('AM.view.directory.FolderForm', {
                 xtype: 'checkboxlistcombo',
                 width: 180,
                 multiSelect: true,
-                itemId: 'permissionitem',
-                fieldLabel: 'Permissions:',
-                labelSeparator: '',
-                emptyText: '',
-                allowBlank: true,
-                name: 'permissions',
-                displayField: 'permission',
+                name: 'ResourceGroups',
+                itemId: 'ResourceGroupId',
+                fieldLabel: 'Groups for the User:',
+                displayField: 'groupName',
                 autoSelect: false,
                 queryMode: 'remote',
-                store: 'PermissionsS',
-                valueField: 'permission',
-                hidden: false
+                store: 'ResourceGroupStore',
+                valueField: 'groupId'
             }]
         });
 

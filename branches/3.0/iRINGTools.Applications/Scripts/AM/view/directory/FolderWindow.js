@@ -22,8 +22,8 @@ Ext.define('AM.view.directory.FolderWindow', {
     'AM.view.directory.FolderForm'
   ],
     border: false,
-    height: 110,
-    width: 430,
+    height: 135,
+    width: 450,
     minHeight: 100,
     minWidth: 280,
     layout: {
