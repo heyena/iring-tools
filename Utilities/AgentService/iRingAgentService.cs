@@ -257,6 +257,10 @@ namespace iRINGAgentService
                 adapterSettings = new AdapterSettings();
                 adapterSettings.AppendSettings(settings);
 
+              
+                //Call agent provider
+                AgentProvider agentProvider = new AgentProvider(adapterSettings);
+
                 //update status to Busy in DB 
                 updateSQL = string.Format(UPDATE_SQL_TPL, "Schedule", "Status = 'Busy'", " where Schedule_Id = '" + _configList[k].ScheduleId + "'");
                 idSQLMap[_configList[k].JobId] = updateSQL;
@@ -266,8 +270,6 @@ namespace iRINGAgentService
                 idSQLMap[_configList[k].JobId] = updateSQL;
                 DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
 
-                //Call agent provider
-                AgentProvider agentProvider = new AgentProvider(adapterSettings);
                 AgentConfig agentConfig = (AgentConfig)_configList[k];
                 _logger.Debug("Calling task with config no. " + k);
                 agentProvider.ProcessTask(agentConfig);
