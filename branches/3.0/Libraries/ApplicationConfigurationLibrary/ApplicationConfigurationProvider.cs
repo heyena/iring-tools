@@ -71,6 +71,7 @@ namespace org.iringtools.applicationConfig
         public Response InsertContext(string userName,XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
@@ -78,8 +79,32 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = context.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //        NameValueList nvl = new NameValueList();
+
+                //        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                //        nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
+                //        nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
+                //        nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
+                //        nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
+                //        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(context.SiteId) });
+                //        nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(context.FolderId) });
+                //        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                    
+                //        DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiContext", nvl);
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Contexts added successfully.");
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
+                    if (context == null || string.IsNullOrEmpty(context.DisplayName))
+                        PrepareErrorResponse(response, "Please enter Context DisplayName!");
+                    else
+                    {
                         NameValueList nvl = new NameValueList();
 
                         nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
@@ -87,16 +112,28 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(context.SiteId) });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(context.FolderId) });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
-                    
-                        DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiContext", nvl);
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiContext", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "Context added successfully!");
+                                break;
+                            case "0":
+                                PrepareErrorResponse(response, "Context with this name already exists!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Contexts added successfully.");
             }
             catch (Exception ex)
             {
@@ -254,6 +291,7 @@ namespace org.iringtools.applicationConfig
         public Response InsertFolder(string userName, XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
@@ -261,16 +299,48 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = folder.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    dc.ExecuteCommand("spiFolder @UserName = {0}, @SiteId = {1}, @ParentFolderId = {2}, " +
+                //                                  "@FolderName = {3}, @GroupList = {4}", userName, folder.SiteId, folder.ParentFolderId, folder.FolderName, rawXml);
+
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Folder added successfully.");
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteCommand("spiFolder @UserName = {0}, @SiteId = {1}, @ParentFolderId = {2}, " +
-                                                  "@FolderName = {3}, @GroupList = {4}", userName, folder.SiteId, folder.ParentFolderId, folder.FolderName, rawXml);
+                    if (folder == null || string.IsNullOrEmpty(folder.FolderName))
+                        PrepareErrorResponse(response, "Please enter FolderName!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                        nvl.Add(new ListItem() { Name = "@ParentFolderId", Value = folder.ParentFolderId.ToString() });
+                        nvl.Add(new ListItem() { Name = "@FolderName", Value = folder.FolderName });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiFolder", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "folderadded");
+                                break;
+                            case "0":
+                                PrepareSuccessResponse(response, "duplicatefolder");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
 
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Folder added successfully.");
             }
             catch (Exception ex)
             {
@@ -290,21 +360,51 @@ namespace org.iringtools.applicationConfig
         public Response UpdateFolder(string userName, XDocument xml)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
                 Folder folder = Utility.DeserializeDataContract<Folder>(xml.ToString());
                 string rawXml = folder.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    dc.ExecuteCommand("spuFolder @UserName = {0}, @SiteId = {1}, @FolderId = {2}, @ParentFolderId = {3}, " +
+                //                                  "@FolderName = {4}, @GroupList = {5}", userName, folder.SiteId, folder.FolderId, folder.ParentFolderId, folder.FolderName, rawXml);
+
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Folder updated successfully.");
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteCommand("spuFolder @UserName = {0}, @SiteId = {1}, @FolderId = {2}, @ParentFolderId = {3}, " +
-                                                  "@FolderName = {4}, @GroupList = {5}", userName, folder.SiteId, folder.FolderId, folder.ParentFolderId, folder.FolderName, rawXml);
+                    if (folder == null || string.IsNullOrEmpty(folder.FolderName))
+                        PrepareErrorResponse(response, "Please enter FolderName!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                        nvl.Add(new ListItem() { Name = "@FolderId", Value = folder.FolderId.ToString() });
+                        nvl.Add(new ListItem() { Name = "@ParentFolderId", Value = folder.ParentFolderId.ToString() });
+                        nvl.Add(new ListItem() { Name = "@FolderName", Value = folder.FolderName });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuFolder", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "folderupdated");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
 
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Folder updated successfully.");
             }
             catch (Exception ex)
             {
@@ -324,18 +424,44 @@ namespace org.iringtools.applicationConfig
         public Response DeleteFolder(string folderId)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
 
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    dc.ExecuteCommand("spdFolder @FolderId = {0} ", folderId);
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Folder deleted successfully.");
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteCommand("spdFolder @FolderId = {0} ", folderId);
+                    if (string.IsNullOrEmpty(folderId))
+                        PrepareErrorResponse(response, "Please enter folderid!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@FolderId", Value = folderId });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdFolder", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "folderdeleted");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Folder deleted successfully.");
             }
             catch (Exception ex)
             {
@@ -419,33 +545,67 @@ namespace org.iringtools.applicationConfig
         public Response InsertApplication(string userName, XDocument xml)
         {
             Response response = new Response();
-
+            response.Messages = new Messages();
             try
             {
                 Application application = Utility.DeserializeDataContract<Application>(xml.ToString());
 
                 string rawXml = application.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    NameValueList nvl = new NameValueList();
+
+                //    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                //    nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(application.ContextId) });
+                //    nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName});
+                //    nvl.Add(new ListItem() { Name = "@InternalName", Value = application.InternalName });
+                //    nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
+                //    nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
+                //    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(application.SiteId) });
+                //    nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
+                //    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+
+                //    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiApplication", nvl);
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Applications added successfully.");
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    NameValueList nvl = new NameValueList();
+                    if (application == null || string.IsNullOrEmpty(application.DisplayName))
+                        PrepareErrorResponse(response, "Please enter Application DisplayName!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                        nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(application.ContextId) });
+                        nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName });
+                        nvl.Add(new ListItem() { Name = "@InternalName", Value = application.InternalName });
+                        nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
+                        nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
-                    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                    nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(application.ContextId) });
-                    nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName});
-                    nvl.Add(new ListItem() { Name = "@InternalName", Value = application.InternalName });
-                    nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
-                    nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
-                    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(application.SiteId) });
-                    nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
-                    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiApplication", nvl);
 
-                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiApplication", nvl);
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "Application added successfully!");
+                                break;
+                            case "0":
+                                PrepareErrorResponse(response, "Application with this name already exists!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
                 }
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Applications added successfully.");
             }
             catch (Exception ex)
             {
@@ -561,6 +721,7 @@ namespace org.iringtools.applicationConfig
         public Response InsertGraph(string userName, XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
@@ -569,22 +730,64 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = graph.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    //if (graph.graph == null)  ////For testing purpose.
+                //    //{
+                //    //    string grapthPath = @"C:\Branch3.0\iRINGTools.Services\App_Data\Mapping.1234_000.ABC.xml";
+                //    //    byte[] bytes = System.IO.File.ReadAllBytes(grapthPath);
+                //    //    graph.graph = bytes;
+                //    //}
+
+                //    dc.ExecuteQuery<Graph>("spiGraph @Username = {0}, @ApplicationId = {1}, @GraphName = {2}, @Graph = {3}, @SiteId = {4}, @GroupList = {5}",
+                //                                         userName, graph.ApplicationId, graph.GraphName, graph.graph, _siteID, rawXml).ToList();
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Graphs added successfully.");
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    //if (graph.graph == null)  ////For testing purpose.
-                    //{
-                    //    string grapthPath = @"C:\Branch3.0\iRINGTools.Services\App_Data\Mapping.1234_000.ABC.xml";
-                    //    byte[] bytes = System.IO.File.ReadAllBytes(grapthPath);
-                    //    graph.graph = bytes;
-                    //}
+                    if (graph == null || string.IsNullOrEmpty(graph.GraphName))
+                        PrepareErrorResponse(response, "Please enter GraphName!");
+                    else
+                    {
+                        //if (graph.graph == null)  ////For testing purpose.
+                        //{
+                        //    string grapthPath = @"C:\Branch3.0\iRINGTools.Services\App_Data\Mapping.1234_000.ABC.xml";
+                        //    byte[] bytes = System.IO.File.ReadAllBytes(grapthPath);
+                        //    graph.graph = bytes;
+                        //}
 
-                    dc.ExecuteQuery<Graph>("spiGraph @Username = {0}, @ApplicationId = {1}, @GraphName = {2}, @Graph = {3}, @SiteId = {4}, @GroupList = {5}",
-                                                         userName, graph.ApplicationId, graph.GraphName, graph.graph, _siteID, rawXml).ToList();
+
+                        NameValueList nvl = new NameValueList();
+
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                        nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(graph.ApplicationId) });
+                        nvl.Add(new ListItem() { Name = "@GraphName", Value = graph.GraphName });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID)});
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedureWithExtraParam_ByteArray(_connSecurityDb, "spiGraph", nvl, "@Graph", graph.graph);
+
+                        
+                        switch (output.ToString())
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "Graph added successfully!");
+                                break;
+                            case "0":
+                                PrepareErrorResponse(response, "Graph with this name already exists!");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output.ToString());
+                                break;
+                        }
+                    }
+
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Graphs added successfully.");
             }
             catch (Exception ex)
             {
@@ -1233,6 +1436,27 @@ namespace org.iringtools.applicationConfig
             }
             return valueListMaps;
         }
+
+        #region Private Methods
+        private void PrepareErrorResponse(Response response, string errMsg)
+        {
+            Status status = new Status { Level = StatusLevel.Error };
+            status.Messages = new Messages { errMsg };
+            response.DateTimeStamp = DateTime.Now;
+            response.Level = StatusLevel.Error;
+            response.StatusList.Add(status);
+
+        }
+        private void PrepareSuccessResponse(Response response, string errMsg)
+        {
+            Status status = new Status { Level = StatusLevel.Success };
+            status.Messages = new Messages { errMsg };
+            response.DateTimeStamp = DateTime.Now;
+            response.Level = StatusLevel.Success;
+            response.StatusList.Add(status);
+        }
+        #endregion
+
 
     }
 }

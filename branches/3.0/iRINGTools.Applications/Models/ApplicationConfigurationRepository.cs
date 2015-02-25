@@ -5,6 +5,7 @@ using System.Web;
 
 using org.iringtools.applicationConfig;
 using org.iringtools.utility;
+using library = org.iringtools.library;
 using log4net;
 using System.Net;
 using System.Collections.Specialized;
@@ -53,14 +54,14 @@ namespace iRINGTools.Web.Models
             return folders;
         }
 
-        public string AddFolder(string userName, Folder newFolder)
+        public library.Response AddFolder(string userName, Folder newFolder)
         {
-            string obj = null;
+           library.Response response = null;
 
             try
             {
                 WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
-                obj = client.Post<Folder>(String.Format("/insertFolder/{0}?format=xml", userName), newFolder, true);
+                response = client.Post<Folder,library.Response>(String.Format("/insertFolder/{0}?format=xml", userName), newFolder, true);
             }
             catch (Exception ex)
             {
@@ -68,17 +69,17 @@ namespace iRINGTools.Web.Models
                 throw;
             }
 
-            return obj;
+            return response;
         }
 
-        public string UpdateFolder(string userName, Folder updatedFolder)
+        public library.Response UpdateFolder(string userName, Folder updatedFolder)
         {
-            string obj = null;
+            library.Response response = null;
 
             try
             {
                 WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
-                obj = client.Put<Folder>(String.Format("/updateFolder/{0}?format=xml", userName), updatedFolder, true);
+                response = client.Put<Folder,library.Response>(String.Format("/updateFolder/{0}?format=xml", userName), updatedFolder, true);
             }
             catch (Exception ex)
             {
@@ -86,17 +87,17 @@ namespace iRINGTools.Web.Models
                 throw;
             }
 
-            return obj;
+            return response;
         }
 
-        public string DeleteFolder(Folder folder)
+        public library.Response DeleteFolder(Folder folder)
         {
-            string obj = null;
+            library.Response response = null;
 
             try
             {
                 WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
-                obj = client.Delete<Folder>(String.Format("/deleteFolder/{0}?format=xml", folder.FolderId), folder, true);
+                response = client.Delete<Folder,library.Response>(String.Format("/deleteFolder/{0}?format=xml", folder.FolderId), folder, true);
             }
             catch (Exception ex)
             {
@@ -104,7 +105,7 @@ namespace iRINGTools.Web.Models
                 throw;
             }
 
-            return obj;
+            return response;
         }
 
         public Contexts GetContexts(string userName, Guid parentFolderId, int siteId)
