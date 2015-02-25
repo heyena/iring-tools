@@ -428,9 +428,7 @@
                     {
                         foreach (KeyValuePair<string, object> eachDictionaryEntry in eachIdentifier.Dictionary)
                         {
-                            string columnName = objectType.dataProperties.Find(dProp => dProp.propertyName == eachDictionaryEntry.Key).columnName;
-
-                            getPageQuery.Append(columnName + "= '" + eachDictionaryEntry.Value + "' AND ");
+                            getPageQuery.Append(objectType.dataProperties.Find(dProp => dProp.propertyName == eachDictionaryEntry.Key).columnName + "= '" + eachDictionaryEntry.Value + "' AND ");
                         }
 
                         getPageQuery = getPageQuery.Remove(getPageQuery.ToString().LastIndexOf("AND"), 4);
@@ -1073,7 +1071,9 @@
 
                 DataSet tempDataSet = new DataSet();
 
-                _sqlDatalayerDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                //_sqlDatalayerDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+
+                tempDataSet.EnforceConstraints = false;
 
                 //Getting values from the database
                 _sqlDatalayerDataAdapter.FillSchema(tempDataSet, SchemaType.Source);
