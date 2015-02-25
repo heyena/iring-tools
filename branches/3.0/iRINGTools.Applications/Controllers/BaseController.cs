@@ -97,6 +97,18 @@ namespace org.iringtools.web.controllers
 
               IAuthHeaders headersProvider = (IAuthHeaders)Activator.CreateInstance(headersProviderType);
               _authHeaders = headersProvider.Get(_authenticatedUser);
+              //getting user name from authenticated header
+              if (_authHeaders != null)
+              {
+                  string strBechtelUserId = _authHeaders["X-myPSN-UserID"];
+                  char[] splitUser = new[] { '@' };
+                  var splitString = strBechtelUserId.Split(splitUser);
+                  string userName = splitString[0];
+                  System.Web.HttpContext.Current.Session["userName"] = userName;
+              }
+                // end of authenticated header
+             
+
             }
           }
           catch (Exception e)
