@@ -434,6 +434,48 @@ namespace org.iringtools.adapter
             CloseConnection(dbConn);
         }
     }
+
+    public string ExecuteScalarStoredProcedureWithExtraParam_ByteArray(string connStr, string spName, NameValueList spParamters,string paramName,byte [] paramValue)
+    {
+        _logger.Debug(spName);
+
+        DbConnection dbConn = null;
+        DbCommand dbCmd = null;
+        string output = string.Empty;
+
+        try
+        {
+            dbConn = OpenConnection(connStr);
+            dbCmd = new SqlCommand();
+            dbCmd.CommandType = System.Data.CommandType.StoredProcedure;
+            dbCmd.CommandText = spName;
+            dbCmd.Connection = dbConn;
+
+
+            foreach (ListItem item in spParamters)
+            {
+                dbCmd.Parameters.Add(new SqlParameter(item.Name, item.Value));
+            }
+
+            SqlParameter extraParam = new SqlParameter(paramName, SqlDbType.VarBinary);
+            extraParam.Value = paramValue;
+            dbCmd.Parameters.Add(extraParam);
+
+            dbCmd.CommandTimeout = 0;
+            output = (string)dbCmd.ExecuteScalar();
+
+            return output;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("Error executing stored procedure [" + spName + "]: " + ex.Message);
+            throw ex;
+        }
+        finally
+        {
+            CloseConnection(dbConn);
+        }
+    }
     #region helper methods
     private DbConnection OpenConnection(string connStr)
     {

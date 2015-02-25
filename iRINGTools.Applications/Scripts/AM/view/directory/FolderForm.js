@@ -118,21 +118,27 @@ Ext.define('AM.view.directory.FolderForm', {
         if (state == 'new')
             form.findField('name').setValue(folderName);
 
-        node.eachChild(function (n) {
-            if (n.data.text == folderName) {
-                if (state == 'new') {
-                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Folder name \"' + folderName + '\" already exists.' });
-                    return;
-                }
-            }
-        });
+//        node.eachChild(function (n) {
+//            if (n.data.text == folderName) {
+//                if (state == 'new') {
+//                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Folder name \"' + folderName + '\" already exists.' });
+//                    return;
+//                }
+//            }
+//        });
 
         if (form.isValid()) {
             form.submit({
                 waitMsg: 'Saving Data...',
 
                 success: function (response, request) {
-                    Ext.example.msg('Notification', 'Folder saved successfully!');
+                    var objResponseText = Ext.JSON.decode(request.response.responseText);
+                    if (objResponseText["message"] == "duplicatefolder") {
+                        showDialog(400, 50, 'Alert', "Folder with this name already exists", Ext.Msg.OK, null);
+                        return;
+                    }
+                    
+                    //Ext.example.msg('Notification', 'Folder saved successfully!');
                     win.fireEvent('save', me);
 
                     var currentNode;
@@ -156,12 +162,19 @@ Ext.define('AM.view.directory.FolderForm', {
                     });
 
                     me.setLoading(false);
+
+                    if (objResponseText["message"] == "folderadded") {
+                        showDialog(400, 50, 'Alert', "Folder added successfully!", Ext.Msg.OK, null);
+                    }
+                    if (objResponseText["message"] == "folderupdated") {
+                        showDialog(400, 50, 'Alert', "Folder updated successfully!", Ext.Msg.OK, null);
+                    }
                 },
 
                 failure: function (response, request) {
-                    var resp = Ext.decode(request.response.responseText);
-                    var userMsg = resp['message'];
-                    var detailMsg = resp['stackTraceDescription'];
+                    var objResponseText = Ext.JSON.decode(request.response.responseText);
+                    var userMsg = objResponseText['message'];
+                    var detailMsg = objResponseText['stackTraceDescription'];
                     var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
                     Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                     Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);

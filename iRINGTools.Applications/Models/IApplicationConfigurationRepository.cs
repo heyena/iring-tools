@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using org.iringtools.applicationConfig;
+using library = org.iringtools.library;
 
 namespace iRINGTools.Web.Models
 {
@@ -10,11 +11,11 @@ namespace iRINGTools.Web.Models
     {
         Folders GetFolders(string userName, Guid parentFolderId, int siteId);
 
-        string AddFolder(string userName, Folder newFolder);
+        library.Response AddFolder(string userName, Folder newFolder);
 
-        string DeleteFolder(Folder folder);
+        library.Response DeleteFolder(Folder folder);
 
-        string UpdateFolder(string userName, Folder updatedFolder);
+        library.Response UpdateFolder(string userName, Folder updatedFolder);
 
         Contexts GetContexts(string userName, Guid parentFolderId, int siteId);
 
