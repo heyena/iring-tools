@@ -660,6 +660,21 @@ namespace org.iringtools.web.controllers
                                 };
 
                                 extensionPropertiesNode.children.Add(extensionPropertyNode);
+
+                                //hg - if extension is part of key add it to keys collection
+                                if (dictObject.isKeyProperty(extProperty.columnName))
+                                {
+                                    Node keyPropertyNode = new Node()
+                                    {
+                                        text = extProperty.columnName,
+                                        type = "keyProperty",
+                                        iconCls = "treeKey",
+                                        leaf = true,
+                                        properties = properties
+                                    };
+
+                                    keyPropertiesNode.children.Add(keyPropertyNode);
+                                }
                             }
 
 

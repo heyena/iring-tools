@@ -91,6 +91,9 @@
     <Reference Include="Ninject.Extensions.Xml">
       <HintPath>..\..\ExternalBinaries\Ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
     </Reference>
+    <Reference Include="SSOIdentityProvider">
+      <HintPath>..\..\iRINGTools.Applications\bin\SSOIdentityProvider.dll</HintPath>
+    </Reference>
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
