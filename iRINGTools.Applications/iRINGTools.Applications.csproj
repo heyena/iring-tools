@@ -64,6 +64,10 @@
     <Reference Include="Ninject.Web.Mvc">
       <HintPath>..\ExternalBinaries\Ninject2\extensions\Ninject.Web.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="SSOIdentityProvider, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\SSOIdentityProvider.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.DirectoryServices" />
@@ -445,6 +449,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App_Data\ldap.conf" />
     <None Include="App_Data\ldap.default.conf" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
