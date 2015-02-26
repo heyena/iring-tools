@@ -139,20 +139,27 @@ Ext.define('AM.view.directory.ContextForm', {
 
         if (form.findField('cacheDBConnStr').getValue() == this.cacheConnStrTpl)
             form.findField('cacheDBConnStr').setValue('');
-               node.eachChild(function (n) {
-            if (n.data.text == folderName) {
-                if (state == 'new') {
-                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Context name \"' + folderName + '\" already exists.' });
-                    return;
-                }
-            }
-        });
+
+//               node.eachChild(function (n) {
+//            if (n.data.text == folderName) {
+//                if (state == 'new') {
+//                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Context name \"' + folderName + '\" already exists.' });
+//                    return;
+//                }
+//            }
+//        });
 
         if (form.isValid()) {
             form.submit({
                 waitMsg: 'Saving Data...',
                 success: function (response, request) {
-                    Ext.example.msg('Notification', 'Context saved successfully!');
+
+                    var objResponseText = Ext.JSON.decode(request.response.responseText);
+                    if (objResponseText["message"] == "duplicatecontext") {
+                        showDialog(400, 50, 'Alert', "Context with this internal name already exists", Ext.Msg.OK, null);
+                        return;
+                    }
+
                     win.fireEvent('save', me);
 
                     var currentNode;
@@ -176,11 +183,20 @@ Ext.define('AM.view.directory.ContextForm', {
                     });
 
                     me.setLoading(false);
+
+                    me.setLoading(false);
+
+                    if (objResponseText["message"] == "contextadded") {
+                        showDialog(400, 50, 'Alert', "Context added successfully!", Ext.Msg.OK, null);
+                    }
+                    if (objResponseText["message"] == "contextupdated") {
+                        showDialog(400, 50, 'Alert', "Context updated successfully!", Ext.Msg.OK, null);
+                    }
                 },
                 failure: function (response, request) {
-                    var resp = Ext.decode(request.response.responseText);
-                    var userMsg = resp['message'];
-                    var detailMsg = resp['stackTraceDescription'];
+                    var objResponseText = Ext.decode(request.response.responseText);
+                    var userMsg = objResponseText['message'];
+                    var detailMsg = objResponseText['stackTraceDescription'];
                     var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
                     Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                     Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);

@@ -229,20 +229,12 @@ Ext.define('AM.controller.Directory', {
                 'state': 'delete'
             },
             success: function (response, request) {
-                //var resp = Ext.decode(response.responseText);
                 var objResponseText = Ext.decode(response.responseText);
                 var parentNode = node.parentNode;
                 parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
                 tree.view.refresh();
                 showDialog(400, 50, 'Alert', "Folder deleted successfully!", Ext.Msg.OK, null);
-                //                } else {
-                //                    var userMsg = resp['message'];
-                //                    var detailMsg = resp['stackTraceDescription'];
-                //                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
-                //                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-                //                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-                //                }
             },
             failure: function (response, request) {
                 var objResponseText = Ext.decode(response.responseText);
@@ -344,24 +336,25 @@ Ext.define('AM.controller.Directory', {
                 'state': 'delete'
             },
             success: function (response, request) {
-                var resp = Ext.decode(response.responseText);
-                if (resp.success) {
-                    var parentNode = node.parentNode;
-                    parentNode.removeChild(node);
-                    tree.getSelectionModel().select(parentNode);
-                    tree.view.refresh();
-                } else {
-                    var userMsg = resp['message'];
-                    var detailMsg = resp['stackTraceDescription'];
-                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
-                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-                }
+                var objResponseText = Ext.decode(response.responseText);
+                var parentNode = node.parentNode;
+                parentNode.removeChild(node);
+                tree.getSelectionModel().select(parentNode);
+                tree.view.refresh();
+                showDialog(400, 50, 'Alert', "Context deleted successfully!", Ext.Msg.OK, null);
+
+                //                } else {
+                //                    var userMsg = resp['message'];
+                //                    var detailMsg = resp['stackTraceDescription'];
+                //                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                //                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                //                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+                //                }
             },
             failure: function (response, request) {
-                var resp = Ext.decode(response.responseText);
-                var userMsg = resp['message'];
-                var detailMsg = resp['stackTraceDescription'];
+                var objResponseText = Ext.decode(response.responseText);
+                var userMsg = objResponseText['message'];
+                var detailMsg = objResponseText['stackTraceDescription'];
                 var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
                 Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                 Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);

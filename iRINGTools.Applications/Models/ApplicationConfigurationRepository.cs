@@ -127,14 +127,14 @@ namespace iRINGTools.Web.Models
             return contexts;
         }
 
-        public string AddContext(string userName, Context newContext)
+        public library.Response AddContext(string userName, Context newContext)
         {
-            string obj = null;
+            library.Response response = null;
 
             try
             {
                 WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
-                obj = client.Post<Context>(String.Format("/insertContext/{0}?format=xml", userName), newContext, true);
+                response = client.Post<Context, library.Response>(String.Format("/insertContext/{0}?format=xml", userName), newContext, true);
             }
             catch (Exception ex)
             {
@@ -142,17 +142,17 @@ namespace iRINGTools.Web.Models
                 throw;
             }
 
-            return obj;
+            return response;
         }
 
-        public string UpdateContext(string userName, Context updatedContext)
+        public library.Response UpdateContext(string userName, Context updatedContext)
         {
-            string obj = null;
+            library.Response response = null;
 
             try
             {
                 WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
-                obj = client.Put<Context>(String.Format("/updateContext/{0}?format=xml", userName), updatedContext, true);
+                response = client.Put<Context, library.Response>(String.Format("/updateContext/{0}?format=xml", userName), updatedContext, true);
             }
             catch (Exception ex)
             {
@@ -160,17 +160,17 @@ namespace iRINGTools.Web.Models
                 throw;
             }
 
-            return obj;
+            return response;
         }
 
-        public string DeleteContext(Context context)
+        public library.Response DeleteContext(Context context)
         {
-            string obj = null;
+            library.Response response = null;
 
             try
             {
                 WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
-                obj = client.Delete<Context>(String.Format("/deleteContext/{0}?format=xml", context.ContextId), context, true);
+                response = client.Delete<Context, library.Response>(String.Format("/deleteContext/{0}?format=xml", context.ContextId), context, true);
             }
             catch (Exception ex)
             {
@@ -178,7 +178,7 @@ namespace iRINGTools.Web.Models
                 throw;
             }
 
-            return obj;
+            return response;
         }
 
         public Applications GetApplications(string userName, Guid parentContextId, int siteId)

@@ -19,11 +19,11 @@ namespace iRINGTools.Web.Models
 
         Contexts GetContexts(string userName, Guid parentFolderId, int siteId);
 
-        string AddContext(string userName, Context newContext);
+        library.Response AddContext(string userName, Context newContext);
 
-        string UpdateContext(string userName, Context updatedContext);
+        library.Response UpdateContext(string userName, Context updatedContext);
 
-        string DeleteContext(Context context);
+        library.Response DeleteContext(Context context);
 
         Applications GetApplications(string userName, Guid parentContextId, int siteId);
 
