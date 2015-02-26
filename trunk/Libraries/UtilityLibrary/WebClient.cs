@@ -435,7 +435,7 @@ namespace org.iringtools.utility
       try
       {
         string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Getting stream from URL [{0}]...", uri));
+        _logger.Debug(string.Format("Getting stream from URL [uri]...", uri));
 
         WebRequest request = HttpWebRequest.Create(uri);
 
