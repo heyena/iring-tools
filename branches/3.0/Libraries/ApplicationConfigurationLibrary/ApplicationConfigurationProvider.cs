@@ -121,10 +121,10 @@ namespace org.iringtools.applicationConfig
                         switch (output)
                         {
                             case "1":
-                                PrepareSuccessResponse(response, "Context added successfully!");
+                                PrepareSuccessResponse(response, "contextadded");
                                 break;
                             case "0":
-                                PrepareErrorResponse(response, "Context with this name already exists!");
+                                PrepareSuccessResponse(response, "duplicatecontext");
                                 break;
                             default:
                                 PrepareErrorResponse(response, output);
@@ -153,6 +153,7 @@ namespace org.iringtools.applicationConfig
         public Response UpdateContext(string userName,XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
@@ -160,23 +161,52 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = context.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //        NameValueList nvl = new NameValueList();
+                //        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                //        nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
+                //        nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
+                //        nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
+                //        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(context.SiteId) });
+                //        nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(context.ContextId) });
+                //        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+
+                //        DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuContext", nvl);
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Contexts updated successfully.");
                 using (var dc = new DataContext(_connSecurityDb))
                 {
+                    if (context == null || string.IsNullOrEmpty(context.DisplayName))
+                        PrepareErrorResponse(response, "Please enter context DisplayName!");
+                    else
+                    {
                         NameValueList nvl = new NameValueList();
                         nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(context.SiteId) });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(context.ContextId) });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
-                        DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuContext", nvl);
-                }
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuContext", nvl);
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Contexts updated successfully.");
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "contextupdated");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
+                }
             }
             catch (Exception ex)
             {
@@ -196,17 +226,43 @@ namespace org.iringtools.applicationConfig
         public Response DeleteContext(string contextId)
         {
             Response response = new Response();
+            response.Messages = new Messages();
+
 
             try
             {
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    dc.ExecuteQuery<Context>("spdContext @ContextId = {0}", contextId);
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Context deleted successfully.");
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<Context>("spdContext @ContextId = {0}", contextId);
-                }
+                    if (string.IsNullOrEmpty(contextId))
+                        PrepareErrorResponse(response, "Please enter contextid!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@ContextId", Value = contextId });
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Context deleted successfully.");
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdContext", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "contextdeleted");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
+                }
             }
             catch (Exception ex)
             {
@@ -299,17 +355,6 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = folder.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
-                //using (var dc = new DataContext(_connSecurityDb))
-                //{
-                //    dc.ExecuteCommand("spiFolder @UserName = {0}, @SiteId = {1}, @ParentFolderId = {2}, " +
-                //                                  "@FolderName = {3}, @GroupList = {4}", userName, folder.SiteId, folder.ParentFolderId, folder.FolderName, rawXml);
-
-                //}
-
-                //response.DateTimeStamp = DateTime.Now;
-                //response.Messages = new Messages();
-                //response.Messages.Add("Folder added successfully.");
-
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (folder == null || string.IsNullOrEmpty(folder.FolderName))
@@ -365,16 +410,6 @@ namespace org.iringtools.applicationConfig
             {
                 Folder folder = Utility.DeserializeDataContract<Folder>(xml.ToString());
                 string rawXml = folder.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
-                //using (var dc = new DataContext(_connSecurityDb))
-                //{
-                //    dc.ExecuteCommand("spuFolder @UserName = {0}, @SiteId = {1}, @FolderId = {2}, @ParentFolderId = {3}, " +
-                //                                  "@FolderName = {4}, @GroupList = {5}", userName, folder.SiteId, folder.FolderId, folder.ParentFolderId, folder.FolderName, rawXml);
-
-                //}
-
-                //response.DateTimeStamp = DateTime.Now;
-                //response.Messages = new Messages();
-                //response.Messages.Add("Folder updated successfully.");
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -428,16 +463,6 @@ namespace org.iringtools.applicationConfig
 
             try
             {
-
-                //using (var dc = new DataContext(_connSecurityDb))
-                //{
-                //    dc.ExecuteCommand("spdFolder @FolderId = {0} ", folderId);
-                //}
-
-                //response.DateTimeStamp = DateTime.Now;
-                //response.Messages = new Messages();
-                //response.Messages.Add("Folder deleted successfully.");
-
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (string.IsNullOrEmpty(folderId))
