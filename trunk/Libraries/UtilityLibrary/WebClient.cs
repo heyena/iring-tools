@@ -150,8 +150,6 @@ namespace org.iringtools.utility
 
     public bool Async { get; set; }
 
-    public string UserName { get; set; }
-
     public string AccessToken
     {
       get
@@ -294,12 +292,6 @@ namespace org.iringtools.utility
         }
 
         request.Headers.Add("async", Async ? "True" : "False");
-
-        if (!string.IsNullOrEmpty(UserName))
-        {
-            _logger.Debug("UserName: " + UserName);
-            request.Headers.Add("UserName", UserName);
-        }
 
         if (Headers != null)
         {

@@ -68,9 +68,8 @@ Ext.define('AM.view.sqlconfig.SqlKeySelectionPanel', {
         me.callParent(arguments);
     },
 
-    setRecord: function (record, dataview) {
+    setRecord: function (record) {
         this.record = record;
-        this.dataview = dataview;
         this.loadValues();
     },
 
@@ -84,17 +83,6 @@ Ext.define('AM.view.sqlconfig.SqlKeySelectionPanel', {
             var availItems = [];
             Ext.each(itemList, function (item) {
                 availItems.push({ name: item.columnName });
-            });
-
-            //hg - get extension data from dataview
-            var items = me.dataview.store.data.items;
-            Ext.each(items, function (item) {
-                if (item.raw.type == 'extension') {
-                    var oChildren = item.childNodes;
-                    Ext.each(oChildren, function (child) {
-                        availItems.push({ name: child.raw.text });
-                    });
-                }
             });
 
             selector.store.loadData(availItems);
