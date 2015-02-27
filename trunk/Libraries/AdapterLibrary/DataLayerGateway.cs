@@ -153,7 +153,7 @@ namespace org.iringtools.adapter
                 if (_lwDataLayer2 != null)
                 {
 
-                  _logger.Info("DataLayer Class: LightWeight2");
+                    _logger.Info("DataLayer Class: LightWeight2");
 
                     dictionary = _lwDataLayer2.Dictionary(refresh, objectType, out filter);
                 }
@@ -163,7 +163,7 @@ namespace org.iringtools.adapter
 
                     if (refresh)
                     {
-                      _logger.Info("Refreshing Dictionary");
+                        _logger.Info("Refreshing Dictionary");
 
                         if (!string.IsNullOrEmpty(objectType))
                         {
@@ -1864,7 +1864,11 @@ namespace org.iringtools.adapter
                             int indexCounter = 0;
                             foreach (var pair in dataObj.Dictionary)
                             {
-                                if (indexCounter < objectType.dataProperties.Count() && (objectType.dataProperties[indexCounter++].dataType.ToString()) == "String")
+                                string val = String.Empty;
+                                if (pair.Value != null)
+                                    val = pair.Value.ToString();
+             
+                                if (indexCounter < objectType.dataProperties.Count() && (objectType.dataProperties[indexCounter].dataType.ToString()) == "String")
                                 {
                                     if (pair.Value == null)
                                         newRow[pair.Key] = DBNull.Value;
@@ -1873,11 +1877,13 @@ namespace org.iringtools.adapter
                                 }
                                 else
                                 {
-                                    if (string.IsNullOrEmpty(pair.Value.ToString()))
+                                    if (string.IsNullOrEmpty(val))
                                         newRow[pair.Key] = DBNull.Value;
                                     else
                                         newRow[pair.Key] = pair.Value;
                                 }
+
+                                indexCounter++;
 
                             }
 
@@ -1887,7 +1893,6 @@ namespace org.iringtools.adapter
                             }
                             table.Rows.Add(newRow);
                         }
-
 
                         SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
                         bulkCopy.DestinationTableName = tableName;
@@ -1914,7 +1919,11 @@ namespace org.iringtools.adapter
                                 int indexCounter = 0;
                                 foreach (var pair in dataObj.Dictionary)
                                 {
-                                    if (indexCounter < objectType.dataProperties.Count() && (objectType.dataProperties[indexCounter++].dataType.ToString()) == "String")
+                                    string val = String.Empty;
+                                    if (pair.Value != null)
+                                        val = pair.Value.ToString();
+
+                                    if (indexCounter < objectType.dataProperties.Count() && (objectType.dataProperties[indexCounter].dataType.ToString()) == "String")
                                     {
                                         if (pair.Value == null)
                                             newRow[pair.Key] = DBNull.Value;
@@ -1923,11 +1932,13 @@ namespace org.iringtools.adapter
                                     }
                                     else
                                     {
-                                        if (string.IsNullOrEmpty(pair.Value.ToString()))
+                                        if (string.IsNullOrEmpty(val))
                                             newRow[pair.Key] = DBNull.Value;
                                         else
                                             newRow[pair.Key] = pair.Value;
                                     }
+
+                                    indexCounter++;
 
                                 }
                                 if (dataObj.HasContent)

@@ -122,9 +122,7 @@
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ConfigurationRepository.cs" />
-    <Compile Include="Encryption.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Encryption.cs" />
     <Compile Include="EncryptionUtility.cs" />
     <Compile Include="GenericDataTable.cs" />
     <Compile Include="IWebHttpClient.cs" />
