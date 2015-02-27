@@ -136,7 +136,6 @@
     <None Include="App_Data\99999_000.iw.config" />
     <None Include="App_Default.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
