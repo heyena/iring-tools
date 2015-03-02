@@ -605,7 +605,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
                         nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(application.SiteId) });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
