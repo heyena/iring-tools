@@ -16,12 +16,27 @@
     using org.iringtools.library;
     using org.iringtools.utility;
     using StaticDust.Configuration;
+    using System.Collections;
 
     /// <summary>
     /// Class responsible for containing all methods and properties required to perform operations on sql data layer
     /// </summary>
     public class SqlDataLayer : BaseLightweightDataLayer2
     {
+        #region Enumerations
+
+        /// <summary>
+        /// Enumeration for user choice to handle duplicate rows(data)
+        /// </summary>
+        enum DuplicateHandlingActions
+        {
+            DuplicateAllowed,
+            DuplicateNotAllowed,
+            TerminateExecution
+        }
+
+        #endregion
+
         #region Private Data Members
 
         /// <summary>
@@ -43,6 +58,11 @@
         /// Variable to hold name of the schema to be used in database
         /// </summary>
         string schemaName = string.Empty;
+
+        /// <summary>
+        /// User selected duplicate handling action
+        /// </summary>
+        DuplicateHandlingActions selectedDuplicateHandlingActions;
 
         /// <summary>
         /// Database dictionary object
@@ -75,7 +95,7 @@
 
         private static readonly byte[] BMP = { 66, 77 };
         private static readonly byte[] MSO = { 208, 207, 17, 224, 161, 177, 26, 225 }; //MSO means all Microsoft Office products
-        private static readonly byte[] MSOX = { 80, 75, 3, 4};//, 20, 0, 6, 0, 8, 0, 0, 0, 33, 0 };
+        private static readonly byte[] MSOX = { 80, 75, 3, 4 };//, 20, 0, 6, 0, 8, 0, 0, 0, 33, 0 };
         //private static readonly byte[] XLS = { 77, 105, 99, 114, 111, 115, 111, 102, 116, 32, 69, 120, 99, 101, 108, 0 }; NOT REQUIRED
         private static readonly byte[] DOC = { 87, 111, 114, 100, 46, 68, 111, 99, 117, 109, 101, 110, 116, 46 };
         private static readonly byte[] DOCX = { 145, 26, 183, 243, 0, 0, 0, 78, 2, 0, 0, 11, 0 };
@@ -129,6 +149,8 @@
 
                 databaseDictionaryPath = _settings["AppDataPath"] + @"DatabaseDictionary." + _settings["projectName"] + "." + _settings["applicationName"] + ".xml";
                 dataDictionaryPath = _settings["AppDataPath"] + @"DataDictionary." + _settings["projectName"] + "." + _settings["applicationName"] + ".xml";
+
+                selectedDuplicateHandlingActions = (DuplicateHandlingActions)Enum.Parse(typeof(DuplicateHandlingActions), _settings["DuplicateHandlingAction"].ToString());
             }
             catch (Exception exceptionDuringInitialization)
             {
@@ -160,7 +182,10 @@
             }
             else if (File.Exists(databaseDictionaryPath))
             {
-                dataDictionary = Utility.Read<DataDictionary>(databaseDictionaryPath);
+                DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(databaseDictionaryPath);
+
+                dataDictionary = new DataDictionary();
+                dataDictionary.dataObjects = databaseDictionary.dataObjects;
 
                 Utility.Write<DataDictionary>(dataDictionary, dataDictionaryPath);
 
@@ -201,8 +226,20 @@
 
                     string composeExtensionPropertiesQuery = ExtenstionPropertiesAsQuery(dataObjectToBeUsedForGet);
 
+                    StringBuilder columnNames = new StringBuilder();
+
+                    //Getting column names as string
+                    foreach (KeyProperty eachKeyProperty in dataObjectToBeUsedForGet.keyProperties)
+                    {
+                        columnNames.Append(objectType.dataProperties.Find(dProp => dProp.propertyName == eachKeyProperty.keyPropertyName).columnName + ",");
+                    }
+
+                    columnNames = columnNames.Remove(columnNames.ToString().LastIndexOf(","), 1);
+
+                    StringBuilder getQuery = new StringBuilder("SELECT " + dataObjectToBeUsedForGet.tableName + ".* " + composeExtensionPropertiesQuery + " FROM schemaName." + dataObjectToBeUsedForGet.tableName);
+
                     //Executing GET operation to fetch data
-                    DataTable getDataTable = ExecuteGetDatabaseQuery("SELECT " + dataObjectToBeUsedForGet.tableName + ".* " + composeExtensionPropertiesQuery + " FROM schemaName." + dataObjectToBeUsedForGet.tableName);
+                    DataTable getDataTable = DuplicatesHandlingOnUserChoice(getQuery, columnNames);
 
                     if (getDataTable != null)
                     {
@@ -288,7 +325,7 @@
                             columnNamesInWhereClause.Remove(columnNamesInWhereClause.Length - 4, 4);
 
                             //Executing GET operation to fetch data
-                            DataTable getDataTable = ExecuteGetDatabaseQuery("SELECT " + "*" + " FROM schemaName." + dataObjectToBeUsedForGet.tableName + " WHERE " + columnNamesInWhereClause);
+                            DataTable getDataTable = ExecuteGetDatabaseQuery("SELECT * FROM schemaName." + dataObjectToBeUsedForGet.tableName + " WHERE " + columnNamesInWhereClause);
 
                             int columnNumber = 0;
 
@@ -355,19 +392,20 @@
                     //Preparing query for GET operation
                     StringBuilder getIdQuery = new StringBuilder();
 
-                    getIdQuery.Append("SELECT DISTINCT ");
+                    getIdQuery.Append("SELECT ");
+
+                    StringBuilder columnNames = new StringBuilder();
 
                     foreach (KeyProperty eachKeyProperty in dataObjectToBeUsedForGet.keyProperties)
                     {
-                        getIdQuery.Append(dataObjectToBeUsedForGet.dataProperties.Find(prop => prop.propertyName == eachKeyProperty.keyPropertyName).columnName + ",");
+                        columnNames.Append(dataObjectToBeUsedForGet.dataProperties.Find(prop => prop.propertyName == eachKeyProperty.keyPropertyName).columnName + ",");
                     }
 
-                    getIdQuery = getIdQuery.Remove(getIdQuery.ToString().LastIndexOf(","), 1);
-
+                    columnNames = columnNames.Remove(columnNames.ToString().LastIndexOf(","), 1);
+                    getIdQuery.Append(columnNames);
                     getIdQuery.Append(" FROM schemaName." + objectType.tableName);
 
-                    //Executing GET operation to fetch identifiers
-                    DataTable dataTableContainingIdentifiers = ExecuteGetDatabaseQuery(getIdQuery.ToString());
+                    DataTable dataTableContainingIdentifiers = DuplicatesHandlingOnUserChoice(getIdQuery, columnNames);
 
                     foreach (DataRow eachDataRow in dataTableContainingIdentifiers.Rows)
                     {
@@ -423,6 +461,16 @@
 
                     getPageQuery.Append("SELECT " + dataObjectToBeUsedForGet.tableName + ".* " + composeExtensionPropertiesQuery + " FROM schemaName." + dataObjectToBeUsedForGet.tableName + " WHERE ( (");
 
+                    StringBuilder columnNames = new StringBuilder();
+
+                    //Getting column names as string
+                    foreach (KeyProperty eachKeyProperty in dataObjectToBeUsedForGet.keyProperties)
+                    {
+                        columnNames.Append(objectType.dataProperties.Find(dProp => dProp.propertyName == eachKeyProperty.keyPropertyName).columnName + ",");
+                    }
+
+                    columnNames = columnNames.Remove(columnNames.ToString().LastIndexOf(","), 1);
+
                     //Preparing query for GET operation
                     foreach (SerializableDataObject eachIdentifier in identifiers)
                     {
@@ -440,7 +488,7 @@
                     getPageQuery.Append(") ");
 
                     //Executing GET operation to fetch a page of data based on list of identifiers
-                    DataTable getDataTable = ExecuteGetDatabaseQuery(getPageQuery.ToString());
+                    DataTable getDataTable = DuplicatesHandlingOnUserChoice(getPageQuery, columnNames);
 
                     if (getDataTable != null)
                     {
@@ -723,6 +771,49 @@
             {
                 return string.Empty;
             }
+        }
+
+        /// <summary>
+        /// Handles the duplicate rows based on user choice
+        /// </summary>
+        /// <param name="getQuery">Holds get query</param>
+        /// <param name="columnNames">Holds column names</param>
+        /// <returns></returns>
+        private DataTable DuplicatesHandlingOnUserChoice(StringBuilder getQuery, StringBuilder columnNames)
+        {
+            DataTable dataTableContainingIdentifiers;
+
+            if (selectedDuplicateHandlingActions == DuplicateHandlingActions.DuplicateAllowed)
+            {
+                //Executing GET operation to fetch identifiers
+                dataTableContainingIdentifiers = ExecuteGetDatabaseQuery(getQuery.ToString());
+            }
+            else
+            {
+                StringBuilder checkDuplicateQuery = new StringBuilder();
+                checkDuplicateQuery.Append(getQuery + " GROUP BY " + columnNames + " HAVING COUNT(*) > 1;");
+
+                DataTable checkDuplicateDataTable = ExecuteGetDatabaseQuery(checkDuplicateQuery.ToString());
+
+                if (checkDuplicateDataTable.Rows.Count > 0)
+                {
+                    if (selectedDuplicateHandlingActions == DuplicateHandlingActions.DuplicateNotAllowed)
+                    {
+                        StringBuilder getIdWithoutDuplicateQuery = checkDuplicateQuery.Replace('>', '=');
+                        dataTableContainingIdentifiers = ExecuteGetDatabaseQuery(getIdWithoutDuplicateQuery.ToString());
+                    }
+                    else
+                    {
+                        throw new Exception("Dupliate entries were found for key properties. Execution terminated.");
+                    }
+                }
+                else
+                {
+                    dataTableContainingIdentifiers = ExecuteGetDatabaseQuery(getQuery.ToString());
+                }
+            }
+
+            return dataTableContainingIdentifiers;
         }
 
         /// <summary>
