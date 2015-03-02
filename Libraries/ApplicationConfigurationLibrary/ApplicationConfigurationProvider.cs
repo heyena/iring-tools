@@ -79,26 +79,6 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = context.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
-                //using (var dc = new DataContext(_connSecurityDb))
-                //{
-                //        NameValueList nvl = new NameValueList();
-
-                //        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                //        nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
-                //        nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
-                //        nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
-                //        nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
-                //        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(context.SiteId) });
-                //        nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(context.FolderId) });
-                //        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
-                    
-                //        DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiContext", nvl);
-                //}
-
-                //response.DateTimeStamp = DateTime.Now;
-                //response.Messages = new Messages();
-                //response.Messages.Add("Contexts added successfully.");
-
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (context == null || string.IsNullOrEmpty(context.DisplayName))
@@ -161,23 +141,6 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = context.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
-                //using (var dc = new DataContext(_connSecurityDb))
-                //{
-                //        NameValueList nvl = new NameValueList();
-                //        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                //        nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
-                //        nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
-                //        nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
-                //        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(context.SiteId) });
-                //        nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(context.ContextId) });
-                //        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
-
-                //        DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuContext", nvl);
-                //}
-
-                //response.DateTimeStamp = DateTime.Now;
-                //response.Messages = new Messages();
-                //response.Messages.Add("Contexts updated successfully.");
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (context == null || string.IsNullOrEmpty(context.DisplayName))
@@ -231,15 +194,6 @@ namespace org.iringtools.applicationConfig
 
             try
             {
-                //using (var dc = new DataContext(_connSecurityDb))
-                //{
-                //    dc.ExecuteQuery<Context>("spdContext @ContextId = {0}", contextId);
-                //}
-
-                //response.DateTimeStamp = DateTime.Now;
-                //response.Messages = new Messages();
-                //response.Messages.Add("Context deleted successfully.");
-
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (string.IsNullOrEmpty(contextId))
@@ -577,26 +531,6 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = application.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
-                //using (var dc = new DataContext(_connSecurityDb))
-                //{
-                //    NameValueList nvl = new NameValueList();
-
-                //    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                //    nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(application.ContextId) });
-                //    nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName});
-                //    nvl.Add(new ListItem() { Name = "@InternalName", Value = application.InternalName });
-                //    nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
-                //    nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
-                //    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(application.SiteId) });
-                //    nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
-                //    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
-
-                //    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiApplication", nvl);
-                //}
-
-                //response.DateTimeStamp = DateTime.Now;
-                //response.Messages = new Messages();
-                //response.Messages.Add("Applications added successfully.");
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (application == null || string.IsNullOrEmpty(application.DisplayName))
@@ -619,10 +553,10 @@ namespace org.iringtools.applicationConfig
                         switch (output)
                         {
                             case "1":
-                                PrepareSuccessResponse(response, "Application added successfully!");
+                                PrepareSuccessResponse(response, "applicationadded");
                                 break;
                             case "0":
-                                PrepareErrorResponse(response, "Application with this name already exists!");
+                                PrepareSuccessResponse(response, "duplicateapplication");
                                 break;
                             default:
                                 PrepareErrorResponse(response, output);
@@ -650,6 +584,7 @@ namespace org.iringtools.applicationConfig
         public Response UpdateApplication(string userName, XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
@@ -659,23 +594,35 @@ namespace org.iringtools.applicationConfig
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    NameValueList nvl = new NameValueList();
+                    if (application == null || string.IsNullOrEmpty(application.DisplayName))
+                        PrepareErrorResponse(response, "Please enter application DisplayName!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
 
-                    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                    nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(application.ApplicationId) });
-                    nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName });
-                    nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
-                    nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
-                    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(application.SiteId) });
-                    nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
-                    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                        nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(application.ApplicationId) });
+                        nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName });
+                        nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
+                        nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(application.SiteId) });
+                        nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
-                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuApplication", nvl);
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuApplication", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "applicationupdated");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Applications updated successfully.");
             }
             catch (Exception ex)
             {
@@ -695,17 +642,33 @@ namespace org.iringtools.applicationConfig
         public Response DeleteApplication(string applicationId)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteCommand("spdApplication @ApplicationId = {0} ", applicationId);
-                }
+                    if (string.IsNullOrEmpty(applicationId))
+                        PrepareErrorResponse(response, "Please enter applicationId!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@ApplicationId", Value = applicationId });
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Application deleted successfully.");
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdApplication", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "applicationdeleted");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
+                }
             }
             catch (Exception ex)
             {
@@ -755,23 +718,6 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = graph.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
-                //using (var dc = new DataContext(_connSecurityDb))
-                //{
-                //    //if (graph.graph == null)  ////For testing purpose.
-                //    //{
-                //    //    string grapthPath = @"C:\Branch3.0\iRINGTools.Services\App_Data\Mapping.1234_000.ABC.xml";
-                //    //    byte[] bytes = System.IO.File.ReadAllBytes(grapthPath);
-                //    //    graph.graph = bytes;
-                //    //}
-
-                //    dc.ExecuteQuery<Graph>("spiGraph @Username = {0}, @ApplicationId = {1}, @GraphName = {2}, @Graph = {3}, @SiteId = {4}, @GroupList = {5}",
-                //                                         userName, graph.ApplicationId, graph.GraphName, graph.graph, _siteID, rawXml).ToList();
-                //}
-
-                //response.DateTimeStamp = DateTime.Now;
-                //response.Messages = new Messages();
-                //response.Messages.Add("Graphs added successfully.");
-
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (graph == null || string.IsNullOrEmpty(graph.GraphName))
@@ -800,10 +746,10 @@ namespace org.iringtools.applicationConfig
                         switch (output.ToString())
                         {
                             case "1":
-                                PrepareSuccessResponse(response, "Graph added successfully!");
+                                PrepareSuccessResponse(response, "graphadded");
                                 break;
                             case "0":
-                                PrepareErrorResponse(response, "Graph with this name already exists!");
+                                PrepareSuccessResponse(response, "duplicategraph");
                                 break;
                             default:
                                 PrepareErrorResponse(response, output.ToString());
@@ -833,6 +779,7 @@ namespace org.iringtools.applicationConfig
         public Response UpdateGraph(string userName, XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
@@ -840,16 +787,53 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = graph.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+
+                //    dc.ExecuteQuery<Graph>("spuGraph @Username = {0}, @GraphId = {1}, @GraphName = {2}, @Graph = {3}, @SiteId = {4}, @GroupList = {5}",
+                //                                         userName, graph.GraphId, graph.GraphName, graph.graph, _siteID, rawXml).ToList();
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Graphs updated successfully.");
                 using (var dc = new DataContext(_connSecurityDb))
                 {
+                    if (graph == null || string.IsNullOrEmpty(graph.GraphName))
+                        PrepareErrorResponse(response, "Please enter GraphName!");
+                    else
+                    {
+                        //if (graph.graph == null)  ////For testing purpose.
+                        //{
+                        //    string grapthPath = @"C:\Branch3.0\iRINGTools.Services\App_Data\Mapping.1234_000.ABC.xml";
+                        //    byte[] bytes = System.IO.File.ReadAllBytes(grapthPath);
+                        //    graph.graph = bytes;
+                        //}
 
-                    dc.ExecuteQuery<Graph>("spuGraph @Username = {0}, @GraphId = {1}, @GraphName = {2}, @Graph = {3}, @SiteId = {4}, @GroupList = {5}",
-                                                         userName, graph.GraphId, graph.GraphName, graph.graph, _siteID, rawXml).ToList();
+
+                        NameValueList nvl = new NameValueList();
+
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                        nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graph.GraphId) });
+                        nvl.Add(new ListItem() { Name = "@GraphName", Value = graph.GraphName });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedureWithExtraParam_ByteArray(_connSecurityDb, "spuGraph", nvl, "@Graph", graph.graph);
+
+
+                        switch (output.ToString())
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "graphupdated");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output.ToString());
+                                break;
+                        }
+                    }
+
                 }
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Graphs updated successfully.");
             }
             catch (Exception ex)
             {
@@ -869,18 +853,43 @@ namespace org.iringtools.applicationConfig
         public Response DeleteGraph(string graphId)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
-                Guid id = new Guid(graphId);
+                //Guid id = new Guid(graphId);
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    dc.ExecuteQuery<Graph>("spdGraph @GraphId = {0}", id);
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Graph deleted successfully.");
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteQuery<Graph>("spdGraph @GraphId = {0}", id);
-                }
+                    if (string.IsNullOrEmpty(graphId))
+                        PrepareErrorResponse(response, "Please enter graphId!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@GraphId", Value = graphId });
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Graph deleted successfully.");
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdGraph", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "graphdeleted");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
+                }
             }
             catch (Exception ex)
             {
