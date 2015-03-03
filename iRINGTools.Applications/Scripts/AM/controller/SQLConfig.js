@@ -198,7 +198,7 @@
                 var keyConfigPanel = container.down('sqlkeyconfigpanel');
                 keyConfigPanel.setRecord(record);
                 container.getLayout().setActiveItem(keyConfigPanel);
-                //this.reload(container);
+                //                this.reload(container);
                 break;
             case 'properties':
                 var propSelPanel = container.down('sqlpropertyselectionpanel');
@@ -325,29 +325,48 @@
 
         var dataProps = keysNode.parentNode.raw.properties.dataProperties;
         var keys = panel.getForm().findField('selectedKeys').getValue();
-
+        var childNodes = new Object;
+        childNodes = Ext.Object.merge(childNodes, keysNode.childNodes);
+        var nodeCount = keysNode.childNodes.length;
 
         keysNode.removeAll();
 
         Ext.each(keys, function (key) {
-            Ext.each(dataProps, function (dataProp) {
-                if (dataProp.columnName === key) {
-                    // add to keys node
-                    keysNode.appendChild({
-                        text: key,
-                        type: 'keyProperty',
-                        iconCls: 'treeKey',
-                        leaf: true,
-                        properties: dataProp
-                    });
+            Ext.each(dataProps, function (keyProp) {
+                if (keyProp.columnName === key) {
+                    var oldNode;
+                    var isPresent = false;
+
+                    for (var i = 0; i < nodeCount; i++) {
+                        if (childNodes[i].raw.properties.columnName == key) {
+                            isPresent = true;
+                            oldNode = childNodes[i];
+                            break;
+                        }
+                    }
+
+                    // add to properties node
+                    if (isPresent) {
+                        keysNode.appendChild(oldNode);
+                    }
+                    else {
+                        keysNode.appendChild({
+                            text: key,
+                            type: 'keyProperty',
+                            iconCls: 'treeKey',
+                            leaf: true,
+                            properties: keyProp
+                        });
+                    }
 
                     // update keytype in data record
-                    dataProp.keyType = 'assigned';
+                    keyProp.keyType = 'assigned';
 
                     // remove from selected properties node
-                    var propNode = propsNode.findChild('text', key);
-                    if (propNode != null) {
-                        propsNode.removeChild(propNode);
+                    var keyNode = propsNode.findChild('text', key);
+
+                    if (keyNode != null) {
+                        propsNode.removeChild(keyNode);
                     }
 
                     return;
@@ -451,21 +470,39 @@
 
         var propsNode = treePanel.getSelectionModel().getLastSelected();
         var props = panel.getForm().findField('selectedProperties').getValue();
+        var childNodes = new Object;
+        childNodes = Ext.Object.merge(childNodes, propsNode.childNodes);
+        var nodeCount = propsNode.childNodes.length;
         var dataProps = propsNode.parentNode.raw.properties.dataProperties;
-
         propsNode.removeAll();
 
         Ext.each(props, function (prop) {
             Ext.each(dataProps, function (dataProp) {
                 if (dataProp.columnName === prop) {
+                    var oldNode;
+                    var isPresent = false;
+
+                    for (var i = 0; i < nodeCount; i++) {
+                        if (childNodes[i].raw.properties.columnName == prop) {
+                            isPresent = true;
+                            oldNode = childNodes[i];
+                            break;
+                        }
+                    }
+
                     // add to properties node
-                    propsNode.appendChild({
-                        text: prop,
-                        type: 'dataProperty',
-                        iconCls: 'treeProperty',
-                        leaf: true,
-                        properties: dataProp
-                    });
+                    if (isPresent) {
+                        propsNode.appendChild(oldNode);
+                    }
+                    else {
+                        propsNode.appendChild({
+                            text: prop,
+                            type: 'dataProperty',
+                            iconCls: 'treeProperty',
+                            leaf: true,
+                            properties: dataProp
+                        });
+                    }
                     return;
                 }
             });
@@ -734,7 +771,7 @@
                     propertyName: extVal.propertyName,
                     dataType: extVal.dataType,
                     dataLength: extVal.dataLength,
-                    isNullable:true,
+                    isNullable: true,
                     keyType: 0,
                     precision: 0,
                     scale: 0,
