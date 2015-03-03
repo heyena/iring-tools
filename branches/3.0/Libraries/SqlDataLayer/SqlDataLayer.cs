@@ -150,7 +150,14 @@
                 databaseDictionaryPath = _settings["AppDataPath"] + @"DatabaseDictionary." + _settings["projectName"] + "." + _settings["applicationName"] + ".xml";
                 dataDictionaryPath = _settings["AppDataPath"] + @"DataDictionary." + _settings["projectName"] + "." + _settings["applicationName"] + ".xml";
 
-                selectedDuplicateHandlingActions = (DuplicateHandlingActions)Enum.Parse(typeof(DuplicateHandlingActions), _settings["DuplicateHandlingAction"].ToString());
+                if (_settings["DuplicateHandlingAction"] != null)
+                {
+                    selectedDuplicateHandlingActions = (DuplicateHandlingActions)Enum.Parse(typeof(DuplicateHandlingActions), _settings["DuplicateHandlingAction"].ToString());
+                }
+                else
+                {
+                    selectedDuplicateHandlingActions = DuplicateHandlingActions.DuplicateAllowed;
+                }
             }
             catch (Exception exceptionDuringInitialization)
             {
@@ -222,21 +229,19 @@
 
                 if (dataDictionary != null)
                 {
-                    DataObject dataObjectToBeUsedForGet = dataDictionary.dataObjects.Where<DataObject>(P => P.objectName.ToUpper() == objectType.objectName.ToUpper()).FirstOrDefault();
-
-                    string composeExtensionPropertiesQuery = ExtenstionPropertiesAsQuery(dataObjectToBeUsedForGet);
+                    string composeExtensionPropertiesQuery = ExtenstionPropertiesAsQuery(objectType);
 
                     StringBuilder columnNames = new StringBuilder();
 
                     //Getting column names as string
-                    foreach (KeyProperty eachKeyProperty in dataObjectToBeUsedForGet.keyProperties)
+                    foreach (KeyProperty eachKeyProperty in objectType.keyProperties)
                     {
                         columnNames.Append(objectType.dataProperties.Find(dProp => dProp.propertyName == eachKeyProperty.keyPropertyName).columnName + ",");
                     }
 
                     columnNames = columnNames.Remove(columnNames.ToString().LastIndexOf(","), 1);
 
-                    StringBuilder getQuery = new StringBuilder("SELECT " + dataObjectToBeUsedForGet.tableName + ".* " + composeExtensionPropertiesQuery + " FROM schemaName." + dataObjectToBeUsedForGet.tableName);
+                    StringBuilder getQuery = new StringBuilder("SELECT " + objectType.tableName + ".* " + composeExtensionPropertiesQuery + " FROM schemaName." + objectType.tableName);
 
                     //Executing GET operation to fetch data
                     DataTable getDataTable = DuplicatesHandlingOnUserChoice(getQuery, columnNames);
@@ -254,14 +259,14 @@
                                 serializableDataObject.HasContent = true;
                             }
 
-                            foreach (DataProperty eachDataProperty in dataObjectToBeUsedForGet.dataProperties)
+                            foreach (DataProperty eachDataProperty in objectType.dataProperties)
                             {
                                 serializableDataObject.SetPropertyValue(eachDataProperty.propertyName, eachDataRowFromGet[eachDataProperty.columnName]);
                             }
 
-                            if (dataObjectToBeUsedForGet.extensionProperties != null && dataObjectToBeUsedForGet.extensionProperties.Count > 0)
+                            if (objectType.extensionProperties != null && objectType.extensionProperties.Count > 0)
                             {
-                                foreach (ExtensionProperty eachExtensionProperty in dataObjectToBeUsedForGet.extensionProperties)
+                                foreach (ExtensionProperty eachExtensionProperty in objectType.extensionProperties)
                                 {
                                     serializableDataObject.SetPropertyValue(eachExtensionProperty.propertyName, eachDataRowFromGet[eachExtensionProperty.columnName]);
                                 }
@@ -311,8 +316,6 @@
                     {
                         foreach (KeyValuePair<string, string> eachId in idFormats)
                         {
-                            DataObject dataObjectToBeUsedForGet = dataDictionary.dataObjects.Where<DataObject>(P => P.objectName.ToUpper() == objectType.objectName.ToUpper()).FirstOrDefault();
-
                             StringBuilder columnNamesInWhereClause = new StringBuilder();
 
                             string[] columnValues = eachId.Key.Split(objectType.keyDelimeter.ToCharArray());
@@ -325,7 +328,7 @@
                             columnNamesInWhereClause.Remove(columnNamesInWhereClause.Length - 4, 4);
 
                             //Executing GET operation to fetch data
-                            DataTable getDataTable = ExecuteGetDatabaseQuery("SELECT * FROM schemaName." + dataObjectToBeUsedForGet.tableName + " WHERE " + columnNamesInWhereClause);
+                            DataTable getDataTable = ExecuteGetDatabaseQuery("SELECT * FROM schemaName." + objectType.tableName + " WHERE " + columnNamesInWhereClause);
 
                             int columnNumber = 0;
 
@@ -334,7 +337,7 @@
                             {
                                 if (getDataTable.Rows[0][columnNumber] != DBNull.Value && eachDataColumn.DataType == typeof(byte[]))
                                 {
-                                    IContentObject contentObject = new SQLContentObject(dataObjectToBeUsedForGet, getDataTable, (byte[])getDataTable.Rows[0][columnNumber]);
+                                    IContentObject contentObject = new SQLContentObject(objectType, getDataTable, (byte[])getDataTable.Rows[0][columnNumber]);
 
                                     contentObject.ContentType = GetMimeFromBytes((byte[])getDataTable.Rows[0][columnNumber]);
                                     contentObject.Content.Position = 0;
@@ -387,8 +390,6 @@
 
                 if (dataDictionary != null)
                 {
-                    DataObject dataObjectToBeUsedForGet = dataDictionary.dataObjects.Where<DataObject>(P => P.objectName.ToUpper() == objectType.objectName.ToUpper()).FirstOrDefault();
-
                     //Preparing query for GET operation
                     StringBuilder getIdQuery = new StringBuilder();
 
@@ -396,9 +397,9 @@
 
                     StringBuilder columnNames = new StringBuilder();
 
-                    foreach (KeyProperty eachKeyProperty in dataObjectToBeUsedForGet.keyProperties)
+                    foreach (KeyProperty eachKeyProperty in objectType.keyProperties)
                     {
-                        columnNames.Append(dataObjectToBeUsedForGet.dataProperties.Find(prop => prop.propertyName == eachKeyProperty.keyPropertyName).columnName + ",");
+                        columnNames.Append(objectType.dataProperties.Find(prop => prop.propertyName == eachKeyProperty.keyPropertyName).columnName + ",");
                     }
 
                     columnNames = columnNames.Remove(columnNames.ToString().LastIndexOf(","), 1);
@@ -411,9 +412,9 @@
                     {
                         SerializableDataObject serializableDataObject = new SerializableDataObject();
 
-                        foreach (KeyProperty eachKeyProperty in dataObjectToBeUsedForGet.keyProperties)
+                        foreach (KeyProperty eachKeyProperty in objectType.keyProperties)
                         {
-                            serializableDataObject.SetPropertyValue(eachKeyProperty.keyPropertyName, eachDataRow[dataObjectToBeUsedForGet.dataProperties.Find(prop => prop.propertyName == eachKeyProperty.keyPropertyName).columnName]);
+                            serializableDataObject.SetPropertyValue(eachKeyProperty.keyPropertyName, eachDataRow[objectType.dataProperties.Find(prop => prop.propertyName == eachKeyProperty.keyPropertyName).columnName]);
                         }
 
                         listOfSerializableDataObjects.Add(serializableDataObject);
@@ -455,16 +456,15 @@
                 if (dataDictionary != null)
                 {
                     StringBuilder getPageQuery = new StringBuilder();
-                    DataObject dataObjectToBeUsedForGet = dataDictionary.dataObjects.Where<DataObject>(P => P.objectName.ToUpper() == objectType.objectName.ToUpper()).FirstOrDefault();
 
-                    string composeExtensionPropertiesQuery = ExtenstionPropertiesAsQuery(dataObjectToBeUsedForGet);
+                    string composeExtensionPropertiesQuery = ExtenstionPropertiesAsQuery(objectType);
 
-                    getPageQuery.Append("SELECT " + dataObjectToBeUsedForGet.tableName + ".* " + composeExtensionPropertiesQuery + " FROM schemaName." + dataObjectToBeUsedForGet.tableName + " WHERE ( (");
+                    getPageQuery.Append("SELECT " + objectType.tableName + ".* " + composeExtensionPropertiesQuery + " FROM schemaName." + objectType.tableName + " WHERE ( (");
 
                     StringBuilder columnNames = new StringBuilder();
 
                     //Getting column names as string
-                    foreach (KeyProperty eachKeyProperty in dataObjectToBeUsedForGet.keyProperties)
+                    foreach (KeyProperty eachKeyProperty in objectType.keyProperties)
                     {
                         columnNames.Append(objectType.dataProperties.Find(dProp => dProp.propertyName == eachKeyProperty.keyPropertyName).columnName + ",");
                     }
@@ -503,14 +503,14 @@
                                 serializableDataObject.HasContent = true;
                             }
 
-                            foreach (DataProperty eachDataProperty in dataObjectToBeUsedForGet.dataProperties)
+                            foreach (DataProperty eachDataProperty in objectType.dataProperties)
                             {
                                 serializableDataObject.SetPropertyValue(eachDataProperty.propertyName, eachDataRowFromGet[eachDataProperty.columnName]);
                             }
 
-                            if (dataObjectToBeUsedForGet.extensionProperties != null && dataObjectToBeUsedForGet.extensionProperties.Count > 0)
+                            if (objectType.extensionProperties != null && objectType.extensionProperties.Count > 0)
                             {
-                                foreach (ExtensionProperty eachExtensionProperty in dataObjectToBeUsedForGet.extensionProperties)
+                                foreach (ExtensionProperty eachExtensionProperty in objectType.extensionProperties)
                                 {
                                     serializableDataObject.SetPropertyValue(eachExtensionProperty.propertyName, eachDataRowFromGet[eachExtensionProperty.columnName]);
                                 }
@@ -568,7 +568,7 @@
                     responseOfPost.StatusCode = System.Net.HttpStatusCode.Accepted;
 
                     //Getting post data object from data Dictionary to avoid any descrepencies in data object which is received in the method.
-                    objectType = dataDictionary.dataObjects.Find(dObj => dObj.objectName == objectType.objectName);
+                    //objectType = dataDictionary.dataObjects.Find(dObj => dObj.objectName == objectType.objectName);
 
                     //Setting the object name for post operation
                     if (objectType.aliasDictionary != null && objectType.aliasDictionary["TABLE_NAME_IN"] != null)
