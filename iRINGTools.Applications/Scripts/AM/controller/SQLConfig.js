@@ -624,6 +624,10 @@
         var valid = true;
 
         Ext.each(objectsNode.childNodes, function (objectNode) {
+            if (objectNode.raw.properties.keyDelimiter == null) {
+                objectNode.raw.properties.keyDelimiter = '~';
+            }
+
             var objProps = objectNode.raw.properties;
             var keyNodes = objectNode.findChild('text', 'Keys').childNodes;
             var propNodes = objectNode.findChild('text', 'Properties').childNodes;
