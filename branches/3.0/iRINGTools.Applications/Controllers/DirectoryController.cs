@@ -928,16 +928,6 @@ namespace org.iringtools.web.controllers
                     tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
                     tempFolder.groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
                     response = _appConfigRepository.AddFolder(userName, tempFolder);
-                    
-                    //if (response.Level == StatusLevel.Success)
-                    //{
-                    //    List<JsonTreeNode> nodes = null;
-                    //    if (response.StatusText.ToLower().Equals("folderadded"))
-                    //        nodes = PopulateFolderNode(tempFolder.ParentFolderId);
-                    //    return Json(new { success = true, message = response.StatusText, nodes }, JsonRequestBehavior.AllowGet);
-                    //}
-                    //else
-                    //    return Json(new { success = false, message = response.StatusText, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
                 }
                 else if (form["state"] == "edit")
                 {
@@ -945,49 +935,24 @@ namespace org.iringtools.web.controllers
                     tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["path"]) ? Guid.Parse(form["path"]) : Guid.Empty;
                     tempFolder.groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
                     response = _appConfigRepository.UpdateFolder(userName, tempFolder);
-                    //if (response.Level == StatusLevel.Success)
-                    //{
-                    //    List<JsonTreeNode> nodes = PopulateFolderNode(tempFolder.ParentFolderId);
-                    //    return Json(new { success = true, message = response.StatusText, nodes }, JsonRequestBehavior.AllowGet);
-                    //}
-                    //else
-                    //    return Json(new { success = false, message = response.StatusText, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
                     tempFolder.FolderId = !String.IsNullOrEmpty(form["nodeid"]) ? Guid.Parse(form["nodeid"]) : Guid.Empty;
                     tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["parentnodeid"]) ? Guid.Parse(form["parentnodeid"]) : Guid.Empty;
                     response = _appConfigRepository.DeleteFolder(tempFolder);
-                    //if (response.Level == StatusLevel.Success)
-                    //{
-                    //    //List<JsonTreeNode> nodes = PopulateFolderNode(tempFolder.ParentFolderId);
-                    //    return Json(new { success = true, message = response.StatusText}, JsonRequestBehavior.AllowGet);
-                    //}
-                    //else
-                    //    return Json(new { success = false, message = response.StatusText, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
                 }
 
                 if (response.Level == StatusLevel.Success)
                 {
-                    List<JsonTreeNode> nodes = null;
-                    if (response.StatusText.ToLower().Equals("folderadded") || response.StatusText.ToLower().Equals("folderupdated"))
-                        nodes = PopulateFolderNode(tempFolder.ParentFolderId);
+                    List<JsonTreeNode> nodes = PopulateFolderNode(tempFolder.ParentFolderId);
+                    //if (response.StatusText.ToLower().Equals("folderadded") || response.StatusText.ToLower().Equals("folderupdated"))
+                    //nodes = PopulateFolderNode(tempFolder.ParentFolderId);
                     return Json(new { success = true, message = response.StatusText, nodes }, JsonRequestBehavior.AllowGet);
                 }
                 else
                     return Json(new { success = false, message = response.StatusText, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
 
-                //if (success.Trim().Contains("Error"))
-                //{
-                //    _CustomErrorLog = new CustomErrorLog();
-                //    _CustomError = _CustomErrorLog.getErrorResponse(success);
-
-                //    return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
-                //}
-
-                
-
-                //return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {

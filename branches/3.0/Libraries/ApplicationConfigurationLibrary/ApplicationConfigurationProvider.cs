@@ -356,7 +356,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateFolder(string userName, XDocument xml)
+        public Response UpdateFolder(string userName, bool IsFolderNameChanged,XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -378,6 +378,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@ParentFolderId", Value = folder.ParentFolderId.ToString() });
                         nvl.Add(new ListItem() { Name = "@FolderName", Value = folder.FolderName });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                        nvl.Add(new ListItem() { Name = "@IsFolderNameChanged", Value = Convert.ToString(IsFolderNameChanged) });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuFolder", nvl);
 
@@ -385,6 +386,9 @@ namespace org.iringtools.applicationConfig
                         {
                             case "1":
                                 PrepareSuccessResponse(response, "folderupdated");
+                                break;
+                            case "0":
+                                PrepareSuccessResponse(response, "duplicatefolder");
                                 break;
                             default:
                                 PrepareErrorResponse(response, output);
@@ -776,7 +780,7 @@ namespace org.iringtools.applicationConfig
         }
 
 
-        public Response UpdateGraph(string userName, XDocument xml)
+        public Response UpdateGraph(string userName,bool IsGraphNameChanged, XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -818,6 +822,8 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@GraphName", Value = graph.GraphName });
                         nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                        nvl.Add(new ListItem() { Name = "@IsGraphNameChanged", Value = Convert.ToString(IsGraphNameChanged) });
+                        nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(graph.ApplicationId) });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedureWithExtraParam_ByteArray(_connSecurityDb, "spuGraph", nvl, "@Graph", graph.graph);
 
@@ -826,6 +832,9 @@ namespace org.iringtools.applicationConfig
                         {
                             case "1":
                                 PrepareSuccessResponse(response, "graphupdated");
+                                break;
+                            case "0":
+                                PrepareSuccessResponse(response, "duplicategraph");
                                 break;
                             default:
                                 PrepareErrorResponse(response, output.ToString());
