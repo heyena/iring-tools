@@ -72,14 +72,15 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public library.Response UpdateFolder(string userName, Folder updatedFolder)
+        public library.Response UpdateFolder(string userName, bool IsFolderNameChanged, Folder updatedFolder)
         {
             library.Response response = null;
 
             try
             {
                 WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
-                response = client.Put<Folder,library.Response>(String.Format("/updateFolder/{0}?format=xml", userName), updatedFolder, true);
+                response = client.Put<Folder, library.Response>(String.Format("/updateFolder/{0}?IsFolderNameChanged={1}&format=xml", userName, IsFolderNameChanged), updatedFolder, true);
+                ///updateFolder/{userName}?IsFolderNameChanged={IsFolderNameChanged}&format={format}
             }
             catch (Exception ex)
             {

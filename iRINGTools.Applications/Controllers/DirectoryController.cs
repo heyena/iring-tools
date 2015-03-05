@@ -916,6 +916,7 @@ namespace org.iringtools.web.controllers
 
                 //string success = String.Empty;
                 string folderName = form["displayName"];
+                bool isFolderNameChanged = Convert.ToBoolean(form["isFolderNameChanged"]);
 
                 Folder tempFolder = new Folder()
                 {
@@ -934,7 +935,7 @@ namespace org.iringtools.web.controllers
                     tempFolder.FolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
                     tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["path"]) ? Guid.Parse(form["path"]) : Guid.Empty;
                     tempFolder.groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
-                    response = _appConfigRepository.UpdateFolder(userName, tempFolder);
+                    response = _appConfigRepository.UpdateFolder(userName,isFolderNameChanged, tempFolder);
                 }
                 else
                 {

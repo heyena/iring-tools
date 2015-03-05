@@ -69,6 +69,10 @@ Ext.define('AM.view.directory.FolderForm', {
                 xtype: 'hiddenfield',
                 name: 'state'
             },
+             {
+                 xtype: 'hiddenfield',
+                 name: 'isFolderNameChanged'
+             },
             {
                 xtype: 'hiddenfield',
                 name: 'oldContext'
@@ -114,18 +118,28 @@ Ext.define('AM.view.directory.FolderForm', {
         var state = form.findField('state').getValue();
         var contextNameField = form.findField('contextName');
         var node = me.node;
+        var FolderNameBeforeUpdate =Ext.String.trim(node.raw.text);
+        var isFolderNameChanged;
+        if (FolderNameBeforeUpdate == Ext.String.trim(folderName) ) {
+            isFolderNameChanged = false;
 
+        }
+        else {
+            isFolderNameChanged = true;
+
+        }
+        form.findField('isFolderNameChanged').setValue(isFolderNameChanged);
         if (state == 'new')
             form.findField('name').setValue(folderName);
 
-//        node.eachChild(function (n) {
-//            if (n.data.text == folderName) {
-//                if (state == 'new') {
-//                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Folder name \"' + folderName + '\" already exists.' });
-//                    return;
-//                }
-//            }
-//        });
+        //        node.eachChild(function (n) {
+        //            if (n.data.text == folderName) {
+        //                if (state == 'new') {
+        //                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Folder name \"' + folderName + '\" already exists.' });
+        //                    return;
+        //                }
+        //            }
+        //        });
 
         if (form.isValid()) {
             form.submit({
@@ -133,11 +147,8 @@ Ext.define('AM.view.directory.FolderForm', {
 
                 success: function (response, request) {
                     var objResponseText = Ext.JSON.decode(request.response.responseText);
-                    if (objResponseText["message"] == "duplicatefolder") {
-                        showDialog(400, 50, 'Alert', "Folder with this name already exists", Ext.Msg.OK, null);
-                        return;
-                    }
                     
+
                     //Ext.example.msg('Notification', 'Folder saved successfully!');
                     win.fireEvent('save', me);
 
@@ -168,6 +179,9 @@ Ext.define('AM.view.directory.FolderForm', {
                     }
                     if (objResponseText["message"] == "folderupdated") {
                         showDialog(400, 50, 'Alert', "Folder updated successfully!", Ext.Msg.OK, null);
+                    }
+                    if (objResponseText["message"] == "duplicatefolder") {
+                        showDialog(400, 50, 'Alert', "Folder with this name already exists", Ext.Msg.OK, null);
                     }
                 },
 
