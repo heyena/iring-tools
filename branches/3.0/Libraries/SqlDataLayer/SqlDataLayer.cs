@@ -1288,11 +1288,11 @@
                             //Adding parameters based on database type
                             if (dbTypeName == "Oracle")
                             {
-                                _sqlDatalayerDbCommand.Parameters.Add(new OracleParameter(dbParameterDictionary[dbTypeName] + columnName, columnDetails.Value));
+                                _sqlDatalayerDbCommand.Parameters.Add(new OracleParameter(dbParameterDictionary[dbTypeName] + columnName, columnDetails.Value ?? DBNull.Value));
                             }
                             else if (dbTypeName == "Sql")
                             {
-                                _sqlDatalayerDbCommand.Parameters.Add(new SqlParameter(dbParameterDictionary[dbTypeName] + columnName, columnDetails.Value));
+                                _sqlDatalayerDbCommand.Parameters.Add(new SqlParameter(dbParameterDictionary[dbTypeName] + columnName, columnDetails.Value ?? DBNull.Value));
                             }
                         }
                     }
