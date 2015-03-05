@@ -1022,9 +1022,9 @@ namespace org.iringtools.web.controllers
 
                 if (response.Level == StatusLevel.Success)
                 {
-                    List<JsonTreeNode> nodes = null;
-                    if (response.StatusText.ToLower().Equals("contextadded") || response.StatusText.ToLower().Equals("contextupdated"))
-                        nodes = PopulateFolderNode(tempContext.FolderId);
+                    List<JsonTreeNode> nodes = PopulateFolderNode(tempContext.FolderId);
+                    //if (response.StatusText.ToLower().Equals("contextadded") || response.StatusText.ToLower().Equals("contextupdated"))
+                      //  nodes = PopulateFolderNode(tempContext.FolderId);
                     return Json(new { success = true, message = response.StatusText, nodes }, JsonRequestBehavior.AllowGet);
                 }
                 else
