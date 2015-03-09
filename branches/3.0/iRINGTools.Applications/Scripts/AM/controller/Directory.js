@@ -234,6 +234,20 @@ Ext.define('AM.controller.Directory', {
                 parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
                 tree.view.refresh();
+                me.getDirTree().onReload();
+
+                var currentNode;
+                //                    currentNode = node.parentNode;
+                //                          while (currentNode.firstChild) {
+                //                    currentNode.removeChild(currentNode.firstChild);
+                //                }
+
+                //                var index = 0;
+
+                //                Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
+                //                    currentNode.insertChild(index, newNode);
+                //                    index++;
+                //                });
                 showDialog(400, 50, 'Alert', "Folder deleted successfully!", Ext.Msg.OK, null);
             },
             failure: function (response, request) {
@@ -341,6 +355,20 @@ Ext.define('AM.controller.Directory', {
                 parentNode.removeChild(node);
                 tree.getSelectionModel().select(parentNode);
                 tree.view.refresh();
+                me.getDirTree().onReload();
+
+//                    var currentNode;            
+//                    currentNode = node.parentNode;
+//                          while (currentNode.firstChild) {
+//                    currentNode.removeChild(currentNode.firstChild);
+//                }
+
+//                var index = 0;
+
+//                Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
+//                    currentNode.insertChild(index, newNode);
+//                    index++;
+//                });
                 showDialog(400, 50, 'Alert', "Context deleted successfully!", Ext.Msg.OK, null);
 
                 //                } else {
