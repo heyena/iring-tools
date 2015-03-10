@@ -351,6 +351,21 @@ namespace org.iringtools.web.controllers
                 string scope = form["scope"];
                 string app = form["app"];
                 string selectedTables = form["selectedTables"];
+                 //for edit sqlconfiguration
+                string dbProvider1 = Convert.ToString(form["dbProvider"].ToLower().IndexOf("mssql"));
+                string dbServer = form["dbServer"];
+                string dbInstance = form["dbInstance"];
+                string dbName = form["dbName"];
+                string portNumber = form["portNumber"];
+                string dbUserName = form["dbUserName"];
+                string dbPassword = form["dbPassword"];
+                string dbSchema = form["dbSchema"];
+
+             var connStr = (dbProvider1 != "-1") ? "Data Source=" + dbServer+ "\\" + dbInstance+ ";" + "Initial Catalog=" +
+            dbName + ";User ID=" + dbUserName+ ";Password=" + dbPassword: "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=" + dbServer + ")(PORT=" +
+            portNumber + "))(CONNECT_DATA=(" + dbServer + "=" + dbInstance +
+            ")));User Id=" + dbUserName + ";Password=" + dbPassword;
+                 //
 
                 _repository.Session = Session;
 
@@ -376,9 +391,20 @@ namespace org.iringtools.web.controllers
                     string dbProvider = dictionary.Provider;
                     string conStr = Utility.DecodeFrom64(dictionary.ConnectionString);
 
-                    conElts = GetConnectionElements(dbProvider, conStr);
-                    conElts["dbSchema"] = dictionary.SchemaName;
-                    root.properties.Add("connectionInfo", conElts);
+                    if (connStr == "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=)(PORT=))(CONNECT_DATA=(=)));User Id=;Password=")
+                    {
+                        conElts = GetConnectionElements(dbProvider, conStr);
+                        conElts["dbSchema"] = dictionary.SchemaName;
+                        root.properties.Add("connectionInfo", conElts);
+                    }
+                    else {
+                        conElts = GetConnectionElements(dbProvider, connStr);
+                        conElts["dbSchema"] = dictionary.SchemaName;
+                        root.properties.Add("connectionInfo", conElts);
+                    
+                    }
+
+                   
                 }
                 else
                 {
