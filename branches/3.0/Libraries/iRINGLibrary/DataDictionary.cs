@@ -110,6 +110,7 @@ namespace org.iringtools.library
             dataProperties = new List<DataProperty>();
             dataRelationships = new List<DataRelationship>();
             extensionProperties = new List<ExtensionProperty>();
+            aliasDictionary = new Dictionary<string, string>();
         }
 
         [DataMember(IsRequired = true, Order = 0)]
@@ -223,6 +224,11 @@ namespace org.iringtools.library
     [DataContract(Name = "dataProperty", Namespace = "http://www.iringtools.org/library")]
     public class DataProperty
     {
+        public DataProperty()
+        {
+            aliasDictionary = new Dictionary<string, string>();
+        }
+
         [DataMember(IsRequired = true, Order = 0)]
         public string columnName { get; set; }
 
@@ -445,6 +451,11 @@ namespace org.iringtools.library
     [DataContract(Namespace = "http://www.iringtools.org/library")]
     public class PicklistObject
     {
+        public PicklistObject()
+        {
+            pickListProperties = new List<DataProperty>();
+        }
+
         [DataMember(IsRequired = true, Order = 0)]
         public string name { get; set; }
 
@@ -465,6 +476,11 @@ namespace org.iringtools.library
     [DataContract(Name = "unionObject", Namespace = "http://www.iringtools.org/library")]
     public class UnionObject
     {
+        public UnionObject()
+        {
+            unionTypes = new List<UnionType>();
+        }
+
         [DataMember(IsRequired = false, Order = 0)]
         public string unionName { get; set; }
 

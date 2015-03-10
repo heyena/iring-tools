@@ -339,7 +339,7 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "dataFilter", Namespace = "http://www.iringtools.org/data/filter")]
     public class DataFilter
     {
-        DataFilter()
+       public DataFilter()
         {
             expressions = new Expressions();
             orderExpressions = new OrderExpressions();

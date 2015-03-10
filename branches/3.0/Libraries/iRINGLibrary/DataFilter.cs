@@ -1432,18 +1432,23 @@ namespace org.iringtools.library
     [DataMember(Name = "propertyName", Order = 0, IsRequired = true)]
     public string PropertyName { get; set; }
 
-    [DataMember(Name = "sortOrder", Order = 1, EmitDefaultValue = false)]
+    [DataMember(Name = "sortOrder", Order = 1, EmitDefaultValue = true)]
     public SortOrder SortOrder { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollupExpression")]
   public class RollupExpression
   {
-    [DataMember(Name = "groupBy", Order = 0, EmitDefaultValue = false)]
-    public String GroupBy { get; set; }
+      public RollupExpression()
+      {
+          Rollups = new List<Rollup>();
+      }
 
-    [DataMember(Name = "rollups", Order = 1, EmitDefaultValue = false)]
-    public List<Rollup> Rollups { get; set; }
+      [DataMember(Name = "groupBy", Order = 0, EmitDefaultValue = false)]
+      public String GroupBy { get; set; }
+
+      [DataMember(Name = "rollups", Order = 1, EmitDefaultValue = false)]
+      public List<Rollup> Rollups { get; set; }
   }    
 
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollup")]
