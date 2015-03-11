@@ -40,9 +40,6 @@ namespace org.iringtools.agent
         [DataMember(Name = "app", Order = 3)]
         public string App { get; set; }
 
-        [DataMember(Name = "scope", Order = 4)]
-        public string Scope { get; set; }
-
         [DataMember(Name = "exchangeId", Order = 5)]
         public string ExchangeId { get; set; }
 
