@@ -997,6 +997,26 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Get graph by graphid")]
+        [WebGet(UriTemplate = "/GetGraphByGraphID?graphId={graphId}&format={format}")]
+        public void GetGraphByGraphID(Guid graphId, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                Graph graph = _applicationConfigurationProvider.GetGraphByGraphID(graphId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<Graph>(graph, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
         #region Private Methods
         private string MapContentType(string format)
         {

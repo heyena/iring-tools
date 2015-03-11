@@ -1480,6 +1480,24 @@ namespace org.iringtools.applicationConfig
             return valueListMaps;
         }
 
+        public Graph GetGraphByGraphID(Guid graphID)
+        {
+            Graph graphs = new Graph();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphID) });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphByGraphID", nvl);
+                graphs = utility.Utility.Deserialize<Graph>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Graph by GraphID: " + ex);
+            }
+            return graphs;
+        }
+
         #region Private Methods
         private void PrepareErrorResponse(Response response, string errMsg)
         {
