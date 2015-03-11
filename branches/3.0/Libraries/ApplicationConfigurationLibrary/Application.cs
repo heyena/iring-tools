@@ -119,7 +119,7 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "graph", Namespace = "http://www.iringtools.org/library")]
     public class Graph
     {
-        Graph()
+        public Graph()
         {
             permissions = new Permissions();
             groups = new Groups();
