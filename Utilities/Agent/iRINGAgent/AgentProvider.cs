@@ -90,7 +90,7 @@ namespace org.iringtools.agent
                 }
                 else if (task.TaskType.ToLower().Equals("exchange"))
                 {
-                    string url = string.Format("{0}?scope={1}&xid={2}", task.BaseURL, task.Scope, task.ExchangeId);
+                    string url = string.Format("{0}?scope={1}&xid={2}", task.BaseURL, task.Project, task.ExchangeId);
                     WebRequest request = CreateWebRequest(url);
 
                     if (!string.IsNullOrEmpty(clientToken))
@@ -111,7 +111,7 @@ namespace org.iringtools.agent
             }
             catch (Exception e)
             {
-                _logger.Error("Error processing task: " + task.TaskType + " for " + task.Scope + e.Message);
+                _logger.Error("Error processing task: " + task.TaskType + " for " + task.Project + e.Message);
             }
         }
 

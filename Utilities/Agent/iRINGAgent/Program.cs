@@ -111,7 +111,6 @@ namespace org.iringtools.agent
                         BaseURL = "",
                         Project = "99999_000",
                         App = "iw",
-                        Scope = "99999_000",
                         ExchangeId = ""
                     }
                 }
