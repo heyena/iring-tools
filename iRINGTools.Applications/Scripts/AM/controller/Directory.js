@@ -357,18 +357,18 @@ Ext.define('AM.controller.Directory', {
                 tree.view.refresh();
                 me.getDirTree().onReload();
 
-//                    var currentNode;            
-//                    currentNode = node.parentNode;
-//                          while (currentNode.firstChild) {
-//                    currentNode.removeChild(currentNode.firstChild);
-//                }
+                //                    var currentNode;            
+                //                    currentNode = node.parentNode;
+                //                          while (currentNode.firstChild) {
+                //                    currentNode.removeChild(currentNode.firstChild);
+                //                }
 
-//                var index = 0;
+                //                var index = 0;
 
-//                Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
-//                    currentNode.insertChild(index, newNode);
-//                    index++;
-//                });
+                //                Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
+                //                    currentNode.insertChild(index, newNode);
+                //                    index++;
+                //                });
                 showDialog(400, 50, 'Alert', "Context deleted successfully!", Ext.Msg.OK, null);
 
                 //                } else {
@@ -580,9 +580,9 @@ Ext.define('AM.controller.Directory', {
             }
         }, me);
 
-        if (utilsObj.isSecEnable == "False") {
-            form.getForm().findField('permissions').hide();
-        }
+        //        if (utilsObj.isSecEnable == "False") {
+        //            form.getForm().findField('permissions').hide();
+        //        }
         form.node = node1;
         form.getForm().findField('path').setValue(path);
         form.getForm().findField('state').setValue(state);
@@ -597,7 +597,7 @@ Ext.define('AM.controller.Directory', {
         form.getForm().findField('application').setValue(application);
         form.getForm().findField('cacheImportURI').setValue(cacheImportURI);
         form.getForm().findField('cacheTimeout').setValue(cacheTimeout);
-        form.getForm().findField('permissions').setValue(permission);
+        //        form.getForm().findField('permissions').setValue(permission);
         win.show();
     },
 
@@ -628,6 +628,38 @@ Ext.define('AM.controller.Directory', {
                 }
 
                 //tree.onReload();
+            },
+            failure: function (response, request) {
+                var resp = Ext.decode(response.responseText);
+                var userMsg = resp['message'];
+                var detailMsg = resp['stackTraceDescription'];
+                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+            }
+        });
+    },
+
+    onDeleteApplication: function (item, e, eOpts) {
+        var tree = this.getDirTree();
+        var node = tree.getSelectedNode();
+
+        Ext.Ajax.request({
+            url: 'directory/Application',
+            method: 'POST',
+            params: {
+                nodeId: node.data.id,
+                parentNodeId: node.data.parentId,
+                state: "delete"
+            },
+            success: function (response, request) {
+                var resp = Ext.decode(response.responseText);
+                if (resp.success) {
+                    var parentNode = node.parentNode;
+                    parentNode.removeChild(node);
+                    tree.getSelectionModel().select(parentNode);
+                    tree.view.refresh();
+                }
             },
             failure: function (response, request) {
                 var resp = Ext.decode(response.responseText);
@@ -1603,8 +1635,11 @@ Ext.define('AM.controller.Directory', {
             "menuitem[action=neweditendpoint]": {
                 click: this.newOrEditEndpoint
             },
-            "menuitem[action=deleteendpoint]": {
-                click: this.deleteEndpoint
+            //            "menuitem[action=deleteendpoint]": {
+            //                click: this.deleteEndpoint
+            //            },
+            "menuitem[action=deleteApplication]": {
+                click: this.onDeleteApplication
             },
             "menuitem[action=newdatalayer]": {
                 click: this.onNewDataLayer

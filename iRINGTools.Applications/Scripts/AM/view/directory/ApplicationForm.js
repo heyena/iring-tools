@@ -139,18 +139,14 @@ Ext.define('AM.view.directory.ApplicationForm', {
             xtype: 'checkboxlistcombo',
             width: 180,
             multiSelect: true,
-            itemId: 'permissionitem',
-            fieldLabel: 'Permissions:',
-            labelSeparator: '',
-            emptyText: '',
-            allowBlank: true,
-            name: 'permissions',
-            displayField: 'permission',
+            name: 'ResourceGroups',
+            itemId: 'ResourceGroupId',
+            fieldLabel: 'Groups for the User:',
+            displayField: 'groupName',
             autoSelect: false,
             queryMode: 'remote',
-            store: 'PermissionsS',
-            valueField: 'permission'
-
+            store: 'ResourceGroupStore',
+            valueField: 'groupId'
         },
         {
           xtype: 'container',
