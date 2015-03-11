@@ -67,6 +67,8 @@ namespace org.iringtools.agent
                 Initialize();
                 string clientToken = GetClientToken();
 
+                _logger.Debug("Got Client Token");
+
                 if (task.TaskType.ToLower().Equals("cache"))
                 {
                   if (clientToken != null)
@@ -74,9 +76,15 @@ namespace org.iringtools.agent
                     _settings["AllowImpersonation"] = "True";
                     _settings["ImpersonatedUser"] = _clientId;
                     _settings["ClientToken"] = clientToken;
+                    _settings["Authorization"] = clientToken;
                   }
 
-                  string doRefresh = _settings["RefreshDictionary"].ToString();
+                  _logger.Debug("Updating Cache with Client Token");
+
+                  string doRefresh = _settings["RefreshDictionary"];
+
+                  if(String.IsNullOrEmpty(doRefresh))
+                      doRefresh = "false";
 
                   _logger.Info("RefreshDictionary Flag: " + doRefresh);
 

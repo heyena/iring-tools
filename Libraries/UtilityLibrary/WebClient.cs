@@ -75,6 +75,8 @@ namespace org.iringtools.utility
     {
       _baseUri = baseUri;
 
+      Headers = new Dictionary<string, string>();
+
       object accessToken = ConfigurationManager.AppSettings["AccessToken"];
       if (accessToken != null)
         _accessToken = accessToken.ToString();
