@@ -194,6 +194,7 @@ namespace org.iringtools.adapter.projection
                             else if (dto.transferType == TransferType.Change)
                             {
                                 ((SerializableDataObject)dataObject).State = ObjectState.Update;
+                                ((SerializableDataObject)dataObject).Id = dto.internalIdentifier;
                             }
 
                             if (dto.content != null && dto.content.Length > 0)
