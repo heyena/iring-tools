@@ -1495,45 +1495,45 @@ namespace org.iringtools.applicationConfig
 
 
         //  public Response InsertJob(Job job )
-        public Response InsertJob(XDocument xml)
-        {
-            Response response = new Response();
-            response.Messages = new Messages();
+        //public Response InsertJob(XDocument xml)
+        //{
+        //    Response response = new Response();
+        //    response.Messages = new Messages();
 
-            try
-            {
-                Job job = Utility.DeserializeDataContract<Job>(xml.ToString());
+        //    try
+        //    {
+        //        Job job = Utility.DeserializeDataContract<Job>(xml.ToString());
 
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                    NameValueList nvl = new NameValueList();
+        //        using (var dc = new DataContext(_connSecurityDb))
+        //        {
+        //            NameValueList nvl = new NameValueList();
 
-                    nvl.Add(new ListItem() { Name = "@Is_Exchange", Value = Convert.ToString(job.Is_Exchange) });
-                    nvl.Add(new ListItem() { Name = "@Scope", Value = job.scope });
-                    nvl.Add(new ListItem() { Name = "@App", Value = job.app });
-                    nvl.Add(new ListItem() { Name = "@DataObject", Value = job.dataobject });
-                    nvl.Add(new ListItem() { Name = "@Xid", Value = job.xid });
-                    nvl.Add(new ListItem() { Name = "@Exchange_Url", Value = job.Exchange_Url });
-                    nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = job.cache_page_size });
+        //            nvl.Add(new ListItem() { Name = "@Is_Exchange", Value = Convert.ToString(job.Is_Exchange) });
+        //            nvl.Add(new ListItem() { Name = "@Scope", Value = job.scope });
+        //            nvl.Add(new ListItem() { Name = "@App", Value = job.app });
+        //            nvl.Add(new ListItem() { Name = "@DataObject", Value = job.dataobject });
+        //            nvl.Add(new ListItem() { Name = "@Xid", Value = job.xid });
+        //            nvl.Add(new ListItem() { Name = "@Exchange_Url", Value = job.Exchange_Url });
+        //            nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = job.cache_page_size });
 
-                    string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiJob", nvl);
-                }
+        //            string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiJob", nvl);
+        //        }
 
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error adding Job: " + ex);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.Error("Error adding Job: " + ex);
 
-                Status status = new Status { Level = StatusLevel.Error };
-                status.Messages = new Messages { ex.Message };
+        //        Status status = new Status { Level = StatusLevel.Error };
+        //        status.Messages = new Messages { ex.Message };
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Error;
-                response.StatusList.Add(status);
-            }
+        //        response.DateTimeStamp = DateTime.Now;
+        //        response.Level = StatusLevel.Error;
+        //        response.StatusList.Add(status);
+        //    }
 
-            return response;
-        }
+        //    return response;
+        //}
 
         #region Private Methods
         private void PrepareErrorResponse(Response response, string errMsg)
