@@ -195,7 +195,6 @@ namespace iRINGTools.Web.Models
             {
                 logger.Error(ex.ToString());
                 throw;
-
             }
 
             return applications;
@@ -253,6 +252,24 @@ namespace iRINGTools.Web.Models
             }
 
             return obj;
+        }
+
+        internal library.DataObjects GetDataObjectsForAnApplication(string userName, Guid guid)
+        {
+            library.DataObjects dataObjects = null;
+
+            try
+            {
+                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                dataObjects = client.Get<library.DataObjects>(String.Format(""));
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+                throw;
+            }
+
+            return dataObjects;
         }
     }
 }
