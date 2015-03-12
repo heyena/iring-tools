@@ -489,39 +489,39 @@ namespace org.iringtools.applicationConfig
 
 
 
-    [CollectionDataContract(Name = "job", Namespace = "http://www.iringtools.org/library", ItemName = "job")]
-    public class Jobs : List<Job>
-    {
+    //[CollectionDataContract(Name = "job", Namespace = "http://www.iringtools.org/library", ItemName = "job")]
+    //public class Jobs : List<Job>
+    //{
 
-    }
+    //}
 
-    [DataContract(Name = "job", Namespace = "http://www.iringtools.org/library")]
-    public class Job
-    {
+    //[DataContract(Name = "job", Namespace = "http://www.iringtools.org/library")]
+    //public class Job
+    //{
       
-        [DataMember(Name = "Is_Exchange", Order = 0)]
-        public int Is_Exchange { get; set; }
+    //    [DataMember(Name = "Is_Exchange", Order = 0)]
+    //    public int Is_Exchange { get; set; }
 
-        [DataMember(Name = "Scope", Order = 1, EmitDefaultValue = false)]
-        public string scope { get; set; }
+    //    [DataMember(Name = "Scope", Order = 1, EmitDefaultValue = false)]
+    //    public string scope { get; set; }
 
-        [DataMember(Name = "App", Order = 2, EmitDefaultValue = false)]
-        public string app { get; set; }
+    //    [DataMember(Name = "App", Order = 2, EmitDefaultValue = false)]
+    //    public string app { get; set; }
 
-        [DataMember(Name = "DataObject", Order = 3, EmitDefaultValue = false)]
-        public string dataobject { get; set; }
+    //    [DataMember(Name = "DataObject", Order = 3, EmitDefaultValue = false)]
+    //    public string dataobject { get; set; }
 
-        [DataMember(Name = "Xid", Order = 4, EmitDefaultValue = false)]
-        public string xid { get; set; }
+    //    [DataMember(Name = "Xid", Order = 4, EmitDefaultValue = false)]
+    //    public string xid { get; set; }
 
-        [DataMember(Name = "Exchange_Url", Order = 5, EmitDefaultValue = false)]
-        public string Exchange_Url { get; set; }
+    //    [DataMember(Name = "Exchange_Url", Order = 5, EmitDefaultValue = false)]
+    //    public string Exchange_Url { get; set; }
 
-        [DataMember(Name = "Cache_Page_Size", Order = 6, EmitDefaultValue = false)]
-        public string cache_page_size { get; set; }
+    //    [DataMember(Name = "Cache_Page_Size", Order = 6, EmitDefaultValue = false)]
+    //    public string cache_page_size { get; set; }
 
         
-    }
+    //}
 
 
 
