@@ -15,7 +15,7 @@ namespace iRINGTools.Web.Models
 
         library.Response DeleteFolder(Folder folder);
 
-        library.Response UpdateFolder(string userName, bool IsFolderNameChanged, Folder updatedFolder);
+        library.Response UpdateFolder(string userName, Folder updatedFolder);
 
         Contexts GetContexts(string userName, Guid parentFolderId, int siteId);
 
