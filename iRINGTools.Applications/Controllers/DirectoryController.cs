@@ -100,7 +100,7 @@ namespace org.iringtools.web.controllers
                         {
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-                            string scopeName = form["text"];
+                            string contextName = form["text"];
                             org.iringtools.applicationConfig.Applications applications = _appConfigRepository.GetApplications(userName, Guid.Parse(form["node"]), siteId);
 
                             foreach (Application application in applications)
@@ -113,29 +113,20 @@ namespace org.iringtools.web.controllers
                                     {
                                         nodeType = "async",
                                         type = "ApplicationNode",
-                                        iconCls = "application",
-                                        id = scopeName + "/" + application.InternalName,
+                                        iconCls = "tabsApplication",
+                                        id = application.ApplicationId.ToString(),
                                         text = application.DisplayName,
                                         expanded = false,
                                         leaf = false,
                                         children = null,
-                                        record = new
-                                        {
-                                            Name = application.InternalName,
-                                            DisplayName = application.DisplayName,
-                                            Description = application.Description,
-                                            DataLayer = application.Assembly,
-                                            Assembly = application.Assembly,
-                                            ApplicationSettings = application.applicationSettings,
-                                            PermissionGroups = application.permissions
-                                        }
+                                        record = application
                                     };
 
-                                    node.property = new Dictionary<string, string>();
-                                    node.property.Add("Internal Name", application.InternalName);
-                                    node.property.Add("Display Name", application.DisplayName);
-                                    node.property.Add("Description", application.Description);
-                                    node.property.Add("Data Layer", application.Assembly);
+                                    //node.property = new Dictionary<string, string>();
+                                    //node.property.Add("Internal Name", application.InternalName);
+                                    //node.property.Add("Display Name", application.DisplayName);
+                                    //node.property.Add("Description", application.Description);
+                                    //node.property.Add("Data Layer", application.Assembly);
                                     //node.property.Add("LightweightDataLayer", application.IsLightweight ? "Yes" : "No");
 
                                     nodes.Add(node);
@@ -241,7 +232,7 @@ namespace org.iringtools.web.controllers
                                     {
                                         nodeType = "async",
                                         type = "ApplicationNode",
-                                        iconCls = "application",
+                                        iconCls = "tabsApplication",
                                         id = scope.Name + "/" + application.Name,
                                         text = application.DisplayName,
                                         expanded = false,
@@ -719,54 +710,6 @@ namespace org.iringtools.web.controllers
             }
         }
 
-        private List<JsonTreeNode> PopulateFolderNode(Guid folderId)
-        {
-            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-            Folders folders = _appConfigRepository.GetFolders(userName, folderId, siteId);
-            org.iringtools.applicationConfig.Contexts contexts = _appConfigRepository.GetContexts(userName, folderId, siteId);
-
-            foreach (Folder folder in folders)
-            {
-                JsonTreeNode node = new JsonTreeNode
-                {
-                    nodeType = "async",
-                    type = "FolderNode",
-                    iconCls = "folder",
-                    id = folder.FolderId.ToString(),
-                    text = folder.FolderName,
-                    expanded = false,
-                    leaf = false,
-                    children = null,
-                    record = folder
-                };
-
-                node.property = new Dictionary<string, string>();
-                node.property.Add("Display Name", folder.FolderName);
-                nodes.Add(node);
-            }
-
-            foreach (org.iringtools.applicationConfig.Context context in contexts)
-            {
-                JsonTreeNode node = new JsonTreeNode
-                {
-                    nodeType = "async",
-                    type = "ContextNode",
-                    iconCls = "context",
-                    id = context.ContextId.ToString(),
-                    text = context.DisplayName,
-                    expanded = false,
-                    leaf = false,
-                    children = null,
-                    record = context
-                };
-
-                node.property = new Dictionary<string, string>();
-                node.property.Add("Display Name", context.DisplayName);
-                nodes.Add(node);
-            }
-            return nodes;
-        }
-
         public ActionResult DataLayers()
         {
             try
@@ -1064,10 +1007,6 @@ namespace org.iringtools.web.controllers
             try
             {
                 string success = String.Empty;
-                string scopeName = form["Scope"];
-                string cacheImportURI = form["cacheImportURI"];
-                long cacheTimeout = String.IsNullOrWhiteSpace(form["cacheTimeout"]) ? 0 : Convert.ToInt64(form["cacheTimeout"]);
-                string permissions = form["permissions"];
 
                 library.Configuration configuration = new Configuration
                 {
@@ -1076,66 +1015,6 @@ namespace org.iringtools.web.controllers
                         Settings = new List<Setting>()
                     }
                 };
-
-                CacheInfo cacheInfo = new CacheInfo
-                {
-                    ImportURI = cacheImportURI,
-                    Timeout = cacheTimeout
-                };
-
-                for (int i = 0; i < form.AllKeys.Length; i++)
-                {
-                    if (form.GetKey(i).ToLower().StartsWith("key"))
-                    {
-                        String key = form[i];
-                        if (i + 1 < form.AllKeys.Length)
-                        {
-                            String value = form[i + 1];
-                            configuration.AppSettings.Settings.Add(new Setting()
-                            {
-                                Key = key,
-                                Value = value
-                            });
-                        }
-                    }
-                }
-
-                List<string> groups = new List<string>();
-                if (permissions.Contains(","))
-                {
-                    string[] arrstring = permissions.Split(',');
-                    groups = new List<string>(arrstring);
-                }
-                else
-                {
-                    groups.Add(permissions);
-                }
-
-                ScopeApplication application = new ScopeApplication()
-                {
-                    DisplayName = form["displayName"],//form["Name"],
-                    Name = form["internalName"],
-                    Description = form["Description"],
-                    Assembly = form["assembly"],
-                    Configuration = configuration,
-                    CacheInfo = cacheInfo,
-                    PermissionGroup = new PermissionGroups()
-                };
-
-                if (!string.IsNullOrEmpty(permissions))
-                    application.PermissionGroup.AddRange(groups);
-
-
-                #region TODO
-                // TODO: Need to create it dynamically at runtime
-                Group tempGroup = new Group();
-                tempGroup.Active = 1;
-                tempGroup.GroupDesc = "Admin Group";
-                tempGroup.GroupId = 47;
-                tempGroup.GroupName = "Administrator";
-                tempGroup.SiteId = 1;
-
-                #endregion
 
                 Application tempApplication = new Application()
                 {
@@ -1149,22 +1028,25 @@ namespace org.iringtools.web.controllers
                     groups = new Groups()
                 };
 
-                tempApplication.groups.Add(tempGroup);
-
-                if (String.IsNullOrEmpty(form["Application"]))
+                if (form["state"] == "new")
                 {
                     tempApplication.ContextId = Guid.Parse(form["path"]);
+                    tempApplication.groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
 
                     success = _appConfigRepository.AddApplication(userName, tempApplication);
-
-                    success = _repository.AddApplication(scopeName, application);
                 }
-                else
+                else if (form["state"] == "edit")
                 {
+                    tempApplication.groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
                     success = _appConfigRepository.UpdateApplication(userName, tempApplication);
-
-                    success = _repository.UpdateApplication(scopeName, form["Application"], application);
                 }
+                else if (form["State"] == "delete")
+                {
+                    tempApplication.ApplicationId = !String.IsNullOrEmpty(form["nodeid"]) ? Guid.Parse(form["nodeId"]) : Guid.Empty;
+                    tempApplication.ContextId = !String.IsNullOrEmpty(form["nodeid"]) ? Guid.Parse(form["parentNodeId"]) : Guid.Empty;
+                    success = _appConfigRepository.DeleteApplication(tempApplication);
+                }
+
                 if (success.Trim().Contains("Error"))
                 {
                     _CustomErrorLog = new CustomErrorLog();
@@ -1173,109 +1055,129 @@ namespace org.iringtools.web.controllers
                 }
 
                 //string applicationName = form["Application"];
-                List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                List<JsonTreeNode> applicationsNode = new List<JsonTreeNode>();
+                Applications applications = _appConfigRepository.GetApplications(userName, tempApplication.ContextId, siteId);
 
-                ScopeProject scope = _repository.GetScope(scopeName);
-                ScopeApplication app = (from apps in scope.Applications
-                                        where apps.Name == application.Name
-                                        select apps).FirstOrDefault();
-
-                Configuration config = _repository.GetConfig(scope.Name, app.Name);
-                app.Configuration = config;
-
-                DataLayer dataLayer = _repository.GetDataLayer(scope.Name, app.Name);
-
-                if (dataLayer != null)
+                foreach (Application application in applications)
                 {
-                    JsonTreeNode node = new JsonTreeNode
+                    JsonTreeNode applicationNode = new JsonTreeNode
                     {
                         nodeType = "async",
-                        type = "ApplicationNode",//"appNode",
-                        iconCls = "application",
-                        id = scope.Name + "/" + app.Name,
-                        text = app.DisplayName,
+                        type = "ApplicationNode",
+                        iconCls = "tabsApplication",
+                        id = application.ApplicationId.ToString(),
+                        text = application.DisplayName,
                         expanded = false,
                         leaf = false,
                         children = null,
-                        record = new
-                        {
-                            Name = app.Name,
-                            DisplayName = app.DisplayName,
-                            Description = app.Description,
-                            DataLayer = dataLayer.Name,
-                            Assembly = dataLayer.Assembly,
-                            Configuration = app.Configuration,
-                            CacheImportURI = app.CacheInfo == null ? "" : app.CacheInfo.ImportURI,
-                            CacheTimeout = app.CacheInfo == null ? "" : Convert.ToString(app.CacheInfo.Timeout),
-                            PermissionGroups = app.PermissionGroup
-                        }
+                        record = application
                     };
 
-                    node.property = new Dictionary<string, string>();
-                    node.property.Add("Internal Name", app.Name);
-                    node.property.Add("Display Name", app.DisplayName);
-                    node.property.Add("Description", app.Description);
-                    node.property.Add("Data Layer", dataLayer.Name);
-                    node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
-
-
-                    JsonTreeNode dataObjectsNode = new JsonTreeNode
-                    {
-                        nodeType = "async",
-                        type = "DataObjectsNode",
-                        iconCls = "folder",
-                        id = scopeName + "/" + app.Name + "/DataObjects",
-                        text = "Data Objects",
-                        expanded = false,
-                        leaf = false,
-                        children = null,
-                        property = new Dictionary<string, string>()
-                    };
-
-                    if (scope != null)
-                    {
-                        ScopeApplication scopeapplication = scope.Applications.Find(x => x.Name.ToLower() == app.Name.ToLower());
-
-                        if (scopeapplication != null)
-                        {
-                            dataObjectsNode.property.Add("Data Mode", scopeapplication.DataMode.ToString());
-                        }
-                    }
-
-                    JsonTreeNode graphsNode = new JsonTreeNode
-                    {
-                        nodeType = "async",
-                        type = "GraphsNode",
-                        iconCls = "folder",
-                        id = scopeName + "/" + app.Name + "/Graphs",
-                        text = "Graphs",
-                        expanded = false,
-                        leaf = false,
-                        children = null
-                    };
-
-                    JsonTreeNode ValueListsNode = new JsonTreeNode
-                    {
-                        nodeType = "async",
-                        type = "ValueListsNode",
-                        iconCls = "folder",
-                        id = scopeName + "/" + app.Name + "/ValueLists",
-                        text = "ValueLists",
-                        expanded = false,
-                        leaf = false,
-                        children = null
-                    };
-
-                    if (node.children == null)
-                        node.children = new List<JsonTreeNode>();
-                    node.children.Add(dataObjectsNode);
-                    node.children.Add(graphsNode);
-                    node.children.Add(ValueListsNode);
-
-                    nodes.Add(node);
+                    //DataObjects dataObjects = _appConfigRepository.GetDataObjectsForAnApplication(userName, application.ApplicationId);
+                    applicationsNode.Add(applicationNode);
                 }
 
-                return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
+                //ScopeProject scope = _repository.GetScope(scopeName);
+                //ScopeApplication app = (from apps in scope.Applications
+                //                        where apps.Name == application.Name
+                //                        select apps).FirstOrDefault();
+
+                //Configuration config = _repository.GetConfig(scope.Name, app.Name);
+                //app.Configuration = config;
+
+                //DataLayer dataLayer = _repository.GetDataLayer(scope.Name, app.Name);
+
+                //if (dataLayer != null)
+                //{
+                //    JsonTreeNode node = new JsonTreeNode
+                //    {
+                //        nodeType = "async",
+                //        type = "ApplicationNode",//"appNode",
+                //        iconCls = "application",
+                //        id = scope.Name + "/" + app.Name,
+                //        text = app.DisplayName,
+                //        expanded = false,
+                //        leaf = false,
+                //        children = null,
+                //        record = new
+                //        {
+                //            Name = app.Name,
+                //            DisplayName = app.DisplayName,
+                //            Description = app.Description,
+                //            DataLayer = dataLayer.Name,
+                //            Assembly = dataLayer.Assembly,
+                //            Configuration = app.Configuration,
+                //            CacheImportURI = app.CacheInfo == null ? "" : app.CacheInfo.ImportURI,
+                //            CacheTimeout = app.CacheInfo == null ? "" : Convert.ToString(app.CacheInfo.Timeout),
+                //            PermissionGroups = app.PermissionGroup
+                //        }
+                //    };
+
+                //    node.property = new Dictionary<string, string>();
+                //    node.property.Add("Internal Name", app.Name);
+                //    node.property.Add("Display Name", app.DisplayName);
+                //    node.property.Add("Description", app.Description);
+                //    node.property.Add("Data Layer", dataLayer.Name);
+                //    node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
+
+
+                //    JsonTreeNode dataObjectsNode = new JsonTreeNode
+                //    {
+                //        nodeType = "async",
+                //        type = "DataObjectsNode",
+                //        iconCls = "folder",
+                //        id = scopeName + "/" + app.Name + "/DataObjects",
+                //        text = "Data Objects",
+                //        expanded = false,
+                //        leaf = false,
+                //        children = null,
+                //        property = new Dictionary<string, string>()
+                //    };
+
+                //    if (scope != null)
+                //    {
+                //        ScopeApplication scopeapplication = scope.Applications.Find(x => x.Name.ToLower() == app.Name.ToLower());
+
+                //        if (scopeapplication != null)
+                //        {
+                //            dataObjectsNode.property.Add("Data Mode", scopeapplication.DataMode.ToString());
+                //        }
+                //    }
+
+                //    JsonTreeNode graphsNode = new JsonTreeNode
+                //    {
+                //        nodeType = "async",
+                //        type = "GraphsNode",
+                //        iconCls = "folder",
+                //        id = scopeName + "/" + app.Name + "/Graphs",
+                //        text = "Graphs",
+                //        expanded = false,
+                //        leaf = false,
+                //        children = null
+                //    };
+
+                //    JsonTreeNode ValueListsNode = new JsonTreeNode
+                //    {
+                //        nodeType = "async",
+                //        type = "ValueListsNode",
+                //        iconCls = "folder",
+                //        id = scopeName + "/" + app.Name + "/ValueLists",
+                //        text = "ValueLists",
+                //        expanded = false,
+                //        leaf = false,
+                //        children = null
+                //    };
+
+                //    if (node.children == null)
+                //        node.children = new List<JsonTreeNode>();
+                //    node.children.Add(dataObjectsNode);
+                //    node.children.Add(graphsNode);
+                //    node.children.Add(ValueListsNode);
+
+                //    nodes.Add(node);
+                //}
+
+                return Json(new { success = true, nodes = applicationsNode }, JsonRequestBehavior.AllowGet);
                 //JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
                 //return result;
             }
@@ -1298,216 +1200,6 @@ namespace org.iringtools.web.controllers
                 }
             }
         }
-
-        //public JsonResult Application(FormCollection form)
-        //{
-        //    try
-        //    {
-        //        string success = String.Empty;
-        //        string scopeName = form["Scope"];
-        //        string cacheImportURI = form["cacheImportURI"];
-        //        long cacheTimeout = String.IsNullOrWhiteSpace(form["cacheTimeout"]) ? 0 : Convert.ToInt64(form["cacheTimeout"]);
-        //        string permissions = form["permissions"];
-
-        //        library.Configuration configuration = new Configuration
-        //        {
-        //            AppSettings = new AppSettings
-        //            {
-        //                Settings = new List<Setting>()
-        //            }
-        //        };
-
-        //        CacheInfo cacheInfo = new CacheInfo
-        //        {
-        //            ImportURI = cacheImportURI,
-        //            Timeout = cacheTimeout
-        //        };
-
-        //        for (int i = 0; i < form.AllKeys.Length; i++)
-        //        {
-        //            //if (form.GetKey(i).ToLower() != "scope" && form.GetKey(i).ToLower() != "name" && form.GetKey(i).ToLower() != "description" && 
-        //            //  form.GetKey(i).ToLower() != "assembly" && form.GetKey(i).ToLower() != "application" && form.GetKey(i).ToLower().Substring(0, 3) != "val"
-        //            //  && form.GetKey(i).ToLower() != "cacheimporturi" && form.GetKey(i).ToLower() != "cachetimeout")
-        //            if (form.GetKey(i).ToLower().StartsWith("key"))
-        //            {
-        //                String key = form[i];
-        //                if (i + 1 < form.AllKeys.Length)
-        //                {
-        //                    String value = form[i + 1];
-        //                    configuration.AppSettings.Settings.Add(new Setting()
-        //                    {
-        //                        Key = key,
-        //                        Value = value
-        //                    });
-        //                }
-        //            }
-        //        }
-
-        //        List<string> groups = new List<string>();
-        //        if (permissions.Contains(","))
-        //        {
-        //            string[] arrstring = permissions.Split(',');
-        //            groups = new List<string>(arrstring);
-        //        }
-        //        else
-        //        {
-        //            groups.Add(permissions);
-        //        }
-
-        //        ScopeApplication application = new ScopeApplication()
-        //        {
-        //            DisplayName = form["displayName"],//form["Name"],
-        //            Name = form["internalName"],
-        //            Description = form["Description"],
-        //            Assembly = form["assembly"],
-        //            Configuration = configuration,
-        //            CacheInfo = cacheInfo,
-        //            PermissionGroup = new PermissionGroups()
-        //        };
-        //        if (!string.IsNullOrEmpty(permissions))
-        //            application.PermissionGroup.AddRange(groups);
-
-        //        if (String.IsNullOrEmpty(form["Application"]))
-        //        {
-        //            success = _repository.AddApplication(scopeName, application);
-        //        }
-        //        else
-        //        {
-        //            success = _repository.UpdateApplication(scopeName, form["Application"], application);
-        //        }
-        //        if (success.Trim().Contains("Error"))
-        //        {
-        //            _CustomErrorLog = new CustomErrorLog();
-        //            _CustomError = _CustomErrorLog.getErrorResponse(success);
-        //            return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
-        //        }
-
-        //        //string applicationName = form["Application"];
-        //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
-        //        ScopeProject scope = _repository.GetScope(scopeName);
-        //        ScopeApplication app = (from apps in scope.Applications
-        //                                where apps.Name == application.Name
-        //                                select apps).FirstOrDefault();
-
-        //        Configuration config = _repository.GetConfig(scope.Name, app.Name);
-        //        app.Configuration = config;
-
-        //        DataLayer dataLayer = _repository.GetDataLayer(scope.Name, app.Name);
-
-        //        if (dataLayer != null)
-        //        {
-        //            JsonTreeNode node = new JsonTreeNode
-        //            {
-        //                nodeType = "async",
-        //                type = "ApplicationNode",//"appNode",
-        //                iconCls = "application",
-        //                id = scope.Name + "/" + app.Name,
-        //                text = app.DisplayName,
-        //                expanded = false,
-        //                leaf = false,
-        //                children = null,
-        //                record = new
-        //                {
-        //                    Name = app.Name,
-        //                    DisplayName = app.DisplayName,
-        //                    Description = app.Description,
-        //                    DataLayer = dataLayer.Name,
-        //                    Assembly = dataLayer.Assembly,
-        //                    Configuration = app.Configuration,
-        //                    CacheImportURI = app.CacheInfo == null ? "" : app.CacheInfo.ImportURI,
-        //                    CacheTimeout = app.CacheInfo == null ? "" : Convert.ToString(app.CacheInfo.Timeout),
-        //                    PermissionGroups = app.PermissionGroup
-        //                }
-        //            };
-
-        //            node.property = new Dictionary<string, string>();
-        //            node.property.Add("Internal Name", app.Name);
-        //            node.property.Add("Display Name", app.DisplayName);
-        //            node.property.Add("Description", app.Description);
-        //            node.property.Add("Data Layer", dataLayer.Name);
-        //            node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
-
-
-        //            JsonTreeNode dataObjectsNode = new JsonTreeNode
-        //            {
-        //                nodeType = "async",
-        //                type = "DataObjectsNode",
-        //                iconCls = "folder",
-        //                id = scopeName + "/" + app.Name + "/DataObjects",
-        //                text = "Data Objects",
-        //                expanded = false,
-        //                leaf = false,
-        //                children = null,
-        //                property = new Dictionary<string, string>()
-        //            };
-
-        //            if (scope != null)
-        //            {
-        //                ScopeApplication scopeapplication = scope.Applications.Find(x => x.Name.ToLower() == app.Name.ToLower());
-
-        //                if (scopeapplication != null)
-        //                {
-        //                    dataObjectsNode.property.Add("Data Mode", scopeapplication.DataMode.ToString());
-        //                }
-        //            }
-
-        //            JsonTreeNode graphsNode = new JsonTreeNode
-        //            {
-        //                nodeType = "async",
-        //                type = "GraphsNode",
-        //                iconCls = "folder",
-        //                id = scopeName + "/" + app.Name + "/Graphs",
-        //                text = "Graphs",
-        //                expanded = false,
-        //                leaf = false,
-        //                children = null
-        //            };
-
-        //            JsonTreeNode ValueListsNode = new JsonTreeNode
-        //            {
-        //                nodeType = "async",
-        //                type = "ValueListsNode",
-        //                iconCls = "folder",
-        //                id = scopeName + "/" + app.Name + "/ValueLists",
-        //                text = "ValueLists",
-        //                expanded = false,
-        //                leaf = false,
-        //                children = null
-        //            };
-
-        //            if (node.children == null)
-        //                node.children = new List<JsonTreeNode>();
-        //            node.children.Add(dataObjectsNode);
-        //            node.children.Add(graphsNode);
-        //            node.children.Add(ValueListsNode);
-
-        //            nodes.Add(node);
-        //        }
-
-        //        return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
-        //        //JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        //        //return result;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.Error(e.ToString());
-        //        if (e.InnerException != null)
-        //        {
-        //            string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
-        //            var jsonSerialiser = new JavaScriptSerializer();
-        //            CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
-        //            return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
-        //        }
-        //        else
-        //        {
-        //            _CustomErrorLog = new CustomErrorLog();
-        //            _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errAddUIApplication, e, _logger);
-        //            return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
-
-        //        }
-        //    }
-        //}
 
         public JsonResult DeleteScope(FormCollection form)
         {
@@ -1779,6 +1471,54 @@ namespace org.iringtools.web.controllers
             }
 
             return tempGroups;
+        }
+
+        private List<JsonTreeNode> PopulateFolderNode(Guid folderId)
+        {
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+            Folders folders = _appConfigRepository.GetFolders(userName, folderId, siteId);
+            org.iringtools.applicationConfig.Contexts contexts = _appConfigRepository.GetContexts(userName, folderId, siteId);
+
+            foreach (Folder folder in folders)
+            {
+                JsonTreeNode node = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = "FolderNode",
+                    iconCls = "folder",
+                    id = folder.FolderId.ToString(),
+                    text = folder.FolderName,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = folder
+                };
+
+                node.property = new Dictionary<string, string>();
+                node.property.Add("Display Name", folder.FolderName);
+                nodes.Add(node);
+            }
+
+            foreach (org.iringtools.applicationConfig.Context context in contexts)
+            {
+                JsonTreeNode node = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = "ContextNode",
+                    iconCls = "context",
+                    id = context.ContextId.ToString(),
+                    text = context.DisplayName,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = context
+                };
+
+                node.property = new Dictionary<string, string>();
+                node.property.Add("Display Name", context.DisplayName);
+                nodes.Add(node);
+            }
+            return nodes;
         }
 
         #endregion
