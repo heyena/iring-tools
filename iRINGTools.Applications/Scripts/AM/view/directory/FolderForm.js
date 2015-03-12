@@ -69,10 +69,6 @@ Ext.define('AM.view.directory.FolderForm', {
                 xtype: 'hiddenfield',
                 name: 'state'
             },
-             {
-                 xtype: 'hiddenfield',
-                 name: 'isFolderNameChanged'
-             },
             {
                 xtype: 'hiddenfield',
                 name: 'oldContext'
@@ -118,17 +114,7 @@ Ext.define('AM.view.directory.FolderForm', {
         var state = form.findField('state').getValue();
         var contextNameField = form.findField('contextName');
         var node = me.node;
-        var FolderNameBeforeUpdate =Ext.String.trim(node.raw.text);
-        var isFolderNameChanged;
-        if (FolderNameBeforeUpdate == Ext.String.trim(folderName) ) {
-            isFolderNameChanged = false;
-
-        }
-        else {
-            isFolderNameChanged = true;
-
-        }
-        form.findField('isFolderNameChanged').setValue(isFolderNameChanged);
+        
         if (state == 'new')
             form.findField('name').setValue(folderName);
 

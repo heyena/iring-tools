@@ -914,9 +914,7 @@ namespace org.iringtools.web.controllers
             {
                 Response response = null;
 
-                //string success = String.Empty;
                 string folderName = form["displayName"];
-                bool isFolderNameChanged = Convert.ToBoolean(form["isFolderNameChanged"]);
 
                 Folder tempFolder = new Folder()
                 {
@@ -935,7 +933,7 @@ namespace org.iringtools.web.controllers
                     tempFolder.FolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
                     tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["path"]) ? Guid.Parse(form["path"]) : Guid.Empty;
                     tempFolder.groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
-                    response = _appConfigRepository.UpdateFolder(userName,isFolderNameChanged, tempFolder);
+                    response = _appConfigRepository.UpdateFolder(userName, tempFolder);
                 }
                 else
                 {
@@ -947,8 +945,6 @@ namespace org.iringtools.web.controllers
                 if (response.Level == StatusLevel.Success)
                 {
                     List<JsonTreeNode> nodes = PopulateFolderNode(tempFolder.ParentFolderId);
-                    //if (response.StatusText.ToLower().Equals("folderadded") || response.StatusText.ToLower().Equals("folderupdated"))
-                    //nodes = PopulateFolderNode(tempFolder.ParentFolderId);
                     return Json(new { success = true, message = response.StatusText, nodes }, JsonRequestBehavior.AllowGet);
                 }
                 else

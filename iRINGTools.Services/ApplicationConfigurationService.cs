@@ -310,8 +310,8 @@ namespace org.iringtools.services
         }
 
         [Description("Update graphs to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateGraph/{userName}?IsGraphNameChanged={IsGraphNameChanged}&format={format}")]
-        public void UpdateGraph(string userName,bool IsGraphNameChanged,string format, Stream stream) 
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateGraph/{userName}?format={format}")]
+        public void UpdateGraph(string userName,string format, Stream stream) 
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -327,7 +327,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Graph>(stream, format, true);
-                    response = _applicationConfigurationProvider.UpdateGraph(userName, IsGraphNameChanged, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.UpdateGraph(userName, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -580,8 +580,8 @@ namespace org.iringtools.services
         }
 
         [Description("update Folder to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateFolder/{userName}?IsFolderNameChanged={IsFolderNameChanged}&format={format}")]
-        public void UpdateFolder(string userName, bool IsFolderNameChanged, string format, Stream stream)
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateFolder/{userName}?format={format}")]
+        public void UpdateFolder(string userName, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -597,7 +597,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Folder>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateFolder(userName, IsFolderNameChanged, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.UpdateFolder(userName, new XDocument(xElement));
                 }
             }
             catch (Exception ex)

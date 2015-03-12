@@ -356,7 +356,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateFolder(string userName, bool IsFolderNameChanged,XDocument xml)
+        public Response UpdateFolder(string userName,XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -378,7 +378,6 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@ParentFolderId", Value = folder.ParentFolderId.ToString() });
                         nvl.Add(new ListItem() { Name = "@FolderName", Value = folder.FolderName });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
-                        nvl.Add(new ListItem() { Name = "@IsFolderNameChanged", Value = Convert.ToString(IsFolderNameChanged) });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuFolder", nvl);
 
@@ -780,7 +779,7 @@ namespace org.iringtools.applicationConfig
         }
 
 
-        public Response UpdateGraph(string userName,bool IsGraphNameChanged, XDocument xml)
+        public Response UpdateGraph(string userName, XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -791,16 +790,6 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = graph.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
-                //using (var dc = new DataContext(_connSecurityDb))
-                //{
-
-                //    dc.ExecuteQuery<Graph>("spuGraph @Username = {0}, @GraphId = {1}, @GraphName = {2}, @Graph = {3}, @SiteId = {4}, @GroupList = {5}",
-                //                                         userName, graph.GraphId, graph.GraphName, graph.graph, _siteID, rawXml).ToList();
-                //}
-
-                //response.DateTimeStamp = DateTime.Now;
-                //response.Messages = new Messages();
-                //response.Messages.Add("Graphs updated successfully.");
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (graph == null || string.IsNullOrEmpty(graph.GraphName))
@@ -822,7 +811,6 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@GraphName", Value = graph.GraphName });
                         nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
-                        nvl.Add(new ListItem() { Name = "@IsGraphNameChanged", Value = Convert.ToString(IsGraphNameChanged) });
                         nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(graph.ApplicationId) });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedureWithExtraParam_ByteArray(_connSecurityDb, "spuGraph", nvl, "@Graph", graph.graph);
