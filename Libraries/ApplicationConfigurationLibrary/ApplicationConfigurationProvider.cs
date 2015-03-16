@@ -1618,13 +1618,14 @@ namespace org.iringtools.applicationConfig
             return valueListMaps;
         }
 
-        public Graph GetGraphByGraphID(Guid graphID)
+        public Graph GetGraphByGraphID(string userName,Guid graphID)
         {
             Graph graphs = new Graph();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphID) });
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphByGraphID", nvl);
                 graphs = utility.Utility.Deserialize<Graph>(xmlString, true);
