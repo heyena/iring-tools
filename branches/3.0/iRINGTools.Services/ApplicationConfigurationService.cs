@@ -998,15 +998,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get graph by graphid")]
-        [WebGet(UriTemplate = "/GetGraphByGraphID?graphId={graphId}&format={format}")]
-        public void GetGraphByGraphID(Guid graphId, string format)
+        [WebGet(UriTemplate = "/GetGraphByGraphID?userName={UserName}&graphId={graphId}&format={format}")]
+        public void GetGraphByGraphID(string userName,Guid graphId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                Graph graph = _applicationConfigurationProvider.GetGraphByGraphID(graphId);
+                Graph graph = _applicationConfigurationProvider.GetGraphByGraphID(userName,graphId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Graph>(graph, format, true);
             }
             catch (Exception ex)
