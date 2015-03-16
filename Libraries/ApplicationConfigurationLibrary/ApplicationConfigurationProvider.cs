@@ -1197,6 +1197,7 @@ namespace org.iringtools.applicationConfig
         public Response InsertExchange(string userName, XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
@@ -1204,31 +1205,71 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = exchange.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    NameValueList nvl = new NameValueList();
+                //    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                //    nvl.Add(new ListItem() { Name = "@CommodityId", Value = Convert.ToString(exchange.CommodityId) });
+                //    nvl.Add(new ListItem() { Name = "@SourceGraphId", Value = Convert.ToString(exchange.SourceGraphId) });
+                //    nvl.Add(new ListItem() { Name = "@DestinationGraphId", Value = Convert.ToString(exchange.DestinationGraphId) });
+                //    nvl.Add(new ListItem() { Name = "@Name", Value = exchange.Name });
+                //    nvl.Add(new ListItem() { Name = "@Description", Value = exchange.Description });
+                //    nvl.Add(new ListItem() { Name = "@PoolSize", Value = Convert.ToString(exchange.PoolSize) });
+                //    nvl.Add(new ListItem() { Name = "@XTypeAdd", Value = exchange.XTypeAdd });
+                //    nvl.Add(new ListItem() { Name = "@XTypeChange", Value = exchange.XTypeChange });
+                //    nvl.Add(new ListItem() { Name = "@XTypeSync", Value = exchange.XTypeSync });
+                //    nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
+                //    nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
+                //    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
+                //    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+
+                //    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiExchange", nvl);
+
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Exchange added successfully.");
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    NameValueList nvl = new NameValueList();
-                    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                    nvl.Add(new ListItem() { Name = "@CommodityId", Value = Convert.ToString(exchange.CommodityId) });
-                    nvl.Add(new ListItem() { Name = "@SourceGraphId", Value = Convert.ToString(exchange.SourceGraphId) });
-                    nvl.Add(new ListItem() { Name = "@DestinationGraphId", Value = Convert.ToString(exchange.DestinationGraphId) });
-                    nvl.Add(new ListItem() { Name = "@Name", Value = exchange.Name });
-                    nvl.Add(new ListItem() { Name = "@Description", Value = exchange.Description });
-                    nvl.Add(new ListItem() { Name = "@PoolSize", Value = Convert.ToString(exchange.PoolSize) });
-                    nvl.Add(new ListItem() { Name = "@XTypeAdd", Value = exchange.XTypeAdd });
-                    nvl.Add(new ListItem() { Name = "@XTypeChange", Value = exchange.XTypeChange });
-                    nvl.Add(new ListItem() { Name = "@XTypeSync", Value = exchange.XTypeSync });
-                    nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
-                    nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
-                    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
-                    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                    if (exchange == null || string.IsNullOrEmpty(exchange.Name))
+                        PrepareErrorResponse(response, "Please enter Exchange Name!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                        nvl.Add(new ListItem() { Name = "@CommodityId", Value = Convert.ToString(exchange.CommodityId) });
+                        nvl.Add(new ListItem() { Name = "@SourceGraphId", Value = Convert.ToString(exchange.SourceGraphId) });
+                        nvl.Add(new ListItem() { Name = "@DestinationGraphId", Value = Convert.ToString(exchange.DestinationGraphId) });
+                        nvl.Add(new ListItem() { Name = "@Name", Value = exchange.Name });
+                        nvl.Add(new ListItem() { Name = "@Description", Value = exchange.Description });
+                        nvl.Add(new ListItem() { Name = "@PoolSize", Value = Convert.ToString(exchange.PoolSize) });
+                        nvl.Add(new ListItem() { Name = "@XTypeAdd", Value = exchange.XTypeAdd });
+                        nvl.Add(new ListItem() { Name = "@XTypeChange", Value = exchange.XTypeChange });
+                        nvl.Add(new ListItem() { Name = "@XTypeSync", Value = exchange.XTypeSync });
+                        nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
+                        nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
-                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiExchange", nvl);
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiExchange", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "exchangeadded");
+                                break;
+                            case "0":
+                                PrepareSuccessResponse(response, "duplicateexchange");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
 
                 }
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Exchange added successfully.");
             }
             catch (Exception ex)
             {
@@ -1248,6 +1289,7 @@ namespace org.iringtools.applicationConfig
         public Response UpdateExchange(string userName, XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
@@ -1255,31 +1297,73 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = exchange.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    NameValueList nvl = new NameValueList();
+                //    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                //    nvl.Add(new ListItem() { Name = "@ExchangeId", Value = Convert.ToString(exchange.ExchangeId) });
+                //    nvl.Add(new ListItem() { Name = "@SourceGraphId", Value = Convert.ToString(exchange.SourceGraphId) });
+                //    nvl.Add(new ListItem() { Name = "@DestinationGraphId", Value = Convert.ToString(exchange.DestinationGraphId) });
+                //    nvl.Add(new ListItem() { Name = "@Name", Value = exchange.Name });
+                //    nvl.Add(new ListItem() { Name = "@Description", Value = exchange.Description });
+                //    nvl.Add(new ListItem() { Name = "@PoolSize", Value = Convert.ToString(exchange.PoolSize) });
+                //    nvl.Add(new ListItem() { Name = "@XTypeAdd", Value = exchange.XTypeAdd });
+                //    nvl.Add(new ListItem() { Name = "@XTypeChange", Value = exchange.XTypeChange });
+                //    nvl.Add(new ListItem() { Name = "@XTypeSync", Value = exchange.XTypeSync });
+                //    nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
+                //    nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
+                //    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
+                //    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+
+                //    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuExchange", nvl);
+
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Exchange updated successfully.");
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    NameValueList nvl = new NameValueList();
-                    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                    nvl.Add(new ListItem() { Name = "@ExchangeId", Value = Convert.ToString(exchange.ExchangeId) });
-                    nvl.Add(new ListItem() { Name = "@SourceGraphId", Value = Convert.ToString(exchange.SourceGraphId) });
-                    nvl.Add(new ListItem() { Name = "@DestinationGraphId", Value = Convert.ToString(exchange.DestinationGraphId) });
-                    nvl.Add(new ListItem() { Name = "@Name", Value = exchange.Name });
-                    nvl.Add(new ListItem() { Name = "@Description", Value = exchange.Description });
-                    nvl.Add(new ListItem() { Name = "@PoolSize", Value = Convert.ToString(exchange.PoolSize) });
-                    nvl.Add(new ListItem() { Name = "@XTypeAdd", Value = exchange.XTypeAdd });
-                    nvl.Add(new ListItem() { Name = "@XTypeChange", Value = exchange.XTypeChange });
-                    nvl.Add(new ListItem() { Name = "@XTypeSync", Value = exchange.XTypeSync });
-                    nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
-                    nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
-                    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
-                    nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                    if (exchange == null || string.IsNullOrEmpty(exchange.Name))
+                        PrepareErrorResponse(response, "Please enter Exchange Name!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                        nvl.Add(new ListItem() { Name = "@ExchangeId", Value = Convert.ToString(exchange.ExchangeId) });
+                        nvl.Add(new ListItem() { Name = "@SourceGraphId", Value = Convert.ToString(exchange.SourceGraphId) });
+                        nvl.Add(new ListItem() { Name = "@DestinationGraphId", Value = Convert.ToString(exchange.DestinationGraphId) });
+                        nvl.Add(new ListItem() { Name = "@Name", Value = exchange.Name });
+                        nvl.Add(new ListItem() { Name = "@Description", Value = exchange.Description });
+                        nvl.Add(new ListItem() { Name = "@PoolSize", Value = Convert.ToString(exchange.PoolSize) });
+                        nvl.Add(new ListItem() { Name = "@XTypeAdd", Value = exchange.XTypeAdd });
+                        nvl.Add(new ListItem() { Name = "@XTypeChange", Value = exchange.XTypeChange });
+                        nvl.Add(new ListItem() { Name = "@XTypeSync", Value = exchange.XTypeSync });
+                        nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
+                        nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                        nvl.Add(new ListItem() { Name = "@CommodityId", Value = exchange.CommodityId.ToString() });
 
-                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuExchange", nvl);
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuExchange", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "exchangeupdated");
+                                break;
+                            case "0":
+                                PrepareSuccessResponse(response, "duplicateexchange");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
 
                 }
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Exchange updated successfully.");
             }
             catch (Exception ex)
             {
@@ -1350,6 +1434,7 @@ namespace org.iringtools.applicationConfig
         public Response InsertCommodity(string userName, XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
@@ -1357,16 +1442,48 @@ namespace org.iringtools.applicationConfig
 
                 string rawXml = commodity.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    dc.ExecuteCommand("spiCommodity @UserName = {0}, @SiteId = {1}, @ContextId = {2}, " +
+                //                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.ContextId, commodity.CommodityName, rawXml);
+
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Commodity added successfully.");
+
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteCommand("spiCommodity @UserName = {0}, @SiteId = {1}, @ContextId = {2}, " +
-                                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.ContextId, commodity.CommodityName, rawXml);
+                    if (commodity == null || string.IsNullOrEmpty(commodity.CommodityName))
+                        PrepareErrorResponse(response, "Please enter CommodityName!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                        nvl.Add(new ListItem() { Name = "@ContextId", Value = commodity.ContextId.ToString() });
+                        nvl.Add(new ListItem() { Name = "@CommodityName", Value = commodity.CommodityName });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiCommodity", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "contextadded");
+                                break;
+                            case "0":
+                                PrepareSuccessResponse(response, "duplicatecontext");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
 
                 }
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Commodity added successfully.");
             }
             catch (Exception ex)
             {
@@ -1386,21 +1503,54 @@ namespace org.iringtools.applicationConfig
         public Response UpdateCommodity(string userName, XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
                 Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
                 string rawXml = commodity.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+            
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    dc.ExecuteCommand("spuCommodity @UserName = {0}, @SiteId = {1}, @CommodityId = {2}, " +
+                //                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.CommodityId, commodity.CommodityName, rawXml);
+
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("Commodity updated successfully.");
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    dc.ExecuteCommand("spuCommodity @UserName = {0}, @SiteId = {1}, @CommodityId = {2}, " +
-                                                  "@CommodityName = {3}, @GroupList = {4}", userName, commodity.SiteId, commodity.CommodityId, commodity.CommodityName, rawXml);
+                    if (commodity == null || string.IsNullOrEmpty(commodity.CommodityName))
+                        PrepareErrorResponse(response, "Please enter CommodityName!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                        nvl.Add(new ListItem() { Name = "@CommodityId", Value = commodity.CommodityId.ToString() });
+                        nvl.Add(new ListItem() { Name = "@CommodityName", Value = commodity.CommodityName });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                        nvl.Add(new ListItem() { Name = "@ContextId", Value = commodity.ContextId.ToString() });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuCommodity", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "commodityupdated");
+                                break;
+                            case "0":
+                                PrepareSuccessResponse(response, "duplicatecommodity");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
 
                 }
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("Commodity updated successfully.");
             }
             catch (Exception ex)
             {
