@@ -43,6 +43,16 @@ Ext.define('AM.view.menus.ContextMenu', {
           action: 'neweditendpoint',
           icon: 'Content/img/16x16/document-new.png',
           text: 'New Application'
+      },
+        {
+            xtype: 'menuseparator'
+        },
+        {
+            xtype: 'menuitem',
+            action: 'cacheupdate',
+            icon: 'Content/img/16x16/document-new.png',
+            itemId: 'cacheupscreen',
+            text: 'Cache Update'
         }
       ]
     });
