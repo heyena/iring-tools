@@ -37,30 +37,30 @@ Ext.define('AM.view.directory.ContextForm', {
                 msgTarget: 'side'
             },
             dockedItems: [
-        {
-            xtype: 'toolbar',
-            dock: 'bottom',
-            items: [
-            {
-                xtype: 'tbfill'
-            },
-            {
-                xtype: 'button',
-                handler: function (button, event) {
-                    me.onSave();
-                },
-                text: 'Ok'
-            },
-            {
-                xtype: 'button',
-                handler: function (button, event) {
-                    me.onReset();
-                },
-                text: 'Cancel'
-            }
-          ]
-        }
-      ],
+                {
+                    xtype: 'toolbar',
+                    dock: 'bottom',
+                    items: [
+                        {
+                            xtype: 'tbfill'
+                        },
+                        {
+                            xtype: 'button',
+                            handler: function(button, event) {
+                                me.onSave();
+                            },
+                            text: 'Ok'
+                        },
+                        {
+                            xtype: 'button',
+                            handler: function(button, event) {
+                                me.onReset();
+                            },
+                            text: 'Cancel'
+                        }
+                    ]
+                }
+            ],
             items: [
             {
                 xtype: 'hiddenfield',
@@ -92,7 +92,7 @@ Ext.define('AM.view.directory.ContextForm', {
                 fieldLabel: 'Internal Name',
                 name: 'internalName',
                 allowBlank: false
-            },           
+            },
             {
                 xtype: 'hiddenfield',
                 itemId: 'contextname',
@@ -116,6 +116,9 @@ Ext.define('AM.view.directory.ContextForm', {
                 name: 'ResourceGroups',
                 itemId: 'ResourceGroupId',
                 fieldLabel: 'Groups for the User:',
+                emptyText: 'Select a Groups for the User...',
+                forceSelection: true,
+                allowBlank: true,
                 displayField: 'groupName',
                 autoSelect: false,
                 queryMode: 'remote',
@@ -132,24 +135,17 @@ Ext.define('AM.view.directory.ContextForm', {
         var me = this;
         var win = me.up('window');
         var form = me.getForm();
+        var ResourceGroups = this.getForm().findField('ResourceGroups').getValue();
         var folderName = form.findField('displayName').getValue();
         var state = form.findField('state').getValue();
         var contextNameField = form.findField('contextName');
         var node = me.node;
-
         if (form.findField('cacheDBConnStr').getValue() == this.cacheConnStrTpl)
             form.findField('cacheDBConnStr').setValue('');
 
-//               node.eachChild(function (n) {
-//            if (n.data.text == folderName) {
-//                if (state == 'new') {
-//                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Context name \"' + folderName + '\" already exists.' });
-//                    return;
-//                }
-//            }
-//        });
-
         if (form.isValid()) {
+		 if(ResourceGroups != '')
+		{ 
             form.submit({
                 waitMsg: 'Saving Data...',
                 success: function (response, request) {
@@ -203,7 +199,14 @@ Ext.define('AM.view.directory.ContextForm', {
 
                 }
             });
-        }
+        		}
+		else
+		{
+		      // var expPanel = alert('exceptionpanel', { title: 'Error Notification' });
+		      // Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue('Select atleast one Group before saving :');
+		      showDialog(400, 50, 'Alert', "Select atleast one Group before saving", Ext.Msg.OK, null);
+		}
+		}
         else {
             Ext.widget('messagepanel', { title: 'Warning', msg: 'Please complete all required fields.' });
             return;

@@ -117,70 +117,68 @@ Ext.define('AM.view.directory.FolderForm', {
         
         if (state == 'new')
             form.findField('name').setValue(folderName);
-
-        //        node.eachChild(function (n) {
-        //            if (n.data.text == folderName) {
-        //                if (state == 'new') {
-        //                    Ext.widget('messagepanel', { title: 'Warning', msg: 'Folder name \"' + folderName + '\" already exists.' });
-        //                    return;
-        //                }
-        //            }
-        //        });
+        var ResourceGroups = this.getForm().findField('ResourceGroups').getValue();
 
         if (form.isValid()) {
-            form.submit({
-                waitMsg: 'Saving Data...',
+            if (ResourceGroups != '') {
+                form.submit({
+                    waitMsg: 'Saving Data...',
 
-                success: function (response, request) {
-                    var objResponseText = Ext.JSON.decode(request.response.responseText);
-                    
+                    success: function(response, request) {
+                        var objResponseText = Ext.JSON.decode(request.response.responseText);
 
-                    //Ext.example.msg('Notification', 'Folder saved successfully!');
-                    win.fireEvent('save', me);
 
-                    var currentNode;
+                        //Ext.example.msg('Notification', 'Folder saved successfully!');
+                        win.fireEvent('save', me);
 
-                    if (state == 'new') {
-                        currentNode = node;
+                        var currentNode;
+
+                        if (state == 'new') {
+                            currentNode = node;
+                        } else {
+                            currentNode = node.parentNode;
+                        }
+
+                        while (currentNode.firstChild) {
+                            currentNode.removeChild(currentNode.firstChild);
+                        }
+
+                        var index = 0;
+
+                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function(newNode) {
+                            currentNode.insertChild(index, newNode);
+                            index++;
+                        });
+
+                        me.setLoading(false);
+
+                        if (objResponseText["message"] == "folderadded") {
+                            showDialog(400, 50, 'Alert', "Folder added successfully!", Ext.Msg.OK, null);
+                        }
+                        if (objResponseText["message"] == "folderupdated") {
+                            showDialog(400, 50, 'Alert', "Folder updated successfully!", Ext.Msg.OK, null);
+                        }
+                        if (objResponseText["message"] == "duplicatefolder") {
+                            showDialog(400, 50, 'Alert', "Folder with this name already exists", Ext.Msg.OK, null);
+                        }
+                    },
+
+                    failure: function(response, request) {
+                        var objResponseText = Ext.JSON.decode(request.response.responseText);
+                        var userMsg = objResponseText['message'];
+                        var detailMsg = objResponseText['stackTraceDescription'];
+                        var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                        Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                        Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                     }
-                    else {
-                        currentNode = node.parentNode;
-                    }
+                });
+            } 
+            else {
+                showDialog(400, 50, 'Alert', "Select atleast one Group before saving", Ext.Msg.OK, null);
+            }
+        
 
-                    while (currentNode.firstChild) {
-                        currentNode.removeChild(currentNode.firstChild);
-                    }
-
-                    var index = 0;
-
-                    Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
-                        currentNode.insertChild(index, newNode);
-                        index++;
-                    });
-
-                    me.setLoading(false);
-
-                    if (objResponseText["message"] == "folderadded") {
-                        showDialog(400, 50, 'Alert', "Folder added successfully!", Ext.Msg.OK, null);
-                    }
-                    if (objResponseText["message"] == "folderupdated") {
-                        showDialog(400, 50, 'Alert', "Folder updated successfully!", Ext.Msg.OK, null);
-                    }
-                    if (objResponseText["message"] == "duplicatefolder") {
-                        showDialog(400, 50, 'Alert', "Folder with this name already exists", Ext.Msg.OK, null);
-                    }
-                },
-
-                failure: function (response, request) {
-                    var objResponseText = Ext.JSON.decode(request.response.responseText);
-                    var userMsg = objResponseText['message'];
-                    var detailMsg = objResponseText['stackTraceDescription'];
-                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
-                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-                }
-            });
-        }
+    }
         else {
             Ext.widget('messagepanel', { title: 'Warning', msg: 'Please give folder name.' });
             return;
