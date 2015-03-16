@@ -1017,6 +1017,26 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Get graph by application id")]
+        [WebGet(UriTemplate = "/GetApplicationByApplicationID?userName={UserName}&applicationId={applicationId}&format={format}")]
+        public void GetApplicationByApplicationID(string userName, Guid applicationId, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                Application application = _applicationConfigurationProvider.GetApplicationByApplicationID(userName, applicationId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<Application>(application, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
        
         //[Description("Insert schedular details to the data base.")]
         //[WebInvoke(Method = "POST", UriTemplate = "/insertJob?format={format}")]
