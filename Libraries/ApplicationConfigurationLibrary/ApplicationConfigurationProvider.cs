@@ -1637,6 +1637,25 @@ namespace org.iringtools.applicationConfig
             return graphs;
         }
 
+        public Application GetApplicationByApplicationID(string userName, Guid applicationID)
+        {
+            Application application = new Application();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationID) });
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgApplicationByApplicationID", nvl);
+                application = utility.Utility.Deserialize<Application>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Application By ApplicationID: " + ex);
+            }
+            return application;
+        }
+
 
         /// <summary>
         /// insert job
