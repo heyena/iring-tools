@@ -66,7 +66,11 @@ Ext.define('AM.controller.Directory', {
         'menus.FolderMenu',
         'menus.ContextMenu',
         'directory.ContextForm',
-        'directory.ContextWindow'
+        'directory.ContextWindow',
+        'directory.NewJobForm',
+        'directory.SchduleCacheWindow'
+        
+
     ],
 
     refs: [
@@ -390,7 +394,59 @@ Ext.define('AM.controller.Directory', {
         });
     },
 
-    //
+    //onCacheUpdate
+    onCacheUpdate: function (item, e, eOpts) {
+        var me = this;
+        var context, displayName, apps;
+        var tree = me.getDirTree();
+        var node = tree.getSelectedNode();
+        var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
+        context = node.data.record.context;
+        apps = node.childNodes;
+
+        var tempStore = Ext.create('Ext.data.Store', {
+            fields: ['display'],
+            storeId: 'apptempStore',
+            //autoLoad:true,
+            listeners: {
+                'load': function () {
+                    var arr = node.childNodes;
+                    Ext.each(arr, function (item, index) {
+                        tempStore.insert(index, { display: item.data.property["Display Name"] });
+                        
+
+                    })
+                }
+
+            }
+
+
+        });
+
+        if (item.itemId == 'cacheupscreen' && node.data.record !== undefined) {
+
+            displayNameCont = node.data.record.DisplayName;
+
+
+        }
+
+        var win = Ext.widget('cachewindow');
+        var form = win.down('form');
+
+
+        win.on('cancel', function () {
+            win.destroy();
+        }, me);
+
+
+        form.getForm().findField('displayName').setValue(displayNameCont);
+        form.getForm().findField('applications').setValue(apps[0].data.text);
+        
+
+        win.show();
+    },
+
+    //onCacheUpdate
     newOrEditScope: function (item, e, eOpts) {
 
         var me = this;
@@ -1734,6 +1790,9 @@ Ext.define('AM.controller.Directory', {
             },
             "menuitem[action=refreshRoot]": {
                 click: this.onRefreshRoot
+            },
+            "menuitem[action=cacheupdate]": {
+                click: this.onCacheUpdate
             }
 
         });
