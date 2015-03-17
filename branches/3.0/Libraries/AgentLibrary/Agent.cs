@@ -77,16 +77,10 @@ namespace org.iringtools.AgentLibrary
             [DataMember(Name = "Client_Secret", Order = 3, EmitDefaultValue = false)]
             public string Client_Secret { get; set; }
 
-            [DataMember(Name = "Access_Token", Order = 4, EmitDefaultValue = false)]
-            public string Access_Token { get; set; }
-
-            [DataMember(Name = "App_Key", Order = 5, EmitDefaultValue = false)]
-            public string App_Key { get; set; }
-
-            [DataMember(Name = "Grant_Type", Order = 6, EmitDefaultValue = false)]
+            [DataMember(Name = "Grant_Type", Order = 4, EmitDefaultValue = false)]
             public string Grant_Type { get; set; }
 
-            [DataMember(Name = "Request_Timeout", Order = 7, EmitDefaultValue = false)]
+            [DataMember(Name = "Request_Timeout", Order = 5, EmitDefaultValue = false)]
             public int Request_Timeout { get; set; }
         }
 
@@ -104,7 +98,7 @@ namespace org.iringtools.AgentLibrary
             public Guid Schedule_Id { get; set; }
 
             [DataMember(Name = "Created_DateTime", Order = 1, EmitDefaultValue = false)]
-            public DateTime Created_DateTime { get; set; }
+            public string Created_DateTime { get; set; }
 
             [DataMember(Name = "Created_By", Order = 2, EmitDefaultValue = false)]
             public string Created_By { get; set; }
@@ -112,13 +106,16 @@ namespace org.iringtools.AgentLibrary
             [DataMember(Name = "Occurance", Order = 3, EmitDefaultValue = false)]
             public string Occurance { get; set; }
 
-            [DataMember(Name = "Start_DateTime", Order = 4, EmitDefaultValue = false)]
-            public DateTime Start_DateTime { get; set; }
+            [DataMember(Name = "Weekday", Order = 4, EmitDefaultValue = false)]
+            public string Weekday { get; set; }
 
-            [DataMember(Name = "End_DateTime", Order = 5, EmitDefaultValue = false)]
-            public DateTime End_DateTime { get; set; }
+            [DataMember(Name = "Start_DateTime", Order = 5, EmitDefaultValue = false)]
+            public string Start_DateTime { get; set; }
 
-            [DataMember(Name = "Status", Order = 6, EmitDefaultValue = false)]
+            [DataMember(Name = "End_DateTime", Order = 6, EmitDefaultValue = false)]
+            public string End_DateTime { get; set; }
+
+            [DataMember(Name = "Status", Order = 7, EmitDefaultValue = false)]
             public string Status { get; set; }
 
         }
@@ -139,10 +136,10 @@ namespace org.iringtools.AgentLibrary
             public Guid Job_Id { get; set; }
 
             [DataMember(Name = "Next_Start_DateTime", Order = 2, EmitDefaultValue = false)]
-            public DateTime Next_Start_DateTime { get; set; }
+            public string Next_Start_DateTime { get; set; }
 
             [DataMember(Name = "Last_Start_DateTime", Order = 3, EmitDefaultValue = false)]
-            public DateTime Last_Start_DateTime { get; set; }
+            public string Last_Start_DateTime { get; set; }
 
             [DataMember(Name = "Active", Order = 4, EmitDefaultValue = false)]
             public int Active { get; set; }
