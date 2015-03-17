@@ -447,7 +447,7 @@ Ext.define('AM.controller.Directory', {
                         'load': function () {
                             var arr = objResponseText;
                             Ext.each(arr, function (temp, index) {
-                                tempStore.insert(index, { display: temp.property["Display Name"] });
+                                tempStore.insert(index, { display: temp.record.DisplayName});
 
 
                             })
