@@ -44,6 +44,21 @@ Ext.define('AM.view.directory.NewJobForm', {
         });
 
 
+        var weekDaysStore = Ext.create('Ext.data.Store', {
+        fields: ['weekdays'],
+        data: [
+        { "weekdays": "Monday"    },
+        { "weekdays": "Tuesday"   },
+        { "weekdays": "Wednesday" },
+        { "weekdays": "Thursday"  },
+        { "weekdays": "Friday"    },
+        { "weekdays": "Saturday"  },
+        { "weekdays": "Sunday"    }
+            
+        ]
+     
+        });
+
 
         Ext.applyIf(me, {
 
@@ -146,16 +161,18 @@ Ext.define('AM.view.directory.NewJobForm', {
                         xtype: 'datefield',
                         labelWidth: 110,
                         emptyText: 'Select Date',
+                        minValue:(new Date()),
                         name: 'startdat',
                         margin: '0 30 0 0 ',
                         allowBlank: false
                     }, {
-                        xtype: 'timefield',
+                        xtype: 'datefield',
                         name: 'dailysttime',
-                        minValue: '6:00 AM',
-                        maxValue: '8:00 PM',
-                        increment: 30,
-                        emptyText: 'Select Time',
+                        minValue: (new Date()),
+//                        minValue: '6:00 AM',
+//                        maxValue: '8:00 PM',
+//                        increment: 30,
+                        emptyText: 'Select End Date',
                         anchor: '100%'
                     }]
                 }]
@@ -193,14 +210,21 @@ Ext.define('AM.view.directory.NewJobForm', {
                         emptyText: 'Options',
                         name: 'weeklycom',
                         margin: '0 30 0 0 ',
-                        allowBlank: false
+                        allowBlank: false,
+                        store: weekDaysStore,
+                       // queryMode: 'local',
+                       //forceSelection: true,
+                       //triggerAction: 'all',
+                        displayField: 'weekdays',
+                        valueField: 'weekdays'
                     }, {
-                        xtype: 'timefield',
+                        xtype: 'datefield',
                         name: 'wktimein',
-                        minValue: '6:00 AM',
-                        maxValue: '8:00 PM',
-                        increment: 30,
-                        emptyText: 'Select Time',
+                        minValue: (new Date()),
+//                      minValue: '6:00 AM',
+//                      maxValue: '8:00 PM',
+//                      increment: 30,
+                        emptyText: 'Select End Date',
                         anchor: '100%'
                     }]
                 }]
@@ -247,8 +271,9 @@ Ext.define('AM.view.directory.NewJobForm', {
                     }, {
                         xtype: 'datefield',
                         labelWidth: 110,
-                        emptyText: 'Select Date',
+                        emptyText: 'Select End Date',
                         name: 'monthdate',
+                        minValue: (new Date()),
                         margin: '0 30 0 0 ',
                         allowBlank: false
                     }]
