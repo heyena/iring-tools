@@ -25,6 +25,8 @@ namespace org.iringtools.web.controllers
     {
         //string userName = "WorldTest";
         string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        int siteId = 4;
+
         Groups groupsToGenerate = new Groups();
 
         private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
@@ -63,7 +65,7 @@ namespace org.iringtools.web.controllers
                     case "WorldNode":
                         {
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            Sites sites = _securityRepository.GetSitesbyUser(userName);
+                            Sites sites = _securityRepository.GetSitesbyUser(userName, siteId);
 
                             foreach (Site site in sites)
                             {
