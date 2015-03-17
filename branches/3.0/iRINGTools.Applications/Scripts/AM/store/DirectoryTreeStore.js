@@ -65,7 +65,12 @@ Ext.define('AM.store.DirectoryTreeStore', {
     requires: [
     'AM.model.DirectoryModel'
   ],
-
+    listeners: {
+        beforeload: function (store, operation, eOpts) {
+            var node = operation.node;
+            operation.params.record = node.get('record');
+        }
+    },
     constructor: function (cfg) {
         var me = this;
         cfg = cfg || {};
@@ -74,11 +79,10 @@ Ext.define('AM.store.DirectoryTreeStore', {
             model: 'AM.model.DirectoryModel',
             storeId: 'directorytreestore',
             root: {
-                id: 'caa7fc0d-37de-4e44-afb8-8af8dd7e294c',
-                expanded: false,
-                type: 'RootNode',
-                iconCls: 'root',
-                text: 'Root',
+                expanded: true,
+                type: 'WorldNode',
+                iconCls: 'world',
+                text: 'World',
                 security: ''
             },
             proxy: {
@@ -87,14 +91,7 @@ Ext.define('AM.store.DirectoryTreeStore', {
                     read: 'POST'
                 },
                 extraParams: {
-                    id: 'caa7fc0d-37de-4e44-afb8-8af8dd7e294c',
-                    type: 'RootNode',
-                    contextName: null,
-                    endpoint: null,
-                    baseUrl: null,
-                    related: null,
-                    security: null,
-                    refresh: false
+                    type: 'WorldNode'
                 },
                 timeout: 600000,
                 url: 'directory/getnode',

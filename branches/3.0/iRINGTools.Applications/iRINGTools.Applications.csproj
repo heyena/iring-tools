@@ -16,7 +16,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <SilverlightApplicationList>
     </SilverlightApplicationList>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -163,7 +163,6 @@
     <Compile Include="Models\RefDataRepository.cs" />
     <Compile Include="Models\SecurityRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-   
     <Content Include="Content\img\extension.png" />
     <Content Include="Scripts\AM\controller\SQLConfig.js" />
   </ItemGroup>
@@ -266,7 +265,6 @@
     <Content Include="Scripts\AM\store\SearchStore.js" />
     <Content Include="Scripts\AM\store\SpreadsheetStore.js" />
     <Content Include="Scripts\AM\store\VirtualPropertyStore.js" />
-    
     <Content Include="Scripts\AM\utilities\utilities.js" />
     <Content Include="Scripts\AM\ux\css\CheckHeader.css" />
     <Content Include="Scripts\AM\ux\css\GroupTabPanel.css" />
@@ -339,7 +337,6 @@
     <Content Include="Scripts\AM\view\directory\FolderForm.js" />
     <Content Include="Scripts\AM\view\directory\FolderWindow.js" />
     <Content Include="Scripts\AM\view\directory\SchedulerCacheWindow.js" />
-    
     <Content Include="Scripts\AM\view\directory\NewJobForm.js" />
     <Content Include="Scripts\AM\view\directory\ScopeForm.js" />
     <Content Include="Scripts\AM\view\directory\ScopeWindow.js" />
@@ -370,7 +367,7 @@
     <Content Include="Scripts\AM\view\menus\NoLdapScopesMenu.js" />
     <Content Include="Scripts\AM\view\menus\RolemapMenu.js" />
     <Content Include="Scripts\AM\view\menus\RootAdminScopesMenu.js" />
-    <Content Include="Scripts\AM\view\menus\RootMenu.js" />
+    <Content Include="Scripts\AM\view\menus\SiteMenu.js" />
     <Content Include="Scripts\AM\view\menus\ScopeMenu.js" />
     <Content Include="Scripts\AM\view\menus\ScopesMenu.js" />
     <Content Include="Scripts\AM\view\menus\TemplatemapMenu.js" />
@@ -541,7 +538,7 @@
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>12345</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:12345</IISUrl>
+          <IISUrl>http://localhost/iRINGTools_3_0.Applications</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

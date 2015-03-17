@@ -148,7 +148,7 @@ namespace org.iringtools.UserSecurity
         [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "chk", Order = 4, EmitDefaultValue = false)]
+        [DataMember(Name = "chk", Order = 5, EmitDefaultValue = false)]
         public Boolean Chk { get; set; }
     }
 

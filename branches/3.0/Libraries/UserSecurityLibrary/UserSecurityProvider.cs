@@ -244,6 +244,20 @@ namespace org.iringtools.UserSecurity
             return sites;
         }
 
+        public Sites GetSitesByUser(string userName)
+        {
+            List<Site> listSites = new List<Site>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                listSites = dc.ExecuteQuery<Site>("spgSitesByUser @UserName = {0}, @SiteId = {1}", userName, _siteID).ToList();
+            }
+
+            Sites sites = new Sites();
+            sites.AddRange(listSites);
+            return sites;
+        }
+
         public Site GetSite(int iSiteId)
         {
             List<Site> lstSite = new List<Site>();
@@ -877,7 +891,6 @@ namespace org.iringtools.UserSecurity
             return group;
         }
 
-
         public Roles GetAllRoles()
         {
             List<Role> lstRole = new List<Role>();
@@ -972,7 +985,7 @@ namespace org.iringtools.UserSecurity
             return permissions;
         }
 
-        public Groups GetGroupsUser(string userName, int siteId)
+        public Groups GetGroupsUser(string userName)
         {
             try
             {
@@ -980,7 +993,7 @@ namespace org.iringtools.UserSecurity
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    lstGroup = dc.ExecuteQuery<Group>("spgGroupUser @UserName = {0}, @SiteId = {1}", userName, siteId).ToList();
+                    lstGroup = dc.ExecuteQuery<Group>("spgGroupUser @UserName = {0}, @SiteId = {1}", userName, _siteID).ToList();
                 }
 
                 Groups groups = new Groups();
@@ -1008,7 +1021,6 @@ namespace org.iringtools.UserSecurity
             users.AddRange(lstGroup);
             return users;
         }
-
 
         public Roles GetGroupRoles(int iGroupId)
         {
