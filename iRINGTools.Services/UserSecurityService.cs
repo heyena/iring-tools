@@ -156,6 +156,26 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Get all sites from the database.")]
+        [WebGet(UriTemplate = "/sitesbyuser?userName={userName}&format={format}")]
+        public void GetSitesByUser(string userName, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                    format = "xml";
+
+                Sites sites = _userSecurityProvider.GetSitesByUser(userName);
+                _userSecurityProvider.FormatOutgoingMessage<Sites>(sites, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
         [Description("Get site by site ID from the database.")]
         [WebGet(UriTemplate = "/site?siteId={siteId}&format={format}")]
         public void GetSite(int siteId, string format)
@@ -739,15 +759,15 @@ namespace org.iringtools.services
         }
 
         [Description("Return all groups that the user belongs to from the database.")]
-        [WebGet(UriTemplate = "/groupsUser?userName={userName}&siteId={siteId}&format={format}")]
-        public void GetGroupsUser(string userName, int siteId, string format)
+        [WebGet(UriTemplate = "/groupsUser?userName={userName}&format={format}")]
+        public void GetGroupsUser(string userName, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                  format = "xml"; 
 
-                Groups groups = _userSecurityProvider.GetGroupsUser(userName, siteId);
+                Groups groups = _userSecurityProvider.GetGroupsUser(userName);
                 _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
             }
             catch (Exception ex)

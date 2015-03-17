@@ -19,9 +19,9 @@ using org.iringtools.mapping;
 using org.iringtools.utility;
 using org.iringtools.UserSecurity;
 using System.Web.Mvc;
+
 namespace iRINGTools.Web.Models
 {
-
     public class SecurityRepository : IsecurityRepository
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(SecurityRepository));
@@ -523,14 +523,14 @@ namespace iRINGTools.Web.Models
 
         }
 
-        public Groups GetUserGroups(string userName, int siteId, string format)
+        public Groups GetUserGroups(string userName, string format)
         {
             Groups items = null;
             _logger.Debug("In SecurityRepository GetUserGroups");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                items = client.Get<Groups>("/groupsUser?userName=" + userName + "&siteId=" + siteId + "&format=" + format);
+                items = client.Get<Groups>("/groupsUser?userName=" + userName + "&format=" + format);
 
                 _logger.Debug("Successfully called Security Service.");
             }
@@ -579,6 +579,7 @@ namespace iRINGTools.Web.Models
             return response;
 
         }
+
         public Groups GetRoleGroups(string roleId, string format)
         {
             Groups items = null;
@@ -636,6 +637,7 @@ namespace iRINGTools.Web.Models
             return response;
 
         }
+
         public Roles GetGroupRoles(string groupId, string format)
         {
             Roles items = null;
@@ -725,6 +727,25 @@ namespace iRINGTools.Web.Models
 
         }
 
+        internal Sites GetSitesbyUser(string userName)
+        {
+            Sites sites = null;
+            _logger.Debug("In SecurityRepository GetGroupRoles");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                sites = client.Get<Sites>(String.Format("/sitesbyuser?userName={0}&format=xml", userName));
+
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+
+            }
+            return sites;
+        }
 
         #region Private Methods
         private Response PrepareErrorResponse(Exception ex, string errMsg)

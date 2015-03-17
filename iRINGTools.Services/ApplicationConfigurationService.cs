@@ -449,15 +449,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get context collection for user")]
-        [WebGet(UriTemplate = "/contexts/{userName}?siteId={siteId}&folderId={folderId}&format={format}")]
-        public void GetContextsForUser(string userName, int siteId, Guid folderId, string format)
+        [WebGet(UriTemplate = "/contexts/{userName}?folderId={folderId}&format={format}")]
+        public void GetContextsForUser(string userName, Guid folderId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                org.iringtools.applicationConfig.Contexts contexts = _applicationConfigurationProvider.GetContextsForUser(userName, siteId, folderId);
+                org.iringtools.applicationConfig.Contexts contexts = _applicationConfigurationProvider.GetContextsForUser(userName, folderId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Contexts>(contexts, format, true);
             }
             catch (Exception ex)
@@ -469,15 +469,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get application collection for user")]
-        [WebGet(UriTemplate = "/applications/{userName}?siteId={siteId}&contextId={contextId}&format={format}")]
-        public void GetApplicationsForUser(string userName, int siteId, Guid contextId, string format)
+        [WebGet(UriTemplate = "/applications/{userName}?contextId={contextId}&format={format}")]
+        public void GetApplicationsForUser(string userName, Guid contextId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                Applications applications = _applicationConfigurationProvider.GetApplicationsForUser(userName, siteId, contextId);
+                Applications applications = _applicationConfigurationProvider.GetApplicationsForUser(userName, contextId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Applications>(applications, format, true);
             }
             catch (Exception ex)

@@ -62,7 +62,7 @@ Ext.define('AM.controller.Directory', {
         'directory.VirtualPropertyWindow',
         'menus.VirtualPropertyMenu',
 		'common.ExceptionPanel',
-        'menus.RootMenu',
+        'menus.SiteMenu',
         'directory.FolderForm',
         'directory.FolderWindow',
         'menus.FolderMenu',
@@ -70,7 +70,7 @@ Ext.define('AM.controller.Directory', {
         'directory.ContextForm',
         'directory.ContextWindow',
         'directory.NewJobForm',
-        'directory.SchduleCacheWindow'
+        'directory.SchedulerCacheWindow'
 
 
     ],
@@ -153,7 +153,7 @@ Ext.define('AM.controller.Directory', {
         }
     },
 
-    //root
+    //Site
     onNewOrEditFolder: function (item, e, eOpts) {
 
         var me = this;
@@ -201,7 +201,12 @@ Ext.define('AM.controller.Directory', {
         //            form.getForm().findField('permissions').hide();
         //        }
 
-        form.getForm().findField('id').setValue(node.internalId);
+        if (node.internalId == "0") {
+            form.getForm().findField('id').setValue(null);
+        }
+        else {
+            form.getForm().findField('id').setValue(node.internalId);
+        }
         form.getForm().findField('path').setValue(path);
         form.getForm().findField('state').setValue(state);
         form.getForm().findField('oldContext').setValue(context);
@@ -211,8 +216,6 @@ Ext.define('AM.controller.Directory', {
 
         win.show();
     },
-
-    //end root
 
     //Delete folder
     onDeleteFolder: function (item, e, eOpts) {
@@ -950,9 +953,9 @@ Ext.define('AM.controller.Directory', {
             } else if (obj.type === "ScopeNode") {
                 var scopeMenu = Ext.widget('scopemenu');
                 scopeMenu.showAt(e.getXY());
-            } else if (obj.type === "RootNode") {
-                var rootMenu = Ext.widget('rootmenu');
-                rootMenu.showAt(e.getXY());
+            } else if (obj.type === "SiteNode") {
+                var siteMenu = Ext.widget('sitemenu');
+                siteMenu.showAt(e.getXY());
             } else if (obj.type === "FolderNode") {
                 var folderMenu = Ext.widget('foldermenu');
                 folderMenu.showAt(e.getXY());

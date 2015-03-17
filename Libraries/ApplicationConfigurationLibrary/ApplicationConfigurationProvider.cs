@@ -77,7 +77,7 @@ namespace org.iringtools.applicationConfig
             {
                 Context context = Utility.DeserializeDataContract<Context>(xml.ToString());
 
-                string rawXml = context.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = context.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -139,7 +139,7 @@ namespace org.iringtools.applicationConfig
             {
                 Context context = Utility.DeserializeDataContract<Context>(xml.ToString());
 
-                string rawXml = context.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = context.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -233,14 +233,14 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Contexts GetContextsForUser(string userName, int siteId, Guid folderId)
+        public Contexts GetContextsForUser(string userName, Guid folderId)
         {
             Contexts contexts = new Contexts();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId)});
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID)});
                 nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(folderId)});
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgContextByUser", nvl);
@@ -253,14 +253,14 @@ namespace org.iringtools.applicationConfig
             return contexts;
         }
 
-        public Applications GetApplicationsForUser(string userName, int siteId, Guid contextId)
+        public Applications GetApplicationsForUser(string userName, Guid contextId)
         {
             Applications applications = new Applications();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                 nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(contextId) });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgApplicationByUser", nvl);
@@ -278,11 +278,6 @@ namespace org.iringtools.applicationConfig
             Folders folders = new Folders();
             try
             {
-                if (parentFolderId == Guid.Empty)
-                {
-                    parentFolderId = new Guid("00000000-1111-2222-3333-444444444444");
-                }
-
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                 nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
@@ -307,7 +302,7 @@ namespace org.iringtools.applicationConfig
             {
                 Folder folder = Utility.DeserializeDataContract<Folder>(xml.ToString());
 
-                string rawXml = folder.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = folder.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -363,7 +358,7 @@ namespace org.iringtools.applicationConfig
             try
             {
                 Folder folder = Utility.DeserializeDataContract<Folder>(xml.ToString());
-                string rawXml = folder.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = folder.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -532,7 +527,7 @@ namespace org.iringtools.applicationConfig
             {
                 Application application = Utility.DeserializeDataContract<Application>(xml.ToString());
 
-                string rawXml = application.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = application.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -593,7 +588,7 @@ namespace org.iringtools.applicationConfig
             {
                 Application application = Utility.DeserializeDataContract<Application>(xml.ToString());
 
-                string rawXml = application.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = application.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -719,7 +714,7 @@ namespace org.iringtools.applicationConfig
 
                 Graph graph = Utility.DeserializeDataContract<Graph>(xml.ToString());
 
-                string rawXml = graph.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = graph.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -788,7 +783,7 @@ namespace org.iringtools.applicationConfig
             {
                 Graph graph = Utility.DeserializeDataContract<Graph>(xml.ToString());
 
-                string rawXml = graph.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = graph.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -1203,7 +1198,7 @@ namespace org.iringtools.applicationConfig
             {
                 Exchange exchange = Utility.DeserializeDataContract<Exchange>(xml.ToString());
 
-                string rawXml = exchange.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = exchange.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 //using (var dc = new DataContext(_connSecurityDb))
                 //{
@@ -1295,7 +1290,7 @@ namespace org.iringtools.applicationConfig
             {
                 Exchange exchange = Utility.DeserializeDataContract<Exchange>(xml.ToString());
 
-                string rawXml = exchange.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = exchange.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 //using (var dc = new DataContext(_connSecurityDb))
                 //{
@@ -1440,7 +1435,7 @@ namespace org.iringtools.applicationConfig
             {
                 Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
 
-                string rawXml = commodity.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = commodity.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 //using (var dc = new DataContext(_connSecurityDb))
                 //{
@@ -1508,7 +1503,7 @@ namespace org.iringtools.applicationConfig
             try
             {
                 Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
-                string rawXml = commodity.groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string rawXml = commodity.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
             
                 //using (var dc = new DataContext(_connSecurityDb))
                 //{

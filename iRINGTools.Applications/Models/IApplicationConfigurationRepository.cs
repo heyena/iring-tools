@@ -9,7 +9,7 @@ namespace iRINGTools.Web.Models
 {
     internal interface IApplicationConfigurationRepository
     {
-        Folders GetFolders(string userName, Guid parentFolderId, int siteId);
+        Folders GetFolders(string userName, int siteId, Guid parentFolderId);
 
         library.Response AddFolder(string userName, Folder newFolder);
 
@@ -17,7 +17,7 @@ namespace iRINGTools.Web.Models
 
         library.Response UpdateFolder(string userName, Folder updatedFolder);
 
-        Contexts GetContexts(string userName, Guid parentFolderId, int siteId);
+        Contexts GetContexts(string userName, Guid parentFolderId);
 
         library.Response AddContext(string userName, Context newContext);
 
@@ -25,7 +25,7 @@ namespace iRINGTools.Web.Models
 
         library.Response DeleteContext(Context context);
 
-        Applications GetApplications(string userName, Guid parentContextId, int siteId);
+        Applications GetApplications(string userName, Guid parentContextId);
 
         string AddApplication(string userName, Application newApplication);
 

@@ -16,32 +16,38 @@ namespace iRINGTools.Web.Models
     internal class ApplicationConfigurationRepository : IApplicationConfigurationRepository
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ApplicationConfigurationRepository));
-
-        AdapterRepository adapter;
+        private library.CustomError _CustomError = null;
+        protected library.ServiceSettings _settings;
+        protected string _proxyHost;
+        protected string _proxyPort;
+        //AdapterRepository adapter;
 
         string applicationConfigurationServiceUri = null;
 
-        internal ApplicationConfigurationRepository(AdapterRepository _adapter)
+        public ApplicationConfigurationRepository()
         {
-            adapter = _adapter;
-
             NameValueCollection settings = ConfigurationManager.AppSettings;
-            
-            applicationConfigurationServiceUri = settings["ApplicationConfigServiceUri"];
 
+            _settings = new library.ServiceSettings();
+            _settings.AppendSettings(settings);
+
+            _proxyHost = _settings["ProxyHost"];
+            _proxyPort = _settings["ProxyPort"];
+
+            applicationConfigurationServiceUri = _settings["ApplicationConfigServiceUri"];
             if (applicationConfigurationServiceUri.EndsWith("/"))
-            {
                 applicationConfigurationServiceUri = applicationConfigurationServiceUri.Remove(applicationConfigurationServiceUri.Length - 1);
-            }
+
+
         }
 
-        public Folders GetFolders(string userName, Guid parentFolderId, int siteId)
+        public Folders GetFolders(string userName, int siteId, Guid parentFolderId)
         {
             Folders folders = null;
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
                 folders = client.Get<Folders>(String.Format("/folders/{0}?siteId={1}&parentFolderId={2}&format=xml", userName, siteId, parentFolderId));
             }
             catch (Exception ex)
@@ -60,7 +66,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
                 response = client.Post<Folder,library.Response>(String.Format("/insertFolder/{0}?format=xml", userName), newFolder, true);
             }
             catch (Exception ex)
@@ -78,7 +84,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
                 response = client.Put<Folder, library.Response>(String.Format("/updateFolder/{0}?format=xml", userName), updatedFolder, true);
                 
             }
@@ -97,7 +103,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
                 response = client.Delete<Folder,library.Response>(String.Format("/deleteFolder/{0}?format=xml", folder.FolderId), folder, true);
             }
             catch (Exception ex)
@@ -109,14 +115,14 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public Contexts GetContexts(string userName, Guid parentFolderId, int siteId)
+        public Contexts GetContexts(string userName, Guid parentFolderId)
         {
             Contexts contexts = null;
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
-                contexts = client.Get<org.iringtools.applicationConfig.Contexts>(String.Format("/contexts/{0}?siteId={1}&folderId={2}&format=xml", userName, siteId, parentFolderId));
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+                contexts = client.Get<org.iringtools.applicationConfig.Contexts>(String.Format("/contexts/{0}?folderId={1}&format=xml", userName, parentFolderId));
             }
             catch (Exception ex)
             {
@@ -134,7 +140,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
                 response = client.Post<Context, library.Response>(String.Format("/insertContext/{0}?format=xml", userName), newContext, true);
             }
             catch (Exception ex)
@@ -152,7 +158,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
                 response = client.Put<Context, library.Response>(String.Format("/updateContext/{0}?format=xml", userName), updatedContext, true);
             }
             catch (Exception ex)
@@ -170,7 +176,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
                 response = client.Delete<Context, library.Response>(String.Format("/deleteContext/{0}?format=xml", context.ContextId), context, true);
             }
             catch (Exception ex)
@@ -182,14 +188,14 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public Applications GetApplications(string userName, Guid parentContextId, int siteId)
+        public Applications GetApplications(string userName, Guid parentContextId)
         {
             Applications applications = null;
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
-                applications = client.Get<org.iringtools.applicationConfig.Applications>(String.Format("/applications/{0}?siteId={1}&contextId={2}&format=xml", userName, siteId, parentContextId));
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+                applications = client.Get<org.iringtools.applicationConfig.Applications>(String.Format("/applications/{0}?contextId={1}&format=xml", userName, parentContextId));
             }
             catch (Exception ex)
             {
@@ -206,7 +212,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
                 obj = client.Post<Application>(String.Format("/insertApplication/{0}?format=xml", userName), newApplication, true);
             }
             catch (Exception ex)
@@ -224,7 +230,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
                 obj = client.Put<Application>(String.Format("/updateApplication/{0}?format=xml", userName), updatedApplication, true);
             }
             catch (Exception ex)
@@ -242,7 +248,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
                 obj = client.Delete<Application>(String.Format("/deleteApplication/{0}?format=xml", application.ApplicationId), application, true);
             }
             catch (Exception ex)
@@ -260,7 +266,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                WebHttpClient client = adapter.CreateWebClient(applicationConfigurationServiceUri);
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
                 dataObjects = client.Get<library.DataObjects>(String.Format(""));
             }
             catch (Exception ex)
@@ -270,6 +276,13 @@ namespace iRINGTools.Web.Models
             }
 
             return dataObjects;
+        }
+
+        protected WebHttpClient CreateWebClient(string baseUri)
+        {
+            WebHttpClient client = null;
+            client = new WebHttpClient(baseUri);
+            return client;
         }
     }
 }

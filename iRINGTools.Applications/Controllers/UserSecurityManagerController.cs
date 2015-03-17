@@ -363,9 +363,9 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-                string userName = "vmallire";
-                int siteId = 1;
-                Groups userGroups = _repository.GetUserGroups(userName, siteId, "xml");
+                //string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+                string userName = "WorldTest";
+                Groups userGroups = _repository.GetUserGroups(userName, "xml");
 
                 JsonContainer<Groups> container = new JsonContainer<Groups>();
                 container.items = userGroups;
@@ -456,9 +456,7 @@ namespace org.iringtools.web.controllers
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
             
-        }
-
-        
+        }        
 
         public JsonResult saveGroupRoles(FormCollection form)
         {

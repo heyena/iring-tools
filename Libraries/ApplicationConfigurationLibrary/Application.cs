@@ -22,8 +22,8 @@ namespace org.iringtools.applicationConfig
     {
         public Context()
         {
-            permissions = new Permissions();
-            groups = new Groups();
+            Permissions = new Permissions();
+            Groups = new Groups();
         }
 
         [DataMember(Name = "contextId", Order = 0)]
@@ -50,11 +50,11 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "folderId", Order = 7, EmitDefaultValue = false)]
         public Guid FolderId { get; set; }
 
-        [DataMember(Name = "permissions", Order = 8, EmitDefaultValue = false)]
-        public Permissions permissions { get; set; }
+        [DataMember(Name = "Permissions", Order = 8, EmitDefaultValue = false)]
+        public Permissions Permissions { get; set; }
 
-        [DataMember(Name = "groups", Order = 9, EmitDefaultValue = false)]
-        public Groups groups { get; set; }
+        [DataMember(Name = "Groups", Order = 9, EmitDefaultValue = false)]
+        public Groups Groups { get; set; }
     }
 
     [CollectionDataContract(Name = "applications", Namespace = "http://www.iringtools.org/library", ItemName = "application")]
@@ -68,9 +68,9 @@ namespace org.iringtools.applicationConfig
     {
         public Application()
         {
-            permissions = new Permissions();
+            Permissions = new Permissions();
             applicationSettings = new ApplicationSettings();
-            groups = new Groups();
+            Groups = new Groups();
         }
 
         [DataMember(Name = "contextId", Order = 0)]
@@ -100,14 +100,14 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "assembly", Order = 8, EmitDefaultValue = false)]
         public string Assembly { get; set; }
 
-        [DataMember(Name = "permissions", Order = 9, EmitDefaultValue = false)]
-        public Permissions permissions { get; set; }
+        [DataMember(Name = "Permissions", Order = 9, EmitDefaultValue = false)]
+        public Permissions Permissions { get; set; }
 
         [DataMember(Name = "applicationSettings", Order = 10, EmitDefaultValue = false)]
         public ApplicationSettings applicationSettings { get; set; }
 
-        [DataMember(Name = "groups", Order = 11, EmitDefaultValue = false)]
-        public Groups groups { get; set; }
+        [DataMember(Name = "Groups", Order = 11, EmitDefaultValue = false)]
+        public Groups Groups { get; set; }
     }
 
     [CollectionDataContract(Name = "graphs", Namespace = "http://www.iringtools.org/library", ItemName = "graph")]
@@ -121,8 +121,8 @@ namespace org.iringtools.applicationConfig
     {
         public Graph()
         {
-            permissions = new Permissions();
-            groups = new Groups();
+            Permissions = new Permissions();
+            Groups = new Groups();
         }
 
         [DataMember(Name = "applicationId", Order = 0)]
@@ -143,11 +143,11 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "active", Order = 5, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "permissions", Order = 6, EmitDefaultValue = false)]
-        public Permissions permissions { get; set; }
+        [DataMember(Name = "Permissions", Order = 6, EmitDefaultValue = false)]
+        public Permissions Permissions { get; set; }
 
-        [DataMember(Name = "groups", Order = 7, EmitDefaultValue = false)]
-        public Groups groups { get; set; }
+        [DataMember(Name = "Groups", Order = 7, EmitDefaultValue = false)]
+        public Groups Groups { get; set; }
     }
 
     [CollectionDataContract(Name = "folders", Namespace = "http://www.iringtools.org/library", ItemName = "folder")]
@@ -161,8 +161,8 @@ namespace org.iringtools.applicationConfig
     {
         public Folder()
         {
-            permissions = new Permissions();
-            groups = new Groups();
+            Permissions = new Permissions();
+            Groups = new Groups();
         }
 
         [DataMember(Name = "folderId", Order = 0)]
@@ -180,11 +180,11 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "permissions", Order = 5, EmitDefaultValue = false)]
-        public Permissions permissions { get; set; }
+        [DataMember(Name = "Permissions", Order = 5, EmitDefaultValue = false)]
+        public Permissions Permissions { get; set; }
 
-        [DataMember(Name = "groups", Order = 6, EmitDefaultValue = false)]
-        public Groups groups { get; set; }
+        [DataMember(Name = "Groups", Order = 6, EmitDefaultValue = false)]
+        public Groups Groups { get; set; }
     }
 
     [CollectionDataContract(Name = "exchanges", Namespace = "http://www.iringtools.org/library", ItemName = "exchange")]
@@ -198,8 +198,8 @@ namespace org.iringtools.applicationConfig
     {
         Exchange()
         {
-            permissions = new Permissions();
-            groups = new Groups();
+            Permissions = new Permissions();
+            Groups = new Groups();
         }
 
         [DataMember(Name = "exchangeId", Order = 0)]
@@ -244,11 +244,11 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "active", Order = 13, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "permissions", Order = 14, EmitDefaultValue = false)]
-        public Permissions permissions { get; set; }
+        [DataMember(Name = "Permissions", Order = 14, EmitDefaultValue = false)]
+        public Permissions Permissions { get; set; }
 
-        [DataMember(Name = "groups", Order = 15, EmitDefaultValue = false)]
-        public Groups groups { get; set; }
+        [DataMember(Name = "Groups", Order = 15, EmitDefaultValue = false)]
+        public Groups Groups { get; set; }
     }
 
     /// <summary>
@@ -288,8 +288,8 @@ namespace org.iringtools.applicationConfig
     {
         Commodity()
         {
-            permissions = new Permissions();
-            groups = new Groups();
+            Permissions = new Permissions();
+            Groups = new Groups();
         }
 
         [DataMember(Name = "contextId", Order = 0)]
@@ -307,11 +307,11 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "permissions", Order = 5, EmitDefaultValue = false)]
-        public Permissions permissions { get; set; }
+        [DataMember(Name = "Permissions", Order = 5, EmitDefaultValue = false)]
+        public Permissions Permissions { get; set; }
 
-        [DataMember(Name = "groups", Order = 6, EmitDefaultValue = false)]
-        public Groups groups { get; set; }
+        [DataMember(Name = "Groups", Order = 6, EmitDefaultValue = false)]
+        public Groups Groups { get; set; }
     }
 
     [CollectionDataContract(Name = "applicationSettings", Namespace = "http://www.iringtools.org/library", ItemName = "applicationSetting")]
