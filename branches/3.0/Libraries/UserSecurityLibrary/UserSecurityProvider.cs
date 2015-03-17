@@ -244,13 +244,13 @@ namespace org.iringtools.UserSecurity
             return sites;
         }
 
-        public Sites GetSitesByUser(string userName)
+        public Sites GetSitesByUser(string userName, int siteId)
         {
             List<Site> listSites = new List<Site>();
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                listSites = dc.ExecuteQuery<Site>("spgSitesByUser @UserName = {0}, @SiteId = {1}", userName, _siteID).ToList();
+                listSites = dc.ExecuteQuery<Site>("spgSitesByUser @UserName = {0}, @SiteId = {1}", userName, siteId).ToList();
             }
 
             Sites sites = new Sites();
