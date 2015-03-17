@@ -727,14 +727,14 @@ namespace iRINGTools.Web.Models
 
         }
 
-        internal Sites GetSitesbyUser(string userName)
+        internal Sites GetSitesbyUser(string userName, int siteId)
         {
             Sites sites = null;
             _logger.Debug("In SecurityRepository GetGroupRoles");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
-                sites = client.Get<Sites>(String.Format("/sitesbyuser?userName={0}&format=xml", userName));
+                sites = client.Get<Sites>(String.Format("/sitesbyuser?userName={0}&siteId={1}&format=xml", userName, siteId));
 
                 _logger.Debug("Successfully called Security Service.");
             }

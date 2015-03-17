@@ -157,15 +157,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get all sites from the database.")]
-        [WebGet(UriTemplate = "/sitesbyuser?userName={userName}&format={format}")]
-        public void GetSitesByUser(string userName, string format)
+        [WebGet(UriTemplate = "/sitesbyuser?userName={userName}&siteId={siteId}&format={format}")]
+        public void GetSitesByUser(string userName, int siteId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                     format = "xml";
 
-                Sites sites = _userSecurityProvider.GetSitesByUser(userName);
+                Sites sites = _userSecurityProvider.GetSitesByUser(userName, siteId);
                 _userSecurityProvider.FormatOutgoingMessage<Sites>(sites, format, true);
             }
             catch (Exception ex)

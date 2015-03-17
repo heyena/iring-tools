@@ -23,8 +23,8 @@ namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
     {
-        string userName = "WorldTest";
-        //string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        //string userName = "WorldTest";
+        string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
         Groups groupsToGenerate = new Groups();
 
         private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
