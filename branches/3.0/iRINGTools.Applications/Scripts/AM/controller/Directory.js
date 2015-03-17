@@ -18,6 +18,8 @@ Ext.define('AM.controller.Directory', {
         'VirtualPropertyStore',
         'PermissionsS',
         'ResourceGroupStore'
+
+
     ],
 
     views: [
@@ -69,7 +71,7 @@ Ext.define('AM.controller.Directory', {
         'directory.ContextWindow',
         'directory.NewJobForm',
         'directory.SchduleCacheWindow'
-        
+
 
     ],
 
@@ -400,28 +402,61 @@ Ext.define('AM.controller.Directory', {
         var context, displayName, apps;
         var tree = me.getDirTree();
         var node = tree.getSelectedNode();
+        var objResponseText;
+        Ext.Ajax.request({
+            url: 'directory/getnode',
+            form: me.form,
+            method: 'POST',
+            params: {
+                nodedetails: node.data,
+                jsonData: node.data,
+                contentType: 'application/json',
+                type: 'ContextNode',
+                'node': node.internalId,
+                'parentnodeid': node.parentNode.internalId,
+                'nodename': node.data.record.FolderName
+            },
+            success: function (response, request) {
+                objResponseText = Ext.decode(response.responseText);
+                var parentNode = node.parentNode;
+                // parentNode.removeChild(node);
+               // tree.getSelectionModel().select(parentNode);
+                //tree.view.refresh();
+                // me.getDirTree().onReload();
+
+            },
+            failure: function (response, request) {
+                objResponseText = Ext.decode(response.responseText);
+                var userMsg = objResponseText['message'];
+                var detailMsg = objResponseText['stackTraceDescription'];
+                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+            }
+        })
+
         var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
         context = node.data.record.context;
-        apps = node.childNodes;
+        //apps = node.childNodes;
 
-        var tempStore = Ext.create('Ext.data.Store', {
-            fields: ['display'],
-            storeId: 'apptempStore',
-            //autoLoad:true,
-            listeners: {
-                'load': function () {
-                    var arr = node.childNodes;
-                    Ext.each(arr, function (item, index) {
-                        tempStore.insert(index, { display: item.data.property["Display Name"] });
-                        
-
-                    })
-                }
-
-            }
+                var tempStore = Ext.create('Ext.data.Store', {
+                    fields: ['display'],
+                    storeId: 'apptempStore',
+                    //autoLoad:true,
+                    listeners: {
+                        'load': function () {
+                            var arr = objResponseText;
+                            Ext.each(arr, function (temp, index) {
+                                tempStore.insert(index, { display: temp.property["Display Name"] });
 
 
-        });
+                            })
+                        }
+
+                    }
+
+
+                });
 
         if (item.itemId == 'cacheupscreen' && node.data.record !== undefined) {
 
@@ -438,10 +473,11 @@ Ext.define('AM.controller.Directory', {
             win.destroy();
         }, me);
 
-
+        //var displayName1 = tempStore2.getAt(0);
+       // var disp = displayName1.get('display');
         form.getForm().findField('displayName').setValue(displayNameCont);
-        form.getForm().findField('applications').setValue(apps[0].data.text);
-        
+        //form.getForm().findField('applications').setValue(disp);
+
 
         win.show();
     },
