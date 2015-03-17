@@ -985,26 +985,33 @@ namespace org.iringtools.UserSecurity
             return permissions;
         }
 
-        public Groups GetGroupsUser(string userName)
+        public Groups GetGroupsUser(string userName, String siteId)
         {
+            Groups groups = new Groups();
             try
             {
-                List<Group> lstGroup = new List<Group>();
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
 
-                using (var dc = new DataContext(_connSecurityDb))
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGroupUser", nvl);
+                groups = utility.Utility.Deserialize<Groups>(xmlString, true);            
+        
+           /*     using (var dc = new DataContext(_connSecurityDb))
                 {
                     lstGroup = dc.ExecuteQuery<Group>("spgGroupUser @UserName = {0}, @SiteId = {1}", userName, _siteID).ToList();
                 }
 
                 Groups groups = new Groups();
                 groups.AddRange(lstGroup);
-                return groups;
+                return groups;*/
             }
             catch (Exception ex)
             {
                 _logger.Error("Error getting Groups mapped with a user: " + ex);
                 throw ex;
             }
+            return groups;
         }
 
         public Users GetGroupUser(int iGroupId, int iUserId)
