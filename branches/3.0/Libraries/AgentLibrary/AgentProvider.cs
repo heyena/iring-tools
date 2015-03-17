@@ -65,33 +65,22 @@ namespace org.iringtools.AgentLibrary
 
         public org.iringtools.AgentLibrary.Agent.Job GetJob(string scope, string app)
         {
-            List<org.iringtools.AgentLibrary.Agent.Job> lstJob = new List<org.iringtools.AgentLibrary.Agent.Job>();
-
-            using (var dc = new DataContext(_connSecurityDb))
-            {
-                lstJob = dc.ExecuteQuery<org.iringtools.AgentLibrary.Agent.Job>("spgJob @ScopeName = {0}, @AppName = {1}", scope, app).ToList();
-            }
-
+           
             org.iringtools.AgentLibrary.Agent.Job job = new org.iringtools.AgentLibrary.Agent.Job();
-            if (lstJob.Count > 0)
-                job = lstJob.First();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ScopeName", Value = Convert.ToString(scope) });
+                nvl.Add(new ListItem() { Name = "@AppName", Value = Convert.ToString(app) });
 
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgJob", nvl);
+                job = utility.Utility.Deserialize<org.iringtools.AgentLibrary.Agent.Job>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Job: " + ex);
+            }
             return job;
-            //org.iringtools.AgentLibrary.Agent.Jobs jobs = new org.iringtools.AgentLibrary.Agent.Jobs();
-            //try
-            //{
-            //    NameValueList nvl = new NameValueList();
-            //    nvl.Add(new ListItem() { Name = "@scopename", Value =  Convert.ToString(scope) });
-            //    nvl.Add(new ListItem() { Name = "@appname", Value = Convert.ToString(app) });
-                
-            //    string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgJob", nvl);
-            //    jobs = utility.Utility.Deserialize<org.iringtools.AgentLibrary.Agent.Jobs>(xmlString, true);
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.Error("Error getting  Job: " + ex);
-            //}
-            //return jobs;
         }
 
         public Response InsertJob(XDocument xml)
@@ -102,6 +91,9 @@ namespace org.iringtools.AgentLibrary
             try
             {               
                 org.iringtools.AgentLibrary.Agent.Job job = Utility.DeserializeDataContract<org.iringtools.AgentLibrary.Agent.Job>(xml.ToString());
+
+                string schedulesXml = job.schedules.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (job == null)
@@ -116,6 +108,7 @@ namespace org.iringtools.AgentLibrary
                         nvl.Add(new ListItem() { Name = "@Xid", Value = job.Xid });
                         nvl.Add(new ListItem() { Name = "@Exchange_Url", Value = job.Exchange_Url });
                         nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = job.Cache_Page_size });
+                        nvl.Add(new ListItem() { Name = "@Schedules", Value = schedulesXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiJob", nvl);
 

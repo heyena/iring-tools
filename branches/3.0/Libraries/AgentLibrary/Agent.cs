@@ -24,7 +24,8 @@ namespace org.iringtools.AgentLibrary
         {
             public Job()
             {
-                jobClientInfos = new JobClientInfos();
+                schedules = new Schedules();
+                jobclientinfos = new JobClientInfos();
             }
 
             [DataMember(Name = "job_Id", Order = 0)]
@@ -51,18 +52,21 @@ namespace org.iringtools.AgentLibrary
             [DataMember(Name = "cache_page_size", Order = 7, EmitDefaultValue = false)]
             public string Cache_Page_size { get; set; }
 
-            [DataMember(Name = "jobClientInfos", Order = 8, EmitDefaultValue = false)]
-            public JobClientInfos jobClientInfos { get; set; }
+            [DataMember(Name = "jobclientinfos", Order = 8, EmitDefaultValue = false)]
+            public JobClientInfos jobclientinfos { get; set; }
+
+            [DataMember(Name = "schedules", Order = 9, EmitDefaultValue = false)]
+            public Schedules schedules { get; set; }
 
         }
 
-        [CollectionDataContract(Name = "jobclientinfos", Namespace = "http://www.iringtools.org/library", ItemName = "job_client_info")]
+        [CollectionDataContract(Name = "jobclientinfos", Namespace = "http://www.iringtools.org/library", ItemName = "jobclientinfo")]
         public class JobClientInfos : List<JobClientInfo>
         {
 
         }
 
-        [DataContract(Name = "job_client_info", Namespace = "http://www.iringtools.org/library")]
+        [DataContract(Name = "jobclientinfo", Namespace = "http://www.iringtools.org/library")]
         public class JobClientInfo
         {
             [DataMember(Name = "Job_Id", Order = 0)]
