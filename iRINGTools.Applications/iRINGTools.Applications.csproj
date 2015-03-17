@@ -163,6 +163,7 @@
     <Compile Include="Models\RefDataRepository.cs" />
     <Compile Include="Models\SecurityRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+   
     <Content Include="Content\img\extension.png" />
     <Content Include="Scripts\AM\controller\SQLConfig.js" />
   </ItemGroup>
@@ -265,6 +266,7 @@
     <Content Include="Scripts\AM\store\SearchStore.js" />
     <Content Include="Scripts\AM\store\SpreadsheetStore.js" />
     <Content Include="Scripts\AM\store\VirtualPropertyStore.js" />
+    
     <Content Include="Scripts\AM\utilities\utilities.js" />
     <Content Include="Scripts\AM\ux\css\CheckHeader.css" />
     <Content Include="Scripts\AM\ux\css\GroupTabPanel.css" />
@@ -336,6 +338,9 @@
     <Content Include="Scripts\AM\view\directory\ContextForm.js" />
     <Content Include="Scripts\AM\view\directory\FolderForm.js" />
     <Content Include="Scripts\AM\view\directory\FolderWindow.js" />
+    <Content Include="Scripts\AM\view\directory\SchedulerCacheWindow.js" />
+    
+    <Content Include="Scripts\AM\view\directory\NewJobForm.js" />
     <Content Include="Scripts\AM\view\directory\ScopeForm.js" />
     <Content Include="Scripts\AM\view\directory\ScopeWindow.js" />
     <Content Include="Scripts\AM\view\directory\VirtualPropertyForm.js" />
@@ -533,8 +538,8 @@
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
-          <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>63075</DevelopmentServerPort>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>12345</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:12345</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
