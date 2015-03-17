@@ -290,8 +290,6 @@ namespace org.iringtools.AgentLibrary
                     nvl.Add(new ListItem() { Name = "@SSo_Url", Value = jobClientInfo.SSo_Url });
                     nvl.Add(new ListItem() { Name = "@Client_id", Value = jobClientInfo.Client_id });
                     nvl.Add(new ListItem() { Name = "@Client_Secret", Value = jobClientInfo.Client_Secret });
-                    nvl.Add(new ListItem() { Name = "@Access_Token", Value = jobClientInfo.Access_Token });
-                    nvl.Add(new ListItem() { Name = "@App_Key", Value = jobClientInfo.App_Key });
                     nvl.Add(new ListItem() { Name = "@Grant_Type", Value = jobClientInfo.Grant_Type });
                     nvl.Add(new ListItem() { Name = "@Request_Timeout", Value = Convert.ToString(jobClientInfo.Request_Timeout) });
 
@@ -346,8 +344,6 @@ namespace org.iringtools.AgentLibrary
                         nvl.Add(new ListItem() { Name = "@SSo_Url", Value = jobClientInfo.SSo_Url });
                         nvl.Add(new ListItem() { Name = "@Client_id", Value = jobClientInfo.Client_id });
                         nvl.Add(new ListItem() { Name = "@Client_Secret", Value = jobClientInfo.Client_Secret });
-                        nvl.Add(new ListItem() { Name = "@Access_Token", Value = jobClientInfo.Access_Token });
-                        nvl.Add(new ListItem() { Name = "@App_Key", Value = jobClientInfo.App_Key });
                         nvl.Add(new ListItem() { Name = "@Grant_Type", Value = jobClientInfo.Grant_Type });
                         nvl.Add(new ListItem() { Name = "@Request_Timeout", Value = Convert.ToString(jobClientInfo.Request_Timeout) });
 
@@ -472,11 +468,12 @@ namespace org.iringtools.AgentLibrary
                 {
                     NameValueList nvl = new NameValueList();
                     //nvl.Add(new ListItem() { Name = "@Schedule_Id", Value = Convert.ToString(schedule.Schedule_Id) });
-                    nvl.Add(new ListItem() { Name = "@Created_DateTime", Value = schedule.Created_DateTime.ToString() });
+                    nvl.Add(new ListItem() { Name = "@Created_DateTime", Value = schedule.Created_DateTime});
                     nvl.Add(new ListItem() { Name = "@Created_By", Value = schedule.Created_By });
                     nvl.Add(new ListItem() { Name = "@Occurance", Value = schedule.Occurance });
-                    nvl.Add(new ListItem() { Name = "@Start_DateTime", Value = schedule.Start_DateTime.ToString() });
-                    nvl.Add(new ListItem() { Name = "@End_DateTime", Value = schedule.End_DateTime.ToString() });
+                    nvl.Add(new ListItem() { Name = "@Weekday", Value = schedule.Weekday });
+                    nvl.Add(new ListItem() { Name = "@Start_DateTime", Value = schedule.Start_DateTime});
+                    nvl.Add(new ListItem() { Name = "@End_DateTime", Value = schedule.End_DateTime});
                     nvl.Add(new ListItem() { Name = "@Status", Value = schedule.Status });
                  
                     string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiSchedule", nvl);
@@ -529,8 +526,9 @@ namespace org.iringtools.AgentLibrary
                         nvl.Add(new ListItem() { Name = "@Created_DateTime", Value = Convert.ToString(schedule.Created_DateTime) });
                         nvl.Add(new ListItem() { Name = "@Created_By", Value = schedule.Created_By });
                         nvl.Add(new ListItem() { Name = "@Occurance", Value = schedule.Occurance });
-                        nvl.Add(new ListItem() { Name = "@Start_DateTime", Value = Convert.ToString(schedule.Start_DateTime) });
-                        nvl.Add(new ListItem() { Name = "@End_DateTime", Value = Convert.ToString(schedule.End_DateTime) });
+                        nvl.Add(new ListItem() { Name = "@Weekday", Value = schedule.Weekday });
+                        nvl.Add(new ListItem() { Name = "@Start_DateTime", Value = schedule.Start_DateTime});
+                        nvl.Add(new ListItem() { Name = "@End_DateTime", Value = schedule.End_DateTime});
                         nvl.Add(new ListItem() { Name = "@Status", Value = schedule.Status });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuSchedule", nvl);
@@ -649,8 +647,8 @@ namespace org.iringtools.AgentLibrary
                     NameValueList nvl = new NameValueList();
                     nvl.Add(new ListItem() { Name = "@Schedule_Id", Value = Convert.ToString(jobschedule.Schedule_Id) });
                     nvl.Add(new ListItem() { Name = "@Job_Id", Value = Convert.ToString(jobschedule.Job_Id) });
-                    nvl.Add(new ListItem() { Name = "@Next_Start_DateTime", Value = Convert.ToString(jobschedule.Next_Start_DateTime) });
-                    nvl.Add(new ListItem() { Name = "@Last_Start_DateTime", Value = Convert.ToString(jobschedule.Last_Start_DateTime) });
+                    nvl.Add(new ListItem() { Name = "@Next_Start_DateTime", Value = jobschedule.Next_Start_DateTime});
+                    nvl.Add(new ListItem() { Name = "@Last_Start_DateTime", Value = jobschedule.Last_Start_DateTime});
                     nvl.Add(new ListItem() { Name = "@Active", Value = Convert.ToString(jobschedule.Active) });
                    
                     string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiJobSchedule", nvl);
@@ -703,8 +701,8 @@ namespace org.iringtools.AgentLibrary
                         NameValueList nvl = new NameValueList();
                         nvl.Add(new ListItem() { Name = "@Schedule_Id", Value = Convert.ToString(jobschedule.Schedule_Id) });
                         nvl.Add(new ListItem() { Name = "@Job_Id", Value = Convert.ToString(jobschedule.Job_Id) });
-                        nvl.Add(new ListItem() { Name = "@Next_Start_DateTime", Value = Convert.ToString(jobschedule.Next_Start_DateTime) });
-                        nvl.Add(new ListItem() { Name = "@Last_Start_DateTime", Value = Convert.ToString(jobschedule.Last_Start_DateTime) });
+                        nvl.Add(new ListItem() { Name = "@Next_Start_DateTime", Value = jobschedule.Next_Start_DateTime });
+                        nvl.Add(new ListItem() { Name = "@Last_Start_DateTime", Value = jobschedule.Last_Start_DateTime });
                         nvl.Add(new ListItem() { Name = "@Active", Value = Convert.ToString(jobschedule.Active) });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuJobSchedule", nvl);
