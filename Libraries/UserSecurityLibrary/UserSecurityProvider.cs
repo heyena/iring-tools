@@ -20,7 +20,7 @@ namespace org.iringtools.UserSecurity
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
         private string _connSecurityDb;
-        private int _siteID;
+        private int _siteID; //TODO: Need to remove all its uses and this variable
 
         [Inject]
         public UserSecurityProvider(NameValueCollection settings)
@@ -985,14 +985,13 @@ namespace org.iringtools.UserSecurity
             return permissions;
         }
 
-        public Groups GetGroupsUser(string userName, String siteId)
+        public Groups GetGroupsUser(string userName)
         {
             Groups groups = new Groups();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGroupUser", nvl);
                 groups = utility.Utility.Deserialize<Groups>(xmlString, true);            

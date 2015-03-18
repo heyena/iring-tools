@@ -41,14 +41,14 @@ namespace iRINGTools.Web.Models
 
         }
 
-        public Folders GetFolders(string userName, int siteId, Guid parentFolderId)
+        public Folders GetFolders(string userName, int siteId, int platformId, Guid parentFolderId)
         {
             Folders folders = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                folders = client.Get<Folders>(String.Format("/folders/{0}?siteId={1}&parentFolderId={2}&format=xml", userName, siteId, parentFolderId));
+                folders = client.Get<Folders>(String.Format("/folders/{0}?siteId={1}&platformId={2}&parentFolderId={3}&format=xml", userName, siteId, platformId, parentFolderId));
             }
             catch (Exception ex)
             {

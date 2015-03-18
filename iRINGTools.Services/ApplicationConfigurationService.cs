@@ -29,7 +29,6 @@ namespace org.iringtools.services
             _applicationConfigurationProvider = new ApplicationConfigurationProvider(ConfigurationManager.AppSettings);
         }
 
-
         [Description("Gets the scopes available from the data base.")]
         [WebGet(UriTemplate = "/contexts?siteId={siteId}&format={format}")]
         public void GetContexts(int siteId, string format)  // Completed.
@@ -529,15 +528,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get application collection for user")]
-        [WebGet(UriTemplate = "/folders/{userName}?siteId={siteId}&parentFolderId={parentFolderId}&format={format}")]
-        public void GetFoldersForUser(string userName, int siteId, Guid parentFolderId, string format)
+        [WebGet(UriTemplate = "/folders/{userName}?siteId={siteId}&platformId={platformId}&parentFolderId={parentFolderId}&format={format}")]
+        public void GetFoldersForUser(string userName, int siteId, int platformId, Guid parentFolderId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                Folders folders = _applicationConfigurationProvider.GetFoldersForUser(userName, siteId, parentFolderId);
+                Folders folders = _applicationConfigurationProvider.GetFoldersForUser(userName, siteId, platformId, parentFolderId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Folders>(folders, format, true);
             }
             catch (Exception ex)
