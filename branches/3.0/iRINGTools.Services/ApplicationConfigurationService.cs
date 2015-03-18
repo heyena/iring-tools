@@ -488,15 +488,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get graph collection for user")]
-        [WebGet(UriTemplate = "/graphs/{userName}?siteId={siteId}&applicationId={applicationId}&format={format}")]
-        public void GetGraphsForUser(string userName, int siteId, Guid applicationId, string format)
+        [WebGet(UriTemplate = "/graphs/{userName}?applicationId={applicationId}&format={format}")]
+        public void GetGraphsForUser(string userName, Guid applicationId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                Graphs graphs = _applicationConfigurationProvider.GetGraphsForUser(userName, siteId, applicationId);
+                Graphs graphs = _applicationConfigurationProvider.GetGraphsForUser(userName, applicationId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Graphs>(graphs, format, true);
             }
             catch (Exception ex)
@@ -508,15 +508,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get graph collection for user")]
-        [WebGet(UriTemplate = "/graphMapping/{userName}?siteId={siteId}&graphId={graphId}&format={format}")]
-        public void GetGraphMappingForUser(string userName, int siteId, Guid graphId, string format)
+        [WebGet(UriTemplate = "/graphMapping/{userName}?graphId={graphId}&format={format}")]
+        public void GetGraphMappingForUser(string userName, Guid graphId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                Graphs graphs = _applicationConfigurationProvider.GetGraphMappingForUser(userName, siteId, graphId);
+                Graphs graphs = _applicationConfigurationProvider.GetGraphMappingForUser(userName, graphId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Graphs>(graphs, format, true);
             }
             catch (Exception ex)
@@ -753,15 +753,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get exchange collection for user")]
-        [WebGet(UriTemplate = "/exchanges/{userName}?siteId={siteId}&commodityId={commodityId}&format={format}")]
-        public void GetExchangesForUser(string userName, int siteId, Guid commodityId, string format)
+        [WebGet(UriTemplate = "/exchanges/{userName}?commodityId={commodityId}&format={format}")]
+        public void GetExchangesForUser(string userName, Guid commodityId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                org.iringtools.applicationConfig.Exchanges exchanges = _applicationConfigurationProvider.GetExchangesForUser(userName, siteId, commodityId);
+                org.iringtools.applicationConfig.Exchanges exchanges = _applicationConfigurationProvider.GetExchangesForUser(userName,commodityId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Exchanges>(exchanges, format, true);
             }
             catch (Exception ex)
@@ -865,15 +865,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get Commodities collection for user")]
-        [WebGet(UriTemplate = "/commodities/{userName}?siteId={siteId}&contextId={contextId}&format={format}")]
-        public void GetCommoditiesForUser(string userName, int siteId, Guid contextId, string format)
+        [WebGet(UriTemplate = "/commodities/{userName}?contextId={contextId}&format={format}")]
+        public void GetCommoditiesForUser(string userName, Guid contextId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                org.iringtools.applicationConfig.Commodities exchanges = _applicationConfigurationProvider.GetCommoditiesForUser(userName, siteId, contextId);
+                org.iringtools.applicationConfig.Commodities exchanges = _applicationConfigurationProvider.GetCommoditiesForUser(userName,contextId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Commodities>(exchanges, format, true);
             }
             catch (Exception ex)
