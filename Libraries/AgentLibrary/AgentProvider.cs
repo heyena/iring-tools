@@ -46,7 +46,10 @@ namespace org.iringtools.AgentLibrary
             org.iringtools.AgentLibrary.Agent.Jobs jobs = new org.iringtools.AgentLibrary.Agent.Jobs();
             try
             {
-               
+                //NameValueList nvl = new NameValueList();
+                //string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgAllJobs", nvl);
+                //jobs = utility.Utility.Deserialize<org.iringtools.AgentLibrary.Agent.Jobs>(xmlString, true);
+
                 List<org.iringtools.AgentLibrary.Agent.Job> lstJob = new List<org.iringtools.AgentLibrary.Agent.Job>();
 
                 using (var dc = new DataContext(_connSecurityDb))
@@ -87,6 +90,7 @@ namespace org.iringtools.AgentLibrary
         {
             Response response = new Response();
             response.Messages = new Messages();
+            string cachePageSize = "";
 
             try
             {               
@@ -100,6 +104,11 @@ namespace org.iringtools.AgentLibrary
                         PrepareErrorResponse(response, "Please enter valid Job!");
                     else
                     {
+                        if (string.IsNullOrEmpty(_settings["CachePageSize"]))
+                            cachePageSize = "1000";
+                        else
+                            cachePageSize = _settings["CachePageSize"];
+
                         NameValueList nvl = new NameValueList();
                         nvl.Add(new ListItem() { Name = "@Is_exchange", Value = Convert.ToString(job.Is_Exchange) });
                         nvl.Add(new ListItem() { Name = "@Scope", Value = job.Scope });
@@ -107,7 +116,7 @@ namespace org.iringtools.AgentLibrary
                         nvl.Add(new ListItem() { Name = "@DataObject", Value = job.DataObject });
                         nvl.Add(new ListItem() { Name = "@Xid", Value = job.Xid });
                         nvl.Add(new ListItem() { Name = "@Exchange_Url", Value = job.Exchange_Url });
-                        nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = job.Cache_Page_size });
+                        nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = cachePageSize});
                         nvl.Add(new ListItem() { Name = "@Schedules", Value = schedulesXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiJob", nvl);
@@ -144,14 +153,15 @@ namespace org.iringtools.AgentLibrary
             return response;
         }
 
-        public Response UpdateJob(XDocument xml)
+        public Response UpdateJob(string jobId, XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
+            string cachePageSize = "";
             try
             {
-                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 org.iringtools.AgentLibrary.Agent.Job job = Utility.DeserializeDataContract<org.iringtools.AgentLibrary.Agent.Job>(xml.ToString());
+                string schedulesXml = job.schedules.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -159,15 +169,21 @@ namespace org.iringtools.AgentLibrary
                         PrepareErrorResponse(response, "Please enter Job!");
                     else
                     {
+                        if (string.IsNullOrEmpty(_settings["CachePageSize"]))
+                            cachePageSize = "1000";
+                        else
+                            cachePageSize = _settings["CachePageSize"];
+
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@Job_Id", Value = Convert.ToString(job.Job_id) });
-                        nvl.Add(new ListItem() { Name = "@Is_exchange", Value = Convert.ToString(job.Is_Exchange) });
+                        nvl.Add(new ListItem() { Name = "@Job_Id", Value = jobId });
+                        nvl.Add(new ListItem() { Name = "@Is_Exchange", Value = job.Is_Exchange });
                         nvl.Add(new ListItem() { Name = "@Scope", Value = job.Scope });
                         nvl.Add(new ListItem() { Name = "@App", Value = job.App });
                         nvl.Add(new ListItem() { Name = "@DataObject", Value = job.DataObject });
                         nvl.Add(new ListItem() { Name = "@Xid", Value = job.Xid });
                         nvl.Add(new ListItem() { Name = "@Exchange_Url", Value = job.Exchange_Url });
-                        nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = job.Cache_Page_size });
+                        nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = Convert.ToString(_settings["CachePageSize"]) });
+                        nvl.Add(new ListItem() { Name = "@Schedules", Value = schedulesXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuJob", nvl);
 
@@ -203,7 +219,7 @@ namespace org.iringtools.AgentLibrary
             Response response = new Response();
             response.Messages = new Messages();
 
-            try
+        try
             {
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -317,7 +333,7 @@ namespace org.iringtools.AgentLibrary
             return response;
         }
 
-        public Response UpdateJobClientInfo(XDocument xml)
+        public Response UpdateJobClientInfo(string jobId, XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -333,7 +349,7 @@ namespace org.iringtools.AgentLibrary
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@Job_Id", Value = Convert.ToString(jobClientInfo.Job_Id) });
+                        nvl.Add(new ListItem() { Name = "@Job_Id", Value = jobId });
                         nvl.Add(new ListItem() { Name = "@SSo_Url", Value = jobClientInfo.SSo_Url });
                         nvl.Add(new ListItem() { Name = "@Client_id", Value = jobClientInfo.Client_id });
                         nvl.Add(new ListItem() { Name = "@Client_Secret", Value = jobClientInfo.Client_Secret });
@@ -432,21 +448,6 @@ namespace org.iringtools.AgentLibrary
                 schedule = lstSchedule.First();
 
             return schedule;
-
-            //org.iringtools.AgentLibrary.Agent.Schedules schedules = new org.iringtools.AgentLibrary.Agent.Schedules();
-            //try
-            //{
-            //    NameValueList nvl = new NameValueList();
-            //    nvl.Add(new ListItem() { Name = "@Schedule_Id", Value = schedule_id });
-               
-            //    string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgSchedule", nvl);
-            //    schedules = utility.Utility.Deserialize<org.iringtools.AgentLibrary.Agent.Schedules>(xmlString, true);
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.Error("Error getting  Job: " + ex);
-            //}
-            //return schedules;
         }
 
         public Response InsertSchedule(XDocument xml)
@@ -500,7 +501,7 @@ namespace org.iringtools.AgentLibrary
             return response;
         }
 
-        public Response UpdateSchedule(XDocument xml)
+        public Response UpdateSchedule(string scheduleId, XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -516,7 +517,7 @@ namespace org.iringtools.AgentLibrary
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@Created_DateTime", Value = Convert.ToString(schedule.Created_DateTime) });
+                        nvl.Add(new ListItem() { Name = "@Created_DateTime", Value = scheduleId });
                         nvl.Add(new ListItem() { Name = "@Created_By", Value = schedule.Created_By });
                         nvl.Add(new ListItem() { Name = "@Occurance", Value = schedule.Occurance });
                         nvl.Add(new ListItem() { Name = "@Weekday", Value = schedule.Weekday });
@@ -676,7 +677,7 @@ namespace org.iringtools.AgentLibrary
             return response;
         }
 
-        public Response UpdateJobSchedule(XDocument xml)
+        public Response UpdateJobSchedule(string jobId, string scheduleId, XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -692,8 +693,8 @@ namespace org.iringtools.AgentLibrary
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@Schedule_Id", Value = Convert.ToString(jobschedule.Schedule_Id) });
-                        nvl.Add(new ListItem() { Name = "@Job_Id", Value = Convert.ToString(jobschedule.Job_Id) });
+                        nvl.Add(new ListItem() { Name = "@Schedule_Id", Value = scheduleId });
+                        nvl.Add(new ListItem() { Name = "@Job_Id", Value = jobId });
                         nvl.Add(new ListItem() { Name = "@Next_Start_DateTime", Value = jobschedule.Next_Start_DateTime });
                         nvl.Add(new ListItem() { Name = "@Last_Start_DateTime", Value = jobschedule.Last_Start_DateTime });
                         nvl.Add(new ListItem() { Name = "@Active", Value = Convert.ToString(jobschedule.Active) });

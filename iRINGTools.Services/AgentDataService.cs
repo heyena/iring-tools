@@ -105,8 +105,8 @@ namespace org.iringtools.services
         }
 
         [Description("Update jobs to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateJob?format={format}")]
-        public void UpdateJob(string format, Stream stream) // Completed.
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateJob/{jobId}?format={format}")]
+        public void UpdateJob(string jobId, string format, Stream stream) // Completed.
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -122,7 +122,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _agentProvider.FormatIncomingMessage<org.iringtools.AgentLibrary.Agent.Jobs>(stream, format);
-                    response = _agentProvider.UpdateJob(new XDocument(xElement));
+                    response = _agentProvider.UpdateJob(jobId, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -135,8 +135,8 @@ namespace org.iringtools.services
             _agentProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
-        [Description("Delete jobs from the data base.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteJob/jobId={jobId}?format={format}")]
+        [Description("Delete job from the data base.")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteJob/{jobId}?format={format}")]
         public void DeleteJob(string jobId, string format) // Completed.
         {
             if (string.IsNullOrEmpty(format))
@@ -219,8 +219,8 @@ namespace org.iringtools.services
         }
 
         [Description("Update job client info in the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateJobClientInfo?format={format}")]
-        public void UpdateJobClientInfo(string format, Stream stream) 
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateJobClientInfo/{jobId}?format={format}")]
+        public void UpdateJobClientInfo(string jobId, string format, Stream stream) 
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -236,7 +236,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _agentProvider.FormatIncomingMessage<org.iringtools.AgentLibrary.Agent.JobClientInfos>(stream, format);
-                    response = _agentProvider.UpdateJobClientInfo(new XDocument(xElement));
+                    response = _agentProvider.UpdateJobClientInfo(jobId, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -250,7 +250,7 @@ namespace org.iringtools.services
         }
 
         [Description("Delete job client info from the data base.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteJobClientInfo/jobId={jobId}?format={format}")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteJobClientInfo/{jobId}?format={format}")]
         public void DeleteJobClientInfo(string jobId, string format) // Completed.
         {
             if (string.IsNullOrEmpty(format))
@@ -333,8 +333,8 @@ namespace org.iringtools.services
         }
 
         [Description("Update schedule in the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateSchedule?format={format}")]
-        public void UpdateSchedule(string format, Stream stream)
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateSchedule/{scheduleId}?format={format}")]
+        public void UpdateSchedule(string scheduleId, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -350,7 +350,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _agentProvider.FormatIncomingMessage<org.iringtools.AgentLibrary.Agent.Schedules>(stream, format);
-                    response = _agentProvider.UpdateSchedule(new XDocument(xElement));
+                    response = _agentProvider.UpdateSchedule(scheduleId, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -364,7 +364,7 @@ namespace org.iringtools.services
         }
 
         [Description("Delete schedule from the data base.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteSchedule/scheduleId={scheduleId}?format={format}")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteSchedule/{scheduleId}?format={format}")]
         public void DeleteSchedule(string scheduleId, string format) 
         {
             if (string.IsNullOrEmpty(format))
@@ -447,8 +447,8 @@ namespace org.iringtools.services
         }
 
         [Description("Update jobschedule in the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateJobSchedule?format={format}")]
-        public void UpdateJobSchedule(string format, Stream stream)
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateJobSchedule?jobId={jobId}&scheduleId={scheduleId}&format={format}")]
+        public void UpdateJobSchedule(string jobId, string scheduleId, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -464,7 +464,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _agentProvider.FormatIncomingMessage<org.iringtools.AgentLibrary.Agent.JobSchedules>(stream, format);
-                    response = _agentProvider.UpdateJobSchedule(new XDocument(xElement));
+                    response = _agentProvider.UpdateJobSchedule(jobId, scheduleId, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -478,7 +478,7 @@ namespace org.iringtools.services
         }
 
         [Description("Delete jobschedule from the data base.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteJobSchedule/jobId={jobId}&scheduleId={scheduleId}?format={format}")]
+        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteJobSchedule?jobId={jobId}&scheduleId={scheduleId}&format={format}")]
         public void DeleteJobSchedule(string jobId, string scheduleId, string format)
         {
             if (string.IsNullOrEmpty(format))
