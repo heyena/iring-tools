@@ -41,19 +41,16 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "cacheConnstr", Order = 4, EmitDefaultValue = false)]
         public string CacheConnStr { get; set; }
 
-        [DataMember(Name = "siteId", Order = 5, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
-
-        [DataMember(Name = "active", Order = 6, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 5, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "folderId", Order = 7, EmitDefaultValue = false)]
+        [DataMember(Name = "folderId", Order = 6, EmitDefaultValue = false)]
         public Guid FolderId { get; set; }
 
-        [DataMember(Name = "permissions", Order = 8, EmitDefaultValue = false)]
+        [DataMember(Name = "permissions", Order = 7, EmitDefaultValue = false)]
         public Permissions Permissions { get; set; }
 
-        [DataMember(Name = "groups", Order = 9, EmitDefaultValue = false)]
+        [DataMember(Name = "groups", Order = 8, EmitDefaultValue = false)]
         public Groups Groups { get; set; }
     }
 
@@ -91,22 +88,19 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "dxfrUrl", Order = 5, EmitDefaultValue = false)]
         public string DXFRUrl { get; set; }
 
-        [DataMember(Name = "siteId", Order = 6, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
-        
-        [DataMember(Name = "active", Order = 7, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 6, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "assembly", Order = 8, EmitDefaultValue = false)]
+        [DataMember(Name = "assembly", Order = 7, EmitDefaultValue = false)]
         public string Assembly { get; set; }
 
-        [DataMember(Name = "permissions", Order = 9, EmitDefaultValue = false)]
+        [DataMember(Name = "permissions", Order = 8, EmitDefaultValue = false)]
         public Permissions Permissions { get; set; }
 
-        [DataMember(Name = "applicationSettings", Order = 10, EmitDefaultValue = false)]
+        [DataMember(Name = "applicationSettings", Order = 9, EmitDefaultValue = false)]
         public ApplicationSettings applicationSettings { get; set; }
 
-        [DataMember(Name = "groups", Order = 11, EmitDefaultValue = false)]
+        [DataMember(Name = "groups", Order = 10, EmitDefaultValue = false)]
         public Groups Groups { get; set; }
     }
 
@@ -137,16 +131,13 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "graphObject", Order = 3, EmitDefaultValue = false)]
         public byte[] graph { get; set; }
 
-        [DataMember(Name = "siteId", Order = 4, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
-
-        [DataMember(Name = "active", Order = 5, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "permissions", Order = 6, EmitDefaultValue = false)]
+        [DataMember(Name = "permissions", Order = 5, EmitDefaultValue = false)]
         public Permissions Permissions { get; set; }
 
-        [DataMember(Name = "groups", Order = 7, EmitDefaultValue = false)]
+        [DataMember(Name = "groups", Order = 6, EmitDefaultValue = false)]
         public Groups Groups { get; set; }
     }
 
@@ -273,10 +264,7 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "groupId", Order = 1, EmitDefaultValue = false)]
         public int GroupId { get; set; }
 
-        [DataMember(Name = "siteId", Order = 2, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
-
-        [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 2, EmitDefaultValue = false)]
         public Byte Active { get; set; }
     }
 

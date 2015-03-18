@@ -26,6 +26,7 @@ namespace org.iringtools.web.controllers
         //string userName = "WorldTest";
         string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
         int siteId = 4;
+        int platformId = 2;
 
         Groups groupsToGenerate = new Groups();
 
@@ -92,7 +93,7 @@ namespace org.iringtools.web.controllers
                             var record = Utility.DeserializeJson<Site>(form["record"].ToString(), false);
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            Folders folders = _appConfigRepository.GetFolders(userName, record.SiteId, Guid.Empty);
+                            Folders folders = _appConfigRepository.GetFolders(userName, record.SiteId, platformId, Guid.Empty);
 
                             foreach (Folder folder in folders)
                             {
@@ -887,16 +888,35 @@ namespace org.iringtools.web.controllers
             {
                 Response response = null;
 
+                dynamic record;
+                Guid parentId;
+                int siteId;
+
+                try
+                {
+                    record = Utility.DeserializeJson<Site>(form["record"].ToString(), false);
+                    parentId = Guid.Empty;
+                    siteId = record.SiteId;
+                }
+                catch
+                {
+                    record = Utility.DeserializeJson<Folder>(form["record"].ToString(), false);
+                    parentId = record.ParentFolderId;
+                    siteId = record.SiteId;
+                }
+
                 string folderName = form["displayName"];
 
                 Folder tempFolder = new Folder()
                 {
-                    FolderName = folderName
+                    FolderName = folderName,
+                    SiteId = siteId,
+                    PlatformId = platformId
                 };
 
                 if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
                 {
-                    tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
+                    tempFolder.ParentFolderId = parentId;
                     tempFolder.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
                     response = _appConfigRepository.AddFolder(userName, tempFolder);
                 }
@@ -1501,7 +1521,7 @@ namespace org.iringtools.web.controllers
         private List<JsonTreeNode> PopulateFolderNode(int siteId, Guid folderId)
         {
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-            Folders folders = _appConfigRepository.GetFolders(userName, siteId, folderId);
+            Folders folders = _appConfigRepository.GetFolders(userName, siteId, platformId, folderId);
             org.iringtools.applicationConfig.Contexts contexts = _appConfigRepository.GetContexts(userName, folderId);
 
             foreach (Folder folder in folders)

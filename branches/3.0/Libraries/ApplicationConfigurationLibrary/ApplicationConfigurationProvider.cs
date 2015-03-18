@@ -273,15 +273,16 @@ namespace org.iringtools.applicationConfig
             return applications;
         }
 
-        public Folders GetFoldersForUser(string userName, int siteId, Guid parentFolderId)
+        public Folders GetFoldersForUser(string userName, int siteId, int platformId, Guid parentFolderId)
         {
             Folders folders = new Folders();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
-                nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(parentFolderId) });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = siteId });
+                nvl.Add(new ListItem() { Name = "@PlatformId", Value = platformId });
+                nvl.Add(new ListItem() { Name = "@ParentFolderOrSiteId", Value = parentFolderId });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgFolderByUser", nvl);
                 folders = utility.Utility.Deserialize<Folders>(xmlString, true);
@@ -311,9 +312,10 @@ namespace org.iringtools.applicationConfig
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = folder.SiteId });
+                        nvl.Add(new ListItem() { Name = "@PlatformId", Value = folder.PlatformId });
                         nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                        nvl.Add(new ListItem() { Name = "@ParentFolderId", Value = folder.ParentFolderId.ToString() });
+                        nvl.Add(new ListItem() { Name = "@ParentFolderId", Value = folder.ParentFolderId });
                         nvl.Add(new ListItem() { Name = "@FolderName", Value = folder.FolderName });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 

@@ -157,16 +157,9 @@ Ext.define('AM.controller.Directory', {
     onNewOrEditFolder: function (item, e, eOpts) {
 
         var me = this;
-        var path, state, context, description, wintitle, displayName;
+        var state, wintitle, displayName;
         var tree = me.getDirTree();
         var node = tree.getSelectedNode();
-        context = node.data.record.context;
-
-        if (node.parentNode) {
-            path = node.parentNode.internalId;
-        } else {
-            path = '';
-        }
 
         var win = Ext.widget('folderWindow');
         var form = win.down('form');
@@ -177,7 +170,7 @@ Ext.define('AM.controller.Directory', {
             var displayName = node.data.record.FolderName;
             win.title = 'Edit Folder';
             var state = 'edit';
-            //            form.getForm().findField('ResourceGroups').setValue(node.data.record.groups);
+            form.getForm().findField('ResourceGroups').setValue(node.data.record.groups);
 
         } else {
             var name = '';
@@ -197,22 +190,8 @@ Ext.define('AM.controller.Directory', {
             win.destroy();
         }, me);
 
-        //        if (utilsObj.isSecEnable == "False") {
-        //            form.getForm().findField('permissions').hide();
-        //        }
-
-        if (node.internalId == "0") {
-            form.getForm().findField('id').setValue(null);
-        }
-        else {
-            form.getForm().findField('id').setValue(node.internalId);
-        }
-        form.getForm().findField('path').setValue(path);
         form.getForm().findField('state').setValue(state);
-        form.getForm().findField('oldContext').setValue(context);
-        form.getForm().findField('name').setValue(name);
         form.getForm().findField('displayName').setValue(displayName);
-        form.getForm().findField('contextName').setValue(name);
 
         win.show();
     },

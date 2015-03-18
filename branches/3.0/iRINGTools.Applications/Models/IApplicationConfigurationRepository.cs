@@ -9,7 +9,7 @@ namespace iRINGTools.Web.Models
 {
     internal interface IApplicationConfigurationRepository
     {
-        Folders GetFolders(string userName, int siteId, Guid parentFolderId);
+        Folders GetFolders(string userName, int siteId, int platformId, Guid parentFolderId);
 
         library.Response AddFolder(string userName, Folder newFolder);
 

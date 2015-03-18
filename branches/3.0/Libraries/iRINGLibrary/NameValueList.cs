@@ -16,6 +16,6 @@ namespace org.iringtools.library
     public string Name { get; set; }
 
     [DataMember(Name = "value", Order = 1)]
-    public string Value { get; set; }
+    public object Value { get; set; }
   }
 }

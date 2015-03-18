@@ -59,8 +59,7 @@ Ext.define('AM.view.directory.FolderForm', {
             }],
             items: [{
                 xtype: 'hiddenfield',
-                name: 'id',
-                value: null
+                name: 'id'
             },
             {
                 xtype: 'hiddenfield',
@@ -124,7 +123,9 @@ Ext.define('AM.view.directory.FolderForm', {
             if (ResourceGroups != '') {
                 form.submit({
                     waitMsg: 'Saving Data...',
-
+                    params: {
+                        record: node.get('record')
+                    },
                     success: function(response, request) {
                         var objResponseText = Ext.JSON.decode(request.response.responseText);
 
