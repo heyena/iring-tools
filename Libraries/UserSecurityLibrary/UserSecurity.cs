@@ -33,7 +33,7 @@ namespace org.iringtools.UserSecurity
 
     }
 
-    [CollectionDataContract(Name = "Groups", Namespace = "http://www.iringtools.org/library", ItemName = "group")]
+    [CollectionDataContract(Name = "groups", Namespace = "http://www.iringtools.org/library", ItemName = "group")]
     public class Groups : List<Group>
     {
 
@@ -130,7 +130,7 @@ namespace org.iringtools.UserSecurity
 
     }
 
-    [DataContract(Name = "Permission", Namespace = "http://www.iringtools.org/library")]
+    [DataContract(Name = "permission", Namespace = "http://www.iringtools.org/library")]
     public class Permission
     {
         [DataMember(Name = "permissionId", Order = 0)]
