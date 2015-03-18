@@ -26,6 +26,7 @@ namespace org.iringtools.AgentLibrary
             {
                 schedules = new Schedules();
                 jobclientinfos = new JobClientInfos();
+                jobschedules = new JobSchedules();
             }
 
             [DataMember(Name = "job_Id", Order = 0)]
@@ -57,6 +58,9 @@ namespace org.iringtools.AgentLibrary
 
             [DataMember(Name = "schedules", Order = 9, EmitDefaultValue = false)]
             public Schedules schedules { get; set; }
+
+            [DataMember(Name = "jobschedules", Order = 10, EmitDefaultValue = false)]
+            public JobSchedules jobschedules { get; set; }
 
         }
 
