@@ -232,9 +232,6 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "xtypeSetNull", Order = 11, EmitDefaultValue = false)]
         public string XTypeSetNull { get; set; }
 
-        [DataMember(Name = "siteId", Order = 12, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
-
         [DataMember(Name = "active", Order = 13, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
@@ -292,9 +289,6 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "commodityName", Order = 2, EmitDefaultValue = false)]
         public string CommodityName { get; set; }
 
-        [DataMember(Name = "siteId", Order = 3, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
-
         [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
@@ -343,9 +337,6 @@ namespace org.iringtools.applicationConfig
 
         [DataMember(Name = "dataFilterTypeId", Order = 2, EmitDefaultValue = false)]
         public int DataFilterTypeId { get; set; }
-
-        [DataMember(Name = "siteId", Order = 3, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
 
         [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
         public Byte Active { get; set; }

@@ -240,7 +240,6 @@ namespace org.iringtools.applicationConfig
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID)});
                 nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(folderId)});
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgContextByUser", nvl);
@@ -260,7 +259,6 @@ namespace org.iringtools.applicationConfig
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                 nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(contextId) });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgApplicationByUser", nvl);
@@ -457,14 +455,13 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Graphs GetGraphsForUser(string userName, int siteId, Guid applicationId)
+        public Graphs GetGraphsForUser(string userName,  Guid applicationId)
         {
             Graphs graphs = new Graphs();
             try
             {
                 NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });              
                 nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationId) });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphByUser", nvl);
@@ -477,14 +474,13 @@ namespace org.iringtools.applicationConfig
             return graphs;
         }
 
-        public Graphs GetGraphMappingForUser(string userName, int siteId, Guid graphId)
+        public Graphs GetGraphMappingForUser(string userName, Guid graphId)
         {
             Graphs graphs = new Graphs();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
                 nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphMappingByUser", nvl);
@@ -1171,14 +1167,13 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Exchanges GetExchangesForUser(string userName, int siteId, Guid commodityId)
+        public Exchanges GetExchangesForUser(string userName, Guid commodityId)
         {
             Exchanges exchanges = new Exchanges();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
                 nvl.Add(new ListItem() { Name = "@CommodityId", Value = Convert.ToString(commodityId) });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgExchangesByUser", nvl);
@@ -1246,8 +1241,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@XTypeChange", Value = exchange.XTypeChange });
                         nvl.Add(new ListItem() { Name = "@XTypeSync", Value = exchange.XTypeSync });
                         nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
-                        nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
+                        nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });                    
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiExchange", nvl);
@@ -1339,7 +1333,6 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@XTypeSync", Value = exchange.XTypeSync });
                         nvl.Add(new ListItem() { Name = "@XTypeDelete", Value = exchange.XTypeDelete });
                         nvl.Add(new ListItem() { Name = "@XTypeSetNull", Value = exchange.XTypeSetNull });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(exchange.SiteId) });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
                         nvl.Add(new ListItem() { Name = "@CommodityId", Value = exchange.CommodityId.ToString() });
 
@@ -1408,14 +1401,13 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Commodities GetCommoditiesForUser(string userName, int siteId, Guid contextId)
+        public Commodities GetCommoditiesForUser(string userName,  Guid contextId)
         {
             Commodities commodities = new Commodities();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
                 nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(contextId) });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgCommoditiesByUser", nvl);
