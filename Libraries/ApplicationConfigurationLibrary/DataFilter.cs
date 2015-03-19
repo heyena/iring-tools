@@ -1423,26 +1423,36 @@ namespace org.iringtools.applicationConfig
         {
             Values = new Values();
         }
+        
+        //[[New Fields
 
-        [DataMember(Name = "openGroupCount", Order = 0, EmitDefaultValue = false)]
+        [DataMember(Name = "dataFilterId", Order = 0, EmitDefaultValue = false)]
+        public Guid DataFilterId { get; set; }
+
+        [DataMember(Name = "expressionId", Order = 1, EmitDefaultValue = false)]
+        public Guid ExpressionId { get; set; }
+
+        //]]
+
+        [DataMember(Name = "openGroupCount", Order = 2, EmitDefaultValue = false)]
         public int OpenGroupCount { get; set; }
 
-        [DataMember(Name = "propertyName", Order = 1, IsRequired = true)]
+        [DataMember(Name = "propertyName", Order = 3, IsRequired = true)]
         public string PropertyName { get; set; }
 
-        [DataMember(Name = "relationalOperator", Order = 2, IsRequired = true)]
+        [DataMember(Name = "relationalOperator", Order = 4, IsRequired = true)]
         public RelationalOperator RelationalOperator { get; set; }
 
-        [DataMember(Name = "values", Order = 3, IsRequired = true)]
+        [DataMember(Name = "values", Order = 5, IsRequired = true)]
         public Values Values { get; set; }
 
-        [DataMember(Name = "logicalOperator", Order = 4, EmitDefaultValue = false)]
+        [DataMember(Name = "logicalOperator", Order = 6, EmitDefaultValue = false)]
         public LogicalOperator LogicalOperator { get; set; }
 
-        [DataMember(Name = "closeGroupCount", Order = 5, EmitDefaultValue = false)]
+        [DataMember(Name = "closeGroupCount", Order = 7, EmitDefaultValue = false)]
         public int CloseGroupCount { get; set; }
 
-        [DataMember(Name = "isCaseSensitive", Order = 6, EmitDefaultValue = false)]
+        [DataMember(Name = "isCaseSensitive", Order = 8, EmitDefaultValue = false)]
         public bool IsCaseSensitive { get; set; }
     }
 
@@ -1452,10 +1462,20 @@ namespace org.iringtools.applicationConfig
     [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "orderExpression")]
     public class OrderExpression
     {
-        [DataMember(Name = "propertyName", Order = 0, IsRequired = true)]
+        //[[New Fields
+
+        [DataMember(Name = "dataFilterId", Order = 0, EmitDefaultValue = false)]
+        public Guid DataFilterId { get; set; }
+
+        [DataMember(Name = "orderExpressionId", Order = 1, EmitDefaultValue = false)]
+        public Guid OrderExpressionId { get; set; }
+
+        //]]
+
+        [DataMember(Name = "propertyName", Order = 2, IsRequired = true)]
         public string PropertyName { get; set; }
 
-        [DataMember(Name = "sortOrder", Order = 1, EmitDefaultValue = true)]
+        [DataMember(Name = "sortOrder", Order = 3, EmitDefaultValue = true)]
         public SortOrder SortOrder { get; set; }
     }
 
@@ -1467,20 +1487,40 @@ namespace org.iringtools.applicationConfig
             Rollups = new List<Rollup>();
         }
 
-        [DataMember(Name = "groupBy", Order = 0, EmitDefaultValue = false)]
+        //[[New Fields
+
+        [DataMember(Name = "dataFilterId", Order = 0, EmitDefaultValue = false)]
+        public Guid DataFilterId { get; set; }
+
+        [DataMember(Name = "rollupExpressionId", Order = 1, EmitDefaultValue = false)]
+        public Guid RollupExpressionId { get; set; }
+
+        //]]
+
+        [DataMember(Name = "groupBy", Order = 2, EmitDefaultValue = false)]
         public String GroupBy { get; set; }
 
-        [DataMember(Name = "rollups", Order = 1, EmitDefaultValue = false)]
+        [DataMember(Name = "rollups", Order = 3, EmitDefaultValue = false)]
         public List<Rollup> Rollups { get; set; }
     }
 
     [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollup")]
     public class Rollup
     {
-        [DataMember(Name = "propertyName", Order = 0, EmitDefaultValue = false)]
+        //[[New Fields
+
+        [DataMember(Name = "rollupExpressionId", Order = 0, EmitDefaultValue = false)]
+        public Guid RollupExpressionId { get; set; }
+
+        [DataMember(Name = "rollupId", Order = 1, EmitDefaultValue = false)]
+        public Guid RollupId { get; set; }
+
+        //]]
+
+        [DataMember(Name = "propertyName", Order = 2, EmitDefaultValue = false)]
         public string PropertyName { get; set; }
 
-        [DataMember(Name = "type", Order = 1, EmitDefaultValue = false)]
+        [DataMember(Name = "type", Order = 3, EmitDefaultValue = false)]
         public RollupType Type { get; set; }
     }
 
