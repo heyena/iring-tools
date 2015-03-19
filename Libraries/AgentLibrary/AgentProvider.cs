@@ -176,7 +176,7 @@ namespace org.iringtools.AgentLibrary
 
                         NameValueList nvl = new NameValueList();
                         nvl.Add(new ListItem() { Name = "@Job_Id", Value = jobId });
-                        nvl.Add(new ListItem() { Name = "@Is_Exchange", Value = job.Is_Exchange });
+                        nvl.Add(new ListItem() { Name = "@Is_Exchange", Value = Convert.ToString(job.Is_Exchange) });
                         nvl.Add(new ListItem() { Name = "@Scope", Value = job.Scope });
                         nvl.Add(new ListItem() { Name = "@App", Value = job.App });
                         nvl.Add(new ListItem() { Name = "@DataObject", Value = job.DataObject });
