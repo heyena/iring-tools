@@ -897,19 +897,14 @@ namespace org.iringtools.web.controllers
                     parentId = record.FolderId;
                 }
 
-                string folderName = form["displayName"];
-
                 Folder tempFolder = new Folder()
-                {
-                    ParentFolderId = parentId,
-                    FolderName = folderName,
-                    SiteId = record.SiteId,
-                    PlatformId = platformId
+                {                    PlatformId = platformId
                 };
 
                 if (form["state"] == "new")
                 {
-                    tempFolder.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
+                    tempFolder.ParentFolderId = parentId;                    tempFolder.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
+
                     response = _appConfigRepository.AddFolder(userName, tempFolder);
                 }
                 else if (form["state"] == "edit")
@@ -960,22 +955,19 @@ namespace org.iringtools.web.controllers
             try
             {
                 Response response = null;
-                string contextName = form["displayName"];
+                var record = Utility.DeserializeJson<Folder>(form["record"].ToString(), true);
 
-                applicationConfig.Context tempContext = new applicationConfig.Context()
-                {
-                    DisplayName = contextName,
-                    InternalName = form["internalName"],
-                    Description = form["description"],
-                    CacheConnStr = form["cacheDBConnStr"],
-                    Permissions = new Permissions(),
-                    Groups = new Groups()
-                };                
+                applicationConfig.Context tempContext = new applicationConfig.Context();              
 
                 if (form["state"] == "new")
                 {
+                    tempContext.DisplayName = form["displayName"];
+                    tempContext.InternalName = form["internalName"];
+                    tempContext.Description = form["description"];
+                    tempContext.CacheConnStr = form["cacheDBConnStr"];
                     tempContext.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
-                    tempContext.FolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
+                    tempContext.FolderId = record.FolderId;
+
                     response = _appConfigRepository.AddContext(userName, tempContext);
 
                 }
