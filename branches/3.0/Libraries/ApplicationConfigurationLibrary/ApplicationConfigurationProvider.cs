@@ -92,7 +92,6 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(context.FolderId) });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
@@ -540,7 +539,6 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@InternalName", Value = application.InternalName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
                         nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
@@ -770,7 +768,6 @@ namespace org.iringtools.applicationConfig
 
             return response;
         }
-
 
         public Response UpdateGraph(string userName, XDocument xml)
         {
