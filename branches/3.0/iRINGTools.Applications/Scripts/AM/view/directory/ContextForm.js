@@ -46,14 +46,14 @@ Ext.define('AM.view.directory.ContextForm', {
                         },
                         {
                             xtype: 'button',
-                            handler: function(button, event) {
+                            handler: function (button, event) {
                                 me.onSave();
                             },
                             text: 'Ok'
                         },
                         {
                             xtype: 'button',
-                            handler: function(button, event) {
+                            handler: function (button, event) {
                                 me.onReset();
                             },
                             text: 'Cancel'
@@ -144,69 +144,68 @@ Ext.define('AM.view.directory.ContextForm', {
             form.findField('cacheDBConnStr').setValue('');
 
         if (form.isValid()) {
-		 if(ResourceGroups != '')
-		{ 
-            form.submit({
-                waitMsg: 'Saving Data...',
-                success: function (response, request) {
+            if (ResourceGroups != '') {
+                form.submit({
+                    waitMsg: 'Saving Data...',
+                    params: {
+                        record: node.get('record')
+                    },
+                    success: function (response, request) {
 
-                    var objResponseText = Ext.JSON.decode(request.response.responseText);
-                    if (objResponseText["message"] == "duplicatecontext") {
-                        showDialog(400, 50, 'Alert', "Context with this internal name already exists", Ext.Msg.OK, null);
-                        return;
+                        var objResponseText = Ext.JSON.decode(request.response.responseText);
+                        if (objResponseText["message"] == "duplicatecontext") {
+                            showDialog(400, 50, 'Alert', "Context with this internal name already exists", Ext.Msg.OK, null);
+                            return;
+                        }
+
+                        win.fireEvent('save', me);
+
+                        var currentNode;
+
+                        if (state == 'new') {
+                            currentNode = node;
+                        }
+                        else {
+                            currentNode = node.parentNode;
+                        }
+
+                        while (currentNode.firstChild) {
+                            currentNode.removeChild(currentNode.firstChild);
+                        }
+
+                        var index = 0;
+
+                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
+                            currentNode.insertChild(index, newNode);
+                            index++;
+                        });
+
+                        me.setLoading(false);
+
+                        me.setLoading(false);
+
+                        if (objResponseText["message"] == "contextadded") {
+                            showDialog(400, 50, 'Alert', "Context added successfully!", Ext.Msg.OK, null);
+                        }
+                        if (objResponseText["message"] == "contextupdated") {
+                            showDialog(400, 50, 'Alert', "Context updated successfully!", Ext.Msg.OK, null);
+                        }
+                    },
+                    failure: function (response, request) {
+                        var objResponseText = Ext.decode(request.response.responseText);
+                        var userMsg = objResponseText['message'];
+                        var detailMsg = objResponseText['stackTraceDescription'];
+                        var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                        Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                        Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+
                     }
-
-                    win.fireEvent('save', me);
-
-                    var currentNode;
-
-                    if (state == 'new') {
-                        currentNode = node;
-                    }
-                    else {
-                        currentNode = node.parentNode;
-                    }
-
-                    while (currentNode.firstChild) {
-                        currentNode.removeChild(currentNode.firstChild);
-                    }
-
-                    var index = 0;
-
-                    Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
-                        currentNode.insertChild(index, newNode);
-                        index++;
-                    });
-
-                    me.setLoading(false);
-
-                    me.setLoading(false);
-
-                    if (objResponseText["message"] == "contextadded") {
-                        showDialog(400, 50, 'Alert', "Context added successfully!", Ext.Msg.OK, null);
-                    }
-                    if (objResponseText["message"] == "contextupdated") {
-                        showDialog(400, 50, 'Alert', "Context updated successfully!", Ext.Msg.OK, null);
-                    }
-                },
-                failure: function (response, request) {
-                    var objResponseText = Ext.decode(request.response.responseText);
-                    var userMsg = objResponseText['message'];
-                    var detailMsg = objResponseText['stackTraceDescription'];
-                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
-                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-
-                }
-            });
-        		}
-		else
-		{
-		      // var expPanel = alert('exceptionpanel', { title: 'Error Notification' });
-		      // Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue('Select atleast one Group before saving :');
-		      showDialog(400, 50, 'Alert', "Select atleast one Group before saving", Ext.Msg.OK, null);
-		}
-		}
+                });
+            }
+            else {
+                showDialog(400, 50, 'Alert', "Select atleast one Group before saving", Ext.Msg.OK, null);
+            }
+        }
         else {
             Ext.widget('messagepanel', { title: 'Warning', msg: 'Please complete all required fields.' });
             return;

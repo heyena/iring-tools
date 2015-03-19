@@ -166,8 +166,6 @@ Ext.define('AM.controller.Directory', {
         form.node = node;
 
         if (item.itemId == 'editFolder' && node.data.record !== undefined) {
-            var name = node.data.record.Name;
-            var displayName = node.data.record.FolderName;
             win.title = 'Edit Folder';
             var state = 'edit';
             form.getForm().findField('ResourceGroups').setValue(node.data.record.groups);
@@ -176,6 +174,7 @@ Ext.define('AM.controller.Directory', {
             var name = '';
             var state = 'new';
             win.title = 'Add Folder';
+            form.getForm().findField('displayName').setValue(displayName);
         }
 
         win.on('save', function () {
@@ -191,7 +190,6 @@ Ext.define('AM.controller.Directory', {
         }, me);
 
         form.getForm().findField('state').setValue(state);
-        form.getForm().findField('displayName').setValue(displayName);
 
         win.show();
     },
@@ -225,17 +223,7 @@ Ext.define('AM.controller.Directory', {
                 me.getDirTree().onReload();
 
                 var currentNode;
-                //                    currentNode = node.parentNode;
-                //                          while (currentNode.firstChild) {
-                //                    currentNode.removeChild(currentNode.firstChild);
-                //                }
 
-                //                var index = 0;
-
-                //                Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
-                //                    currentNode.insertChild(index, newNode);
-                //                    index++;
-                //                });
                 showDialog(400, 50, 'Alert', "Folder deleted successfully!", Ext.Msg.OK, null);
             },
             failure: function (response, request) {
@@ -276,11 +264,6 @@ Ext.define('AM.controller.Directory', {
         form.node = node;
 
         if (item.itemId == 'editContext' && node.data.record !== undefined) {
-            // var name = node.data.record.Name;
-            displayName = node.data.record.DisplayName;
-            internalName = node.data.record.InternalName;
-            description = node.data.record.Description;
-
             win.title = 'Edit Context';
             var state = 'edit';
 
@@ -288,13 +271,16 @@ Ext.define('AM.controller.Directory', {
             var name = '';
             var state = 'new';
             win.title = 'Add Context';
+            form.getForm().findField('description').setValue(description);
+            form.getForm().findField('displayName').setValue(displayName);
+            form.getForm().findField('internalName').setValue(internalName);
         }
 
         win.on('save', function () {
             win.destroy();
             tree.view.refresh();
             tree.expandPath(tree.getRootNode().getPath());
-            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+            var detailGrid = tree.up('panel').down('propertypanel');
             detailGrid.setSource({});
         }, me);
 
@@ -302,16 +288,7 @@ Ext.define('AM.controller.Directory', {
             win.destroy();
         }, me);
 
-        form.getForm().findField('id').setValue(node.internalId);
-        form.getForm().findField('path').setValue(path);
         form.getForm().findField('state').setValue(state);
-        form.getForm().findField('oldContext').setValue(context);
-        form.getForm().findField('description').setValue(description);
-        form.getForm().findField('name').setValue(name);
-        form.getForm().findField('displayName').setValue(displayName);
-        form.getForm().findField('internalName').setValue(internalName);
-        form.getForm().findField('contextName').setValue(name);
-        //        form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
 
         win.show();
     },
