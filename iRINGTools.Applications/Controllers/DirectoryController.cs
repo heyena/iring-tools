@@ -90,7 +90,7 @@ namespace org.iringtools.web.controllers
                         }
                     case "SiteNode":
                         {
-                            var record = Utility.DeserializeJson<Site>(form["record"].ToString(), false);
+                            var record = Utility.DeserializeJson<Site>(form["record"].ToString(), true);
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
                             Folders folders = _appConfigRepository.GetFolders(userName, record.SiteId, platformId, Guid.Empty);
@@ -104,14 +104,12 @@ namespace org.iringtools.web.controllers
                                     iconCls = "folder",
                                     id = folder.FolderId.ToString(),
                                     text = folder.FolderName,
-                                    expanded = true,
+                                    expanded = false,
                                     leaf = false,
                                     children = null,
                                     record = Utility.SerializeJson<Folder>(folder, true)
                                 };
 
-                                node.property = new Dictionary<string, string>();
-                                node.property.Add("Display Name", folder.FolderName);
                                 nodes.Add(node);
                             }
 
@@ -121,7 +119,7 @@ namespace org.iringtools.web.controllers
                         {
                             var record = Utility.DeserializeJson<Folder>(form["record"].ToString(), true);
 
-                            List<JsonTreeNode> nodes = PopulateFolderNode(record.SiteId, Guid.Parse(form["node"]));
+                            List<JsonTreeNode> nodes = PopulateFolderNode(record.SiteId, record.FolderId);
 
                             return Json(nodes, JsonRequestBehavior.AllowGet);
                         }
@@ -176,7 +174,6 @@ namespace org.iringtools.web.controllers
                             {
                                 nodeType = "async",
                                 type = "GroupNode",
-                                //iconCls = "scopes",
                                 id = "groupnode",
                                 text = "Group1",
                                 expanded = false,
@@ -890,40 +887,34 @@ namespace org.iringtools.web.controllers
 
                 dynamic record;
                 Guid parentId;
-                int siteId;
 
-                try
+                record = Utility.DeserializeJson<Site>(form["record"].ToString(), true);
+                parentId = Guid.Empty;
+
+                if (record.SiteName == null)
                 {
-                    record = Utility.DeserializeJson<Site>(form["record"].ToString(), false);
-                    parentId = Guid.Empty;
-                    siteId = record.SiteId;
-                }
-                catch
-                {
-                    record = Utility.DeserializeJson<Folder>(form["record"].ToString(), false);
-                    parentId = record.ParentFolderId;
-                    siteId = record.SiteId;
+                    record = Utility.DeserializeJson<Folder>(form["record"].ToString(), true);
+                    parentId = record.FolderId;
                 }
 
                 string folderName = form["displayName"];
 
                 Folder tempFolder = new Folder()
                 {
+                    ParentFolderId = parentId,
                     FolderName = folderName,
-                    SiteId = siteId,
+                    SiteId = record.SiteId,
                     PlatformId = platformId
                 };
 
-                if (form["state"] == "new")//if (String.IsNullOrEmpty(form["scope"]))
+                if (form["state"] == "new")
                 {
-                    tempFolder.ParentFolderId = parentId;
                     tempFolder.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
                     response = _appConfigRepository.AddFolder(userName, tempFolder);
                 }
                 else if (form["state"] == "edit")
                 {
-                    tempFolder.FolderId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
-                    tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["path"]) ? Guid.Parse(form["path"]) : Guid.Empty;
+                    tempFolder.FolderId = record.FolderId;
                     tempFolder.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
                     response = _appConfigRepository.UpdateFolder(userName, tempFolder);
                 }
@@ -936,7 +927,7 @@ namespace org.iringtools.web.controllers
 
                 if (response.Level == StatusLevel.Success)
                 {
-                    List<JsonTreeNode> nodes = PopulateFolderNode(tempFolder.SiteId, tempFolder.ParentFolderId);
+                    List<JsonTreeNode> nodes = PopulateFolderNode(tempFolder.SiteId, parentId);
                     return Json(new { success = true, message = response.StatusText, nodes }, JsonRequestBehavior.AllowGet);
                 }
                 else
