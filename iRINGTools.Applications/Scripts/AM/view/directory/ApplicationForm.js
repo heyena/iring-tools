@@ -14,126 +14,126 @@
  */
 
 Ext.define('AM.view.directory.ApplicationForm', {
-  extend: 'Ext.form.Panel',
-  alias: 'widget.applicationform',
+    extend: 'Ext.form.Panel',
+    alias: 'widget.applicationform',
 
-  requires: [
+    requires: [
     'AM.view.directory.DataLayerCombo',
     'Ext.ux.form.CheckboxListCombo'
   ],
 
-  record: '',
-  node:'',
-  border: true,
-  bodyStyle: 'padding:10px 5px 0',
-  method: 'POST',
-  url: 'directory/application',
+    record: '',
+    node: '',
+    border: true,
+    bodyStyle: 'padding:10px 5px 0',
+    method: 'POST',
+    url: 'directory/application',
 
-  initComponent: function() {
-    var me = this;
+    initComponent: function () {
+        var me = this;
 
-    me.initialConfig = Ext.apply({
-      method: 'POST',
-      url: 'directory/application'
-    }, me.initialConfig);
+        me.initialConfig = Ext.apply({
+            method: 'POST',
+            url: 'directory/application'
+        }, me.initialConfig);
 
-    Ext.applyIf(me, {
-      defaults: {
-        msgTarget: 'side',
-        anchor: '100%'
-      },
-      dockedItems: [
+        Ext.applyIf(me, {
+            defaults: {
+                msgTarget: 'side',
+                anchor: '100%'
+            },
+            dockedItems: [
         {
-          xtype: 'toolbar',
-          dock: 'bottom',
-          items: [
+            xtype: 'toolbar',
+            dock: 'bottom',
+            items: [
             {
-              xtype: 'tbfill'
+                xtype: 'tbfill'
             },
             {
-              xtype: 'button',
-              handler: function(button, event) {
-                me.onSave();
-              },
-              text: 'Ok'
+                xtype: 'button',
+                handler: function (button, event) {
+                    me.onSave();
+                },
+                text: 'Ok'
             },
             {
-              xtype: 'button',
-              handler: function(button, event) {
-                me.onReset();
-              },
-              text: 'Cancel'
+                xtype: 'button',
+                handler: function (button, event) {
+                    me.onReset();
+                },
+                text: 'Cancel'
             }
           ]
         }
       ],
-      items: [
+            items: [
         {
-          xtype: 'hiddenfield',
-          name: 'oldAssembly'
+            xtype: 'hiddenfield',
+            name: 'oldAssembly'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'assembly'
+            xtype: 'hiddenfield',
+            name: 'assembly'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'scope'
+            xtype: 'hiddenfield',
+            name: 'scope'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'application'
+            xtype: 'hiddenfield',
+            name: 'application'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'name'
+            xtype: 'hiddenfield',
+            name: 'name'
         },
         {
-          xtype: 'hiddenfield',
-          itemId: 'state',
-          name: 'state'
+            xtype: 'hiddenfield',
+            itemId: 'state',
+            name: 'state'
         },
         {
-          xtype: 'hiddenfield',
-          name: 'path'
+            xtype: 'hiddenfield',
+            name: 'path'
         },
         {
-          xtype: 'textfield',
-          fieldLabel: 'Display Name',
-          name: 'displayName',
-          allowBlank: false
+            xtype: 'textfield',
+            fieldLabel: 'Display Name',
+            name: 'displayName',
+            allowBlank: false
         },
         {
-          xtype: 'textfield',
-          fieldLabel: 'Internal Name',
-          name: 'internalName',
-          allowBlank: false
+            xtype: 'textfield',
+            fieldLabel: 'Internal Name',
+            name: 'internalName',
+            allowBlank: false
         },
         {
-          xtype: 'textareafield',
-          fieldLabel: 'Description',
-          name: 'description'
+            xtype: 'textareafield',
+            fieldLabel: 'Description',
+            name: 'description'
         },
         {
-          xtype: 'textfield',
-          disabled: true,
-          hidden: true,
-          fieldLabel: 'Context Name',
-          name: 'context'
+            xtype: 'textfield',
+            disabled: true,
+            hidden: true,
+            fieldLabel: 'Context Name',
+            name: 'context'
         },
         {
-          xtype: 'datalayercombo',
-		  value: ''
+            xtype: 'datalayercombo',
+            value: ''
         },
         {
-          xtype: 'textfield',
-          fieldLabel: 'Cache ImportURI',
-          name: 'cacheImportURI'
+            xtype: 'textfield',
+            fieldLabel: 'Cache ImportURI',
+            name: 'cacheImportURI'
         },
         {
-          xtype: 'textfield',
-          fieldLabel: 'Cache Timeout (in minutes)',
-          name: 'cacheTimeout'
+            xtype: 'textfield',
+            fieldLabel: 'Cache Timeout (in minutes)',
+            name: 'cacheTimeout'
         },
         {
             xtype: 'checkboxlistcombo',
@@ -149,138 +149,112 @@ Ext.define('AM.view.directory.ApplicationForm', {
             valueField: 'groupId'
         },
         {
-          xtype: 'container',
-          layout: {
-            align: 'stretch',
-            type: 'hbox'
-          },
-          items: [
+            xtype: 'container',
+            layout: {
+                align: 'stretch',
+                type: 'hbox'
+            },
+            items: [
             {
-              xtype: 'label',
-              flex: 1,
-              style: {
-                font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
-              },
-              text: 'Settings:'
+                xtype: 'label',
+                flex: 1,
+                style: {
+                    font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
+                },
+                text: 'Settings:'
             },
             {
-              xtype: 'label',
-              flex: 1,
-              style: {
-                font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
-              },
-              text: 'Name'
+                xtype: 'label',
+                flex: 1,
+                style: {
+                    font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
+                },
+                text: 'Name'
             },
             {
-              xtype: 'label',
-              flex: 1.5,
-              style: {
-                font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
-              },
-              text: 'Value'
+                xtype: 'label',
+                flex: 1.5,
+                style: {
+                    font: 'normal 12px tahoma, arial, helvetica, sans-serif;'
+                },
+                text: 'Value'
             },
             {
-              xtype: 'button',
-              action: 'addsettings',
-              width: 50,
-              text: 'Add',
-              tooltip: 'Click to Add settings'
+                xtype: 'button',
+                action: 'addsettings',
+                width: 50,
+                text: 'Add',
+                tooltip: 'Click to Add settings'
             }
           ]
         },
         {
-          xtype: 'fieldset',
-          border: false,
-          height: 200,
-          id: 'settingfieldset',
-          autoScroll: true
+            xtype: 'fieldset',
+            border: false,
+            height: 200,
+            id: 'settingfieldset',
+            autoScroll: true
         }
       ]
-    });
+        });
 
-    me.callParent(arguments);
-  },
-
-  onSave: function() {
-    var me = this;
-    var win = me.up('window');
-    var endpointName = me.getForm().findField('displayName').getValue();
-    var scope = me.getForm().findField('scope').getValue();
-	var node = me.node;
-    var dlCombo = me.down('combo');
-    var state = me.getForm().findField('state').getValue();
-
-    if(state!='edit')
-    me.getForm().findField('name').setValue(endpointName);
-    /////////////////////////////////////
-    if (scope != endpointName) {
-      /*if (ifExistSibling(endpointName, that.node, that.state)) {
-      showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
-      return;
-      }*/
-
-      me.getForm().submit({
-        waitMsg: 'Saving Data...',
-        success: function (response, request) {
-		  Ext.example.msg('Notification', 'Application saved successfully!');
-          win.fireEvent('save', me);
-					var parentNode = node.parentNode;
-					if(node.data.type == 'ScopeNode'){
-						var nodeIndex = node.childNodes.length;
-						node.insertChild(nodeIndex,Ext.JSON.decode(request.response.responseText).nodes[0]); 
-					}else if(node.data.type == 'ApplicationNode'){
-						var nodeIndex = parentNode.indexOf(node); 
-						parentNode.removeChild(node); 
-						parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]); 
-					}
-					me.setLoading(false); 	
-		  //Ext.ComponentQuery.query('directorytree')[0].onReload();
-        },
-        failure: function (response, request) {
-			var resp = Ext.decode(request.response.responseText);
-			
-			var userMsg = resp['message'];
-			var detailMsg = resp['stackTraceDescription'];
-			var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-			Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-			Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
-        }
-      });
-    }
-    else {
-      //var message = 'Scope & Application name cannot be same!';
-		Ext.widget('messagepanel', { title: 'Warning', msg: 'Scope & Application name cannot be same!'});
-	  //showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-    }
-
-    ////////////////////////////////////
-    /*(me.getForm().isValid()){
-    me.getForm().submit({
-    waitMsg: 'Saving Data...',
-    success: function (response, request) {
-
-    win.fireEvent('save', me);
-    Ext.ComponentQuery.query('directorytree')[0].onReload();
+        me.callParent(arguments);
     },
-    failure: function (response, request) {
-    var message = 'Error saving changes!';
-    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-    return;
-    }
-    });
-    }else
-    {
-    var message = 'Please fill the required data';
-    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-    return;
-    }
-    */
-  },
 
-  onReset: function() {
-    var me = this;
-    var win = me.up('window');
-    win.fireEvent('Cancel', me);
-  }
+    onSave: function () {
+        var me = this;
+        var win = me.up('window');
+        var endpointName = me.getForm().findField('displayName').getValue();
+        var scope = me.getForm().findField('scope').getValue();
+        var node = me.node;
+        var dlCombo = me.down('combo');
+        var state = me.getForm().findField('state').getValue();
+
+        if (state != 'edit')
+            me.getForm().findField('name').setValue(endpointName);
+
+        if (scope != endpointName) {
+
+            me.getForm().submit({
+                waitMsg: 'Saving Data...',
+                params: {
+                    record: node.get('record')
+                },
+                success: function (response, request) {
+                    Ext.example.msg('Notification', 'Application saved successfully!');
+                    win.fireEvent('save', me);
+                    var parentNode = node.parentNode;
+                    if (node.data.type == 'ScopeNode') {
+                        var nodeIndex = node.childNodes.length;
+                        node.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]);
+                    } else if (node.data.type == 'ApplicationNode') {
+                        var nodeIndex = parentNode.indexOf(node);
+                        parentNode.removeChild(node);
+                        parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]);
+                    }
+
+                    me.setLoading(false);
+                },
+                failure: function (response, request) {
+                    var resp = Ext.decode(request.response.responseText);
+
+                    var userMsg = resp['message'];
+                    var detailMsg = resp['stackTraceDescription'];
+                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+                }
+            });
+        }
+        else {            
+            Ext.widget('messagepanel', { title: 'Warning', msg: 'Scope & Application name cannot be same!' });            
+        }
+    },
+
+    onReset: function () {
+        var me = this;
+        var win = me.up('window');
+        win.fireEvent('Cancel', me);
+    }
 
 });

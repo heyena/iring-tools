@@ -155,9 +155,8 @@ Ext.define('AM.controller.Directory', {
 
     //Site
     onNewOrEditFolder: function (item, e, eOpts) {
-
         var me = this;
-        var state, wintitle, displayName;
+        var state;
         var tree = me.getDirTree();
         var node = tree.getSelectedNode();
 
@@ -168,20 +167,21 @@ Ext.define('AM.controller.Directory', {
         if (item.itemId == 'editFolder' && node.data.record !== undefined) {
             win.title = 'Edit Folder';
             var state = 'edit';
-            form.getForm().findField('ResourceGroups').setValue(node.data.record.groups);
 
-        } else {
-            var name = '';
+            var record = Ext.decode(node.data.record);
+            form.getForm().findField('displayName').setValue(record.folderName);
+            //form.getForm().findField('ResourceGroups').setValue(record.groups);
+        }
+        else {
             var state = 'new';
             win.title = 'Add Folder';
-            form.getForm().findField('displayName').setValue(displayName);
         }
 
         win.on('save', function () {
             win.destroy();
             tree.view.refresh();
             tree.expandPath(tree.getRootNode().getPath());
-            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+            var detailGrid = tree.up('panel').down('propertypanel');
             detailGrid.setSource({});
         }, me);
 
@@ -190,7 +190,6 @@ Ext.define('AM.controller.Directory', {
         }, me);
 
         form.getForm().findField('state').setValue(state);
-
         win.show();
     },
 
@@ -206,13 +205,8 @@ Ext.define('AM.controller.Directory', {
             form: me.form,
             method: 'POST',
             params: {
-                nodedetails: node.data,
-                jsonData: node.data,
-                contentType: 'application/json',
-                'nodeid': node.internalId,
-                'parentnodeid': node.parentNode.internalId,
-                'nodename': node.data.record.FolderName,
-                'state': 'delete'
+                record: node.data.record,
+                state: 'delete'
             },
             success: function (response, request) {
                 var objResponseText = Ext.decode(response.responseText);
@@ -240,26 +234,12 @@ Ext.define('AM.controller.Directory', {
 
     // onNewOrEditContext
     onNewOrEditContext: function (item, e, eOpts) {
-
         var me = this;
-        var path, state, context, description, wintitle, displayName, internalName;
+        var state;
         var tree = me.getDirTree();
         var node = tree.getSelectedNode();
-        var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
-        context = node.data.record.context;
 
-        if (node.parentNode) {
-            path = node.parentNode.internalId;
-        } else {
-            path = '';
-        }
-
-        var conf = {
-            id: 'tab-' + node.data.id,
-            title: wintitle,
-            iconCls: 'tabsScope'
-        };
-        var win = Ext.widget('contextwindow', conf);
+        var win = Ext.widget('contextwindow');
         var form = win.down('form');
         form.node = node;
 
@@ -267,13 +247,14 @@ Ext.define('AM.controller.Directory', {
             win.title = 'Edit Context';
             var state = 'edit';
 
+            var record = Ext.decode(node.data.record);
+            form.getForm().findField('displayName').setValue(record.displayName);
+            form.getForm().findField('internalName').setValue(record.internalName);
+            form.getForm().findField('description').setValue(record.description);
+            form.getForm().findField('cacheDBConnStr').setValue(record.cacheConnStr);
         } else {
-            var name = '';
             var state = 'new';
             win.title = 'Add Context';
-            form.getForm().findField('description').setValue(description);
-            form.getForm().findField('displayName').setValue(displayName);
-            form.getForm().findField('internalName').setValue(internalName);
         }
 
         win.on('save', function () {
@@ -289,7 +270,6 @@ Ext.define('AM.controller.Directory', {
         }, me);
 
         form.getForm().findField('state').setValue(state);
-
         win.show();
     },
     // end onNewOrEditContext
@@ -306,13 +286,8 @@ Ext.define('AM.controller.Directory', {
             form: me.form,
             method: 'POST',
             params: {
-                nodedetails: node.data,
-                jsonData: node.data,
-                contentType: 'application/json',
-                'nodeid': node.internalId,
-                'parentnodeid': node.parentNode.internalId,
-                'nodename': node.data.record.FolderName,
-                'state': 'delete'
+                record: node.data.record,
+                state: 'delete'
             },
             success: function (response, request) {
                 var objResponseText = Ext.decode(response.responseText);
@@ -321,28 +296,7 @@ Ext.define('AM.controller.Directory', {
                 tree.getSelectionModel().select(parentNode);
                 tree.view.refresh();
                 me.getDirTree().onReload();
-
-                //                    var currentNode;            
-                //                    currentNode = node.parentNode;
-                //                          while (currentNode.firstChild) {
-                //                    currentNode.removeChild(currentNode.firstChild);
-                //                }
-
-                //                var index = 0;
-
-                //                Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
-                //                    currentNode.insertChild(index, newNode);
-                //                    index++;
-                //                });
                 showDialog(400, 50, 'Alert', "Context deleted successfully!", Ext.Msg.OK, null);
-
-                //                } else {
-                //                    var userMsg = resp['message'];
-                //                    var detailMsg = resp['stackTraceDescription'];
-                //                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
-                //                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-                //                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-                //                }
             },
             failure: function (response, request) {
                 var objResponseText = Ext.decode(response.responseText);
@@ -379,7 +333,7 @@ Ext.define('AM.controller.Directory', {
                 objResponseText = Ext.decode(response.responseText);
                 var parentNode = node.parentNode;
                 // parentNode.removeChild(node);
-               // tree.getSelectionModel().select(parentNode);
+                // tree.getSelectionModel().select(parentNode);
                 //tree.view.refresh();
                 // me.getDirTree().onReload();
 
@@ -398,24 +352,24 @@ Ext.define('AM.controller.Directory', {
         context = node.data.record.context;
         //apps = node.childNodes;
 
-                var tempStore = Ext.create('Ext.data.Store', {
-                    fields: ['display'],
-                    storeId: 'apptempStore',
-                    //autoLoad:true,
-                    listeners: {
-                        'load': function () {
-                            var arr = objResponseText;
-                            Ext.each(arr, function (temp, index) {
-                                tempStore.insert(index, { display: temp.record.DisplayName});
+        var tempStore = Ext.create('Ext.data.Store', {
+            fields: ['display'],
+            storeId: 'apptempStore',
+            //autoLoad:true,
+            listeners: {
+                'load': function () {
+                    var arr = objResponseText;
+                    Ext.each(arr, function (temp, index) {
+                        tempStore.insert(index, { display: temp.record.DisplayName });
 
 
-                            })
-                        }
+                    })
+                }
 
-                    }
+            }
 
 
-                });
+        });
 
         if (item.itemId == 'cacheupscreen' && node.data.record !== undefined) {
 
@@ -433,7 +387,7 @@ Ext.define('AM.controller.Directory', {
         }, me);
 
         //var displayName1 = tempStore2.getAt(0);
-       // var disp = displayName1.get('display');
+        // var disp = displayName1.get('display');
         form.getForm().findField('displayName').setValue(displayNameCont);
         //form.getForm().findField('applications').setValue(disp);
 

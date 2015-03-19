@@ -92,7 +92,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
-                        nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(context.FolderId) });
+                        nvl.Add(new ListItem() { Name = "@FolderId", Value = context.FolderId });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiContext", nvl);
@@ -151,8 +151,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
-                        nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(context.ContextId) });
+                        nvl.Add(new ListItem() { Name = "@ContextId", Value = context.ContextId });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuContext", nvl);
@@ -239,7 +238,7 @@ namespace org.iringtools.applicationConfig
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@FolderId", Value = Convert.ToString(folderId)});
+                nvl.Add(new ListItem() { Name = "@FolderId", Value = folderId});
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgContextByUser", nvl);
                 contexts = utility.Utility.Deserialize<org.iringtools.applicationConfig.Contexts>(xmlString, true);    
@@ -258,7 +257,7 @@ namespace org.iringtools.applicationConfig
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(contextId) });
+                nvl.Add(new ListItem() { Name = "@ContextId", Value = contextId });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgApplicationByUser", nvl);
                 applications = utility.Utility.Deserialize<Applications>(xmlString, true);    
@@ -366,7 +365,6 @@ namespace org.iringtools.applicationConfig
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@FolderId", Value = folder.FolderId.ToString() });
                         nvl.Add(new ListItem() { Name = "@ParentFolderId", Value = folder.ParentFolderId.ToString() });
