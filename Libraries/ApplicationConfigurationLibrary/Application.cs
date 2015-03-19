@@ -314,7 +314,7 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "value", Order = 1, EmitDefaultValue = false)]
         public string Value { get; set; }
     }
-
+    /*
     [CollectionDataContract(Name = "dataFilters", Namespace = "http://www.iringtools.org/data/filter", ItemName = "dataFilter")]
     public class DataFilters : List<DataFilter>
     {
@@ -410,7 +410,7 @@ namespace org.iringtools.applicationConfig
         public string SortOrder { get; set; }
 
     }
-
+    */
     [CollectionDataContract(Name = "valueMaps", Namespace = "http://www.iringtools.org/library", ItemName = "valueMap")]
     public class ValueMaps : List<ValueMap>
     {

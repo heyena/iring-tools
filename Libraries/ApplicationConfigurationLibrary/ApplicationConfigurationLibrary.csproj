@@ -52,6 +52,9 @@
   <ItemGroup>
     <Compile Include="ApplicationConfigurationProvider.cs" />
     <Compile Include="Application.cs" />
+    <Compile Include="DatabaseDictionary.cs" />
+    <Compile Include="DataDictionary.cs" />
+    <Compile Include="DataFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

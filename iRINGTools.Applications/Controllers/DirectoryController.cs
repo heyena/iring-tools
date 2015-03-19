@@ -459,11 +459,11 @@ namespace org.iringtools.web.controllers
                             }
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
+                            org.iringtools.library.DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
 
                             if (dictionary != null && dictionary.dataObjects != null)
                             {
-                                foreach (DataObject dataObject in dictionary.dataObjects)
+                                foreach (org.iringtools.library.DataObject dataObject in dictionary.dataObjects)
                                 {
                                     JsonTreeNode node = new JsonTreeNode
                                     {
@@ -507,12 +507,12 @@ namespace org.iringtools.web.controllers
                             string applicationName = context.Split('/')[1];
                             string dataObjectName = context.Split('/')[4];
 
-                            DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
-                            DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName == dataObjectName);
+                            org.iringtools.library.DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
+                            org.iringtools.library.DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName == dataObjectName);
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-                            foreach (DataProperty property in dataObject.dataProperties)
+                            foreach (org.iringtools.library.DataProperty property in dataObject.dataProperties)
                             {
                                 keyType = getKeyType(property.propertyName, dataObject.dataProperties);
                                 dataType = property.dataType.ToString();
@@ -555,7 +555,7 @@ namespace org.iringtools.web.controllers
                             {
                                 if (dataObject.extensionProperties.Count > 0)
                                 {
-                                    foreach (ExtensionProperty extension in dataObject.extensionProperties)
+                                    foreach (org.iringtools.library.ExtensionProperty extension in dataObject.extensionProperties)
                                     {
                                         //keyType = getExtensionType(extension.propertyName,dataObject.extensionProperties);
                                         //dataType = extension.dataType.ToString();
@@ -595,7 +595,7 @@ namespace org.iringtools.web.controllers
                             // Ends]]
                             if (dataObject.dataRelationships.Count > 0)
                             {
-                                foreach (DataRelationship relation in dataObject.dataRelationships)
+                                foreach (org.iringtools.library.DataRelationship relation in dataObject.dataRelationships)
                                 {
                                     JsonTreeNode node = new JsonTreeNode
                                     {
@@ -636,10 +636,10 @@ namespace org.iringtools.web.controllers
                             {
                                 string scopeName = context.Split('/')[0];
                                 string applicationName = context.Split('/')[1];
-                                DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
-                                DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName.ToUpper() == related.ToUpper());
+                                org.iringtools.library.DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
+                                org.iringtools.library.DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName.ToUpper() == related.ToUpper());
 
-                                foreach (DataProperty property in dataObject.dataProperties)
+                                foreach (org.iringtools.library.DataProperty property in dataObject.dataProperties)
                                 {
                                     keytype = getKeyType(property.propertyName, dataObject.dataProperties);
                                     datatype = property.dataType.ToString();
@@ -1397,7 +1397,7 @@ namespace org.iringtools.web.controllers
                         expression.PropertyName = form["propertyName_" + ec];
 
                     if (!string.IsNullOrEmpty(form["relationalOperator_" + ec]))
-                        expression.RelationalOperator = (RelationalOperator)Enum.Parse(typeof(RelationalOperator), form["relationalOperator_" + ec]);
+                        expression.RelationalOperator = (org.iringtools.library.RelationalOperator)Enum.Parse(typeof(org.iringtools.library.RelationalOperator), form["relationalOperator_" + ec]);
 
                     if (!string.IsNullOrEmpty(form["value_" + ec]))
                         expression.Values = new org.iringtools.library.Values() { form["value_" + ec] };
@@ -1405,7 +1405,7 @@ namespace org.iringtools.web.controllers
                         expression.Values = new org.iringtools.library.Values() { string.Empty };
 
                     if (!string.IsNullOrEmpty(form["logicalOperator_" + ec]))
-                        expression.LogicalOperator = (LogicalOperator)Enum.Parse(typeof(LogicalOperator), form["logicalOperator_" + ec]);
+                        expression.LogicalOperator = (org.iringtools.library.LogicalOperator)Enum.Parse(typeof(org.iringtools.library.LogicalOperator), form["logicalOperator_" + ec]);
 
                     if (!string.IsNullOrEmpty(form["closeGroupCount_" + ec]))
                         expression.CloseGroupCount = Convert.ToInt16(form["closeGroupCount_" + ec]);
@@ -1424,7 +1424,7 @@ namespace org.iringtools.web.controllers
                          new org.iringtools.library.OrderExpression()
                          {
                              PropertyName = form["OEProName_" + oec],
-                             SortOrder = (SortOrder)Enum.Parse(typeof(SortOrder), form["OESortOrder_" + oec]),
+                             SortOrder = (org.iringtools.library.SortOrder)Enum.Parse(typeof(org.iringtools.library.SortOrder), form["OESortOrder_" + oec]),
                          }
                        );
                     }
@@ -1487,7 +1487,7 @@ namespace org.iringtools.web.controllers
             return Convert.ToString(dataEntity.Label);
         }
 
-        private string getKeyType(string name, List<DataProperty> properties)
+        private string getKeyType(string name, List<org.iringtools.library.DataProperty> properties)
         {
             string keyType = string.Empty;
             keyType = properties.FirstOrDefault(p => p.propertyName == name).keyType.ToString();
