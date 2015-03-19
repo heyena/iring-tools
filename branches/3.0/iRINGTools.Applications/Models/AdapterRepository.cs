@@ -305,10 +305,10 @@ namespace iRINGTools.Web.Models
             return scope;
         }
 
-        public DataDictionary GetDictionary(string scopeName, string applicationName)
+        public org.iringtools.library.DataDictionary GetDictionary(string scopeName, string applicationName)
         {
             string dictKey = string.Format("Dictionary.{0}.{1}", scopeName, applicationName);
-            DataDictionary dictionary = (DataDictionary)Session[dictKey];
+            org.iringtools.library.DataDictionary dictionary = (org.iringtools.library.DataDictionary)Session[dictKey];
 
             if (dictionary != null)
                 return dictionary;
@@ -328,11 +328,11 @@ namespace iRINGTools.Web.Models
                         throw new Exception("Asynchronous status URL not found.");
                     }
 
-                    dictionary = WaitForRequestCompletion<DataDictionary>(_dataServiceUri, statusUrl);
+                    dictionary = WaitForRequestCompletion<org.iringtools.library.DataDictionary>(_dataServiceUri, statusUrl);
                 }
                 else
                 {
-                    dictionary = client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", applicationName, scopeName), true);
+                    dictionary = client.Get<org.iringtools.library.DataDictionary>(String.Format("/{0}/{1}/dictionary?format=xml", applicationName, scopeName), true);
                 }
             }
             catch (Exception ex)
@@ -346,13 +346,13 @@ namespace iRINGTools.Web.Models
             {
                 dictionary.dataObjects.Sort(new DataObjectComparer());
 
-                foreach (DataObject dataObject in dictionary.dataObjects)
+                foreach (org.iringtools.library.DataObject dataObject in dictionary.dataObjects)
                 {
                     dataObject.dataProperties.Sort(new DataPropertyComparer());
 
                     // move key elements to top of the List.
                     List<String> keyPropertyNames = new List<String>();
-                    foreach (KeyProperty keyProperty in dataObject.keyProperties)
+                    foreach (org.iringtools.library.KeyProperty keyProperty in dataObject.keyProperties)
                     {
                         keyPropertyNames.Add(keyProperty.keyPropertyName);
                     }
@@ -360,8 +360,8 @@ namespace iRINGTools.Web.Models
                     for (int i = 0; i < keyPropertyNames.Count; i++)
                     {
                         value = keyPropertyNames[i];
-                        List<DataProperty> DataProperties = dataObject.dataProperties;
-                        DataProperty prop = null;
+                        List<org.iringtools.library.DataProperty> DataProperties = dataObject.dataProperties;
+                        org.iringtools.library.DataProperty prop = null;
 
                         for (int j = 0; j < DataProperties.Count; j++)
                         {
@@ -992,7 +992,7 @@ namespace iRINGTools.Web.Models
         {
             DataProviders providers = new DataProviders();
 
-            foreach (Provider provider in System.Enum.GetValues(typeof(Provider)))
+            foreach (org.iringtools.library.Provider provider in System.Enum.GetValues(typeof(org.iringtools.library.Provider)))
             {
                 providers.Add(provider);
             }
@@ -1000,12 +1000,12 @@ namespace iRINGTools.Web.Models
             return providers;
         }
 
-        public DatabaseDictionary GetDBDictionary(string scope, string application)
+        public org.iringtools.library.DatabaseDictionary GetDBDictionary(string scope, string application)
         {
             try
             {
                 WebHttpClient client = CreateWebClient(_hibernateServiceUri);
-                DatabaseDictionary dbDictionary = client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
+                org.iringtools.library.DatabaseDictionary dbDictionary = client.Get<org.iringtools.library.DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
 
                 string connStr = dbDictionary.ConnectionString;
                 if (!String.IsNullOrEmpty(connStr))
@@ -1023,14 +1023,14 @@ namespace iRINGTools.Web.Models
             }
         }
 
-        public Response SaveDBDictionary(string scope, string app, DatabaseDictionary dictionary)
+        public Response SaveDBDictionary(string scope, string app, org.iringtools.library.DatabaseDictionary dictionary)
         {
             Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(_hibernateServiceUri);
-                response = client.Post<DatabaseDictionary, Response>("/" + scope + "/" + app + "/dictionary", dictionary);
+                response = client.Post<org.iringtools.library.DatabaseDictionary, Response>("/" + scope + "/" + app + "/dictionary", dictionary);
             }
             catch (Exception ex)
             {
@@ -1061,7 +1061,7 @@ namespace iRINGTools.Web.Models
             return client.Post<Request, List<string>>(uri, request, true);
         }
 
-        public List<DataObject> GetDBObjects(string scope, string app,
+        public List<org.iringtools.library.DataObject> GetDBObjects(string scope, string app,
             Dictionary<string, string> conElts, List<string> tableNames)
         {
             string uri = String.Format("/{0}/{1}/objects", scope, app);
@@ -1075,7 +1075,7 @@ namespace iRINGTools.Web.Models
             request.Add("tableNames", string.Join(",", tableNames));
 
             WebHttpClient client = CreateWebClient(_hibernateServiceUri);
-            List<DataObject> dbObjects = client.Post<Request, List<DataObject>>(uri, request, true);
+            List<org.iringtools.library.DataObject> dbObjects = client.Post<Request, List<org.iringtools.library.DataObject>>(uri, request, true);
             return dbObjects;
         }
 
@@ -1102,7 +1102,7 @@ namespace iRINGTools.Web.Models
             request.Add("serName", serName);
 
             WebHttpClient client = CreateWebClient(_hibernateServiceUri);
-            List<DataObject> dataObjects = client.Post<Request, List<DataObject>>(uri, request, true);
+            List<org.iringtools.library.DataObject> dataObjects = client.Post<Request, List<org.iringtools.library.DataObject>>(uri, request, true);
 
             //try
             //{
@@ -1117,7 +1117,7 @@ namespace iRINGTools.Web.Models
             //    hasDBDictionary = false;
             //}
 
-            foreach (DataObject dataObject in dataObjects)
+            foreach (org.iringtools.library.DataObject dataObject in dataObjects)
             {
                 //hasDataObjectinDBDictionary = false;
 
@@ -1175,7 +1175,7 @@ namespace iRINGTools.Web.Models
                 };
 
                 // add key/data property nodes
-                foreach (DataProperty dataProperty in dataObject.dataProperties)
+                foreach (org.iringtools.library.DataProperty dataProperty in dataObject.dataProperties)
                 {
                     Dictionary<string, string> properties = new Dictionary<string, string>()
                     {
