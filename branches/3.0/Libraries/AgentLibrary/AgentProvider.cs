@@ -46,18 +46,18 @@ namespace org.iringtools.AgentLibrary
             org.iringtools.AgentLibrary.Agent.Jobs jobs = new org.iringtools.AgentLibrary.Agent.Jobs();
             try
             {
-                //NameValueList nvl = new NameValueList();
-                //string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgAllJobs", nvl);
-                //jobs = utility.Utility.Deserialize<org.iringtools.AgentLibrary.Agent.Jobs>(xmlString, true);
+                NameValueList nvl = new NameValueList();
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgAllJobs", nvl);
+                jobs = utility.Utility.Deserialize<org.iringtools.AgentLibrary.Agent.Jobs>(xmlString, true);
 
-                List<org.iringtools.AgentLibrary.Agent.Job> lstJob = new List<org.iringtools.AgentLibrary.Agent.Job>();
+                //List<org.iringtools.AgentLibrary.Agent.Job> lstJob = new List<org.iringtools.AgentLibrary.Agent.Job>();
 
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                    lstJob = dc.ExecuteQuery<org.iringtools.AgentLibrary.Agent.Job>("spgAllJobs").ToList();
-                }
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    lstJob = dc.ExecuteQuery<org.iringtools.AgentLibrary.Agent.Job>("spgAllJobs").ToList();
+                //}
 
-                jobs.AddRange(lstJob);
+                //jobs.AddRange(lstJob);
             }
             catch (Exception ex)
             {
@@ -182,7 +182,7 @@ namespace org.iringtools.AgentLibrary
                         nvl.Add(new ListItem() { Name = "@DataObject", Value = job.DataObject });
                         nvl.Add(new ListItem() { Name = "@Xid", Value = job.Xid });
                         nvl.Add(new ListItem() { Name = "@Exchange_Url", Value = job.Exchange_Url });
-                        nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = Convert.ToString(_settings["CachePageSize"]) });
+                        nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = cachePageSize });
                         nvl.Add(new ListItem() { Name = "@Schedules", Value = schedulesXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuJob", nvl);
