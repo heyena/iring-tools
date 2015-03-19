@@ -1426,10 +1426,10 @@ namespace org.iringtools.applicationConfig
         
         //[[New Fields
 
-        [DataMember(Name = "dataFilterId", Order = 0, EmitDefaultValue = false)]
+        [DataMember(Name = "dataFilterId", Order = 0, EmitDefaultValue = true)]
         public Guid DataFilterId { get; set; }
 
-        [DataMember(Name = "expressionId", Order = 1, EmitDefaultValue = false)]
+        [DataMember(Name = "expressionId", Order = 1, EmitDefaultValue = true)]
         public Guid ExpressionId { get; set; }
 
         //]]
@@ -1464,10 +1464,10 @@ namespace org.iringtools.applicationConfig
     {
         //[[New Fields
 
-        [DataMember(Name = "dataFilterId", Order = 0, EmitDefaultValue = false)]
+        [DataMember(Name = "dataFilterId", Order = 0, EmitDefaultValue = true)]
         public Guid DataFilterId { get; set; }
 
-        [DataMember(Name = "orderExpressionId", Order = 1, EmitDefaultValue = false)]
+        [DataMember(Name = "orderExpressionId", Order = 1, EmitDefaultValue = true)]
         public Guid OrderExpressionId { get; set; }
 
         //]]
@@ -1489,10 +1489,10 @@ namespace org.iringtools.applicationConfig
 
         //[[New Fields
 
-        [DataMember(Name = "dataFilterId", Order = 0, EmitDefaultValue = false)]
+        [DataMember(Name = "dataFilterId", Order = 0, EmitDefaultValue = true)]
         public Guid DataFilterId { get; set; }
 
-        [DataMember(Name = "rollupExpressionId", Order = 1, EmitDefaultValue = false)]
+        [DataMember(Name = "rollupExpressionId", Order = 1, EmitDefaultValue = true)]
         public Guid RollupExpressionId { get; set; }
 
         //]]
@@ -1509,10 +1509,10 @@ namespace org.iringtools.applicationConfig
     {
         //[[New Fields
 
-        [DataMember(Name = "rollupExpressionId", Order = 0, EmitDefaultValue = false)]
+        [DataMember(Name = "rollupExpressionId", Order = 0, EmitDefaultValue = true)]
         public Guid RollupExpressionId { get; set; }
 
-        [DataMember(Name = "rollupId", Order = 1, EmitDefaultValue = false)]
+        [DataMember(Name = "rollupId", Order = 1, EmitDefaultValue = true)]
         public Guid RollupId { get; set; }
 
         //]]

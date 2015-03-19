@@ -287,34 +287,43 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "extensionProperty", Namespace = "http://www.iringtools.org/library")]
     public class ExtensionProperty
     {
+        //[[New Field 
         [DataMember(IsRequired = true, Order = 0)]
-        public string columnName { get; set; }
+        public Guid extensionPropertyId { get; set; }
 
         [DataMember(IsRequired = true, Order = 1)]
-        public string propertyName { get; set; }
+        public Guid dataObjectId { get; set; }
+
+        //]]
 
         [DataMember(IsRequired = true, Order = 2)]
-        public DataType dataType { get; set; }
+        public string columnName { get; set; }
 
         [DataMember(IsRequired = true, Order = 3)]
-        public int dataLength { get; set; }
+        public string propertyName { get; set; }
 
         [DataMember(IsRequired = true, Order = 4)]
-        public bool isNullable { get; set; }
+        public DataType dataType { get; set; }
 
         [DataMember(IsRequired = true, Order = 5)]
+        public int dataLength { get; set; }
+
+        [DataMember(IsRequired = true, Order = 6)]
+        public bool isNullable { get; set; }
+
+        [DataMember(IsRequired = true, Order = 7)]
         public KeyType keyType { get; set; }
 
-        [DataMember(EmitDefaultValue = false, Order = 6)]
+        [DataMember(EmitDefaultValue = false, Order = 8)]
         public bool showOnIndex { get; set; }
 
-        [DataMember(IsRequired = false, Order = 7)]
+        [DataMember(IsRequired = false, Order = 9)]
         public int precision { get; set; }
 
-        [DataMember(IsRequired = false, Order = 8)]
+        [DataMember(IsRequired = false, Order = 10)]
         public int scale { get; set; }
 
-        [DataMember(IsRequired = false, Order = 9)]
+        [DataMember(IsRequired = false, Order = 11)]
         public string definition { get; set; }
 
         //[[By Deepak 12-Dec14 Statrs
