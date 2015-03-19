@@ -23,8 +23,8 @@ namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
     {
-        //string userName = "WorldTest";
-        string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        string userName = "WorldTest";
+        //string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
         int siteId = 4;
         int platformId = 2;
 
@@ -936,7 +936,7 @@ namespace org.iringtools.web.controllers
 
                 if (response.Level == StatusLevel.Success)
                 {
-                    List<JsonTreeNode> nodes = PopulateFolderNode(int.Parse(form["siteId"]), tempFolder.ParentFolderId);
+                    List<JsonTreeNode> nodes = PopulateFolderNode(tempFolder.SiteId, tempFolder.ParentFolderId);
                     return Json(new { success = true, message = response.StatusText, nodes }, JsonRequestBehavior.AllowGet);
                 }
                 else
