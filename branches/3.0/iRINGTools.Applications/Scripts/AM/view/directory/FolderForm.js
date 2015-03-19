@@ -57,36 +57,16 @@ Ext.define('AM.view.directory.FolderForm', {
                     text: 'Cancel'
                 }]
             }],
-            items: [{
-                xtype: 'hiddenfield',
-                name: 'id'
-            },
-            {
-                xtype: 'hiddenfield',
-                name: 'path'
-            },
+            items: [
             {
                 xtype: 'hiddenfield',
                 name: 'state'
-            },
-            {
-                xtype: 'hiddenfield',
-                name: 'oldContext'
-            },
-            {
-                xtype: 'hiddenfield',
-                name: 'name'
             },
             {
                 xtype: 'textfield',
                 fieldLabel: 'Display Name',
                 name: 'displayName',
                 allowBlank: false
-            },
-            {
-                xtype: 'hiddenfield',
-                itemId: 'contextname',
-                name: 'contextName'
             },
             {
                 xtype: 'checkboxlistcombo',
@@ -110,13 +90,9 @@ Ext.define('AM.view.directory.FolderForm', {
         var me = this;
         var win = me.up('window');
         var form = me.getForm();
-        var folderName = form.findField('displayName').getValue();
-        var state = form.findField('state').getValue();
-        var contextNameField = form.findField('contextName');
         var node = me.node;
-        
-        if (state == 'new')
-            form.findField('name').setValue(folderName);
+        var state = form.findField('state').getValue();
+
         var ResourceGroups = this.getForm().findField('ResourceGroups').getValue();
 
         if (form.isValid()) {
@@ -126,17 +102,17 @@ Ext.define('AM.view.directory.FolderForm', {
                     params: {
                         record: node.get('record')
                     },
-                    success: function(response, request) {
+                    success: function (response, request) {
                         var objResponseText = Ext.JSON.decode(request.response.responseText);
 
-                        //Ext.example.msg('Notification', 'Folder saved successfully!');
                         win.fireEvent('save', me);
 
                         var currentNode;
 
                         if (state == 'new') {
                             currentNode = node;
-                        } else {
+                        }
+                        else {
                             currentNode = node.parentNode;
                         }
 
@@ -146,7 +122,7 @@ Ext.define('AM.view.directory.FolderForm', {
 
                         var index = 0;
 
-                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function(newNode) {
+                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
                             currentNode.insertChild(index, newNode);
                             index++;
                         });
@@ -156,15 +132,15 @@ Ext.define('AM.view.directory.FolderForm', {
                         if (objResponseText["message"] == "folderadded") {
                             showDialog(400, 50, 'Alert', "Folder added successfully!", Ext.Msg.OK, null);
                         }
-                        if (objResponseText["message"] == "folderupdated") {
+                        else if (objResponseText["message"] == "folderupdated") {
                             showDialog(400, 50, 'Alert', "Folder updated successfully!", Ext.Msg.OK, null);
                         }
-                        if (objResponseText["message"] == "duplicatefolder") {
+                        else if (objResponseText["message"] == "duplicatefolder") {
                             showDialog(400, 50, 'Alert', "Folder with this name already exists", Ext.Msg.OK, null);
                         }
                     },
 
-                    failure: function(response, request) {
+                    failure: function (response, request) {
                         var objResponseText = Ext.JSON.decode(request.response.responseText);
                         var userMsg = objResponseText['message'];
                         var detailMsg = objResponseText['stackTraceDescription'];
@@ -173,13 +149,11 @@ Ext.define('AM.view.directory.FolderForm', {
                         Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                     }
                 });
-            } 
+            }
             else {
                 showDialog(400, 50, 'Alert', "Select atleast one Group before saving", Ext.Msg.OK, null);
             }
-        
-
-    }
+        }
         else {
             Ext.widget('messagepanel', { title: 'Warning', msg: 'Please give folder name.' });
             return;

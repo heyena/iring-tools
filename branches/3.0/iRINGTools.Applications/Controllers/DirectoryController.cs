@@ -23,8 +23,8 @@ namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
     {
-        string userName = "WorldTest";
-        //string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        //string userName = "WorldTest";
+        string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
         int siteId = 4;
         int platformId = 2;
 
@@ -898,35 +898,44 @@ namespace org.iringtools.web.controllers
                 }
 
                 Folder tempFolder = new Folder()
-                {                    PlatformId = platformId
+                {
+                    FolderName = form["displayName"],
+                    SiteId = record.SiteId,
+                    PlatformId = platformId
                 };
 
                 if (form["state"] == "new")
                 {
-                    tempFolder.ParentFolderId = parentId;                    tempFolder.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
+                    tempFolder.ParentFolderId = parentId;
+                    tempFolder.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
 
                     response = _appConfigRepository.AddFolder(userName, tempFolder);
                 }
                 else if (form["state"] == "edit")
                 {
                     tempFolder.FolderId = record.FolderId;
+                    tempFolder.ParentFolderId = record.ParentFolderId;
                     tempFolder.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
+
                     response = _appConfigRepository.UpdateFolder(userName, tempFolder);
                 }
                 else
                 {
-                    tempFolder.FolderId = !String.IsNullOrEmpty(form["nodeid"]) ? Guid.Parse(form["nodeid"]) : Guid.Empty;
-                    tempFolder.ParentFolderId = !String.IsNullOrEmpty(form["parentnodeid"]) ? Guid.Parse(form["parentnodeid"]) : Guid.Empty;
+                    tempFolder.FolderId = record.FolderId;
+                    tempFolder.ParentFolderId = record.ParentFolderId;
+
                     response = _appConfigRepository.DeleteFolder(tempFolder);
                 }
 
                 if (response.Level == StatusLevel.Success)
                 {
-                    List<JsonTreeNode> nodes = PopulateFolderNode(tempFolder.SiteId, parentId);
+                    List<JsonTreeNode> nodes = PopulateFolderNode(tempFolder.SiteId, tempFolder.ParentFolderId);
                     return Json(new { success = true, message = response.StatusText, nodes }, JsonRequestBehavior.AllowGet);
                 }
                 else
+                {
                     return Json(new { success = false, message = response.StatusText, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
+                }
 
             }
             catch (Exception e)
@@ -955,67 +964,60 @@ namespace org.iringtools.web.controllers
             try
             {
                 Response response = null;
-                var record = Utility.DeserializeJson<Folder>(form["record"].ToString(), true);
+                dynamic record = Utility.DeserializeJson<Folder>(form["record"].ToString(), true);
 
-                applicationConfig.Context tempContext = new applicationConfig.Context();              
+                if (record.FolderName == null)
+                {
+                    record = Utility.DeserializeJson<org.iringtools.applicationConfig.Context>(form["record"].ToString(), true);
+                }
+
+                applicationConfig.Context tempContext = new applicationConfig.Context()
+                {
+                    DisplayName = form["displayName"],
+                    InternalName = form["internalName"],
+                    Description = form["description"],
+                    CacheConnStr = form["cacheDBConnStr"],
+                    FolderId = record.FolderId
+                };
 
                 if (form["state"] == "new")
                 {
-                    tempContext.DisplayName = form["displayName"];
-                    tempContext.InternalName = form["internalName"];
-                    tempContext.Description = form["description"];
-                    tempContext.CacheConnStr = form["cacheDBConnStr"];
                     tempContext.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
-                    tempContext.FolderId = record.FolderId;
 
                     response = _appConfigRepository.AddContext(userName, tempContext);
-
                 }
                 else if (form["state"] == "edit")
                 {
+                    tempContext.ContextId = record.ContextId;
                     tempContext.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
-                    tempContext.ContextId = !String.IsNullOrEmpty(form["id"]) ? Guid.Parse(form["id"]) : Guid.Empty;
-                    tempContext.FolderId = !String.IsNullOrEmpty(form["path"]) ? Guid.Parse(form["path"]) : Guid.Empty;
 
                     response = _appConfigRepository.UpdateContext(userName, tempContext);
                 }
                 else if (form["state"] == "delete")
                 {
-                    tempContext.ContextId = !String.IsNullOrEmpty(form["nodeid"]) ? Guid.Parse(form["nodeid"]) : Guid.Empty;
-                    tempContext.FolderId = !String.IsNullOrEmpty(form["parentnodeid"]) ? Guid.Parse(form["parentnodeid"]) : Guid.Empty;
+                    tempContext.ContextId = record.ContextId;
 
                     response = _appConfigRepository.DeleteContext(tempContext);
                 }
 
-
                 if (response.Level == StatusLevel.Success)
                 {
-                    List<JsonTreeNode> nodes = PopulateFolderNode(int.Parse(form["siteId"]), tempContext.FolderId);
-                    //if (response.StatusText.ToLower().Equals("contextadded") || response.StatusText.ToLower().Equals("contextupdated"))
-                      //  nodes = PopulateFolderNode(tempContext.FolderId);
+                    List<JsonTreeNode> nodes = PopulateFolderNode(siteId, tempContext.FolderId);
+
                     return Json(new { success = true, message = response.StatusText, nodes }, JsonRequestBehavior.AllowGet);
                 }
                 else
+                {
                     return Json(new { success = false, message = response.StatusText, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
-
-                //if (success.Trim().Contains("Error"))
-                //{
-                //    _CustomErrorLog = new CustomErrorLog();
-                //    _CustomError = _CustomErrorLog.getErrorResponse(success);
-
-                //    return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
-                //}
-
-                //List<JsonTreeNode> nodes = PopulateFolderNode(tempContext.FolderId);
-
-                //return Json(new { success = true, nodes }, JsonRequestBehavior.AllowGet);
+                }
             }
             catch (Exception e)
             {
                 _logger.Error(e.ToString());
+
                 if (e.InnerException != null)
                 {
-                    string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
+                    string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;
                     var jsonSerialiser = new JavaScriptSerializer();
                     CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
                     return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
@@ -1026,9 +1028,7 @@ namespace org.iringtools.web.controllers
                     _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errGetUIScope, e, _logger);
                     return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
                 }
-
             }
-
         }
 
         public JsonResult Application(FormCollection form)

@@ -64,23 +64,7 @@ Ext.define('AM.view.directory.ContextForm', {
             items: [
             {
                 xtype: 'hiddenfield',
-                name: 'id'
-            },
-            {
-                xtype: 'hiddenfield',
-                name: 'path'
-            },
-            {
-                xtype: 'hiddenfield',
                 name: 'state'
-            },
-            {
-                xtype: 'hiddenfield',
-                name: 'oldContext'
-            },
-            {
-                xtype: 'hiddenfield',
-                name: 'name'
             },
             {
                 xtype: 'textfield',
@@ -92,11 +76,6 @@ Ext.define('AM.view.directory.ContextForm', {
                 fieldLabel: 'Internal Name',
                 name: 'internalName',
                 allowBlank: false
-            },
-            {
-                xtype: 'hiddenfield',
-                itemId: 'contextname',
-                name: 'contextName'
             },
             {
                 xtype: 'textareafield',
@@ -135,13 +114,8 @@ Ext.define('AM.view.directory.ContextForm', {
         var me = this;
         var win = me.up('window');
         var form = me.getForm();
-        var ResourceGroups = this.getForm().findField('ResourceGroups').getValue();
-        var folderName = form.findField('displayName').getValue();
         var state = form.findField('state').getValue();
-        var contextNameField = form.findField('contextName');
         var node = me.node;
-        if (form.findField('cacheDBConnStr').getValue() == this.cacheConnStrTpl)
-            form.findField('cacheDBConnStr').setValue('');
 
         if (form.isValid()) {
             if (ResourceGroups != '') {

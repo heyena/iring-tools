@@ -38,7 +38,7 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "description", Order = 3, EmitDefaultValue = false)]
         public string Description { get; set; }
 
-        [DataMember(Name = "cacheConnstr", Order = 4, EmitDefaultValue = false)]
+        [DataMember(Name = "cacheConnStr", Order = 4, EmitDefaultValue = false)]
         public string CacheConnStr { get; set; }
 
         [DataMember(Name = "active", Order = 5, EmitDefaultValue = false)]
