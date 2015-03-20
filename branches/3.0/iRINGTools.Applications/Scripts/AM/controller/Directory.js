@@ -491,7 +491,7 @@ Ext.define('AM.controller.Directory', {
         var node = tree.getSelectedNode();
 
         Ext.Ajax.request({
-            url: 'directory/DeleteScope', //'directory/deleteEntry',
+            url: 'directory/DeleteScope', //'directory/deleteEntry', 
             method: 'POST',
             params: {
                 'nodeid': node.data.id
