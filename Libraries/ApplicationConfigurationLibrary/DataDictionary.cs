@@ -225,61 +225,64 @@ namespace org.iringtools.applicationConfig
 
         //[[New Fields
         [DataMember(IsRequired = true, Order = 0)]
-        public Guid dataObjectId { get; set; }
+        public Guid dataPropertyId { get; set; }
 
         [DataMember(IsRequired = true, Order = 1)]
+        public Guid dataObjectId { get; set; }
+
+        [DataMember(IsRequired = true, Order = 2)]
         public int pickListId { get; set; }
         //]]
 
-        [DataMember(IsRequired = true, Order = 2)]
+        [DataMember(IsRequired = true, Order = 3)]
         public string columnName { get; set; }
 
-        [DataMember(IsRequired = true, Order = 3)]
+        [DataMember(IsRequired = true, Order = 4)]
         public string propertyName { get; set; }
 
-        [DataMember(IsRequired = true, Order = 4)]
+        [DataMember(IsRequired = true, Order = 5)]
         public DataType dataType { get; set; }
 
-        [DataMember(IsRequired = true, Order = 5)]
+        [DataMember(IsRequired = true, Order = 6)]
         public int dataLength { get; set; }
 
-        [DataMember(IsRequired = true, Order = 6)]
+        [DataMember(IsRequired = true, Order = 7)]
         public bool isNullable { get; set; }
 
-        [DataMember(IsRequired = true, Order = 7)]
+        [DataMember(IsRequired = true, Order = 8)]
         public KeyType keyType { get; set; }
 
-        [DataMember(EmitDefaultValue = false, Order = 8)]
+        [DataMember(EmitDefaultValue = false, Order = 9)]
         public bool showOnIndex { get; set; }
 
-        [DataMember(EmitDefaultValue = false, Order = 9)]
+        [DataMember(EmitDefaultValue = false, Order = 10)]
         public int numberOfDecimals { get; set; }
 
-        [DataMember(EmitDefaultValue = false, Order = 10)]
+        [DataMember(EmitDefaultValue = false, Order = 11)]
         public bool isReadOnly { get; set; }
 
-        [DataMember(EmitDefaultValue = false, Order = 11)]
+        [DataMember(EmitDefaultValue = false, Order = 12)]
         public bool showOnSearch { get; set; }
 
-        [DataMember(EmitDefaultValue = false, Order = 12)]
+        [DataMember(EmitDefaultValue = false, Order = 13)]
         public bool isHidden { get; set; }
 
-        [DataMember(IsRequired = false, Order = 13, EmitDefaultValue = false)]
+        [DataMember(IsRequired = false, Order = 14, EmitDefaultValue = false)]
         public string description { get; set; }
 
-        [DataMember(IsRequired = false, Order = 14, EmitDefaultValue = false)]
+        [DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
         public Dictionary<string, string> aliasDictionary { get; set; }
 
-        [DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
+        [DataMember(IsRequired = false, Order = 16, EmitDefaultValue = false)]
         public string referenceType { get; set; }
 
-        [DataMember(IsRequired = false, Order = 16, EmitDefaultValue = false)]
+        [DataMember(IsRequired = false, Order = 17, EmitDefaultValue = false)]
         public bool isVirtual { get; set; }
 
-        [DataMember(IsRequired = false, Order = 17)]
+        [DataMember(IsRequired = false, Order = 18)]
         public int precision { get; set; }
 
-        [DataMember(IsRequired = false, Order = 18)]
+        [DataMember(IsRequired = false, Order = 19)]
         public int scale { get; set; }
     }
 
