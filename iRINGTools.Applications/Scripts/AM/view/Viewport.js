@@ -23,7 +23,9 @@ Ext.define('AM.view.Viewport', {
                       '       <font style="font-size:24px;font-family:Arial">Adapter Manager</font>' +
                       '  	 </span>' +
 					  '  	 <span style="float:right;margin-top:16px">' +
-					  '		 <input type="checkbox"  id="gridCheckbox" style="display:none;" />'+
+					  '		 <input type="checkbox"  id="gridCheckbox" style="display:none;" />' +
+                      '      <a><b> Schedule Job </b> </a> ' +
+                      '      <a id="schedule-link" ><br><input type="checkbox"  name="njob" value="NewJob">View Schedule Jobs </a>' +
 					  '      <a id="setting-link" href="#" class="header-link">Settings</a>' +
 					  '      <a href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank" class="header-link">Help</a>' +
 					  '      <a id="about-link" href="#" class="header-link">About</a>' +
@@ -137,6 +139,31 @@ Ext.define('AM.view.Viewport', {
                 });
                 win.show();
             });
+
+
+            //start viewschedule
+
+            Ext.get('schedule-link').on('click', function () {
+                var win = new Ext.Window({
+                    title: 'View Schedule Jobs',
+                    bodyStyle: 'background:#fff;padding:5px',
+                    //width: 607,
+                    //height: 450,
+                    closable: true,
+                    autoScroll: true,
+                    modal: true,
+                    layout: 'vbox',
+
+                    items: [{
+                        xtype: 'viewjobsform'
+                    }]
+
+
+                });
+                win.show();
+
+            });
+            //end viewschedule
         });
     },
 
