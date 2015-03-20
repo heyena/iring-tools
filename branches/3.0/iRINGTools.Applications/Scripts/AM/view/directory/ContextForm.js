@@ -95,14 +95,12 @@ Ext.define('AM.view.directory.ContextForm', {
                 name: 'ResourceGroups',
                 itemId: 'ResourceGroupId',
                 fieldLabel: 'Groups for the User:',
-                emptyText: 'Select a Groups for the User...',
-                forceSelection: true,
-                allowBlank: true,
                 displayField: 'groupName',
                 autoSelect: false,
                 queryMode: 'remote',
                 store: 'ResourceGroupStore',
-                valueField: 'groupId'
+                valueField: 'groupId',
+                emptyText: 'Select Groups For The  User'
             }
           ]
         });
@@ -116,7 +114,7 @@ Ext.define('AM.view.directory.ContextForm', {
         var form = me.getForm();
         var state = form.findField('state').getValue();
         var node = me.node;
-
+        var ResourceGroups = this.getForm().findField('ResourceGroups').getValue();
         if (form.isValid()) {
             if (ResourceGroups != '') {
                 form.submit({
