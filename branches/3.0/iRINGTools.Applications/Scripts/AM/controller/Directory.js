@@ -375,7 +375,7 @@ Ext.define('AM.controller.Directory', {
 
         if (item.itemId == 'cacheupscreen' && node.data.record !== undefined) {
 
-            displayNameCont = node.data.record.DisplayName;
+            displayNameCont = node.data.property["Display Name"];   //node.data.record.DisplayName
 
 
         }
@@ -401,10 +401,20 @@ Ext.define('AM.controller.Directory', {
 
     //Start onEditrow
     onEditrow: function (item, e, eOpts) {
+        var me = this;
+        var context, displayName, apps;
+        var tree = me.getDirTree();
+        var node = tree.getSelectedNode();
 
-        alert("onEditrow");
+        
+        var win = Ext.widget('cachewindow');
+        var form = win.down('form');
 
-   
+        win.on('cancel', function () {
+            win.destroy();
+        }, me);
+
+        win.show();
     },
     //End onEditrow
 
