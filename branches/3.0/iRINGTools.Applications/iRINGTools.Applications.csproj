@@ -340,6 +340,7 @@
     <Content Include="Scripts\AM\view\directory\NewJobForm.js" />
     <Content Include="Scripts\AM\view\directory\ScopeForm.js" />
     <Content Include="Scripts\AM\view\directory\ScopeWindow.js" />
+    <Content Include="Scripts\AM\view\directory\ViewJobsForm.js" />
     <Content Include="Scripts\AM\view\directory\VirtualPropertyForm.js" />
     <Content Include="Scripts\AM\view\directory\VirtualPropertyGrid.js" />
     <Content Include="Scripts\AM\view\directory\VirtualPropertyWindow.js" />
@@ -364,6 +365,7 @@
     <Content Include="Scripts\AM\view\menus\GraphsMenu.js" />
     <Content Include="Scripts\AM\view\menus\GroupAdminScopesMenu.js" />
     <Content Include="Scripts\AM\view\menus\FolderMenu.js" />
+    <Content Include="Scripts\AM\view\menus\JobsMenu.js" />
     <Content Include="Scripts\AM\view\menus\NoLdapScopesMenu.js" />
     <Content Include="Scripts\AM\view\menus\RolemapMenu.js" />
     <Content Include="Scripts\AM\view\menus\RootAdminScopesMenu.js" />
