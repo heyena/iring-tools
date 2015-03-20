@@ -70,7 +70,9 @@ Ext.define('AM.controller.Directory', {
         'directory.ContextForm',
         'directory.ContextWindow',
         'directory.NewJobForm',
-        'directory.SchedulerCacheWindow'
+        'directory.SchedulerCacheWindow',
+        'directory.ViewJobsForm',
+        'menus.JobsMenu'
 
 
     ],
@@ -309,7 +311,7 @@ Ext.define('AM.controller.Directory', {
         });
     },
 
-    //onCacheUpdate
+    // Start onCacheUpdate
     onCacheUpdate: function (item, e, eOpts) {
         var me = this;
         var context, displayName, apps;
@@ -395,7 +397,17 @@ Ext.define('AM.controller.Directory', {
         win.show();
     },
 
-    //onCacheUpdate
+    //End onCacheUpdate
+
+    //Start onEditrow
+    onEditrow: function (item, e, eOpts) {
+
+        alert("onEditrow");
+
+   
+    },
+    //End onEditrow
+
     newOrEditScope: function (item, e, eOpts) {
 
         var me = this;
@@ -1742,6 +1754,9 @@ Ext.define('AM.controller.Directory', {
             },
             "menuitem[action=cacheupdate]": {
                 click: this.onCacheUpdate
+            },
+            "menuitem[action=editrow]": {
+                click: this.onEditrow
             }
 
         });
