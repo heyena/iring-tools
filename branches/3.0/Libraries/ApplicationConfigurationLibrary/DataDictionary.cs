@@ -315,18 +315,21 @@ namespace org.iringtools.applicationConfig
         public bool isNullable { get; set; }
 
         [DataMember(IsRequired = true, Order = 7)]
+        public bool numberOfDecimals { get; set; }
+
+        [DataMember(IsRequired = true, Order = 8)]
         public KeyType keyType { get; set; }
 
-        [DataMember(EmitDefaultValue = false, Order = 8)]
+        [DataMember(EmitDefaultValue = false, Order = 9)]
         public bool showOnIndex { get; set; }
 
-        [DataMember(IsRequired = false, Order = 9)]
+        [DataMember(IsRequired = false, Order = 10)]
         public int precision { get; set; }
 
-        [DataMember(IsRequired = false, Order = 10)]
+        [DataMember(IsRequired = false, Order = 11)]
         public int scale { get; set; }
 
-        [DataMember(IsRequired = false, Order = 11)]
+        [DataMember(IsRequired = false, Order = 12)]
         public string definition { get; set; }
 
         //[[By Deepak 12-Dec14 Statrs
