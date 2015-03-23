@@ -22,7 +22,7 @@ namespace org.iringtools.applicationConfig
 {
     public class ApplicationConfigurationProvider : BaseProvider
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(ApplicationConfigurationProvider));
         private string _connSecurityDb;
         private int _siteID;
 
@@ -152,6 +152,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });
                         nvl.Add(new ListItem() { Name = "@ContextId", Value = context.ContextId });
+                        nvl.Add(new ListItem() { Name = "@ParentFolderId", Value = context.FolderId });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuContext", nvl);

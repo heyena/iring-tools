@@ -114,13 +114,23 @@ Ext.define('AM.view.directory.ContextForm', {
         var form = me.getForm();
         var state = form.findField('state').getValue();
         var node = me.node;
-        var ResourceGroups = this.getForm().findField('ResourceGroups').getValue();
+        var ResourceGroups = me.getForm().findField('ResourceGroups').getValue();
+        var folderSiteId;
+
+        if (state == 'new') {
+            folderSiteId = null;
+        }
+        else {
+            folderSiteId = node.data.property.siteId;
+        }
+
         if (form.isValid()) {
             if (ResourceGroups != '') {
                 form.submit({
                     waitMsg: 'Saving Data...',
                     params: {
-                        record: node.get('record')
+                        record: node.get('record'),
+                        siteId: folderSiteId
                     },
                     success: function (response, request) {
 

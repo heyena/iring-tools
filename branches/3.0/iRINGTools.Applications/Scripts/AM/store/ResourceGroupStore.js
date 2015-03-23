@@ -33,7 +33,7 @@ Ext.define('AM.store.ResourceGroupStore', {
                     baseUrl: null
                 },
                 timeout: 600000,
-                url: 'UserSecurityManager/getUserGroups',
+                url: 'UserSecurityManager/GetGroupsByUser',
                 reader: {
                     type: 'json',
                     root: 'items'
