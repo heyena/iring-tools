@@ -143,13 +143,25 @@ namespace org.iringtools.AgentLibrary
             [DataMember(Name = "Job_Id", Order = 1, EmitDefaultValue = false)]
             public Guid Job_Id { get; set; }
 
-            [DataMember(Name = "Next_Start_DateTime", Order = 2, EmitDefaultValue = false)]
+            [DataMember(Name = "PlatformId", Order = 2, EmitDefaultValue = false)]
+            public int PlatformId { get; set; }
+
+            [DataMember(Name = "SiteId", Order = 3, EmitDefaultValue = false)]
+            public int SiteId { get; set; }
+
+            [DataMember(Name = "Next_Start_DateTime", Order = 4, EmitDefaultValue = false)]
             public string Next_Start_DateTime { get; set; }
 
-            [DataMember(Name = "Last_Start_DateTime", Order = 3, EmitDefaultValue = false)]
+            [DataMember(Name = "Last_Start_DateTime", Order = 5, EmitDefaultValue = false)]
             public string Last_Start_DateTime { get; set; }
 
-            [DataMember(Name = "Active", Order = 4, EmitDefaultValue = false)]
+            [DataMember(Name = "TotalRecords", Order = 6, EmitDefaultValue = false)]
+            public int TotalRecords { get; set; }
+
+            [DataMember(Name = "CachedRecords", Order = 7, EmitDefaultValue = false)]
+            public int CachedRecords { get; set; }
+
+            [DataMember(Name = "Active", Order = 8, EmitDefaultValue = false)]
             public int Active { get; set; }
 
         }
