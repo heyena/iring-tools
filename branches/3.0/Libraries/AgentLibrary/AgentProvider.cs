@@ -41,12 +41,15 @@ namespace org.iringtools.AgentLibrary
             }
         }
 
-        public org.iringtools.AgentLibrary.Agent.Jobs GetAllJobs()
+        public org.iringtools.AgentLibrary.Agent.Jobs GetAllJobs(int platformId, int siteId)
         {
             org.iringtools.AgentLibrary.Agent.Jobs jobs = new org.iringtools.AgentLibrary.Agent.Jobs();
             try
             {
                 NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@PlatformId", Value = Convert.ToString(platformId) });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgAllJobs", nvl);
                 jobs = utility.Utility.Deserialize<org.iringtools.AgentLibrary.Agent.Jobs>(xmlString, true);
 
@@ -66,13 +69,15 @@ namespace org.iringtools.AgentLibrary
             return jobs;
         }
 
-        public org.iringtools.AgentLibrary.Agent.Job GetJob(string scope, string app)
+        public org.iringtools.AgentLibrary.Agent.Job GetJob(int platformId, int siteId, string scope, string app)
         {
            
             org.iringtools.AgentLibrary.Agent.Job job = new org.iringtools.AgentLibrary.Agent.Job();
             try
             {
                 NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@PlatformId", Value = Convert.ToString(platformId) });
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
                 nvl.Add(new ListItem() { Name = "@ScopeName", Value = Convert.ToString(scope) });
                 nvl.Add(new ListItem() { Name = "@AppName", Value = Convert.ToString(app) });
 
@@ -86,7 +91,7 @@ namespace org.iringtools.AgentLibrary
             return job;
         }
 
-        public Response InsertJob(XDocument xml)
+        public Response InsertJob(int platformId, int siteId, XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -117,6 +122,8 @@ namespace org.iringtools.AgentLibrary
                         nvl.Add(new ListItem() { Name = "@Xid", Value = job.Xid });
                         nvl.Add(new ListItem() { Name = "@Exchange_Url", Value = job.Exchange_Url });
                         nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = cachePageSize});
+                        nvl.Add(new ListItem() { Name = "@PlatformId", Value = platformId });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = siteId });
                         nvl.Add(new ListItem() { Name = "@Schedules", Value = schedulesXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiJob", nvl);
@@ -641,8 +648,12 @@ namespace org.iringtools.AgentLibrary
                     NameValueList nvl = new NameValueList();
                     nvl.Add(new ListItem() { Name = "@Schedule_Id", Value = Convert.ToString(jobschedule.Schedule_Id) });
                     nvl.Add(new ListItem() { Name = "@Job_Id", Value = Convert.ToString(jobschedule.Job_Id) });
+                    nvl.Add(new ListItem() { Name = "@PlatformId", Value = Convert.ToString(jobschedule.PlatformId) });
+                    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(jobschedule.SiteId) });
                     nvl.Add(new ListItem() { Name = "@Next_Start_DateTime", Value = jobschedule.Next_Start_DateTime});
                     nvl.Add(new ListItem() { Name = "@Last_Start_DateTime", Value = jobschedule.Last_Start_DateTime});
+                    nvl.Add(new ListItem() { Name = "@TotalRecords", Value = Convert.ToString(jobschedule.TotalRecords) });
+                    nvl.Add(new ListItem() { Name = "@CachedRecords", Value = Convert.ToString(jobschedule.CachedRecords) });
                     nvl.Add(new ListItem() { Name = "@Active", Value = Convert.ToString(jobschedule.Active) });
                    
                     string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiJobSchedule", nvl);
@@ -695,8 +706,12 @@ namespace org.iringtools.AgentLibrary
                         NameValueList nvl = new NameValueList();
                         nvl.Add(new ListItem() { Name = "@Schedule_Id", Value = scheduleId });
                         nvl.Add(new ListItem() { Name = "@Job_Id", Value = jobId });
+                        nvl.Add(new ListItem() { Name = "@PlatformId", Value = Convert.ToString(jobschedule.PlatformId) });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(jobschedule.SiteId) });
                         nvl.Add(new ListItem() { Name = "@Next_Start_DateTime", Value = jobschedule.Next_Start_DateTime });
                         nvl.Add(new ListItem() { Name = "@Last_Start_DateTime", Value = jobschedule.Last_Start_DateTime });
+                        nvl.Add(new ListItem() { Name = "@TotalRecords", Value = Convert.ToString(jobschedule.TotalRecords) });
+                        nvl.Add(new ListItem() { Name = "@CachedRecords", Value = Convert.ToString(jobschedule.CachedRecords) });
                         nvl.Add(new ListItem() { Name = "@Active", Value = Convert.ToString(jobschedule.Active) });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuJobSchedule", nvl);

@@ -30,8 +30,8 @@ namespace org.iringtools.services
         }
 
         [Description("Gets all jobs from the data base.")]
-        [WebGet(UriTemplate = "/alljobs?format={format}")]
-        public void GetAllJobs(string format) 
+        [WebGet(UriTemplate = "/alljobs?platformId={platformId}&siteId={siteId}&format={format}")]
+        public void GetAllJobs(int platformId, int siteId, string format) 
         {
             try
             {
@@ -39,7 +39,7 @@ namespace org.iringtools.services
                 { format = "xml"; }
 
 
-                org.iringtools.AgentLibrary.Agent.Jobs jobs = _agentProvider.GetAllJobs();
+                org.iringtools.AgentLibrary.Agent.Jobs jobs = _agentProvider.GetAllJobs(platformId, siteId);
                 _agentProvider.FormatOutgoingMessage<org.iringtools.AgentLibrary.Agent.Jobs>(jobs, format, true);
             }
 
@@ -52,8 +52,8 @@ namespace org.iringtools.services
         }
 
         [Description("Gets job for a given scope and app from the data base.")]
-        [WebGet(UriTemplate = "/job?scope={scope}&app={app}&format={format}")]
-        public void GetJob(string scope, string app, string format)
+        [WebGet(UriTemplate = "/job?platformId={platformId}&siteId={siteId}&scope={scope}&app={app}&format={format}")]
+        public void GetJob(int platformId, int siteId, string scope, string app, string format)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace org.iringtools.services
                 { format = "xml"; }
 
 
-                org.iringtools.AgentLibrary.Agent.Job job = _agentProvider.GetJob(scope, app);
+                org.iringtools.AgentLibrary.Agent.Job job = _agentProvider.GetJob(platformId, siteId, scope, app);
                 _agentProvider.FormatOutgoingMessage<org.iringtools.AgentLibrary.Agent.Job>(job, format, true);
             }
 
@@ -74,8 +74,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert job to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertJob?format={format}")]
-        public void InsertJob(string format, Stream stream)
+        [WebInvoke(Method = "POST", UriTemplate = "/insertJob?platformId={platformId}&siteId={siteId}&format={format}")]
+        public void InsertJob(int platformId, int siteId, string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -91,7 +91,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _agentProvider.FormatIncomingMessage<org.iringtools.AgentLibrary.Agent.Jobs>(stream, format);
-                    response = _agentProvider.InsertJob(new XDocument(xElement));
+                    response = _agentProvider.InsertJob(platformId, siteId, new XDocument(xElement));
                 }
             }
             catch (Exception ex)
