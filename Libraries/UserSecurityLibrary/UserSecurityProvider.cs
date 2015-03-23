@@ -985,7 +985,7 @@ namespace org.iringtools.UserSecurity
             return permissions;
         }
 
-        public Groups GetGroupsUser(string userName)
+        public Groups GetGroupsByUser(string userName)
         {
             Groups groups = new Groups();
             try
@@ -993,7 +993,7 @@ namespace org.iringtools.UserSecurity
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
 
-                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGroupUser", nvl);
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGroupsByUser", nvl);
                 groups = utility.Utility.Deserialize<Groups>(xmlString, true);            
         
            /*     using (var dc = new DataContext(_connSecurityDb))

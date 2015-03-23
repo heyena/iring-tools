@@ -359,13 +359,13 @@ namespace org.iringtools.web.controllers
             
         }
 
-        public ActionResult getUserGroups()
+        public ActionResult GetGroupsByUser()
         {
             try
             {
                 string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
                 //string userName = "WorldTest";
-                Groups userGroups = _repository.GetUserGroups(userName, "xml");
+                Groups userGroups = _repository.GetGroupsByUser(userName, "xml");
 
                 JsonContainer<Groups> container = new JsonContainer<Groups>();
                 container.items = userGroups;

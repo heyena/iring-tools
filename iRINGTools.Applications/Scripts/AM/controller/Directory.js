@@ -252,6 +252,7 @@ Ext.define('AM.controller.Directory', {
             var record = Ext.decode(node.data.record);
             form.getForm().findField('displayName').setValue(record.displayName);
             form.getForm().findField('internalName').setValue(record.internalName);
+            form.getForm().findField('internalName').readOnly = true ;
             form.getForm().findField('description').setValue(record.description);
             form.getForm().findField('cacheDBConnStr').setValue(record.cacheConnStr);
         } else {
@@ -406,7 +407,7 @@ Ext.define('AM.controller.Directory', {
         var tree = me.getDirTree();
         var node = tree.getSelectedNode();
 
-        
+
         var win = Ext.widget('cachewindow');
         var form = win.down('form');
 
