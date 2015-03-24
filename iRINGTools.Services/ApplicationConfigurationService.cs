@@ -1036,7 +1036,7 @@ namespace org.iringtools.services
             }
         }
 
-        [Description("Insert Commodity to the data base.")]
+        [Description("Insert Dictionary to the data base.")]
         [WebInvoke(Method = "POST", UriTemplate = "/InsertDictionary?format={format}")]
         public void InsertDictionary(string format, Stream stream)
         {
