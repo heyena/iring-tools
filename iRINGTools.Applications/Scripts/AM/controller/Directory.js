@@ -166,6 +166,18 @@ Ext.define('AM.controller.Directory', {
         var form = win.down('form');
         form.node = node;
 
+        if (node.parentNode.data.record != '') {
+            var selectedGroups = Ext.decode(node.data.record).groups;
+
+            var storeObject = Ext.create('Ext.data.Store', { fields: ['groupId', 'groupName'] });
+
+            Ext.each(selectedGroups, function (aRecord) {
+                storeObject.add({ groupId: aRecord['groupId'], groupName: aRecord['groupName'] });
+            }, this);
+
+            form.getForm().findField('ResourceGroups').bindStore(storeObject);
+        }
+
         if (item.itemId == 'editFolder' && node.data.record !== undefined) {
             win.title = 'Edit Folder';
             var state = 'edit';
@@ -245,6 +257,16 @@ Ext.define('AM.controller.Directory', {
         var form = win.down('form');
         form.node = node;
 
+        var selectedGroups = Ext.decode(node.data.record).groups;
+
+        var storeObject = Ext.create('Ext.data.Store', { fields: ['groupId', 'groupName'] });
+
+        Ext.each(selectedGroups, function (aRecord) {
+            storeObject.add({ groupId: aRecord['groupId'], groupName: aRecord['groupName'] });
+        }, this);
+
+        form.getForm().findField('ResourceGroups').bindStore(storeObject);
+
         if (item.itemId == 'editContext' && node.data.record !== undefined) {
             win.title = 'Edit Context';
             var state = 'edit';
@@ -252,7 +274,7 @@ Ext.define('AM.controller.Directory', {
             var record = Ext.decode(node.data.record);
             form.getForm().findField('displayName').setValue(record.displayName);
             form.getForm().findField('internalName').setValue(record.internalName);
-            form.getForm().findField('internalName').readOnly = true ;
+            form.getForm().findField('internalName').readOnly = true;
             form.getForm().findField('description').setValue(record.description);
             form.getForm().findField('cacheDBConnStr').setValue(record.cacheConnStr);
         } else {

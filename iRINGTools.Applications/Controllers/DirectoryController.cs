@@ -28,8 +28,6 @@ namespace org.iringtools.web.controllers
         int siteId = 4;
         int platformId = 2;
 
-        Groups groupsToGenerate = new Groups();
-
         private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
         private CustomError _CustomError = null;
         private CustomErrorLog _CustomErrorLog = null;
@@ -88,8 +86,6 @@ namespace org.iringtools.web.controllers
                         }
                     case "SiteNode":
                         {
-                            groupsToGenerate = _securityRepository.GetGroupsByUser(userName, "xml");
-
                             var record = Utility.DeserializeJson<Site>(form["record"].ToString(), true);
 
                             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
@@ -165,135 +161,135 @@ namespace org.iringtools.web.controllers
                             ActionResult result = Json(nodes, JsonRequestBehavior.AllowGet);
                             return result;
                         }
-                    case "GroupsNode":
-                        {
+                    //case "GroupsNode":
+                    //    {
 
-                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                    //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-                            JsonTreeNode node = new JsonTreeNode
-                            {
-                                nodeType = "async",
-                                type = "GroupNode",
-                                id = "groupnode",
-                                text = "Group1",
-                                expanded = false,
-                                leaf = false,
-                                children = null
-                            };
-                            nodes.Add(node);
-                            return Json(nodes, JsonRequestBehavior.AllowGet);
-                        }
-                    case "GroupNode":
-                        {
+                    //        JsonTreeNode node = new JsonTreeNode
+                    //        {
+                    //            nodeType = "async",
+                    //            type = "GroupNode",
+                    //            id = "groupnode",
+                    //            text = "Group1",
+                    //            expanded = false,
+                    //            leaf = false,
+                    //            children = null
+                    //        };
+                    //        nodes.Add(node);
+                    //        return Json(nodes, JsonRequestBehavior.AllowGet);
+                    //    }
+                    //case "GroupNode":
+                    //    {
 
-                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                    //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-                            JsonTreeNode node = new JsonTreeNode
-                            {
-                                nodeType = "async",
-                                type = "ScopesNode",
-                                iconCls = "scopes",
-                                id = "scopenode",
-                                text = "Scopes",
-                                expanded = false,
-                                leaf = false,
-                                children = null
-                            };
-                            nodes.Add(node);
-                            return Json(nodes, JsonRequestBehavior.AllowGet);
-                        }
+                    //        JsonTreeNode node = new JsonTreeNode
+                    //        {
+                    //            nodeType = "async",
+                    //            type = "ScopesNode",
+                    //            iconCls = "scopes",
+                    //            id = "scopenode",
+                    //            text = "Scopes",
+                    //            expanded = false,
+                    //            leaf = false,
+                    //            children = null
+                    //        };
+                    //        nodes.Add(node);
+                    //        return Json(nodes, JsonRequestBehavior.AllowGet);
+                    //    }
 
-                    case "ScopesNode":
-                        {
-                            System.Collections.IEnumerator ie = Session.GetEnumerator();
-                            while (ie.MoveNext())
-                            {
-                                Session.Remove(ie.Current.ToString());
-                                ie = Session.GetEnumerator();
-                            }
+                    //case "ScopesNode":
+                    //    {
+                    //        System.Collections.IEnumerator ie = Session.GetEnumerator();
+                    //        while (ie.MoveNext())
+                    //        {
+                    //            Session.Remove(ie.Current.ToString());
+                    //            ie = Session.GetEnumerator();
+                    //        }
 
-                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            var contexts = _repository.GetScopes();
+                    //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                    //        var contexts = _repository.GetScopes();
 
-                            if (contexts != null)
-                            {
-                                foreach (ScopeProject scope in contexts)
-                                {
-                                    JsonTreeNode node = new JsonTreeNode
-                                    {
-                                        nodeType = "async",
-                                        type = "ScopeNode",
-                                        iconCls = "scope",
-                                        id = scope.Name,
-                                        text = scope.DisplayName,
-                                        expanded = false,
-                                        leaf = false,
-                                        children = null,
-                                        record = scope
-                                    };
+                    //        if (contexts != null)
+                    //        {
+                    //            foreach (ScopeProject scope in contexts)
+                    //            {
+                    //                JsonTreeNode node = new JsonTreeNode
+                    //                {
+                    //                    nodeType = "async",
+                    //                    type = "ScopeNode",
+                    //                    iconCls = "scope",
+                    //                    id = scope.Name,
+                    //                    text = scope.DisplayName,
+                    //                    expanded = false,
+                    //                    leaf = false,
+                    //                    children = null,
+                    //                    record = scope
+                    //                };
 
-                                    node.property = new Dictionary<string, string>();
-                                    node.property.Add("Internal Name", scope.Name);
-                                    node.property.Add("Display Name", scope.DisplayName);
-                                    node.property.Add("Description", scope.Description);
-                                    nodes.Add(node);
-                                }
-                            }
+                    //                node.property = new Dictionary<string, string>();
+                    //                node.property.Add("Internal Name", scope.Name);
+                    //                node.property.Add("Display Name", scope.DisplayName);
+                    //                node.property.Add("Description", scope.Description);
+                    //                nodes.Add(node);
+                    //            }
+                    //        }
 
-                            return Json(nodes, JsonRequestBehavior.AllowGet);
-                        }
-                    case "ScopeNode":
-                        {
-                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                            ScopeProject scope = _repository.GetScope(form["node"]);
+                    //        return Json(nodes, JsonRequestBehavior.AllowGet);
+                    //    }
+                    //case "ScopeNode":
+                    //    {
+                    //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                    //        ScopeProject scope = _repository.GetScope(form["node"]);
 
-                            foreach (ScopeApplication application in scope.Applications)
-                            {
-                                Configuration config = _repository.GetConfig(scope.Name, application.Name);
-                                application.Configuration = config;
+                    //        foreach (ScopeApplication application in scope.Applications)
+                    //        {
+                    //            Configuration config = _repository.GetConfig(scope.Name, application.Name);
+                    //            application.Configuration = config;
 
-                                DataLayer dataLayer = _repository.GetDataLayer(scope.Name, application.Name);
+                    //            DataLayer dataLayer = _repository.GetDataLayer(scope.Name, application.Name);
 
-                                if (dataLayer != null)
-                                {
-                                    JsonTreeNode node = new JsonTreeNode
-                                    {
-                                        nodeType = "async",
-                                        type = "ApplicationNode",
-                                        iconCls = "tabsApplication",
-                                        id = scope.Name + "/" + application.Name,
-                                        text = application.DisplayName,
-                                        expanded = false,
-                                        leaf = false,
-                                        children = null,
-                                        record = new
-                                        {
-                                            Name = application.Name,
-                                            DisplayName = application.DisplayName,
-                                            Description = application.Description,
-                                            DataLayer = dataLayer.Name,
-                                            Assembly = dataLayer.Assembly,
-                                            Configuration = application.Configuration,
-                                            CacheImportURI = application.CacheInfo == null ? "" : application.CacheInfo.ImportURI,
-                                            CacheTimeout = application.CacheInfo == null ? "" : Convert.ToString(application.CacheInfo.Timeout),
-                                            PermissionGroups = application.PermissionGroup
-                                        }
-                                    };
+                    //            if (dataLayer != null)
+                    //            {
+                    //                JsonTreeNode node = new JsonTreeNode
+                    //                {
+                    //                    nodeType = "async",
+                    //                    type = "ApplicationNode",
+                    //                    iconCls = "tabsApplication",
+                    //                    id = scope.Name + "/" + application.Name,
+                    //                    text = application.DisplayName,
+                    //                    expanded = false,
+                    //                    leaf = false,
+                    //                    children = null,
+                    //                    record = new
+                    //                    {
+                    //                        Name = application.Name,
+                    //                        DisplayName = application.DisplayName,
+                    //                        Description = application.Description,
+                    //                        DataLayer = dataLayer.Name,
+                    //                        Assembly = dataLayer.Assembly,
+                    //                        Configuration = application.Configuration,
+                    //                        CacheImportURI = application.CacheInfo == null ? "" : application.CacheInfo.ImportURI,
+                    //                        CacheTimeout = application.CacheInfo == null ? "" : Convert.ToString(application.CacheInfo.Timeout),
+                    //                        PermissionGroups = application.PermissionGroup
+                    //                    }
+                    //                };
 
-                                    node.property = new Dictionary<string, string>();
-                                    node.property.Add("Internal Name", application.Name);
-                                    node.property.Add("Display Name", application.DisplayName);
-                                    node.property.Add("Description", application.Description);
-                                    node.property.Add("Data Layer", dataLayer.Name);
-                                    node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
+                    //                node.property = new Dictionary<string, string>();
+                    //                node.property.Add("Internal Name", application.Name);
+                    //                node.property.Add("Display Name", application.DisplayName);
+                    //                node.property.Add("Description", application.Description);
+                    //                node.property.Add("Data Layer", dataLayer.Name);
+                    //                node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
 
-                                    nodes.Add(node);
-                                }
-                            }
+                    //                nodes.Add(node);
+                    //            }
+                    //        }
 
-                            ActionResult result = Json(nodes, JsonRequestBehavior.AllowGet);
-                            return result;
-                        }
+                    //        ActionResult result = Json(nodes, JsonRequestBehavior.AllowGet);
+                    //        return result;
+                    //    }
                     case "ApplicationNode":
                         {
                             string context = form["node"];
@@ -1499,7 +1495,7 @@ namespace org.iringtools.web.controllers
 
             for (int i = 0; i < groupArray.Length; i++)
             {
-                tempGroups.Add(groupsToGenerate.Find(gr => gr.GroupId.ToString() == groupArray[i]));
+                tempGroups.Add(new Group(){GroupId = int.Parse(groupArray[i])});
             }
 
             return tempGroups;

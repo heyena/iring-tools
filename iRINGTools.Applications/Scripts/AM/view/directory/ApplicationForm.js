@@ -145,7 +145,6 @@ Ext.define('AM.view.directory.ApplicationForm', {
             displayField: 'groupName',
             autoSelect: false,
             queryMode: 'remote',
-            store: 'ResourceGroupStore',
             valueField: 'groupId'
         },
         {

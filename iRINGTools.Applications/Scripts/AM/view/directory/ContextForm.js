@@ -98,7 +98,6 @@ Ext.define('AM.view.directory.ContextForm', {
                 displayField: 'groupName',
                 autoSelect: false,
                 queryMode: 'remote',
-                store: 'ResourceGroupStore',
                 valueField: 'groupId',
                 emptyText: 'Select Groups For The  User'
             }
