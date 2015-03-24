@@ -45,16 +45,16 @@ namespace org.iringtools.UserSecurity
         [DataMember(Name = "groupId", Order = 0)]
         public int GroupId { get; set; }
 
-        [DataMember(Name = "siteId", Order = 1, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
+        //[DataMember(Name = "siteId", Order = 1, EmitDefaultValue = false)]
+        //public int SiteId { get; set; }
 
-        [DataMember(Name = "groupName", Order = 2, EmitDefaultValue = false)]
+        [DataMember(Name = "groupName", Order = 1, EmitDefaultValue = false)]
         public string GroupName { get; set; }
 
-        [DataMember(Name = "groupDesc", Order = 3, EmitDefaultValue = false)]
+        [DataMember(Name = "groupDesc", Order = 2, EmitDefaultValue = false)]
         public string GroupDesc { get; set; }
 
-        [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
     }
@@ -74,28 +74,28 @@ namespace org.iringtools.UserSecurity
         [DataMember(Name = "userName", Order = 1, EmitDefaultValue = false)]
         public string UserName { get; set; }
 
-        [DataMember(Name = "siteId", Order = 2, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
+        //[DataMember(Name = "siteId", Order = 2, EmitDefaultValue = false)]
+        //public int SiteId { get; set; }
 
-        [DataMember(Name = "userFirstName", Order = 3, EmitDefaultValue = false)]
+        [DataMember(Name = "userFirstName", Order = 2, EmitDefaultValue = false)]
         public string UserFirstName { get; set; }
 
-        [DataMember(Name = "userLastName", Order = 4, EmitDefaultValue = false)]
+        [DataMember(Name = "userLastName", Order = 3, EmitDefaultValue = false)]
         public string UserLastName { get; set; }
         
-        [DataMember(Name = "userFullName", Order = 5, EmitDefaultValue = false)]
+        [DataMember(Name = "userFullName", Order = 4, EmitDefaultValue = false)]
         public string UserFullName { get; set; }
         
-        [DataMember(Name = "userEmail", Order = 6, EmitDefaultValue = false)]
+        [DataMember(Name = "userEmail", Order = 5, EmitDefaultValue = false)]
         public string UserEmail { get; set; }
 
-        [DataMember(Name = "userPhone", Order = 7, EmitDefaultValue = false)]
+        [DataMember(Name = "userPhone", Order = 6, EmitDefaultValue = false)]
         public string UserPhone { get; set; }
 
-        [DataMember(Name = "userDesc", Order = 8, EmitDefaultValue = false)]
+        [DataMember(Name = "userDesc", Order = 7, EmitDefaultValue = false)]
         public string UserDesc { get; set; }
 
-        [DataMember(Name = "active", Order = 9, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 8, EmitDefaultValue = false)]
         public Byte Active { get; set; }
     }
 
@@ -111,16 +111,16 @@ namespace org.iringtools.UserSecurity
         [DataMember(Name = "roleId", Order = 0)]
         public int RoleId { get; set; }
 
-        [DataMember(Name = "siteId", Order = 1, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
+        //[DataMember(Name = "siteId", Order = 1, EmitDefaultValue = false)]
+        //public int SiteId { get; set; }
 
-        [DataMember(Name = "roleName", Order = 2, EmitDefaultValue = false)]
+        [DataMember(Name = "roleName", Order = 1, EmitDefaultValue = false)]
         public string RoleName { get; set; }
 
-        [DataMember(Name = "roleDesc", Order = 3, EmitDefaultValue = false)]
+        [DataMember(Name = "roleDesc", Order = 2, EmitDefaultValue = false)]
         public string RoleDesc { get; set; }
 
-        [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
         public Byte Active { get; set; }
     }
 
@@ -136,19 +136,19 @@ namespace org.iringtools.UserSecurity
         [DataMember(Name = "permissionId", Order = 0)]
         public int PermissionId { get; set; }
 
-        [DataMember(Name = "siteId", Order = 1, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
+        //[DataMember(Name = "siteId", Order = 1, EmitDefaultValue = false)]
+        //public int SiteId { get; set; }
 
-        [DataMember(Name = "permissionName", Order = 2, EmitDefaultValue = false)]
+        [DataMember(Name = "permissionName", Order = 1, EmitDefaultValue = false)]
         public string PermissionName { get; set; }
 
-        [DataMember(Name = "permissionDesc", Order = 3, EmitDefaultValue = false)]
+        [DataMember(Name = "permissionDesc", Order = 2, EmitDefaultValue = false)]
         public string PermissionDesc { get; set; }
 
-        [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
         public Byte Active { get; set; }
 
-        [DataMember(Name = "chk", Order = 5, EmitDefaultValue = false)]
+        [DataMember(Name = "chk", Order = 4, EmitDefaultValue = false)]
         public Boolean Chk { get; set; }
     }
 
@@ -170,13 +170,13 @@ namespace org.iringtools.UserSecurity
         [DataMember(Name = "userId", Order = 2, EmitDefaultValue = false)]
         public int UserId { get; set; }
 
-        [DataMember(Name = "siteId", Order = 3, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
+        //[DataMember(Name = "siteId", Order = 3, EmitDefaultValue = false)]
+        //public int SiteId { get; set; }
 
-        [DataMember(Name = "userGroupsDesc", Order = 4, EmitDefaultValue = false)]
+        [DataMember(Name = "userGroupsDesc", Order = 3, EmitDefaultValue = false)]
         public string UserGroupsDesc { get; set; }
 
-        [DataMember(Name = "active", Order = 5, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 4, EmitDefaultValue = false)]
         public Byte Active { get; set; }
     }
 
@@ -198,13 +198,13 @@ namespace org.iringtools.UserSecurity
         [DataMember(Name = "roleId", Order = 1, EmitDefaultValue = false)]
         public int RoleId { get; set; }
 
-        [DataMember(Name = "siteId", Order = 2, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
+        //[DataMember(Name = "siteId", Order = 2, EmitDefaultValue = false)]
+        //public int SiteId { get; set; }
 
         //[DataMember(Name = "groupRolesDesc", Order = 4, EmitDefaultValue = false)]
         //public string GroupRolesDesc { get; set; }
 
-        [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 2, EmitDefaultValue = false)]
         public Byte Active { get; set; }
     }
 
@@ -221,13 +221,13 @@ namespace org.iringtools.UserSecurity
         [DataMember(Name = "roleId", Order = 0)]
         public int RoleId { get; set; }
 
-        [DataMember(Name = "siteId", Order = 1, EmitDefaultValue = false)]
-        public int SiteId { get; set; }
+        //[DataMember(Name = "siteId", Order = 1, EmitDefaultValue = false)]
+        //public int SiteId { get; set; }
 
-        [DataMember(Name = "permissionId", Order = 2, EmitDefaultValue = false)]
+        [DataMember(Name = "permissionId", Order = 1, EmitDefaultValue = false)]
         public int PermissionId { get; set; }
 
-        [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
+        [DataMember(Name = "active", Order = 2, EmitDefaultValue = false)]
         public Byte Active { get; set; }
     }
 }
