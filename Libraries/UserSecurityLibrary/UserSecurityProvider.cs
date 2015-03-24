@@ -985,6 +985,20 @@ namespace org.iringtools.UserSecurity
             return permissions;
         }
 
+        public Permissions GetAllPermissions()
+        {
+            List<Permission> lstPermission = new List<Permission>();
+
+            using (var dc = new DataContext(_connSecurityDb))
+            {
+                lstPermission = dc.ExecuteQuery<Permission>("spgPermissions").ToList();
+            }
+
+            Permissions permissions = new Permissions();
+            permissions.AddRange(lstPermission);
+            return permissions;
+        }
+
         public Groups GetGroupsByUser(string userName)
         {
             Groups groups = new Groups();
