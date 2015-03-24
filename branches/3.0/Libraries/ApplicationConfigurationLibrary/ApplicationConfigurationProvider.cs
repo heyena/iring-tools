@@ -1641,6 +1641,48 @@ namespace org.iringtools.applicationConfig
             return application;
         }
 
+        public Response InsertDictionary(XDocument xml)
+        {
+            Response response = new Response();
+            response.Messages = new Messages();
+
+            try
+            {
+                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@rawXml", Value = rawXml });
+
+                    string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiDictionary", nvl);
+
+                    switch (output)
+                    {
+                        case "1":
+                            PrepareSuccessResponse(response, "dictionaryadded");
+                            break;
+                        default:
+                            PrepareErrorResponse(response, output);
+                            break;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding dictionary: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
 
         /// <summary>
         /// insert job
