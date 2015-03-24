@@ -29,9 +29,6 @@ Ext.define('AM.store.ResourceGroupStore', {
             storeId: 'ResourceGroupStore',
             proxy: {
                 type: 'ajax',
-                extraParams: {
-                    baseUrl: null
-                },
                 timeout: 600000,
                 url: 'UserSecurityManager/GetGroupsByUser',
                 reader: {
