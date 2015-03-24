@@ -109,7 +109,7 @@ namespace iRINGTools.Web.Models
                 //sitePermissions?siteId={siteId}&format={format}
 
                 //items = client.Get<Permissions>("/permissions?format=" + format);
-                items = client.Get<Permissions>("/sitePermissions?siteId=1&format="+ format);  
+                items = client.Get<Permissions>("/allPermissions?&format="+ format);  
                
                 _logger.Debug("Successfully called Security Service.");
             }
