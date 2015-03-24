@@ -54,7 +54,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentLibrary", "Libraries\AgentLibrary\AgentLibrary.csproj", "{16F2A058-13A2-476B-AE2B-696AEDD190C0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{46FB3942-D0A5-4BFF-97B0-739E56BFB111} = {46FB3942-D0A5-4BFF-97B0-739E56BFB111}
-		{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A} = {6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}
 	EndProjectSection
 EndProject
 Global
