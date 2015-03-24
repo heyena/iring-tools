@@ -1036,7 +1036,36 @@ namespace org.iringtools.services
             }
         }
 
-       
+        [Description("Insert Commodity to the data base.")]
+        [WebInvoke(Method = "POST", UriTemplate = "/InsertDictionary?format={format}")]
+        public void InsertDictionary(string format, Stream stream)
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.DatabaseDictionary>(stream, format);
+                    response = _applicationConfigurationProvider.InsertDictionary(new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
         //[Description("Insert schedular details to the data base.")]
         //[WebInvoke(Method = "POST", UriTemplate = "/insertJob?format={format}")]
         //public void insertJob(string format, Stream stream)
