@@ -169,7 +169,8 @@ namespace org.iringtools.AgentLibrary
             {
                 org.iringtools.AgentLibrary.Agent.Job job = Utility.DeserializeDataContract<org.iringtools.AgentLibrary.Agent.Job>(xml.ToString());
                 string schedulesXml = job.schedules.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
-               
+                string jobSchedulesXml = job.jobschedules.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (job == null)
@@ -191,7 +192,7 @@ namespace org.iringtools.AgentLibrary
                         nvl.Add(new ListItem() { Name = "@Exchange_Url", Value = job.Exchange_Url });
                         nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = cachePageSize });
                         nvl.Add(new ListItem() { Name = "@Schedules", Value = schedulesXml });
-
+                        nvl.Add(new ListItem() { Name = "@JobSchedules", Value = jobSchedulesXml });
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuJob", nvl);
 
                         switch (output)
