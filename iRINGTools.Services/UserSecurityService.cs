@@ -758,6 +758,26 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Return all permissions.")]
+        [WebGet(UriTemplate = "/allPermissions?format={format}")]
+        public void GetAllPermissions(string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                    format = "xml";
+
+                Permissions permissions = _userSecurityProvider.GetAllPermissions();
+                _userSecurityProvider.FormatOutgoingMessage<Permissions>(permissions, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
         [Description("Return all groups that the user belongs to from the database.")]
         [WebGet(UriTemplate = "/groupsByUser?userName={userName}&format={format}")]
         public void GetGroupsByUser(string userName, string format)
