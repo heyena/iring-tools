@@ -203,7 +203,7 @@
 
   <Target Name="CoreBuild" DependsOnTargets="Versioning">
     <Message Text="Performing MSBuild ..." />
-    <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
+    <MSBuild Projects="$(SolutionFile)" Targets="Rebuild"/>
   </Target>
 
   <Target Name="Test">
