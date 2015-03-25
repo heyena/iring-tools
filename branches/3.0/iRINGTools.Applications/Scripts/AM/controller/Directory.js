@@ -166,8 +166,15 @@ Ext.define('AM.controller.Directory', {
         var form = win.down('form');
         form.node = node;
 
-        if (node.parentNode.data.record != '') {
-            var selectedGroups = Ext.decode(node.data.record).groups;
+        if (node.parentNode.data.type != 'SiteNode') {
+            var selectedGroups;
+
+            if (item.itemId == 'editFolder') {
+                selectedGroups = Ext.decode(node.parentNode.data.record).groups;
+            }
+            else {
+                selectedGroups = Ext.decode(node.data.record).groups;
+            }
 
             var storeObject = Ext.create('Ext.data.Store', { fields: ['groupId', 'groupName'] });
 
@@ -184,7 +191,23 @@ Ext.define('AM.controller.Directory', {
 
             var record = Ext.decode(node.data.record);
             form.getForm().findField('displayName').setValue(record.folderName);
-            //form.getForm().findField('ResourceGroups').setValue(record.groups);
+
+            var selectedNamesStore = form.getForm().findField('ResourceGroups').getStore();
+            var selectGroupsNames = '';
+            for (var i = 0; i < selectedNamesStore.getCount(); i++) {
+                Ext.each(record.groups, function (selectedGroup) {
+                    if (selectedGroup.groupId == groupName.data.groupId) {
+                        groupName.checked = true;
+                        selectGroupsNames = selectGroupsNames + groupName.data.groupName + form.getForm().findField('ResourceGroups').delimiter;
+                    }
+                }, this);
+            };
+
+            selectGroupsNames = selectGroupsNames.substring(0, selectGroupsNames.length - 2);
+            form.getForm().findField('ResourceGroups').bindStore(selectedNamesStore);
+            //            form.getForm().findField('ResourceGroups').select(selectGroupsNames);
+
+            var check = form.getForm().findField('ResourceGroups').allSelected;
         }
         else {
             var state = 'new';

@@ -11,11 +11,11 @@ namespace iRINGTools.Web.Models
     {
         Folders GetFolders(string userName, int siteId, int platformId, Guid parentFolderId);
 
-        library.Response AddFolder(string userName, Folder newFolder);
+        library.Response AddFolder(Folder newFolder);
 
         library.Response DeleteFolder(Folder folder);
 
-        library.Response UpdateFolder(string userName, Folder updatedFolder);
+        library.Response UpdateFolder(Folder updatedFolder);
 
         Contexts GetContexts(string userName, Guid parentFolderId);
 

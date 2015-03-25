@@ -905,7 +905,7 @@ namespace org.iringtools.web.controllers
                     tempFolder.ParentFolderId = parentId;
                     tempFolder.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
 
-                    response = _appConfigRepository.AddFolder(userName, tempFolder);
+                    response = _appConfigRepository.AddFolder(tempFolder);
                 }
                 else if (form["state"] == "edit")
                 {
@@ -913,7 +913,7 @@ namespace org.iringtools.web.controllers
                     tempFolder.ParentFolderId = record.ParentFolderId;
                     tempFolder.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
 
-                    response = _appConfigRepository.UpdateFolder(userName, tempFolder);
+                    response = _appConfigRepository.UpdateFolder(tempFolder);
                 }
                 else if (form["state"] == "delete")
                 {

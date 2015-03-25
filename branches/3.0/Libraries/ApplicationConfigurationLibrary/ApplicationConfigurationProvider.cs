@@ -291,7 +291,7 @@ namespace org.iringtools.applicationConfig
             return folders;
         }
         
-        public Response InsertFolder(string userName, XDocument xml)
+        public Response InsertFolder(XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -311,7 +311,6 @@ namespace org.iringtools.applicationConfig
                         NameValueList nvl = new NameValueList();
                         nvl.Add(new ListItem() { Name = "@SiteId", Value = folder.SiteId });
                         nvl.Add(new ListItem() { Name = "@PlatformId", Value = folder.PlatformId });
-                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@ParentFolderId", Value = folder.ParentFolderId });
                         nvl.Add(new ListItem() { Name = "@FolderName", Value = folder.FolderName });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
@@ -350,7 +349,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateFolder(string userName,XDocument xml)
+        public Response UpdateFolder(XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -366,7 +365,8 @@ namespace org.iringtools.applicationConfig
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                        nvl.Add(new ListItem() { Name = "@SiteId", Value = folder.SiteId });
+                        nvl.Add(new ListItem() { Name = "@PlatformId", Value = folder.PlatformId });
                         nvl.Add(new ListItem() { Name = "@FolderId", Value = folder.FolderId.ToString() });
                         nvl.Add(new ListItem() { Name = "@ParentFolderId", Value = folder.ParentFolderId.ToString() });
                         nvl.Add(new ListItem() { Name = "@FolderName", Value = folder.FolderName });
