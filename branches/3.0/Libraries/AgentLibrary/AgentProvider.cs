@@ -170,7 +170,7 @@ namespace org.iringtools.AgentLibrary
                 org.iringtools.AgentLibrary.Agent.Job job = Utility.DeserializeDataContract<org.iringtools.AgentLibrary.Agent.Job>(xml.ToString());
                 string schedulesXml = job.schedules.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 string jobSchedulesXml = job.jobschedules.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
-
+              
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (job == null)
