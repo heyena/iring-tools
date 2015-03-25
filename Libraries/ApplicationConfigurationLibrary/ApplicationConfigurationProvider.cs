@@ -68,7 +68,7 @@ namespace org.iringtools.applicationConfig
             return contexts;
         }
 
-        public Response InsertContext(string userName,XDocument xml)
+        public Response InsertContext(XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -86,8 +86,6 @@ namespace org.iringtools.applicationConfig
                     else
                     {
                         NameValueList nvl = new NameValueList();
-
-                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
                         nvl.Add(new ListItem() { Name = "@InternalName", Value = context.InternalName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
@@ -129,7 +127,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateContext(string userName,XDocument xml)
+        public Response UpdateContext(XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -147,7 +145,6 @@ namespace org.iringtools.applicationConfig
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@DisplayName", Value = context.DisplayName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = context.Description });
                         nvl.Add(new ListItem() { Name = "@CacheConnStr", Value = context.CacheConnStr });

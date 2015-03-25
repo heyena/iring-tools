@@ -134,14 +134,14 @@ namespace iRINGTools.Web.Models
             return contexts;
         }
 
-        public library.Response AddContext(string userName, Context newContext)
+        public library.Response AddContext(Context newContext)
         {
             library.Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                response = client.Post<Context, library.Response>(String.Format("/insertContext/{0}?format=xml", userName), newContext, true);
+                response = client.Post<Context, library.Response>(String.Format("/insertContext?format=xml"), newContext, true);
             }
             catch (Exception ex)
             {
@@ -152,14 +152,14 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public library.Response UpdateContext(string userName, Context updatedContext)
+        public library.Response UpdateContext(Context updatedContext)
         {
             library.Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                response = client.Put<Context, library.Response>(String.Format("/updateContext/{0}?format=xml", userName), updatedContext, true);
+                response = client.Put<Context, library.Response>(String.Format("/updateContext?format=xml"), updatedContext, true);
             }
             catch (Exception ex)
             {

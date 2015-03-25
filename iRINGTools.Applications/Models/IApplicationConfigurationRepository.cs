@@ -19,9 +19,9 @@ namespace iRINGTools.Web.Models
 
         Contexts GetContexts(string userName, Guid parentFolderId);
 
-        library.Response AddContext(string userName, Context newContext);
+        library.Response AddContext(Context newContext);
 
-        library.Response UpdateContext(string userName, Context updatedContext);
+        library.Response UpdateContext(Context updatedContext);
 
         library.Response DeleteContext(Context context);
 

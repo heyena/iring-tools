@@ -22,10 +22,6 @@ Ext.define('AM.model.ResourceGroupModel', {
         name: 'groupId'
     },
     {
-        mapping: 'SiteId',
-        name: 'siteId'
-    },
-    {
         mapping: 'GroupName',
         name: 'groupName'
     },
