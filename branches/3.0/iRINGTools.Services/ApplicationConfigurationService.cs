@@ -52,8 +52,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert contexts to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertContext/{userName}?format={format}")]
-        public void InsertContext(string userName, string format, Stream stream) 
+        [WebInvoke(Method = "POST", UriTemplate = "/insertContext?format={format}")]
+        public void InsertContext(string format, Stream stream) 
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -69,7 +69,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.Contexts>(stream, format);
-                    response = _applicationConfigurationProvider.InsertContext(userName,new XDocument(xElement));
+                    response = _applicationConfigurationProvider.InsertContext(new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -83,8 +83,8 @@ namespace org.iringtools.services
         }
 
         [Description("Update contexts to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateContext/{userName}?format={format}")]
-        public void UpdateContext(string userName,string format, Stream stream) // Completed.
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateContext?format={format}")]
+        public void UpdateContext(string format, Stream stream) // Completed.
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -100,7 +100,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.Contexts>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateContext(userName,new XDocument(xElement));
+                    response = _applicationConfigurationProvider.UpdateContext(new XDocument(xElement));
                 }
             }
             catch (Exception ex)

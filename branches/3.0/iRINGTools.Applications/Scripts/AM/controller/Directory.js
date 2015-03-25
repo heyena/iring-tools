@@ -193,6 +193,19 @@ Ext.define('AM.controller.Directory', {
 
             var record = Ext.decode(node.data.record);
             form.getForm().findField('displayName').setValue(record.folderName);
+
+            var selectedNamesStore = form.getForm().findField('ResourceGroups').getStore();
+            var selectGroupsNames = Ext.create('Ext.data.Store', { fields: [{ mapping: 'GroupId', name: 'groupId' }, { mapping: 'GroupName', name: 'groupName' }, { mapping: 'GroupDesc', name: 'groupDesc' }, { mapping: 'Active', name: 'active'}] });
+            for (var i = 0; i < selectedNamesStore.getCount(); i++) {
+                Ext.each(record.groups, function (selectedGroup) {
+                    var groupName = selectedNamesStore.getAt(i);
+                    if (selectedGroup.groupId == groupName.data.groupId) {
+                        selectGroupsNames.add(groupName);
+                    }
+                }, this);
+            };
+
+            form.getForm().findField('ResourceGroups').lastSelection = selectGroupsNames;
         }
         else {
             var state = 'new';
@@ -265,16 +278,24 @@ Ext.define('AM.controller.Directory', {
         var form = win.down('form');
         form.node = node;
 
-        var selectedGroups = Ext.decode(node.data.record).groups;
+        var selectedGroups;
 
-        var storeObject = Ext.create('Ext.data.Store', { fields: ['groupId', 'groupName'] });
+        if (item.itemId == 'editContext') {
+            selectedGroups = Ext.decode(node.parentNode.data.record).groups;
+        }
+        else if (item.itemId == 'newContext') {
+            selectedGroups = Ext.decode(node.data.record).groups;
+        }
 
-        Ext.each(selectedGroups, function (aRecord) {
-            storeObject.add({ groupId: aRecord['groupId'], groupName: aRecord['groupName'] });
-        }, this);
+        if (selectedGroups != null) {
+            var storeObject = Ext.create('Ext.data.Store', { fields: ['groupId', 'groupName'] });
 
-        form.getForm().findField('ResourceGroups').bindStore(storeObject);
+            Ext.each(selectedGroups, function (aRecord) {
+                storeObject.add({ groupId: aRecord['groupId'], groupName: aRecord['groupName'] });
+            }, this);
 
+            form.getForm().findField('ResourceGroups').bindStore(storeObject);
+        }
         if (item.itemId == 'editContext' && node.data.record !== undefined) {
             win.title = 'Edit Context';
             var state = 'edit';

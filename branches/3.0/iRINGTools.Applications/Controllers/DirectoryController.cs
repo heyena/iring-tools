@@ -984,14 +984,14 @@ namespace org.iringtools.web.controllers
                     folderSiteId = record.SiteId;
                     tempContext.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
 
-                    response = _appConfigRepository.AddContext(userName, tempContext);
+                    response = _appConfigRepository.AddContext(tempContext);
                 }
                 else if (form["state"] == "edit")
                 {
                     tempContext.ContextId = record.ContextId;
                     tempContext.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
 
-                    response = _appConfigRepository.UpdateContext(userName, tempContext);
+                    response = _appConfigRepository.UpdateContext(tempContext);
                 }
                 else if (form["state"] == "delete")
                 {
