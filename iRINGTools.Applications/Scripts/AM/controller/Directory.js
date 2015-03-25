@@ -166,23 +166,25 @@ Ext.define('AM.controller.Directory', {
         var form = win.down('form');
         form.node = node;
 
-        if (node.parentNode.data.type != 'SiteNode') {
+        if (node.parentNode.data.type != 'WorldNode') {
             var selectedGroups;
 
-            if (item.itemId == 'editFolder') {
+            if (item.itemId == 'editFolder' && node.parentNode.data.type != 'SiteNode') {
                 selectedGroups = Ext.decode(node.parentNode.data.record).groups;
             }
-            else {
+            else if (item.itemId == 'newFolder') {
                 selectedGroups = Ext.decode(node.data.record).groups;
             }
 
-            var storeObject = Ext.create('Ext.data.Store', { fields: ['groupId', 'groupName'] });
+            if (selectedGroups != null) {
+                var storeObject = Ext.create('Ext.data.Store', { fields: ['groupId', 'groupName'] });
 
-            Ext.each(selectedGroups, function (aRecord) {
-                storeObject.add({ groupId: aRecord['groupId'], groupName: aRecord['groupName'] });
-            }, this);
+                Ext.each(selectedGroups, function(aRecord) {
+                    storeObject.add({ groupId: aRecord['groupId'], groupName: aRecord['groupName'] });
+                }, this);
 
-            form.getForm().findField('ResourceGroups').bindStore(storeObject);
+                form.getForm().findField('ResourceGroups').bindStore(storeObject);
+            }
         }
 
         if (item.itemId == 'editFolder' && node.data.record !== undefined) {
@@ -191,23 +193,6 @@ Ext.define('AM.controller.Directory', {
 
             var record = Ext.decode(node.data.record);
             form.getForm().findField('displayName').setValue(record.folderName);
-
-            var selectedNamesStore = form.getForm().findField('ResourceGroups').getStore();
-            var selectGroupsNames = '';
-            for (var i = 0; i < selectedNamesStore.getCount(); i++) {
-                Ext.each(record.groups, function (selectedGroup) {
-                    if (selectedGroup.groupId == groupName.data.groupId) {
-                        groupName.checked = true;
-                        selectGroupsNames = selectGroupsNames + groupName.data.groupName + form.getForm().findField('ResourceGroups').delimiter;
-                    }
-                }, this);
-            };
-
-            selectGroupsNames = selectGroupsNames.substring(0, selectGroupsNames.length - 2);
-            form.getForm().findField('ResourceGroups').bindStore(selectedNamesStore);
-            //            form.getForm().findField('ResourceGroups').select(selectGroupsNames);
-
-            var check = form.getForm().findField('ResourceGroups').allSelected;
         }
         else {
             var state = 'new';
