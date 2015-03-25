@@ -179,7 +179,7 @@ Ext.define('AM.controller.Directory', {
             if (selectedGroups != null) {
                 var storeObject = Ext.create('Ext.data.Store', { fields: ['groupId', 'groupName'] });
 
-                Ext.each(selectedGroups, function(aRecord) {
+                Ext.each(selectedGroups, function (aRecord) {
                     storeObject.add({ groupId: aRecord['groupId'], groupName: aRecord['groupName'] });
                 }, this);
 
@@ -194,18 +194,12 @@ Ext.define('AM.controller.Directory', {
             var record = Ext.decode(node.data.record);
             form.getForm().findField('displayName').setValue(record.folderName);
 
-            var selectedNamesStore = form.getForm().findField('ResourceGroups').getStore();
-            var selectGroupsNames = Ext.create('Ext.data.Store', { fields: [{ mapping: 'GroupId', name: 'groupId' }, { mapping: 'GroupName', name: 'groupName' }, { mapping: 'GroupDesc', name: 'groupDesc' }, { mapping: 'Active', name: 'active'}] });
-            for (var i = 0; i < selectedNamesStore.getCount(); i++) {
-                Ext.each(record.groups, function (selectedGroup) {
-                    var groupName = selectedNamesStore.getAt(i);
-                    if (selectedGroup.groupId == groupName.data.groupId) {
-                        selectGroupsNames.add(groupName);
-                    }
-                }, this);
-            };
+            var groupArray = [];
+            Ext.each(record.groups, function (eachGroup) {
+                groupArray.push(eachGroup.groupId);
+            }, this);
 
-            form.getForm().findField('ResourceGroups').lastSelection = selectGroupsNames;
+            form.getForm().findField('ResourceGroups').setValue(groupArray);
         }
         else {
             var state = 'new';
@@ -306,6 +300,15 @@ Ext.define('AM.controller.Directory', {
             form.getForm().findField('internalName').readOnly = true;
             form.getForm().findField('description').setValue(record.description);
             form.getForm().findField('cacheDBConnStr').setValue(record.cacheConnStr);
+
+            var groupArray = [];
+            Ext.each(record.groups, function (eachGroup) {
+                groupArray.push(eachGroup.groupId);
+            }, this);
+
+            form.getForm().findField('ResourceGroups').setValue(groupArray);
+
+
         } else {
             var state = 'new';
             win.title = 'Add Context';
