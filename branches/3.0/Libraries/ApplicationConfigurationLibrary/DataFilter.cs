@@ -37,14 +37,14 @@ using org.iringtools.library;
 
 namespace org.iringtools.applicationConfig
 {
-    [CollectionDataContract(Name = "dataFilters", Namespace = "http://www.iringtools.org/data/filter", ItemName = "dataFilter")]
+    [CollectionDataContract(Name = "dataFilters", Namespace = "http://www.iringtools.org/library", ItemName = "dataFilter")]
     public class DataFilters : List<DataFilter>
     {
 
     }
 
     [Serializable]
-    [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "dataFilter")]
+    [DataContract(Namespace = "http://www.iringtools.org/library", Name = "dataFilter")]
     public class DataFilter
     {
         public static readonly String SYSTEM_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss.ff";
@@ -70,7 +70,7 @@ namespace org.iringtools.applicationConfig
         public Guid ResourceId { get; set; }
 
         [DataMember(Name = "dataFilterTypeId", Order = 2, EmitDefaultValue = false)]
-        public int DataFilterTypeId { get; set; }
+        public int? DataFilterTypeId { get; set; }
 
         [DataMember(Name = "active", Order = 3, EmitDefaultValue = false)]
         public Byte Active { get; set; }
@@ -87,7 +87,7 @@ namespace org.iringtools.applicationConfig
         public List<RollupExpression> RollupExpressions { get; set; }
 
         [DataMember(Name = "isAdmin", Order = 7, EmitDefaultValue = false)]
-        public bool isAdmin { get; set; }
+        public bool? isAdmin { get; set; }
 
         [Obsolete("Use ToSqlWhereClause(DatabaseDictionary dbDictionary, string tableName, string objectAlias) instead")]
         public string ToSqlWhereClause(DataDictionary dataDictionary, string tableName, string objectAlias)
@@ -327,7 +327,7 @@ namespace org.iringtools.applicationConfig
             string columnName = dataProperty.propertyName;
             string qualColumnName = String.Empty;
 
-            if (expression.IsCaseSensitive || IsNumeric(dataProperty.dataType) || dataProperty.dataType == DataType.DateTime)
+            if (expression.IsCaseSensitive == true || IsNumeric(dataProperty.dataType) || dataProperty.dataType == DataType.DateTime)
             {
                 qualColumnName = objectAlias + columnName;
             }
@@ -371,7 +371,7 @@ namespace org.iringtools.applicationConfig
                 case RelationalOperator.StartsWith:
                     if (!isString) throw new Exception("StartsWith operator used with non-string property");
 
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         value = expression.Values.FirstOrDefault();
                     }
@@ -387,7 +387,7 @@ namespace org.iringtools.applicationConfig
                 case RelationalOperator.Contains:
                     if (!isString) throw new Exception("Contains operator used with non-string property");
 
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         value = expression.Values.FirstOrDefault();
                     }
@@ -403,7 +403,7 @@ namespace org.iringtools.applicationConfig
                 case RelationalOperator.EndsWith:
                     if (!isString) throw new Exception("EndsWith operator used with non-string property");
 
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         value = expression.Values.FirstOrDefault();
                     }
@@ -426,7 +426,7 @@ namespace org.iringtools.applicationConfig
                             sqlExpression.Append(qualColumnName + " IN ('" + value + "') OR " + qualColumnName + " is null");
                             break;
                         }
-                        if (expression.IsCaseSensitive)
+                        if (expression.IsCaseSensitive == true)
                         {
                             value = String.Join("','", expression.Values.ToArray());
                         }
@@ -482,7 +482,7 @@ namespace org.iringtools.applicationConfig
                             sqlExpression.Append(qualColumnName + " is null");
                             break;
                         }
-                        if (expression.IsCaseSensitive)
+                        if (expression.IsCaseSensitive == true)
                         {
                             value = expression.Values.FirstOrDefault();
                         }
@@ -530,7 +530,7 @@ namespace org.iringtools.applicationConfig
                             sqlExpression.Append(qualColumnName + " is not null");
                             break;
                         }
-                        if (expression.IsCaseSensitive)
+                        if (expression.IsCaseSensitive == true)
                         {
                             value = expression.Values.FirstOrDefault();
                         }
@@ -582,7 +582,7 @@ namespace org.iringtools.applicationConfig
                             sqlExpression.Append(qualColumnName + " is null");
                             break;
                         }
-                        if (expression.IsCaseSensitive)
+                        if (expression.IsCaseSensitive == true)
                         {
                             value = expression.Values.FirstOrDefault();
                         }
@@ -630,7 +630,7 @@ namespace org.iringtools.applicationConfig
                             sqlExpression.Append(qualColumnName + " is not null");
                             break;
                         }
-                        if (expression.IsCaseSensitive)
+                        if (expression.IsCaseSensitive == true)
                         {
                             value = expression.Values.FirstOrDefault();
                         }
@@ -673,7 +673,7 @@ namespace org.iringtools.applicationConfig
                 case RelationalOperator.GreaterThan:
                     if (isString)
                     {
-                        if (expression.IsCaseSensitive)
+                        if (expression.IsCaseSensitive == true)
                         {
                             value = expression.Values.FirstOrDefault();
                         }
@@ -706,7 +706,7 @@ namespace org.iringtools.applicationConfig
                 case RelationalOperator.GreaterThanOrEqual:
                     if (isString)
                     {
-                        if (expression.IsCaseSensitive)
+                        if (expression.IsCaseSensitive == true)
                         {
                             value = expression.Values.FirstOrDefault();
                         }
@@ -739,7 +739,7 @@ namespace org.iringtools.applicationConfig
                 case RelationalOperator.LesserThan:
                     if (isString)
                     {
-                        if (expression.IsCaseSensitive)
+                        if (expression.IsCaseSensitive == true)
                         {
                             value = expression.Values.FirstOrDefault();
                         }
@@ -772,7 +772,7 @@ namespace org.iringtools.applicationConfig
                 case RelationalOperator.LesserThanOrEqual:
                     if (isString)
                     {
-                        if (expression.IsCaseSensitive)
+                        if (expression.IsCaseSensitive == true)
                         {
                             value = expression.Values.FirstOrDefault();
                         }
@@ -889,7 +889,7 @@ namespace org.iringtools.applicationConfig
                     {
                         _filterBuffer.Remove(expression);
 
-                        groupLevel += (expression.OpenGroupCount - expression.CloseGroupCount);
+                        groupLevel += (Convert.ToInt32(expression.OpenGroupCount) - Convert.ToInt32(expression.CloseGroupCount));
 
                         switch (expression.LogicalOperator)
                         {
@@ -1060,7 +1060,7 @@ namespace org.iringtools.applicationConfig
                 case RelationalOperator.StartsWith:
                     if (!isString) throw new Exception("StartsWith operator used with non-string property");
 
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         return o => o.GetPropertyValue(dataProperty.propertyName).ToString().StartsWith(expression.Values.FirstOrDefault());
                     }
@@ -1072,7 +1072,7 @@ namespace org.iringtools.applicationConfig
                 case RelationalOperator.Contains:
                     if (!isString) throw new Exception("Contains operator used with non-string property");
 
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         return o => o.GetPropertyValue(dataProperty.propertyName).ToString().Contains(expression.Values.FirstOrDefault());
                     }
@@ -1084,7 +1084,7 @@ namespace org.iringtools.applicationConfig
                 case RelationalOperator.EndsWith:
                     if (!isString) throw new Exception("EndsWith operator used with non-string property");
 
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         return o => o.GetPropertyValue(dataProperty.propertyName).ToString().EndsWith(expression.Values.FirstOrDefault());
                     }
@@ -1094,7 +1094,7 @@ namespace org.iringtools.applicationConfig
                     }
 
                 case RelationalOperator.In:
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
 
@@ -1106,7 +1106,7 @@ namespace org.iringtools.applicationConfig
                     }
 
                 case RelationalOperator.EqualTo:
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
 
@@ -1119,7 +1119,7 @@ namespace org.iringtools.applicationConfig
                     }
 
                 case RelationalOperator.NotEqualTo:
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
 
@@ -1132,7 +1132,7 @@ namespace org.iringtools.applicationConfig
                     }
 
                 case RelationalOperator.GreaterThan:
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
 
@@ -1147,7 +1147,7 @@ namespace org.iringtools.applicationConfig
                     }
 
                 case RelationalOperator.GreaterThanOrEqual:
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
 
@@ -1164,7 +1164,7 @@ namespace org.iringtools.applicationConfig
                     }
 
                 case RelationalOperator.LesserThan:
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
 
@@ -1179,7 +1179,7 @@ namespace org.iringtools.applicationConfig
                     }
 
                 case RelationalOperator.LesserThanOrEqual:
-                    if (expression.IsCaseSensitive)
+                    if (expression.IsCaseSensitive == true)
                     {
                         if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
 
@@ -1416,7 +1416,7 @@ namespace org.iringtools.applicationConfig
         }
     }
 
-    [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "expression")]
+    [DataContract(Namespace = "http://www.iringtools.org/library", Name = "expression")]
     public class Expression
     {
         public Expression()
@@ -1435,7 +1435,7 @@ namespace org.iringtools.applicationConfig
         //]]
 
         [DataMember(Name = "openGroupCount", Order = 2, EmitDefaultValue = false)]
-        public int OpenGroupCount { get; set; }
+        public int? OpenGroupCount { get; set; }
 
         [DataMember(Name = "propertyName", Order = 3, IsRequired = true)]
         public string PropertyName { get; set; }
@@ -1450,16 +1450,16 @@ namespace org.iringtools.applicationConfig
         public LogicalOperator LogicalOperator { get; set; }
 
         [DataMember(Name = "closeGroupCount", Order = 7, EmitDefaultValue = false)]
-        public int CloseGroupCount { get; set; }
+        public int? CloseGroupCount { get; set; }
 
         [DataMember(Name = "isCaseSensitive", Order = 8, EmitDefaultValue = false)]
-        public bool IsCaseSensitive { get; set; }
+        public bool? IsCaseSensitive { get; set; }
     }
 
-    [CollectionDataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "values", ItemName = "value")]
+    [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "values", ItemName = "value")]
     public class Values : List<string> { }
 
-    [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "orderExpression")]
+    [DataContract(Namespace = "http://www.iringtools.org/library", Name = "orderExpression")]
     public class OrderExpression
     {
         //[[New Fields
@@ -1479,7 +1479,7 @@ namespace org.iringtools.applicationConfig
         public SortOrder SortOrder { get; set; }
     }
 
-    [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollupExpression")]
+    [DataContract(Namespace = "http://www.iringtools.org/library", Name = "rollupExpression")]
     public class RollupExpression
     {
         public RollupExpression()
@@ -1504,7 +1504,7 @@ namespace org.iringtools.applicationConfig
         public List<Rollup> Rollups { get; set; }
     }
 
-    [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollup")]
+    [DataContract(Namespace = "http://www.iringtools.org/library", Name = "rollup")]
     public class Rollup
     {
         //[[New Fields
@@ -1524,7 +1524,7 @@ namespace org.iringtools.applicationConfig
         public RollupType Type { get; set; }
     }
 
-    [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollupType")]
+    [DataContract(Namespace = "http://www.iringtools.org/library", Name = "rollupType")]
     public enum RollupType
     {
         [EnumMember]
@@ -1541,7 +1541,7 @@ namespace org.iringtools.applicationConfig
         Null,
     }
 
-    [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "logicalOperator")]
+    [DataContract(Namespace = "http://www.iringtools.org/library", Name = "logicalOperator")]
     public enum LogicalOperator
     {
         [EnumMember]
@@ -1558,7 +1558,7 @@ namespace org.iringtools.applicationConfig
         OrNot,
     }
 
-    [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "relationalOperator")]
+    [DataContract(Namespace = "http://www.iringtools.org/library", Name = "relationalOperator")]
     public enum RelationalOperator
     {
         [EnumMember]
@@ -1587,7 +1587,7 @@ namespace org.iringtools.applicationConfig
         IsNotNull,
     }
 
-    [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "sortOrder")]
+    [DataContract(Namespace = "http://www.iringtools.org/library", Name = "sortOrder")]
     public enum SortOrder
     {
         [EnumMember]
