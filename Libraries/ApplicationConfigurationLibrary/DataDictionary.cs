@@ -32,14 +32,14 @@ namespace org.iringtools.applicationConfig
         public Guid applicationId { get; set; }
 
         [DataMember(Order = 4)]
-        public bool isDBDictionary { get; set; }
+        public bool? isDBDictionary { get; set; }
         //]]
 
         [DataMember(Order = 5)]
-        public bool enableSearch { get; set; }
+        public bool? enableSearch { get; set; }
 
         [DataMember(Order = 6)]
-        public bool enableSummary { get; set; }
+        public bool? enableSummary { get; set; }
 
         [DataMember(Order = 7)]
         public string dataVersion { get; set; }
@@ -51,7 +51,7 @@ namespace org.iringtools.applicationConfig
         //[DataMember(IsRequired = false, Order = 9)]
         //public List<UnionObject> unionObjects { get; set; }
 
-        public static bool IsNumeric(DataType dataType)
+        public static bool? IsNumeric(DataType dataType)
         {
             bool isNumeric = false;
 
@@ -97,7 +97,7 @@ namespace org.iringtools.applicationConfig
             dataProperties = new List<DataProperty>();
             dataRelationships = new List<DataRelationship>();
             extensionProperties = new List<ExtensionProperty>();
-            aliasDictionary = new Dictionary<string, string>();
+            aliasDictionary = new aliasDictionary();
         }
         //[[New Fields
         [DataMember(IsRequired = true, Order = 0)]
@@ -129,13 +129,13 @@ namespace org.iringtools.applicationConfig
         public List<DataRelationship> dataRelationships { get; set; }
 
         [DataMember(IsRequired = false, Order = 9, EmitDefaultValue = false)]
-        public bool isReadOnly { get; set; }
+        public bool? isReadOnly { get; set; }
 
         [DataMember(IsRequired = false, Order = 10, EmitDefaultValue = false)]
-        public bool hasContent { get; set; }
+        public bool? hasContent { get; set; }
 
         [DataMember(IsRequired = false, Order = 11, EmitDefaultValue = false)]
-        public bool isListOnly { get; set; }
+        public bool? isListOnly { get; set; }
 
         [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
         public string defaultProjectionFormat { get; set; }
@@ -147,13 +147,13 @@ namespace org.iringtools.applicationConfig
         public string description { get; set; }
 
         [DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
-        public bool isRelatedOnly { get; set; }
+        public bool? isRelatedOnly { get; set; }
 
         [DataMember(IsRequired = false, Order = 16, EmitDefaultValue = false)]
         public string groupName { get; set; }
 
         [DataMember(IsRequired = false, Order = 17, EmitDefaultValue = false)]
-        public Dictionary<string, string> aliasDictionary { get; set; }
+        public aliasDictionary aliasDictionary { get; set; }
 
         [DataMember(IsRequired = false, Order = 18, EmitDefaultValue = false)]
         public string version { get; set; }
@@ -162,7 +162,7 @@ namespace org.iringtools.applicationConfig
         public DataFilter dataFilter { get; set; }
 
         [DataMember(IsRequired = false, Order = 20, EmitDefaultValue = false)]
-        public bool isHidden { get; set; }
+        public bool? isHidden { get; set; }
 
         [DataMember(IsRequired = false, Order = 21)]
         public List<ExtensionProperty> extensionProperties { get; set; }
@@ -220,7 +220,7 @@ namespace org.iringtools.applicationConfig
     {
         public DataProperty()
         {
-            aliasDictionary = new Dictionary<string, string>();
+            aliasDictionary = new aliasDictionary();
         }
 
         //[[New Fields
@@ -231,7 +231,7 @@ namespace org.iringtools.applicationConfig
         public Guid dataObjectId { get; set; }
 
         [DataMember(IsRequired = true, Order = 2)]
-        public int pickListId { get; set; }
+        public Guid pickListId { get; set; }
         //]]
 
         [DataMember(IsRequired = true, Order = 3)]
@@ -244,46 +244,46 @@ namespace org.iringtools.applicationConfig
         public DataType dataType { get; set; }
 
         [DataMember(IsRequired = true, Order = 6)]
-        public int dataLength { get; set; }
+        public int? dataLength { get; set; }
 
         [DataMember(IsRequired = true, Order = 7)]
-        public bool isNullable { get; set; }
+        public bool? isNullable { get; set; }
 
         [DataMember(IsRequired = true, Order = 8)]
         public KeyType keyType { get; set; }
 
         [DataMember(EmitDefaultValue = false, Order = 9)]
-        public bool showOnIndex { get; set; }
+        public bool? showOnIndex { get; set; }
 
         [DataMember(EmitDefaultValue = false, Order = 10)]
-        public int numberOfDecimals { get; set; }
+        public int? numberOfDecimals { get; set; }
 
         [DataMember(EmitDefaultValue = false, Order = 11)]
-        public bool isReadOnly { get; set; }
+        public bool? isReadOnly { get; set; }
 
         [DataMember(EmitDefaultValue = false, Order = 12)]
-        public bool showOnSearch { get; set; }
+        public bool? showOnSearch { get; set; }
 
         [DataMember(EmitDefaultValue = false, Order = 13)]
-        public bool isHidden { get; set; }
+        public bool? isHidden { get; set; }
 
         [DataMember(IsRequired = false, Order = 14, EmitDefaultValue = false)]
         public string description { get; set; }
 
         [DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
-        public Dictionary<string, string> aliasDictionary { get; set; }
+        public aliasDictionary aliasDictionary { get; set; }
 
         [DataMember(IsRequired = false, Order = 16, EmitDefaultValue = false)]
         public string referenceType { get; set; }
 
         [DataMember(IsRequired = false, Order = 17, EmitDefaultValue = false)]
-        public bool isVirtual { get; set; }
+        public bool? isVirtual { get; set; }
 
         [DataMember(IsRequired = false, Order = 18)]
-        public int precision { get; set; }
+        public int? precision { get; set; }
 
         [DataMember(IsRequired = false, Order = 19)]
-        public int scale { get; set; }
+        public int? scale { get; set; }
     }
 
     [Serializable]
@@ -309,25 +309,25 @@ namespace org.iringtools.applicationConfig
         public DataType dataType { get; set; }
 
         [DataMember(IsRequired = true, Order = 5)]
-        public int dataLength { get; set; }
+        public int? dataLength { get; set; }
 
         [DataMember(IsRequired = true, Order = 6)]
-        public bool isNullable { get; set; }
+        public bool? isNullable { get; set; }
 
         [DataMember(IsRequired = true, Order = 7)]
-        public bool numberOfDecimals { get; set; }
+        public int? numberOfDecimals { get; set; }
 
         [DataMember(IsRequired = true, Order = 8)]
         public KeyType keyType { get; set; }
 
         [DataMember(EmitDefaultValue = false, Order = 9)]
-        public bool showOnIndex { get; set; }
+        public bool? showOnIndex { get; set; }
 
         [DataMember(IsRequired = false, Order = 10)]
-        public int precision { get; set; }
+        public int? precision { get; set; }
 
         [DataMember(IsRequired = false, Order = 11)]
-        public int scale { get; set; }
+        public int? scale { get; set; }
 
         [DataMember(IsRequired = false, Order = 12)]
         public string definition { get; set; }
@@ -338,15 +338,16 @@ namespace org.iringtools.applicationConfig
         // Ends]]
     }
 
-    [Serializable]
-    [DataContract(Name = "aliasDictionary", Namespace = "http://www.iringtools.org/library")]
-    public class aliasDictionary
+    //[Serializable]
+    //[DataContract(Name = "aliasDictionary", Namespace = "http://www.iringtools.org/library")]
+    [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "aliasDictionary", ItemName = "KeyValueOfstringstring")]
+    public class aliasDictionary : Dictionary<string,string>
     {
-        [DataMember(IsRequired = false, Order = 0)]
-        public string key { get; set; }
+        //[DataMember(IsRequired = false, Order = 0)]
+        //public string key { get; set; }
 
-        [DataMember(IsRequired = false, Order = 1)]
-        public string value { get; set; }
+        //[DataMember(IsRequired = false, Order = 1)]
+        //public string value { get; set; }
     }
 
     //[[By Deepak 12-Dec14 Statrs
@@ -504,7 +505,7 @@ namespace org.iringtools.applicationConfig
         public string description { get; set; }
 
         [DataMember(IsRequired = false, Order = 4)]
-        public int valuePropertyIndex { get; set; }
+        public int? valuePropertyIndex { get; set; }
 
         [DataMember(IsRequired = false, Order = 5)]
         public string tableName { get; set; }

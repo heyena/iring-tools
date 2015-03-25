@@ -1684,6 +1684,25 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
+        public org.iringtools.applicationConfig.DatabaseDictionary GetDictionary(string applicationId)
+        {
+            org.iringtools.applicationConfig.DatabaseDictionary databaseDictionary = new DatabaseDictionary();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ApplicationID", Value = applicationId });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl);
+
+                databaseDictionary = utility.Utility.Deserialize<org.iringtools.applicationConfig.DatabaseDictionary>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  dictionary: " + ex);
+            }
+            return databaseDictionary;
+        }
+
         /// <summary>
         /// insert job
         /// </summary>

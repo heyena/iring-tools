@@ -1066,6 +1066,27 @@ namespace org.iringtools.services
             PrepareResponse(ref response);
             _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
+
+        [Description("Getting Dictionary from database by application id")]
+        [WebGet(UriTemplate = "/GetDictionary?applicationId={applicationId}&format={format}")]
+        public void GetDictionary(string applicationId, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                org.iringtools.applicationConfig.DatabaseDictionary application = _applicationConfigurationProvider.GetDictionary(applicationId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.DatabaseDictionary>(application, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
         //[Description("Insert schedular details to the data base.")]
         //[WebInvoke(Method = "POST", UriTemplate = "/insertJob?format={format}")]
         //public void insertJob(string format, Stream stream)
