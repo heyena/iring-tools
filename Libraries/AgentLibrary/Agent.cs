@@ -149,7 +149,7 @@ namespace org.iringtools.AgentLibrary
             [DataMember(Name = "Last_Start_DateTime", Order = 3, EmitDefaultValue = false)]
             public string Last_Start_DateTime { get; set; }
 
-            [DataMember(Name = "Active", Order = 4, EmitDefaultValue = false)]
+            [DataMember(Name = "Active", Order = 4)]
             public Byte Active { get; set; }
 
             [DataMember(Name = "PlatformId", Order = 5, EmitDefaultValue = false)]
@@ -163,8 +163,6 @@ namespace org.iringtools.AgentLibrary
 
             [DataMember(Name = "CachedRecords", Order = 8, EmitDefaultValue = false)]
             public int CachedRecords { get; set; }
-
-         
 
         }
 
