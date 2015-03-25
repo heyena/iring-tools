@@ -68,7 +68,6 @@ namespace org.iringtools.UserSecurity
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@UserName", Value = user.UserName });
                         nvl.Add(new ListItem() { Name = "@UserFirstName", Value = user.UserFirstName });
                         nvl.Add(new ListItem() { Name = "@UserLastName", Value = user.UserLastName });
@@ -126,7 +125,6 @@ namespace org.iringtools.UserSecurity
                     {
                         NameValueList nvl = new NameValueList();
                         nvl.Add(new ListItem() { Name = "@UserId", Value = Convert.ToString(user.UserId) });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@UserName", Value = user.UserName });
                         nvl.Add(new ListItem() { Name = "@UserFirstName", Value = user.UserFirstName });
                         nvl.Add(new ListItem() { Name = "@UserLastName", Value = user.UserLastName });
@@ -181,7 +179,6 @@ namespace org.iringtools.UserSecurity
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdUser", nvl);
@@ -290,7 +287,6 @@ namespace org.iringtools.UserSecurity
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@RoleName", Value = role.RoleName });
                         nvl.Add(new ListItem() { Name = "@RoleDesc", Value = role.RoleDesc });
 
@@ -344,7 +340,6 @@ namespace org.iringtools.UserSecurity
                     {
                         NameValueList nvl = new NameValueList();
                         nvl.Add(new ListItem() { Name = "@RoleId", Value = Convert.ToString(role.RoleId) });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@RoleName", Value = role.RoleName });
                         nvl.Add(new ListItem() { Name = "@RoleDesc", Value = role.RoleDesc });
 
@@ -394,7 +389,6 @@ namespace org.iringtools.UserSecurity
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@RoleId", Value = Convert.ToString(roleId) });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdRoles", nvl);
@@ -442,7 +436,6 @@ namespace org.iringtools.UserSecurity
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@PermissionName", Value = permission.PermissionName });
                         nvl.Add(new ListItem() { Name = "@PermissionDesc", Value = permission.PermissionDesc });
 
@@ -495,7 +488,6 @@ namespace org.iringtools.UserSecurity
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@PermissionId", Value = Convert.ToString(permission.PermissionId) });
                         nvl.Add(new ListItem() { Name = "@PermissionName", Value = permission.PermissionName });
                         nvl.Add(new ListItem() { Name = "@PermissionDesc", Value = permission.PermissionDesc });
@@ -545,7 +537,6 @@ namespace org.iringtools.UserSecurity
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@PermissionId", Value = Convert.ToString(permissionId) });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdPermissions", nvl);
@@ -593,7 +584,6 @@ namespace org.iringtools.UserSecurity
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@GroupName", Value = group.GroupName });
                         nvl.Add(new ListItem() { Name = "@GroupDesc", Value = group.GroupDesc });
 
@@ -647,7 +637,6 @@ namespace org.iringtools.UserSecurity
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@GroupId", Value = Convert.ToString(group.GroupId) });
                         nvl.Add(new ListItem() { Name = "@GroupName", Value = group.GroupName });
                         nvl.Add(new ListItem() { Name = "@GroupDesc", Value = group.GroupDesc });
@@ -699,7 +688,6 @@ namespace org.iringtools.UserSecurity
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@GroupId", Value = Convert.ToString(groupId) });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdGroups", nvl);
@@ -852,8 +840,8 @@ namespace org.iringtools.UserSecurity
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstgroupRoles = dc.ExecuteQuery<GroupRole>("spgGroupRoles @GroupId = {0}, @RoleId = {1}, @SiteId = {2}",
-                                                  groupId, roleId, _siteID).ToList();
+                lstgroupRoles = dc.ExecuteQuery<GroupRole>("spgGroupRoles @GroupId = {0}, @RoleId = {1}}",
+                                                  groupId, roleId).ToList();
             }
 
             GroupRoles groupRoles = new GroupRoles();
@@ -1033,8 +1021,8 @@ namespace org.iringtools.UserSecurity
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstGroup = dc.ExecuteQuery<User>("spgGroupUserIdGroupId @UserId = {0}, @GroupId = {1}, @SiteId = {2}",
-                                                   iUserId, iGroupId, _siteID).ToList();
+                lstGroup = dc.ExecuteQuery<User>("spgGroupUserIdGroupId @UserId = {0}, @GroupId = {1}",
+                                                   iUserId, iGroupId).ToList();
             }
 
             Users users = new Users();
@@ -1048,8 +1036,7 @@ namespace org.iringtools.UserSecurity
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstRole = dc.ExecuteQuery<Role>("spgRolesGroup @GroupId = {0}, @SiteId = {1}",
-                                                                    iGroupId, _siteID).ToList();
+                lstRole = dc.ExecuteQuery<Role>("spgRolesGroup @GroupId = {0}", iGroupId).ToList();
             }
 
             Roles roles = new Roles();
@@ -1063,8 +1050,8 @@ namespace org.iringtools.UserSecurity
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstPermission = dc.ExecuteQuery<Permission>("spgRolePermissions @RoleId = {0}, @SiteId = {1}",
-                                                                    iRoleId, _siteID).ToList();
+                lstPermission = dc.ExecuteQuery<Permission>("spgRolePermissions @RoleId = {0}",
+                                                                    iRoleId).ToList();
             }
 
             Permissions permissions = new Permissions();
@@ -1078,8 +1065,8 @@ namespace org.iringtools.UserSecurity
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstPermission = dc.ExecuteQuery<Permission>("spgPermissionRoles @RoleId = {0}, @PermissionId = {1}, @SiteId = {2}",
-                                                                    iRoleId, iPermissionId, _siteID).ToList();
+                lstPermission = dc.ExecuteQuery<Permission>("spgPermissionRoles @RoleId = {0}, @PermissionId = {1}",
+                                                                    iRoleId, iPermissionId).ToList();
             }
 
             Permissions permissions = new Permissions();
@@ -1093,8 +1080,8 @@ namespace org.iringtools.UserSecurity
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstUserGroup = dc.ExecuteQuery<UserGroup>("spgUserGroups @userName = {0}, @siteId = {1}",
-                                                      userName, _siteID).ToList();
+                lstUserGroup = dc.ExecuteQuery<UserGroup>("spgUserGroups @userName = {0}",
+                                                      userName).ToList();
             }
 
             UserGroups userGroups = new UserGroups();
@@ -1161,7 +1148,6 @@ namespace org.iringtools.UserSecurity
 
                 string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                 nvl.Add(new ListItem() { Name = "@rawXML", Value = rawXml });
 
                 string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiGroupUsers", nvl);
@@ -1203,7 +1189,6 @@ namespace org.iringtools.UserSecurity
                 
                     string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                     NameValueList nvl = new NameValueList();
-                    nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                     nvl.Add(new ListItem() { Name = "@rawXML", Value = rawXml });
 
                     string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiUserGroups", nvl);
@@ -1258,7 +1243,6 @@ namespace org.iringtools.UserSecurity
             {
                 string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                 nvl.Add(new ListItem() { Name = "@rawXML", Value = rawXml });
 
                 string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiRoleGroups", nvl);
@@ -1309,7 +1293,6 @@ namespace org.iringtools.UserSecurity
             {
                 string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                 nvl.Add(new ListItem() { Name = "@rawXML", Value = rawXml });
 
                 string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiGroupRoles", nvl);
@@ -1353,7 +1336,6 @@ namespace org.iringtools.UserSecurity
 
 
                 NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                 nvl.Add(new ListItem() { Name = "@rawXML", Value = rawXml });
 
                 string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiRolePermissions", nvl);
