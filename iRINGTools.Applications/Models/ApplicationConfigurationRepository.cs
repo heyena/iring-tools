@@ -60,14 +60,14 @@ namespace iRINGTools.Web.Models
             return folders;
         }
 
-        public library.Response AddFolder(string userName, Folder newFolder)
+        public library.Response AddFolder(Folder newFolder)
         {
            library.Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                response = client.Post<Folder,library.Response>(String.Format("/insertFolder/{0}?format=xml", userName), newFolder, true);
+                response = client.Post<Folder,library.Response>(String.Format("/insertFolder?format=xml"), newFolder, true);
             }
             catch (Exception ex)
             {
@@ -78,14 +78,14 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public library.Response UpdateFolder(string userName, Folder updatedFolder)
+        public library.Response UpdateFolder(Folder updatedFolder)
         {
             library.Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                response = client.Put<Folder, library.Response>(String.Format("/updateFolder/{0}?format=xml", userName), updatedFolder, true);
+                response = client.Put<Folder, library.Response>(String.Format("/updateFolder?format=xml"), updatedFolder, true);
                 
             }
             catch (Exception ex)

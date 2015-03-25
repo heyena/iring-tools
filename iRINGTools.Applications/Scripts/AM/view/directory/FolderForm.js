@@ -77,6 +77,7 @@ Ext.define('AM.view.directory.FolderForm', {
                 fieldLabel: 'Groups for the User:',
                 displayField: 'groupName',
                 autoSelect: false,
+                forceSelection: true,
                 queryMode: 'remote',
                 store: 'ResourceGroupStore',
                 valueField: 'groupId',
