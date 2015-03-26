@@ -773,8 +773,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert Exchange to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertExchange/{userName}?format={format}")]
-        public void InsertExchange(string userName, string format, Stream stream)
+        [WebInvoke(Method = "POST", UriTemplate = "/insertExchange?format={format}")]
+        public void InsertExchange(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -790,7 +790,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.Exchange>(stream, format);
-                    response = _applicationConfigurationProvider.InsertExchange(userName, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.InsertExchange(new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -804,8 +804,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert Exchange to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateExchange/{userName}?format={format}")]
-        public void UpdateExchange(string userName, string format, Stream stream)
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateExchange?format={format}")]
+        public void UpdateExchange(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -821,7 +821,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.Exchange>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateExchange(userName, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.UpdateExchange(new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -885,8 +885,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert Commodity to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertCommodity/{userName}?format={format}")]
-        public void InsertCommodity(string userName, string format, Stream stream)
+        [WebInvoke(Method = "POST", UriTemplate = "/insertCommodity?format={format}")]
+        public void InsertCommodity(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -902,7 +902,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Commodity>(stream, format);
-                    response = _applicationConfigurationProvider.InsertCommodity(userName, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.InsertCommodity(new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -916,8 +916,8 @@ namespace org.iringtools.services
         }
 
         [Description("update Commodity to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateCommodity/{userName}?format={format}")]
-        public void UpdateCommodity(string userName, string format, Stream stream)
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateCommodity?format={format}")]
+        public void UpdateCommodity(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -933,7 +933,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Commodity>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateCommodity(userName, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.UpdateCommodity(new XDocument(xElement));
                 }
             }
             catch (Exception ex)
