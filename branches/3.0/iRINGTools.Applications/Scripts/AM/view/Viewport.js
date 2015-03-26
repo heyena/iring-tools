@@ -24,8 +24,8 @@ Ext.define('AM.view.Viewport', {
                       '  	 </span>' +
 					  '  	 <span style="float:right;margin-top:16px">' +
 					  '		 <input type="checkbox"  id="gridCheckbox" style="display:none;" />' +
-                      '      <a><b> Schedule Job </b> </a> ' +
-                      '      <a id="schedule-link" ><br><input type="checkbox"  name="njob" value="NewJob">View Schedule Jobs </a>' +
+                      '      <a id="schedule-link" href="#" class="header-link"> Schedule Cache Upadte  </a> ' +
+//                      '      <a id="schedule-link" ><br><input type="checkbox"  name="njob" value="NewJob">View Schedule Jobs </a>' +
 					  '      <a id="setting-link" href="#" class="header-link">Settings</a>' +
 					  '      <a href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank" class="header-link">Help</a>' +
 					  '      <a id="about-link" href="#" class="header-link">About</a>' +
@@ -145,9 +145,24 @@ Ext.define('AM.view.Viewport', {
 
             Ext.get('schedule-link').on('click', function () {
                 var win = new Ext.Window({
-                    title: 'View Schedule Jobs',
                     bodyStyle: 'background:#fff;padding:5px',
-                    //width: 607,
+                    width:1050,
+                    height: 350,
+                    tbar: [  // <--- ToolBar
+                        {
+                             text: 'Refresh',
+                             icon: 'Content/img/16x16/view-refresh.png'
+                            }
+                ],
+
+                   bbar: [
+                {
+                    text: 'Close',
+                    handler: function () { this.up('.window').close(); }
+                }
+            ],
+            autoShow: true,
+                                //width: 607,
                     //height: 450,
                     closable: true,
                     autoScroll: true,
@@ -161,6 +176,8 @@ Ext.define('AM.view.Viewport', {
 
                 });
                 win.show();
+                win.center();
+               
 
             });
             //end viewschedule
