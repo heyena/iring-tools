@@ -73,7 +73,7 @@ Ext.define('AM.view.directory.ViewJobsForm', {
 
         items: [{
             xtype: 'container',
-            layout: 'hbox',
+            layout: 'hbox'
           //  margin: '45 0 5 0',
            /*  items: [{
                 xtype: 'label',
@@ -114,10 +114,12 @@ Ext.define('AM.view.directory.ViewJobsForm', {
                     xtype: 'grid',
                     margin: '0 0 0 0',
                     alias: 'widget.viewjobsgrid',
+                   // store:'JobStore',
+                   
                     store: Ext.data.StoreManager.lookup('simpsonsStore'),
-                    //store:'ViewJobsStore',
-//                    autoHeight: true,
-//                    autoWidth: true,
+                   // store:'ViewJobsStore',
+                    autoHeight: true,
+                    autoWidth: true,
                     border: 0,
                     columns: [
 //                       { xtype: 'gridcolumn',
@@ -126,19 +128,19 @@ Ext.define('AM.view.directory.ViewJobsForm', {
                      { xtype: 'gridcolumn',
                         text: 'Context Name', dataIndex: 'scope'
                     }, { xtype: 'gridcolumn',
-                        text: 'Application Name', dataIndex: 'dataobject'
+                        text: 'Application Name', dataIndex: 'jobtype'
                     },{ xtype: 'gridcolumn',
-                        text: 'Data Object Name', dataIndex: 'dataobject'
+                        text: 'Data Object Name ', dataIndex: 'dataobject'
                     },{ xtype: 'gridcolumn',
-                        text: 'Status', dataIndex: 'status'
+                        text: 'Status', dataIndex: 'Status'
                     }, { xtype: 'gridcolumn',
                         text: 'Last Executed', dataIndex: 'laststarttime'
                     }, { xtype: 'gridcolumn',
-                        text: 'Next Schedule', dataIndex: 'nextstarttime'
+                        text: 'Next Schedule', dataIndex: 'laststarttime'
                     },{ xtype: 'gridcolumn',
-                        text: 'Start Date', dataIndex: 'dataobject'
+                        text: 'Start Date', dataIndex: 'laststarttime'
                     },{ xtype: 'gridcolumn',
-                        text: 'End Date', dataIndex: 'dataobject'
+                        text: 'End Date', dataIndex: 'laststarttime'
                     },{ xtype: 'gridcolumn',
                         text: 'Total Records', dataIndex: 'totalrecords'
                     }, { xtype: 'gridcolumn',
@@ -160,7 +162,7 @@ Ext.define('AM.view.directory.ViewJobsForm', {
     });
 
     me.callParent(arguments);
-},
+}
 
 //onSpecialkey: function (field, e, eOpts) {
 //    var me = this;
