@@ -40,7 +40,8 @@ Ext.define('AM.view.menus.ContextMenu', {
         },
         {
           xtype: 'menuitem',
-          action: 'neweditendpoint',
+          action: 'newOrEditApplication',
+          itemId: 'newApplication',
           icon: 'Content/img/16x16/document-new.png',
           text: 'New Application'
       },

@@ -290,6 +290,7 @@ Ext.define('AM.controller.Directory', {
 
             form.getForm().findField('ResourceGroups').bindStore(storeObject);
         }
+
         if (item.itemId == 'editContext' && node.data.record !== undefined) {
             win.title = 'Edit Context';
             var state = 'edit';
@@ -307,8 +308,6 @@ Ext.define('AM.controller.Directory', {
             }, this);
 
             form.getForm().findField('ResourceGroups').setValue(groupArray);
-
-
         } else {
             var state = 'new';
             win.title = 'Add Context';
@@ -364,6 +363,91 @@ Ext.define('AM.controller.Directory', {
                 Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
             }
         });
+    },
+
+    onNewOrEditApplication: function (item, e, eOpts) {
+        var me = this;
+        var state, assembly;
+        var tree = me.getDirTree();
+        var node = tree.getSelectedNode();
+        var context = node.data.parentId;
+
+        var win = Ext.widget('applicationwindow');
+        var form = win.down('form');
+        form.node = node;
+
+        var selectedGroups;
+
+        if (item.itemId == 'editApplication') {
+            selectedGroups = Ext.decode(node.parentNode.data.record).groups;
+        }
+        else if (item.itemId == 'newApplication') {
+            selectedGroups = Ext.decode(node.data.record).groups;
+        }
+
+        if (selectedGroups != null) {
+            var storeObject = Ext.create('Ext.data.Store', { fields: ['groupId', 'groupName'] });
+
+            Ext.each(selectedGroups, function (aRecord) {
+                storeObject.add({ groupId: aRecord['groupId'], groupName: aRecord['groupName'] });
+            }, this);
+
+            form.getForm().findField('ResourceGroups').bindStore(storeObject);
+        }
+
+        if (item.itemId == 'editApplication') {
+            var wintitle = 'Edit Application';
+            var state = 'edit';
+
+            var record = Ext.decode(node.data.record);
+            form.getForm().findField('displayName').setValue(record.displayName);
+            form.getForm().findField('description').setValue(record.description);
+            form.getForm().findField('internalName').setValue(record.internalName);
+            form.getForm().findField('dataLayerCombo').setValue(record.assembly);
+
+            form.getForm().findField('internalName').setReadOnly(true);
+
+            var groupArray = [];
+            Ext.each(record.groups, function (eachGroup) {
+                groupArray.push(eachGroup.groupId);
+            }, this);
+
+            form.getForm().findField('ResourceGroups').setValue(groupArray);
+        }
+        else {
+            var wintitle = 'Add Application';
+            var state = 'new';
+        }
+
+        win.setTitle(wintitle);
+
+        win.on('save', function () {
+            win.close();
+            tree.view.refresh();
+            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+            detailGrid.setSource({});
+        }, me);
+
+        win.on('Cancel', function () {
+            win.close();
+        }, me);
+
+        var dlCmb = me.getDatalayerCombo();
+
+        dlCmb.on('select', function (combo, records, eopts) {
+            if (records !== null && node.data.record !== null) {
+                form.getForm().findField('assembly').setValue(records[0].data.assembly);
+            }
+        }, me);
+
+        dlCmb.on('afterrender', function (combo, eopts) {
+            if (assembly != undefined && assembly !== '') {
+                combo.setValue(assembly.substring(assembly.indexOf(',') + 2));
+            }
+        }, me);
+
+        form.getForm().findField('state').setValue(state);
+        win.show();
     },
 
     // Start onCacheUpdate
@@ -587,100 +671,6 @@ Ext.define('AM.controller.Directory', {
                 Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
             }
         });
-    },
-
-    newOrEditEndpoint: function (item, e, eOpts) {
-        var me = this;
-        var name, displayName, description, datalayer, assembly, application, baseurl, showconfig, endpoint, wintitle, state, path, context;
-        var tree = me.getDirTree();
-        var node1 = tree.getSelectedNode();
-        var node = tree.store.getNodeById(node1.internalId);
-        var cacheImportURI = '';
-        var cacheTimeout = '';
-        var context = node.data.parentId; //node.parentNode.data.text;//node.parentNode.data.record.Name;//node.data.record.ContextName;
-
-        var conf = {
-            id: 'newwin-' + node.data.id,
-            title: '',
-            iconCls: 'tabsApplication',
-            node: node,
-            modal: true
-        };
-
-        var win = Ext.widget('applicationwindow', conf);
-
-        var form = win.down('form');
-
-        if (item.itemId == 'editendpoint') {
-            var name = node.data.record.Name;
-            var displayName = node.data.record.DisplayName;
-            var description = node.data.record.Description;
-            var datalayer = node.data.record.DataLayer;
-            var assembly = node.data.record.Assembly;
-            var application = name;
-            var wintitle = 'Edit Application';
-            var endpoint = node.data.record.Name;
-            var state = 'edit';
-            var cacheImportURI = node.data.record.CacheImportURI;
-            var cacheTimeout = node.data.record.CacheTimeout;
-            var permission = node.data.record.PermissionGroups;
-            var internalName = node.data.record.Name;
-
-            form.getForm().findField('internalName').setReadOnly(true);
-        } else {
-            var wintitle = 'Add Application';
-            var state = '';
-            var application = '';
-            var context = node.data.text;
-            var path = node.internalId;
-        }
-
-        win.setTitle(wintitle);
-
-        win.on('save', function () {
-            win.close();
-            tree.view.refresh();
-            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
-            detailGrid.setSource({});
-        }, me);
-
-        win.on('Cancel', function () {
-            win.close();
-        }, me);
-
-        var dlCmb = me.getDatalayerCombo();
-
-        dlCmb.on('select', function (combo, records, eopts) {
-            if (records !== null && node.data.record !== null) {
-                form.getForm().findField('assembly').setValue(records[0].data.assembly);
-            }
-        }, me);
-
-        dlCmb.on('afterrender', function (combo, eopts) {
-            if (assembly != undefined && assembly !== '') {
-                combo.setValue(assembly.substring(assembly.indexOf(',') + 2));
-            }
-        }, me);
-
-        //        if (utilsObj.isSecEnable == "False") {
-        //            form.getForm().findField('permissions').hide();
-        //        }
-        form.node = node1;
-        form.getForm().findField('path').setValue(path);
-        form.getForm().findField('state').setValue(state);
-        form.getForm().findField('scope').setValue(context);
-        form.getForm().findField('oldAssembly').setValue(assembly);
-        form.getForm().findField('name').setValue(name);
-        form.getForm().findField('displayName').setValue(displayName);
-        form.getForm().findField('internalName').setValue(internalName);
-        form.getForm().findField('description').setValue(description);
-        form.getForm().findField('context').setValue(name);
-        form.getForm().findField('assembly').setValue(assembly);
-        form.getForm().findField('application').setValue(application);
-        form.getForm().findField('cacheImportURI').setValue(cacheImportURI);
-        form.getForm().findField('cacheTimeout').setValue(cacheTimeout);
-        //        form.getForm().findField('permissions').setValue(permission);
-        win.show();
     },
 
     deleteEndpoint: function (item, e, eOpts) {
@@ -1714,12 +1704,9 @@ Ext.define('AM.controller.Directory', {
             "menuitem[action=deletescope]": {
                 click: this.deleteScope
             },
-            "menuitem[action=neweditendpoint]": {
-                click: this.newOrEditEndpoint
+            "menuitem[action=newOrEditApplication]": {
+                click: this.onNewOrEditApplication
             },
-            //            "menuitem[action=deleteendpoint]": {
-            //                click: this.deleteEndpoint
-            //            },
             "menuitem[action=deleteApplication]": {
                 click: this.onDeleteApplication
             },

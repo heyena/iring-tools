@@ -70,36 +70,17 @@ Ext.define('AM.view.directory.ApplicationForm', {
             items: [
         {
             xtype: 'hiddenfield',
-            name: 'oldAssembly'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'assembly'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'scope'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'application'
-        },
-        {
-            xtype: 'hiddenfield',
-            name: 'name'
-        },
-        {
-            xtype: 'hiddenfield',
             itemId: 'state',
             name: 'state'
         },
         {
             xtype: 'hiddenfield',
-            name: 'path'
+            itemId: 'assembly',
+            name: 'assembly'
         },
         {
             xtype: 'textfield',
-            fieldLabel: 'Display Name',
+            fieldLabel: 'Application Name',
             name: 'displayName',
             allowBlank: false
         },
@@ -115,25 +96,9 @@ Ext.define('AM.view.directory.ApplicationForm', {
             name: 'description'
         },
         {
-            xtype: 'textfield',
-            disabled: true,
-            hidden: true,
-            fieldLabel: 'Context Name',
-            name: 'context'
-        },
-        {
             xtype: 'datalayercombo',
+            name: 'dataLayerCombo',
             value: ''
-        },
-        {
-            xtype: 'textfield',
-            fieldLabel: 'Cache ImportURI',
-            name: 'cacheImportURI'
-        },
-        {
-            xtype: 'textfield',
-            fieldLabel: 'Cache Timeout (in minutes)',
-            name: 'cacheTimeout'
         },
         {
             xtype: 'checkboxlistcombo',
@@ -145,7 +110,8 @@ Ext.define('AM.view.directory.ApplicationForm', {
             displayField: 'groupName',
             autoSelect: false,
             queryMode: 'remote',
-            valueField: 'groupId'
+            valueField: 'groupId',
+            emptyText: 'Select Groups For The  User'
         },
         {
             xtype: 'container',
@@ -203,50 +169,76 @@ Ext.define('AM.view.directory.ApplicationForm', {
     onSave: function () {
         var me = this;
         var win = me.up('window');
-        var endpointName = me.getForm().findField('displayName').getValue();
-        var scope = me.getForm().findField('scope').getValue();
+        var form = me.getForm();
+        var state = form.findField('state').getValue();
         var node = me.node;
-        var dlCombo = me.down('combo');
-        var state = me.getForm().findField('state').getValue();
+        var ResourceGroups = me.getForm().findField('ResourceGroups').getValue();
 
-        if (state != 'edit')
-            me.getForm().findField('name').setValue(endpointName);
+        if (form.isValid()) {
+            if (ResourceGroups != '') {
+                me.getForm().submit({
+                    waitMsg: 'Saving Data...',
+                    method: 'POST',
+                    params: {
+                        record: node.get('record')
+                    },
+                    success: function (response, request) {
+                        var objResponseText = Ext.JSON.decode(request.response.responseText);
 
-        if (scope != endpointName) {
+                        if (objResponseText["message"] == "duplicateApplication") {
+                            showDialog(400, 50, 'Alert', "Context with this internal name already exists", Ext.Msg.OK, null);
+                            return;
+                        }
 
-            me.getForm().submit({
-                waitMsg: 'Saving Data...',
-                params: {
-                    record: node.get('record')
-                },
-                success: function (response, request) {
-                    Ext.example.msg('Notification', 'Application saved successfully!');
-                    win.fireEvent('save', me);
-                    var parentNode = node.parentNode;
-                    if (node.data.type == 'ScopeNode') {
-                        var nodeIndex = node.childNodes.length;
-                        node.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]);
-                    } else if (node.data.type == 'ApplicationNode') {
-                        var nodeIndex = parentNode.indexOf(node);
-                        parentNode.removeChild(node);
-                        parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).nodes[0]);
+                        win.fireEvent('save', me);
+
+                        var currentNode;
+
+                        if (state == 'new') {
+                            currentNode = node;
+                        }
+                        else {
+                            currentNode = node.parentNode;
+                        }
+
+                        while (currentNode.firstChild) {
+                            currentNode.removeChild(currentNode.firstChild);
+                        }
+
+                        var index = 0;
+
+                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
+                            currentNode.insertChild(index, newNode);
+                            index++;
+                        });
+
+                        me.setLoading(false);
+
+                        if (objResponseText["message"] == "applicationAdded") {
+                            showDialog(400, 50, 'Alert', "Context added successfully!", Ext.Msg.OK, null);
+                        }
+                        if (objResponseText["message"] == "applicationUpdated") {
+                            showDialog(400, 50, 'Alert', "Context updated successfully!", Ext.Msg.OK, null);
+                        }
+                    },
+                    failure: function (response, request) {
+                        var resp = Ext.decode(request.response.responseText);
+
+                        var userMsg = resp['message'];
+                        var detailMsg = resp['stackTraceDescription'];
+                        var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                        Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                        Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                     }
-
-                    me.setLoading(false);
-                },
-                failure: function (response, request) {
-                    var resp = Ext.decode(request.response.responseText);
-
-                    var userMsg = resp['message'];
-                    var detailMsg = resp['stackTraceDescription'];
-                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
-                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-                }
-            });
+                });
+            }
+            else {
+                showDialog(400, 50, 'Alert', "Select atleast one Group before saving", Ext.Msg.OK, null);
+            }
         }
-        else {            
-            Ext.widget('messagepanel', { title: 'Warning', msg: 'Scope & Application name cannot be same!' });            
+        else {
+            Ext.widget('messagepanel', { title: 'Warning', msg: 'Please complete all required fields.' });
+            return;
         }
     },
 

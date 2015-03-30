@@ -14,61 +14,54 @@
  */
 
 Ext.define('AM.view.menus.ApplicationMenu', {
-  extend: 'Ext.menu.Menu',
-  alias: 'widget.applicationmenu',
+    extend: 'Ext.menu.Menu',
+    alias: 'widget.applicationmenu',
 
-  initComponent: function() {
-    var me = this;
+    initComponent: function () {
+        var me = this;
 
-    Ext.applyIf(me, {
-      items: [
+        Ext.applyIf(me, {
+            items: [
         {
-          xtype: 'menuitem',
-          action: 'neweditendpoint',
-          itemId: 'editendpoint',
-          icon: 'Content/img/16x16/edit.png',
-          text: 'Edit Application'
-      },
+            xtype: 'menuitem',
+            action: 'newOrEditApplication',
+            itemId: 'editApplication',
+            icon: 'Content/img/16x16/edit.png',
+            text: 'Edit Application'
+        },
         {
             xtype: 'menuitem',
             action: 'deleteApplication',
             icon: 'Content/img/16x16/delete.png',
             text: 'Delete Application'
         },
-//        {
-//          xtype: 'menuitem',
-//          action: 'deleteendpoint',
-//          icon: 'Content/img/16x16/delete.png',
-//          text: 'Delete Application'
-//        },
         {
-          xtype: 'menuseparator'
+            xtype: 'menuseparator'
         },
         {
-          xtype: 'menuitem',
-          action: 'configureendpoint',
-          icon: 'Content/img/16x16/preferences-system.png',
-          text: 'Open Configuration'
+            xtype: 'menuitem',
+            action: 'configureendpoint',
+            icon: 'Content/img/16x16/preferences-system.png',
+            text: 'Open Configuration'
         },
         {
-          xtype: 'menuseparator'
+            xtype: 'menuseparator'
         },
         {
-          xtype: 'menuitem',
-          action: 'fileupload',
-          icon: 'Content/img/16x16/document-up.png',
-          text: 'Upload File'
+            xtype: 'menuitem',
+            action: 'fileupload',
+            icon: 'Content/img/16x16/document-up.png',
+            text: 'Upload File'
         },
         {
-          xtype: 'menuitem',
-          action: 'filedownload',
-          icon: 'Content/img/16x16/document-down.png',
-          text: 'Download File'
+            xtype: 'menuitem',
+            action: 'filedownload',
+            icon: 'Content/img/16x16/document-down.png',
+            text: 'Download File'
         }
       ]
-    });
+        });
 
-    me.callParent(arguments);
-  }
-
+        me.callParent(arguments);
+    }
 });

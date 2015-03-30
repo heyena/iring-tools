@@ -66,7 +66,7 @@ namespace org.iringtools.applicationConfig
         public Application()
         {
             Permissions = new Permissions();
-            applicationSettings = new ApplicationSettings();
+            ApplicationSettings = new ApplicationSettings();
             Groups = new Groups();
         }
 
@@ -98,7 +98,7 @@ namespace org.iringtools.applicationConfig
         public Permissions Permissions { get; set; }
 
         [DataMember(Name = "applicationSettings", Order = 9, EmitDefaultValue = false)]
-        public ApplicationSettings applicationSettings { get; set; }
+        public ApplicationSettings ApplicationSettings { get; set; }
 
         [DataMember(Name = "groups", Order = 10, EmitDefaultValue = false)]
         public Groups Groups { get; set; }
