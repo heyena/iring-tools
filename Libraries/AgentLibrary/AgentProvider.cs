@@ -51,16 +51,8 @@ namespace org.iringtools.AgentLibrary
                 nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgAllJobs", nvl);
+                xmlString = HttpUtility.HtmlDecode(xmlString);
                 jobs = utility.Utility.Deserialize<org.iringtools.AgentLibrary.Agent.Jobs>(xmlString, true);
-
-                //List<org.iringtools.AgentLibrary.Agent.Job> lstJob = new List<org.iringtools.AgentLibrary.Agent.Job>();
-
-                //using (var dc = new DataContext(_connSecurityDb))
-                //{
-                //    lstJob = dc.ExecuteQuery<org.iringtools.AgentLibrary.Agent.Job>("spgAllJobs").ToList();
-                //}
-
-                //jobs.AddRange(lstJob);
             }
             catch (Exception ex)
             {
