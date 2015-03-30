@@ -729,7 +729,6 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(graph.ApplicationId) });
                         nvl.Add(new ListItem() { Name = "@GraphName", Value = graph.GraphName });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID)});
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedureWithExtraParam_ByteArray(_connSecurityDb, "spiGraph", nvl, "@Graph", graph.graph);
@@ -1603,9 +1602,9 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public org.iringtools.applicationConfig.DatabaseDictionary GetDictionary(Guid applicationId)
+        public org.iringtools.applicationConfig.DataDictionary GetDictionary(Guid applicationId)
         {
-            org.iringtools.applicationConfig.DatabaseDictionary databaseDictionary = new DatabaseDictionary();
+            org.iringtools.applicationConfig.DataDictionary dataDictionary = new DataDictionary();
             try
             {
                 NameValueList nvl = new NameValueList();
@@ -1613,14 +1612,34 @@ namespace org.iringtools.applicationConfig
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl);
 
-                databaseDictionary = utility.Utility.Deserialize<org.iringtools.applicationConfig.DatabaseDictionary>(xmlString, true);
+                dataDictionary = utility.Utility.Deserialize<org.iringtools.applicationConfig.DataDictionary>(xmlString, true);
             }
             catch (Exception ex)
             {
                 _logger.Error("Error getting  dictionary: " + ex);
             }
-            return databaseDictionary;
+            return dataDictionary;
         }
+
+        public org.iringtools.applicationConfig.DatabaseDictionary GetDatabaseDictionary(Guid applicationId)
+        {
+            org.iringtools.applicationConfig.DatabaseDictionary dataDictionary = new DatabaseDictionary();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ApplicationID", Value = applicationId });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl);
+
+                dataDictionary = utility.Utility.Deserialize<org.iringtools.applicationConfig.DatabaseDictionary>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  dictionary: " + ex);
+            }
+            return dataDictionary;
+        }
+
 
         /// <summary>
         /// insert job

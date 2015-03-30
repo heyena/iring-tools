@@ -1076,7 +1076,27 @@ namespace org.iringtools.services
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                org.iringtools.applicationConfig.DatabaseDictionary dictionary = _applicationConfigurationProvider.GetDictionary(applicationId);
+                org.iringtools.applicationConfig.DataDictionary dictionary = _applicationConfigurationProvider.GetDictionary(applicationId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.DataDictionary>(dictionary, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
+         [Description("Getting DatabaseDictionary from database by application id")]
+        [WebGet(UriTemplate = "/GetDatabaseDictionary?applicationId={applicationId}&format={format}")]
+        public void GetDatabaseDictionary(Guid applicationId, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                org.iringtools.applicationConfig.DatabaseDictionary dictionary = _applicationConfigurationProvider.GetDatabaseDictionary(applicationId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.DatabaseDictionary>(dictionary, format, true);
             }
             catch (Exception ex)
