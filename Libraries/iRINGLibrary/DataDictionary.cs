@@ -64,6 +64,17 @@ namespace org.iringtools.library
         [DataMember(IsRequired = false, Order = 6)]
         public List<UnionObject> unionObjects { get; set; }
 
+        //[[New fields
+        [DataMember(Order = 7, EmitDefaultValue = false)]
+        public Guid dictionaryId { get; set; }
+
+        [DataMember(Order = 8, EmitDefaultValue = false)]
+        public Guid applicationId { get; set; }
+
+        [DataMember(Order = 9, EmitDefaultValue = false)]
+        public bool isDBDictionary { get; set; }
+        //]]
+
         public static bool IsNumeric(DataType dataType)
         {
             bool isNumeric = false;
@@ -173,6 +184,13 @@ namespace org.iringtools.library
         [DataMember(IsRequired = false, Order = 19)]
         public List<ExtensionProperty> extensionProperties { get; set; }
 
+        //[[New Fields
+        [DataMember(IsRequired = true, Order = 20, EmitDefaultValue = false)]
+        public Guid dataObjectId { get; set; }
+
+        [DataMember(IsRequired = true, Order = 21, EmitDefaultValue = false)]
+        public Guid dictionaryId { get; set; }
+        //]]
 
         public bool isKeyProperty(string propertyName)
         {
@@ -279,6 +297,17 @@ namespace org.iringtools.library
 
         [DataMember(IsRequired = false, Order = 16)]
         public int scale { get; set; }
+
+        //[[New Fields
+        [DataMember(IsRequired = true, Order = 17, EmitDefaultValue = false)]
+        public Guid dataPropertyId { get; set; }
+
+        [DataMember(IsRequired = true, Order = 18,EmitDefaultValue = false)]
+        public Guid dataObjectId { get; set; }
+
+        [DataMember(IsRequired = true, Order = 19, EmitDefaultValue = false)]
+        public Guid pickListId { get; set; }
+        //]]
     }
 
     [Serializable]
@@ -315,6 +344,17 @@ namespace org.iringtools.library
         [DataMember(IsRequired = false, Order = 9)]
         public string definition { get; set; }
 
+        //[[New Field 
+        [DataMember(IsRequired = true, Order = 10)]
+        public int numberOfDecimals { get; set; }
+
+        [DataMember(IsRequired = true, Order = 11, EmitDefaultValue = false)]
+        public Guid extensionPropertyId { get; set; }
+
+        [DataMember(IsRequired = true, Order = 12, EmitDefaultValue = false)]
+        public Guid dataObjectId { get; set; }
+        //]]
+
         //[[By Deepak 12-Dec14 Statrs
         //[DataMember(IsRequired = false, Order = 10)]
         //public List<ExtensionParameter> parameters { get; set; }
@@ -349,8 +389,13 @@ namespace org.iringtools.library
     [DataContract(Name = "keyProperty", Namespace = "http://www.iringtools.org/library")]
     public class KeyProperty
     {
-        [DataMember(IsRequired = true)]
+        [DataMember(IsRequired = true,Order = 0)]
         public string keyPropertyName { get; set; }
+
+        //[[New Field 
+        [DataMember(IsRequired = true, Order = 1, EmitDefaultValue = false)]
+        public Guid dataObjectId { get; set; }
+        //]]
     }
 
     [DataContract(Namespace = "http://www.iringtools.org/library")]
@@ -370,11 +415,16 @@ namespace org.iringtools.library
     [DataContract(Name = "propertyMap", Namespace = "http://www.iringtools.org/library")]
     public class PropertyMap
     {
-        [DataMember(IsRequired = true)]
+        [DataMember(IsRequired = true, Order = 0)]
         public string dataPropertyName { get; set; }
 
-        [DataMember(IsRequired = true)]
+        [DataMember(IsRequired = true, Order = 1)]
         public string relatedPropertyName { get; set; }
+
+        //[[New Fields
+        [DataMember(IsRequired = true, Order = 2, EmitDefaultValue = false)]
+        public Guid relationshipId { get; set; }
+        //]]
     }
 
     [Serializable]
@@ -397,6 +447,14 @@ namespace org.iringtools.library
 
         [DataMember(Order = 3, Name = "relationshipType", IsRequired = true)]
         public RelationshipType relationshipType { get; set; }
+
+        //[[New Fields
+        [DataMember(Order = 4, Name = "relationshipId", IsRequired = true, EmitDefaultValue = false)]
+        public Guid relationshipId { get; set; }
+
+        [DataMember(Order = 5, Name = "dataObjectId", IsRequired = true, EmitDefaultValue = false)]
+        public Guid dataObjectId { get; set; }
+        //]]
     }
 
     [DataContract(Namespace = "http://www.iringtools.org/library")]
@@ -470,6 +528,14 @@ namespace org.iringtools.library
 
         [DataMember(IsRequired = false, Order = 4)]
         public List<DataProperty> pickListProperties { get; set; }
+
+        //[[New Fields
+        [DataMember(IsRequired = true, Order = 5, EmitDefaultValue = false)]
+        public Guid dictionaryId { get; set; }
+
+        [DataMember(IsRequired = true, Order = 6, EmitDefaultValue = false)]
+        public Guid pickListId { get; set; }
+        //]]
     }
 
     [Serializable]
