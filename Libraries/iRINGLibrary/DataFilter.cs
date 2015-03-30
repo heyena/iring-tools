@@ -67,16 +67,16 @@ namespace org.iringtools.library
     public bool isAdmin { get; set; }
 
     //[[New Fields
-    [DataMember(Name = "dataFilterId", Order = 4, EmitDefaultValue = false)]
+    [DataMember(Name = "dataFilterId", Order = 4)]
     public Guid DataFilterId { get; set; }
 
-    [DataMember(Name = "resourceId", Order = 5, EmitDefaultValue = false)]
+    [DataMember(Name = "resourceId", Order = 5)]
     public Guid ResourceId { get; set; }
 
-    [DataMember(Name = "dataFilterTypeId", Order = 6, EmitDefaultValue = false)]
+    [DataMember(Name = "dataFilterTypeId", Order = 6)]
     public int DataFilterTypeId { get; set; }
 
-    [DataMember(Name = "active", Order = 7, EmitDefaultValue = false)]
+    [DataMember(Name = "active", Order = 7, EmitDefaultValue = false, IsRequired = false)]
     public Byte Active { get; set; }
     //]]
 
@@ -1437,10 +1437,10 @@ namespace org.iringtools.library
     public bool IsCaseSensitive { get; set; }
 
     //[[New Fields
-    [DataMember(Name = "dataFilterId", Order = 7, EmitDefaultValue = false)]
+    [DataMember(Name = "dataFilterId", Order = 7)]
     public Guid DataFilterId { get; set; }
 
-    [DataMember(Name = "expressionId", Order = 8, EmitDefaultValue = false)]
+    [DataMember(Name = "expressionId", Order = 8)]
     public Guid ExpressionId { get; set; }
     //]]
   }
@@ -1458,10 +1458,10 @@ namespace org.iringtools.library
     public SortOrder SortOrder { get; set; }
 
     //[[New Fields
-    [DataMember(Name = "dataFilterId", Order = 2, EmitDefaultValue = false)]
+    [DataMember(Name = "dataFilterId", Order = 2)]
     public Guid DataFilterId { get; set; }
 
-    [DataMember(Name = "orderExpressionId", Order = 3, EmitDefaultValue = false)]
+    [DataMember(Name = "orderExpressionId", Order = 3)]
     public Guid OrderExpressionId { get; set; }
     //]]
   }
@@ -1481,10 +1481,10 @@ namespace org.iringtools.library
       public List<Rollup> Rollups { get; set; }
 
       //[[New Fields
-      [DataMember(Name = "dataFilterId", Order = 2, EmitDefaultValue = false)]
+      [DataMember(Name = "dataFilterId", Order = 2)]
       public Guid DataFilterId { get; set; }
 
-      [DataMember(Name = "rollupExpressionId", Order = 3, EmitDefaultValue = false)]
+      [DataMember(Name = "rollupExpressionId", Order = 3)]
       public Guid RollupExpressionId { get; set; }
       //]]
   }    
@@ -1499,10 +1499,10 @@ namespace org.iringtools.library
     public RollupType Type { get; set; }
 
     //[[New Fields
-    [DataMember(Name = "rollupExpressionId", Order = 2, EmitDefaultValue = true)]
+    [DataMember(Name = "rollupExpressionId", Order = 2)]
     public Guid RollupExpressionId { get; set; }
 
-    [DataMember(Name = "rollupId", Order = 3, EmitDefaultValue = true)]
+    [DataMember(Name = "rollupId", Order = 3)]
     public Guid RollupId { get; set; }
     //]]
   }

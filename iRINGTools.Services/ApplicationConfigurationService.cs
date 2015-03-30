@@ -1053,7 +1053,7 @@ namespace org.iringtools.services
                 }
                 else
                 {
-                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.DatabaseDictionary>(stream, format);
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.library.DatabaseDictionary>(stream, format);
                     response = _applicationConfigurationProvider.InsertDictionary(new XDocument(xElement));
                 }
             }
