@@ -165,8 +165,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert applications to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertApplication/{userName}?format={format}")]
-        public void InsertApplication(string userName, string format, Stream stream) 
+        [WebInvoke(Method = "POST", UriTemplate = "/insertApplication?format={format}")]
+        public void InsertApplication(string format, Stream stream) 
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -182,7 +182,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Application>(stream, format);
-                    response = _applicationConfigurationProvider.InsertApplication(userName, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.InsertApplication(new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -196,8 +196,8 @@ namespace org.iringtools.services
         }
 
         [Description("Update applications to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateApplication/{userName}?format={format}")]
-        public void UpdateApplication(string userName, string format, Stream stream)
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateApplication?format={format}")]
+        public void UpdateApplication(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -213,7 +213,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<Application>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateApplication(userName, new XDocument(xElement));
+                    response = _applicationConfigurationProvider.UpdateApplication(new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -1069,15 +1069,15 @@ namespace org.iringtools.services
 
         [Description("Getting Dictionary from database by application id")]
         [WebGet(UriTemplate = "/GetDictionary?applicationId={applicationId}&format={format}")]
-        public void GetDictionary(string applicationId, string format)
+        public void GetDictionary(Guid applicationId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                org.iringtools.applicationConfig.DatabaseDictionary application = _applicationConfigurationProvider.GetDictionary(applicationId);
-                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.DatabaseDictionary>(application, format, true);
+                org.iringtools.applicationConfig.DatabaseDictionary dictionary = _applicationConfigurationProvider.GetDictionary(applicationId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.DatabaseDictionary>(dictionary, format, true);
             }
             catch (Exception ex)
             {

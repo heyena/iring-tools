@@ -68,7 +68,7 @@ Ext.define('AM.view.directory.ContextForm', {
             },
             {
                 xtype: 'textfield',
-                fieldLabel: 'Display Name',
+                fieldLabel: 'Context Name',
                 name: 'displayName',
                 allowBlank: false
             }, {
@@ -132,8 +132,8 @@ Ext.define('AM.view.directory.ContextForm', {
                         siteId: folderSiteId
                     },
                     success: function (response, request) {
-
                         var objResponseText = Ext.JSON.decode(request.response.responseText);
+
                         if (objResponseText["message"] == "duplicatecontext") {
                             showDialog(400, 50, 'Alert', "Context with this internal name already exists", Ext.Msg.OK, null);
                             return;
@@ -160,8 +160,6 @@ Ext.define('AM.view.directory.ContextForm', {
                             currentNode.insertChild(index, newNode);
                             index++;
                         });
-
-                        me.setLoading(false);
 
                         me.setLoading(false);
 

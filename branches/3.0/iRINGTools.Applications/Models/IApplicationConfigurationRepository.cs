@@ -27,10 +27,14 @@ namespace iRINGTools.Web.Models
 
         Applications GetApplications(string userName, Guid parentContextId);
 
-        string AddApplication(string userName, Application newApplication);
+        library.Response AddApplication(Application newApplication);
 
-        string UpdateApplication(string userName, Application updatedApplication);
+        library.Response UpdateApplication(Application updatedApplication);
 
-        string DeleteApplication(Application application);
+        library.Response DeleteApplication(Application application);
+
+        org.iringtools.applicationConfig.DataDictionary GetDictionary(Guid guid);
+
+        org.iringtools.applicationConfig.Graphs GetGraphs(string userName, Guid applicationId);
     }
 }

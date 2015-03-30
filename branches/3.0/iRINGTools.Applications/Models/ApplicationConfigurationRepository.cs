@@ -206,14 +206,14 @@ namespace iRINGTools.Web.Models
             return applications;
         }
 
-        public string AddApplication(string userName, Application newApplication)
+        public library.Response AddApplication(Application newApplication)
         {
-            string obj = null;
+            library.Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                obj = client.Post<Application>(String.Format("/insertApplication/{0}?format=xml", userName), newApplication, true);
+                response = client.Post<Application, library.Response>(String.Format("/insertApplication?format=xml"), newApplication, true);
             }
             catch (Exception ex)
             {
@@ -221,17 +221,17 @@ namespace iRINGTools.Web.Models
                 throw;
             }
 
-            return obj;
+            return response;
         }
 
-        public string UpdateApplication(string userName, Application updatedApplication)
+        public library.Response UpdateApplication(Application updatedApplication)
         {
-            string obj = null;
+            library.Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                obj = client.Put<Application>(String.Format("/updateApplication/{0}?format=xml", userName), updatedApplication, true);
+                response = client.Put<Application, library.Response>(String.Format("/updateApplication?format=xml"), updatedApplication, true);
             }
             catch (Exception ex)
             {
@@ -239,17 +239,17 @@ namespace iRINGTools.Web.Models
                 throw;
             }
 
-            return obj;
+            return response;
         }
 
-        public string DeleteApplication(Application application)
+        public library.Response DeleteApplication(Application application)
         {
-            string obj = null;
+            library.Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                obj = client.Delete<Application>(String.Format("/deleteApplication/{0}?format=xml", application.ApplicationId), application, true);
+                response = client.Delete<Application, library.Response>(String.Format("/deleteApplication/{0}?format=xml", application.ApplicationId), application, true);
             }
             catch (Exception ex)
             {
@@ -257,17 +257,17 @@ namespace iRINGTools.Web.Models
                 throw;
             }
 
-            return obj;
+            return response;
         }
 
-        internal library.DataObjects GetDataObjectsForAnApplication(string userName, Guid guid)
+        public org.iringtools.applicationConfig.DataDictionary GetDictionary(Guid applicationId)
         {
-            library.DataObjects dataObjects = null;
+            org.iringtools.applicationConfig.DataDictionary dataDictionary = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                dataObjects = client.Get<library.DataObjects>(String.Format(""));
+                dataDictionary = client.Get<org.iringtools.applicationConfig.DataDictionary>(String.Format("/GetDictionary?applicationId={0}&format=xml", applicationId));
             }
             catch (Exception ex)
             {
@@ -275,8 +275,28 @@ namespace iRINGTools.Web.Models
                 throw;
             }
 
-            return dataObjects;
+            return dataDictionary;
         }
+
+        public org.iringtools.applicationConfig.Graphs GetGraphs(string userName, Guid applicationId)
+        {
+            org.iringtools.applicationConfig.Graphs graphs = null;
+
+            try
+            {
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+                graphs = client.Get<org.iringtools.applicationConfig.Graphs>(String.Format("/graphs/{0}?applicationId={1}&format=xml", userName, applicationId));
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+                throw;
+            }
+
+            return graphs;
+        }
+
+        #region Protected Member Functions
 
         protected WebHttpClient CreateWebClient(string baseUri)
         {
@@ -284,5 +304,7 @@ namespace iRINGTools.Web.Models
             client = new WebHttpClient(baseUri);
             return client;
         }
+
+        #endregion
     }
 }

@@ -512,7 +512,7 @@ namespace org.iringtools.applicationConfig
             return applications;
         }
 
-        public Response InsertApplication(string userName, XDocument xml)
+        public Response InsertApplication(XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -520,7 +520,8 @@ namespace org.iringtools.applicationConfig
             {
                 Application application = Utility.DeserializeDataContract<Application>(xml.ToString());
 
-                string rawXml = application.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string groupXml = application.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string appSettingsXml = application.ApplicationSettings.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -529,24 +530,24 @@ namespace org.iringtools.applicationConfig
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                        nvl.Add(new ListItem() { Name = "@ContextId", Value = Convert.ToString(application.ContextId) });
-                        nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName });
+                        nvl.Add(new ListItem() { Name = "@ContextId", Value = application.ContextId });
                         nvl.Add(new ListItem() { Name = "@InternalName", Value = application.InternalName });
+                        nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
                         nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
                         nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
-                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = groupXml });
+                        nvl.Add(new ListItem() { Name = "@AppSettingsList", Value = appSettingsXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiApplication", nvl);
 
                         switch (output)
                         {
                             case "1":
-                                PrepareSuccessResponse(response, "applicationadded");
+                                PrepareSuccessResponse(response, "applicationAdded");
                                 break;
                             case "0":
-                                PrepareSuccessResponse(response, "duplicateapplication");
+                                PrepareSuccessResponse(response, "duplicateApplication");
                                 break;
                             default:
                                 PrepareErrorResponse(response, output);
@@ -571,7 +572,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateApplication(string userName, XDocument xml)
+        public Response UpdateApplication(XDocument xml)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -580,7 +581,8 @@ namespace org.iringtools.applicationConfig
             {
                 Application application = Utility.DeserializeDataContract<Application>(xml.ToString());
 
-                string rawXml = application.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string groupXml = application.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string appSettingsXml = application.ApplicationSettings.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -590,21 +592,21 @@ namespace org.iringtools.applicationConfig
                     {
                         NameValueList nvl = new NameValueList();
 
-                        nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                        nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(application.ApplicationId) });
+                        nvl.Add(new ListItem() { Name = "@ContextId", Value = application.ContextId });
+                        nvl.Add(new ListItem() { Name = "@ApplicationId", Value = application.ApplicationId });
                         nvl.Add(new ListItem() { Name = "@DisplayName", Value = application.DisplayName });
                         nvl.Add(new ListItem() { Name = "@Description", Value = application.Description });
                         nvl.Add(new ListItem() { Name = "@DXFRUrl", Value = application.DXFRUrl });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
-                        nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
+                        nvl.Add(new ListItem() { Name = "@GroupList", Value = groupXml });
+                        nvl.Add(new ListItem() { Name = "@AppSettingsList", Value = appSettingsXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuApplication", nvl);
 
                         switch (output)
                         {
                             case "1":
-                                PrepareSuccessResponse(response, "applicationupdated");
+                                PrepareSuccessResponse(response, "applicationUpdated");
                                 break;
                             default:
                                 PrepareErrorResponse(response, output);
@@ -1197,7 +1199,6 @@ namespace org.iringtools.applicationConfig
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        //nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@CommodityId", Value = Convert.ToString(exchange.CommodityId) });
                         nvl.Add(new ListItem() { Name = "@SourceGraphId", Value = Convert.ToString(exchange.SourceGraphId) });
                         nvl.Add(new ListItem() { Name = "@DestinationGraphId", Value = Convert.ToString(exchange.DestinationGraphId) });
@@ -1262,7 +1263,6 @@ namespace org.iringtools.applicationConfig
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        //nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@ExchangeId", Value = Convert.ToString(exchange.ExchangeId) });
                         nvl.Add(new ListItem() { Name = "@SourceGraphId", Value = Convert.ToString(exchange.SourceGraphId) });
                         nvl.Add(new ListItem() { Name = "@DestinationGraphId", Value = Convert.ToString(exchange.DestinationGraphId) });
@@ -1379,8 +1379,6 @@ namespace org.iringtools.applicationConfig
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        //nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
-                        //nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@ContextId", Value = commodity.ContextId.ToString() });
                         nvl.Add(new ListItem() { Name = "@CommodityName", Value = commodity.CommodityName });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
@@ -1427,6 +1425,7 @@ namespace org.iringtools.applicationConfig
             {
                 Commodity commodity = Utility.DeserializeDataContract<Commodity>(xml.ToString());
                 string rawXml = commodity.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (commodity == null || string.IsNullOrEmpty(commodity.CommodityName))
@@ -1434,8 +1433,6 @@ namespace org.iringtools.applicationConfig
                     else
                     {
                         NameValueList nvl = new NameValueList();
-                        //nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
-                        //nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@CommodityId", Value = commodity.CommodityId.ToString() });
                         nvl.Add(new ListItem() { Name = "@CommodityName", Value = commodity.CommodityName });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
@@ -1606,7 +1603,7 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public org.iringtools.applicationConfig.DatabaseDictionary GetDictionary(string applicationId)
+        public org.iringtools.applicationConfig.DatabaseDictionary GetDictionary(Guid applicationId)
         {
             org.iringtools.applicationConfig.DatabaseDictionary databaseDictionary = new DatabaseDictionary();
             try

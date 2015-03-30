@@ -130,226 +130,30 @@ namespace org.iringtools.web.controllers
 
                             foreach (Application application in applications)
                             {
-                                //DataLayer dataLayer = _repository.GetDataLayer(scopeName, application.InternalName);
+                                JsonTreeNode node = new JsonTreeNode
+                                {
+                                    nodeType = "async",
+                                    type = "ApplicationNode",
+                                    iconCls = "tabsApplication",
+                                    id = application.ApplicationId.ToString(),
+                                    text = application.DisplayName,
+                                    expanded = false,
+                                    leaf = false,
+                                    children = null,
+                                    record = Utility.SerializeJson <Application>(application, true)
+                                };
 
-                                //if (dataLayer != null)
-                                //{
-                                    JsonTreeNode node = new JsonTreeNode
-                                    {
-                                        nodeType = "async",
-                                        type = "ApplicationNode",
-                                        iconCls = "tabsApplication",
-                                        id = application.ApplicationId.ToString(),
-                                        text = application.DisplayName,
-                                        expanded = false,
-                                        leaf = false,
-                                        children = null,
-                                        record = application
-                                    };
-
-                                    //node.property = new Dictionary<string, string>();
-                                    //node.property.Add("Internal Name", application.InternalName);
-                                    //node.property.Add("Display Name", application.DisplayName);
-                                    //node.property.Add("Description", application.Description);
-                                    //node.property.Add("Data Layer", application.Assembly);
-                                    //node.property.Add("LightweightDataLayer", application.IsLightweight ? "Yes" : "No");
-
-                                    nodes.Add(node);
-                                }
-                            //}
+                                nodes.Add(node);
+                            }
 
                             ActionResult result = Json(nodes, JsonRequestBehavior.AllowGet);
                             return result;
                         }
-                    //case "GroupsNode":
-                    //    {
-
-                    //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
-                    //        JsonTreeNode node = new JsonTreeNode
-                    //        {
-                    //            nodeType = "async",
-                    //            type = "GroupNode",
-                    //            id = "groupnode",
-                    //            text = "Group1",
-                    //            expanded = false,
-                    //            leaf = false,
-                    //            children = null
-                    //        };
-                    //        nodes.Add(node);
-                    //        return Json(nodes, JsonRequestBehavior.AllowGet);
-                    //    }
-                    //case "GroupNode":
-                    //    {
-
-                    //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
-                    //        JsonTreeNode node = new JsonTreeNode
-                    //        {
-                    //            nodeType = "async",
-                    //            type = "ScopesNode",
-                    //            iconCls = "scopes",
-                    //            id = "scopenode",
-                    //            text = "Scopes",
-                    //            expanded = false,
-                    //            leaf = false,
-                    //            children = null
-                    //        };
-                    //        nodes.Add(node);
-                    //        return Json(nodes, JsonRequestBehavior.AllowGet);
-                    //    }
-
-                    //case "ScopesNode":
-                    //    {
-                    //        System.Collections.IEnumerator ie = Session.GetEnumerator();
-                    //        while (ie.MoveNext())
-                    //        {
-                    //            Session.Remove(ie.Current.ToString());
-                    //            ie = Session.GetEnumerator();
-                    //        }
-
-                    //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                    //        var contexts = _repository.GetScopes();
-
-                    //        if (contexts != null)
-                    //        {
-                    //            foreach (ScopeProject scope in contexts)
-                    //            {
-                    //                JsonTreeNode node = new JsonTreeNode
-                    //                {
-                    //                    nodeType = "async",
-                    //                    type = "ScopeNode",
-                    //                    iconCls = "scope",
-                    //                    id = scope.Name,
-                    //                    text = scope.DisplayName,
-                    //                    expanded = false,
-                    //                    leaf = false,
-                    //                    children = null,
-                    //                    record = scope
-                    //                };
-
-                    //                node.property = new Dictionary<string, string>();
-                    //                node.property.Add("Internal Name", scope.Name);
-                    //                node.property.Add("Display Name", scope.DisplayName);
-                    //                node.property.Add("Description", scope.Description);
-                    //                nodes.Add(node);
-                    //            }
-                    //        }
-
-                    //        return Json(nodes, JsonRequestBehavior.AllowGet);
-                    //    }
-                    //case "ScopeNode":
-                    //    {
-                    //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                    //        ScopeProject scope = _repository.GetScope(form["node"]);
-
-                    //        foreach (ScopeApplication application in scope.Applications)
-                    //        {
-                    //            Configuration config = _repository.GetConfig(scope.Name, application.Name);
-                    //            application.Configuration = config;
-
-                    //            DataLayer dataLayer = _repository.GetDataLayer(scope.Name, application.Name);
-
-                    //            if (dataLayer != null)
-                    //            {
-                    //                JsonTreeNode node = new JsonTreeNode
-                    //                {
-                    //                    nodeType = "async",
-                    //                    type = "ApplicationNode",
-                    //                    iconCls = "tabsApplication",
-                    //                    id = scope.Name + "/" + application.Name,
-                    //                    text = application.DisplayName,
-                    //                    expanded = false,
-                    //                    leaf = false,
-                    //                    children = null,
-                    //                    record = new
-                    //                    {
-                    //                        Name = application.Name,
-                    //                        DisplayName = application.DisplayName,
-                    //                        Description = application.Description,
-                    //                        DataLayer = dataLayer.Name,
-                    //                        Assembly = dataLayer.Assembly,
-                    //                        Configuration = application.Configuration,
-                    //                        CacheImportURI = application.CacheInfo == null ? "" : application.CacheInfo.ImportURI,
-                    //                        CacheTimeout = application.CacheInfo == null ? "" : Convert.ToString(application.CacheInfo.Timeout),
-                    //                        PermissionGroups = application.PermissionGroup
-                    //                    }
-                    //                };
-
-                    //                node.property = new Dictionary<string, string>();
-                    //                node.property.Add("Internal Name", application.Name);
-                    //                node.property.Add("Display Name", application.DisplayName);
-                    //                node.property.Add("Description", application.Description);
-                    //                node.property.Add("Data Layer", dataLayer.Name);
-                    //                node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
-
-                    //                nodes.Add(node);
-                    //            }
-                    //        }
-
-                    //        ActionResult result = Json(nodes, JsonRequestBehavior.AllowGet);
-                    //        return result;
-                    //    }
                     case "ApplicationNode":
                         {
-                            string context = form["node"];
-                            string[] contextParts = context.Split(new char[] { '/' });
-                            string scopeName = contextParts[0];
-                            string applicationName = contextParts[1];
-                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                            var record = Utility.DeserializeJson<Application>(form["record"].ToString(), true);
 
-                            JsonTreeNode dataObjectsNode = new JsonTreeNode
-                            {
-                                nodeType = "async",
-                                type = "DataObjectsNode",
-                                iconCls = "folder",
-                                id = context + "/DataObjects",
-                                text = "Data Objects",
-                                expanded = false,
-                                leaf = false,
-                                children = null,
-                                property = new Dictionary<string, string>()
-                            };
-
-                            ScopeProject scope = _repository.GetScope(scopeName);
-
-                            if (scope != null)
-                            {
-                                ScopeApplication application = scope.Applications.Find(x => x.Name.ToLower() == applicationName.ToLower());
-
-                                if (application != null)
-                                {
-                                    dataObjectsNode.property.Add("Data Mode", application.DataMode.ToString());
-                                }
-                            }
-
-                            JsonTreeNode graphsNode = new JsonTreeNode
-                            {
-                                nodeType = "async",
-                                type = "GraphsNode",
-                                iconCls = "folder",
-                                id = context + "/Graphs",
-                                text = "Graphs",
-                                expanded = false,
-                                leaf = false,
-                                children = null
-                            };
-
-                            JsonTreeNode ValueListsNode = new JsonTreeNode
-                            {
-                                nodeType = "async",
-                                type = "ValueListsNode",
-                                iconCls = "folder",
-                                id = context + "/ValueLists",
-                                text = "ValueLists",
-                                expanded = false,
-                                leaf = false,
-                                children = null
-                            };
-
-                            nodes.Add(dataObjectsNode);
-                            nodes.Add(graphsNode);
-                            nodes.Add(ValueListsNode);
+                            List<JsonTreeNode> nodes = PopulateApplicationNode(record.ContextId, record.ApplicationId);
 
                             return Json(nodes, JsonRequestBehavior.AllowGet);
                         }
@@ -539,31 +343,24 @@ namespace org.iringtools.web.controllers
                                 node.property.Add("Data Length", property.dataLength.ToString());
                                 node.property.Add("Precison", property.precision.ToString());
                                 node.property.Add("Scale", property.scale.ToString());
-                                //node.property.Add("isVirtual", property.isVirtual.ToString());
+                                
                                 if (isKeyProp)
                                 {
                                     node.property.Add("Keytype", keyType);
                                 }
                                 nodes.Add(node);
                             }
-                            //[[By Rohit 24-Dec-14 Starts
                             if (dataObject.extensionProperties != null)
                             {
                                 if (dataObject.extensionProperties.Count > 0)
                                 {
                                     foreach (org.iringtools.library.ExtensionProperty extension in dataObject.extensionProperties)
                                     {
-                                        //keyType = getExtensionType(extension.propertyName,dataObject.extensionProperties);
-                                        //dataType = extension.dataType.ToString();
-
-                                        //bool isKeyProp = dataObject.isKeyProperty(extension.propertyName);
                                         JsonTreeNode node = new JsonTreeNode
                                         {
                                             nodeType = "async",
                                             type = "ExtensionNode",
                                             iconCls = "treeExtension",
-                                            //type = isKeyProp ? "KeyDataPropertyNode" : "DataPropertyNode",
-                                            //iconCls = isKeyProp ? "treeKey" : "treeProperty",
                                             id = context + "/" + dataObject.objectName + "/" + extension.propertyName,
                                             text = extension.propertyName,
                                             expanded = false,
@@ -572,10 +369,6 @@ namespace org.iringtools.web.controllers
                                             record = new
                                             {
                                                 Name = extension.propertyName,
-                                                //Keytype = keyType,
-                                                //Datatype = dataType
-
-
                                             }
                                         };
                                         node.property = new Dictionary<string, string>();
@@ -714,9 +507,6 @@ namespace org.iringtools.web.controllers
             }
             catch (Exception e)
             {
-                //_logger.Error(e.ToString());
-                //throw e;
-
                 _logger.Error(e.ToString());
                 if (e.InnerException != null)
                 {
@@ -1035,6 +825,9 @@ namespace org.iringtools.web.controllers
         {
             try
             {
+                Response response = null;
+                dynamic record = Utility.DeserializeJson<org.iringtools.applicationConfig.Context>(form["record"].ToString(), true);
+
                 string success = String.Empty;
 
                 library.Configuration configuration = new Configuration
@@ -1045,169 +838,52 @@ namespace org.iringtools.web.controllers
                     }
                 };
 
+                // TODO: Need to change the name of property (and its attribute) DisplayName to ContextName in Context class
+                if (record.CacheConnStr == null)
+                {
+                    record = Utility.DeserializeJson<org.iringtools.applicationConfig.Application>(form["record"].ToString(), true);
+                }
+
                 Application tempApplication = new Application()
                 {
                     DisplayName = form["displayName"],//form["Name"],
                     InternalName = form["internalName"],
-                    Description = form["Description"],
+                    Description = form["description"],
                     Assembly = form["assembly"],
                     DXFRUrl = "http://localhost:56789/dxfr",
-                    Permissions = new Permissions(),
-                    Groups = new Groups()
+                    ContextId = record.ContextId
                 };
 
                 if (form["state"] == "new")
                 {
-                    tempApplication.ContextId = Guid.Parse(form["path"]);
                     tempApplication.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
 
-                    success = _appConfigRepository.AddApplication(userName, tempApplication);
+                    response = _appConfigRepository.AddApplication(tempApplication);
                 }
                 else if (form["state"] == "edit")
                 {
+                    tempApplication.ApplicationId = record.ApplicationId;
                     tempApplication.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
-                    success = _appConfigRepository.UpdateApplication(userName, tempApplication);
+
+                    response = _appConfigRepository.UpdateApplication(tempApplication);
                 }
                 else if (form["State"] == "delete")
                 {
-                    tempApplication.ApplicationId = !String.IsNullOrEmpty(form["nodeid"]) ? Guid.Parse(form["nodeId"]) : Guid.Empty;
-                    tempApplication.ContextId = !String.IsNullOrEmpty(form["nodeid"]) ? Guid.Parse(form["parentNodeId"]) : Guid.Empty;
-                    success = _appConfigRepository.DeleteApplication(tempApplication);
+                    tempApplication.ApplicationId = record.ApplicationId;
+
+                    response = _appConfigRepository.DeleteApplication(tempApplication);
                 }
 
-                if (success.Trim().Contains("Error"))
+                if (response.Level == StatusLevel.Success)
                 {
-                    _CustomErrorLog = new CustomErrorLog();
-                    _CustomError = _CustomErrorLog.getErrorResponse(success);
-                    return Json(new { success = false, message = _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                    List<JsonTreeNode> nodes = PopulateApplicationNode(tempApplication.ContextId, tempApplication.ApplicationId);
+
+                    return Json(new { success = true, message = response.StatusText, nodes }, JsonRequestBehavior.AllowGet);
                 }
-
-                //string applicationName = form["Application"];
-                List<JsonTreeNode> applicationsNode = new List<JsonTreeNode>();
-                Applications applications = _appConfigRepository.GetApplications(userName, tempApplication.ContextId);
-
-                foreach (Application application in applications)
+                else
                 {
-                    JsonTreeNode applicationNode = new JsonTreeNode
-                    {
-                        nodeType = "async",
-                        type = "ApplicationNode",
-                        iconCls = "tabsApplication",
-                        id = application.ApplicationId.ToString(),
-                        text = application.DisplayName,
-                        expanded = false,
-                        leaf = false,
-                        children = null,
-                        record = application
-                    };
-
-                    //DataObjects dataObjects = _appConfigRepository.GetDataObjectsForAnApplication(userName, application.ApplicationId);
-                    applicationsNode.Add(applicationNode);
+                    return Json(new { success = false, message = response.StatusText, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
                 }
-
-                //ScopeProject scope = _repository.GetScope(scopeName);
-                //ScopeApplication app = (from apps in scope.Applications
-                //                        where apps.Name == application.Name
-                //                        select apps).FirstOrDefault();
-
-                //Configuration config = _repository.GetConfig(scope.Name, app.Name);
-                //app.Configuration = config;
-
-                //DataLayer dataLayer = _repository.GetDataLayer(scope.Name, app.Name);
-
-                //if (dataLayer != null)
-                //{
-                //    JsonTreeNode node = new JsonTreeNode
-                //    {
-                //        nodeType = "async",
-                //        type = "ApplicationNode",//"appNode",
-                //        iconCls = "application",
-                //        id = scope.Name + "/" + app.Name,
-                //        text = app.DisplayName,
-                //        expanded = false,
-                //        leaf = false,
-                //        children = null,
-                //        record = new
-                //        {
-                //            Name = app.Name,
-                //            DisplayName = app.DisplayName,
-                //            Description = app.Description,
-                //            DataLayer = dataLayer.Name,
-                //            Assembly = dataLayer.Assembly,
-                //            Configuration = app.Configuration,
-                //            CacheImportURI = app.CacheInfo == null ? "" : app.CacheInfo.ImportURI,
-                //            CacheTimeout = app.CacheInfo == null ? "" : Convert.ToString(app.CacheInfo.Timeout),
-                //            PermissionGroups = app.PermissionGroup
-                //        }
-                //    };
-
-                //    node.property = new Dictionary<string, string>();
-                //    node.property.Add("Internal Name", app.Name);
-                //    node.property.Add("Display Name", app.DisplayName);
-                //    node.property.Add("Description", app.Description);
-                //    node.property.Add("Data Layer", dataLayer.Name);
-                //    node.property.Add("LightweightDataLayer", dataLayer.IsLightweight ? "Yes" : "No");
-
-
-                //    JsonTreeNode dataObjectsNode = new JsonTreeNode
-                //    {
-                //        nodeType = "async",
-                //        type = "DataObjectsNode",
-                //        iconCls = "folder",
-                //        id = scopeName + "/" + app.Name + "/DataObjects",
-                //        text = "Data Objects",
-                //        expanded = false,
-                //        leaf = false,
-                //        children = null,
-                //        property = new Dictionary<string, string>()
-                //    };
-
-                //    if (scope != null)
-                //    {
-                //        ScopeApplication scopeapplication = scope.Applications.Find(x => x.Name.ToLower() == app.Name.ToLower());
-
-                //        if (scopeapplication != null)
-                //        {
-                //            dataObjectsNode.property.Add("Data Mode", scopeapplication.DataMode.ToString());
-                //        }
-                //    }
-
-                //    JsonTreeNode graphsNode = new JsonTreeNode
-                //    {
-                //        nodeType = "async",
-                //        type = "GraphsNode",
-                //        iconCls = "folder",
-                //        id = scopeName + "/" + app.Name + "/Graphs",
-                //        text = "Graphs",
-                //        expanded = false,
-                //        leaf = false,
-                //        children = null
-                //    };
-
-                //    JsonTreeNode ValueListsNode = new JsonTreeNode
-                //    {
-                //        nodeType = "async",
-                //        type = "ValueListsNode",
-                //        iconCls = "folder",
-                //        id = scopeName + "/" + app.Name + "/ValueLists",
-                //        text = "ValueLists",
-                //        expanded = false,
-                //        leaf = false,
-                //        children = null
-                //    };
-
-                //    if (node.children == null)
-                //        node.children = new List<JsonTreeNode>();
-                //    node.children.Add(dataObjectsNode);
-                //    node.children.Add(graphsNode);
-                //    node.children.Add(ValueListsNode);
-
-                //    nodes.Add(node);
-                //}
-
-                return Json(new { success = true, nodes = applicationsNode }, JsonRequestBehavior.AllowGet);
-                //JsonResult result = Json(new { success = true }, JsonRequestBehavior.AllowGet);
-                //return result;
             }
             catch (Exception e)
             {
@@ -1495,7 +1171,7 @@ namespace org.iringtools.web.controllers
 
             for (int i = 0; i < groupArray.Length; i++)
             {
-                tempGroups.Add(new Group(){GroupId = int.Parse(groupArray[i])});
+                tempGroups.Add(new Group() { GroupId = int.Parse(groupArray[i]) });
             }
 
             return tempGroups;
@@ -1546,6 +1222,80 @@ namespace org.iringtools.web.controllers
             }
 
             return nodes;
+        }
+
+        private List<JsonTreeNode> PopulateApplicationNode(Guid contextId, Guid applicationId)
+        {
+            List<JsonTreeNode> applicationNode = new List<JsonTreeNode>();
+            org.iringtools.applicationConfig.DataDictionary dataDictionary = _appConfigRepository.GetDictionary(applicationId);
+            org.iringtools.applicationConfig.Graphs graphs = _appConfigRepository.GetGraphs(userName, applicationId);
+            //org.iringtools.applicationConfig.ValueListMaps valueListMaps = _appConfigRepository.GetValueListMaps(userName, applicationId);
+
+            JsonTreeNode dataObjectsNode = new JsonTreeNode()
+            {
+                nodeType = "async",
+                type = "DataObjectsNode",
+                iconCls = "dataObjects",
+                id = dataDictionary.dictionaryId.ToString(),
+                text = "Data Objects",
+                expanded = false,
+                leaf = false,
+                record = Utility.SerializeJson<org.iringtools.applicationConfig.DataDictionary>(dataDictionary, true)
+            };
+
+            foreach (org.iringtools.applicationConfig.DataObject dataObject in dataDictionary.dataObjects)
+            {
+                JsonTreeNode node = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = "DataObjectNode",
+                    iconCls = "dataObjects",
+                    id = dataObject.dataObjectId.ToString(),
+                    text = dataObject.objectName,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = Utility.SerializeJson<org.iringtools.applicationConfig.DataObject>(dataObject, true)
+                };
+
+                dataObjectsNode.children.Add(node);
+            }
+
+            applicationNode.Add(dataObjectsNode);
+
+            JsonTreeNode graphsNode = new JsonTreeNode()
+            {
+                nodeType = "async",
+                type = "GraphsNode",
+                iconCls = "graphs",
+                id = dataDictionary.dictionaryId.ToString(),
+                text = "Graphs",
+                expanded = false,
+                leaf = false,
+                record = Utility.SerializeJson<org.iringtools.applicationConfig.Graphs>(graphs, true)
+            };
+
+            foreach (org.iringtools.applicationConfig.Graph graph in graphs)
+            {
+                JsonTreeNode node = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = "GraphNode",
+                    iconCls = "graph",
+                    id = graph.GraphId.ToString(),
+                    text = graph.GraphName,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = Utility.SerializeJson<org.iringtools.applicationConfig.Graph>(graph, true)
+                };
+
+                graphsNode.children.Add(node);
+            }
+
+            applicationNode.Add(graphsNode);
+
+            return applicationNode;
         }
 
         #endregion
