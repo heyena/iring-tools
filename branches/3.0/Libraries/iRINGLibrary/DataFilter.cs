@@ -64,7 +64,21 @@ namespace org.iringtools.library
     public List<RollupExpression> RollupExpressions { get; set; }
 
     [DataMember(Name = "isAdmin", Order = 3, EmitDefaultValue = false)]
-    public bool isAdmin { get; set; }	
+    public bool isAdmin { get; set; }
+
+    //[[New Fields
+    [DataMember(Name = "dataFilterId", Order = 4, EmitDefaultValue = false)]
+    public Guid DataFilterId { get; set; }
+
+    [DataMember(Name = "resourceId", Order = 5, EmitDefaultValue = false)]
+    public Guid ResourceId { get; set; }
+
+    [DataMember(Name = "dataFilterTypeId", Order = 6, EmitDefaultValue = false)]
+    public int DataFilterTypeId { get; set; }
+
+    [DataMember(Name = "active", Order = 7, EmitDefaultValue = false)]
+    public Byte Active { get; set; }
+    //]]
 
     [Obsolete("Use ToSqlWhereClause(DatabaseDictionary dbDictionary, string tableName, string objectAlias) instead")]
     public string ToSqlWhereClause(DataDictionary dataDictionary, string tableName, string objectAlias)
@@ -1421,6 +1435,14 @@ namespace org.iringtools.library
 
     [DataMember(Name = "isCaseSensitive", Order = 6, EmitDefaultValue = false)]
     public bool IsCaseSensitive { get; set; }
+
+    //[[New Fields
+    [DataMember(Name = "dataFilterId", Order = 7, EmitDefaultValue = false)]
+    public Guid DataFilterId { get; set; }
+
+    [DataMember(Name = "expressionId", Order = 8, EmitDefaultValue = false)]
+    public Guid ExpressionId { get; set; }
+    //]]
   }
 
   [CollectionDataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "values", ItemName = "value")]
@@ -1434,6 +1456,14 @@ namespace org.iringtools.library
 
     [DataMember(Name = "sortOrder", Order = 1, EmitDefaultValue = true)]
     public SortOrder SortOrder { get; set; }
+
+    //[[New Fields
+    [DataMember(Name = "dataFilterId", Order = 2, EmitDefaultValue = false)]
+    public Guid DataFilterId { get; set; }
+
+    [DataMember(Name = "orderExpressionId", Order = 3, EmitDefaultValue = false)]
+    public Guid OrderExpressionId { get; set; }
+    //]]
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollupExpression")]
@@ -1449,6 +1479,14 @@ namespace org.iringtools.library
 
       [DataMember(Name = "rollups", Order = 1, EmitDefaultValue = false)]
       public List<Rollup> Rollups { get; set; }
+
+      //[[New Fields
+      [DataMember(Name = "dataFilterId", Order = 2, EmitDefaultValue = false)]
+      public Guid DataFilterId { get; set; }
+
+      [DataMember(Name = "rollupExpressionId", Order = 3, EmitDefaultValue = false)]
+      public Guid RollupExpressionId { get; set; }
+      //]]
   }    
 
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollup")]
@@ -1459,6 +1497,14 @@ namespace org.iringtools.library
 
     [DataMember(Name = "type", Order = 1, EmitDefaultValue = false)]
     public RollupType Type { get; set; }
+
+    //[[New Fields
+    [DataMember(Name = "rollupExpressionId", Order = 2, EmitDefaultValue = true)]
+    public Guid RollupExpressionId { get; set; }
+
+    [DataMember(Name = "rollupId", Order = 3, EmitDefaultValue = true)]
+    public Guid RollupId { get; set; }
+    //]]
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "rollupType")]
