@@ -30,8 +30,8 @@ namespace org.iringtools.services
         }
 
         [Description("Gets all jobs from the data base.")]
-        [WebGet(UriTemplate = "/alljobs?platformId={platformId}&siteId={siteId}&format={format}")]
-        public void GetAllJobs(int platformId, int siteId, string format) 
+        [WebGet(UriTemplate = "/alljobs?userName={userName}&siteId={siteId}&platformId={platformId}&format={format}")]
+        public void GetAllJobs(string userName, int siteId, int platformId, string format) 
         {
             try
             {
@@ -39,7 +39,7 @@ namespace org.iringtools.services
                 { format = "xml"; }
 
 
-                org.iringtools.AgentLibrary.Agent.Jobs jobs = _agentProvider.GetAllJobs(platformId, siteId);
+                org.iringtools.AgentLibrary.Agent.Jobs jobs = _agentProvider.GetAllJobs(userName, siteId, platformId);
                 _agentProvider.FormatOutgoingMessage<org.iringtools.AgentLibrary.Agent.Jobs>(jobs, format, true);
             }
 
@@ -51,9 +51,9 @@ namespace org.iringtools.services
             }
         }
 
-        [Description("Gets job for a given scope and app from the data base.")]
-        [WebGet(UriTemplate = "/job?platformId={platformId}&siteId={siteId}&scope={scope}&app={app}&format={format}")]
-        public void GetJob(int platformId, int siteId, string scope, string app, string format)
+        [Description("Gets a particular job from the data base.")]
+        [WebGet(UriTemplate = "/job?jobId={jobId}&format={format}")]
+        public void GetJob(Guid jobId, string format)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace org.iringtools.services
                 { format = "xml"; }
 
 
-                org.iringtools.AgentLibrary.Agent.Job job = _agentProvider.GetJob(platformId, siteId, scope, app);
+                org.iringtools.AgentLibrary.Agent.Job job = _agentProvider.GetJob(jobId);
                 _agentProvider.FormatOutgoingMessage<org.iringtools.AgentLibrary.Agent.Job>(job, format, true);
             }
 
@@ -74,8 +74,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert job to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertJob?platformId={platformId}&siteId={siteId}&format={format}")]
-        public void InsertJob(int platformId, int siteId, string format, Stream stream)
+        [WebInvoke(Method = "POST", UriTemplate = "/insertJob?format={format}")]
+        public void InsertJob(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -91,7 +91,7 @@ namespace org.iringtools.services
                 else
                 {
                     XElement xElement = _agentProvider.FormatIncomingMessage<org.iringtools.AgentLibrary.Agent.Jobs>(stream, format);
-                    response = _agentProvider.InsertJob(platformId, siteId, new XDocument(xElement));
+                    response = _agentProvider.InsertJob(new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -153,120 +153,6 @@ namespace org.iringtools.services
                 else
                 {
                     response = _agentProvider.DeleteJob(jobId);
-                }
-            }
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-            PrepareResponse(ref response);
-            _agentProvider.FormatOutgoingMessage<Response>(response, format, true);
-        }
-
-        [Description("Gets job client info from the data base.")]
-        [WebGet(UriTemplate = "/jobclientinfo?jobid={jobId}&format={format}")]
-        public void GetJoblientInfo(string jobId, string format)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
-
-
-                org.iringtools.AgentLibrary.Agent.JobClientInfos jobClientInfo = _agentProvider.GetJobClientInfo(jobId);
-                _agentProvider.FormatOutgoingMessage<org.iringtools.AgentLibrary.Agent.JobClientInfos>(jobClientInfo, format, true);
-            }
-
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetScope, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-        }
-
-        [Description("Insert job client info to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertJobClientInfo?format={format}")]
-        public void InsertJobClientInfo(string format, Stream stream)
-        {
-            if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
-
-            Response response = new Response();
-            try
-            {
-                format = MapContentType(format);
-                if (format == "raw")
-                {
-                    throw new Exception("");
-                }
-                else
-                {
-                    XElement xElement = _agentProvider.FormatIncomingMessage<org.iringtools.AgentLibrary.Agent.JobClientInfos>(stream, format);
-                    response = _agentProvider.InsertJobClientInfo(new XDocument(xElement));
-                }
-            }
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-            PrepareResponse(ref response);
-            _agentProvider.FormatOutgoingMessage<Response>(response, format, true);
-        }
-
-        [Description("Update job client info in the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateJobClientInfo/{jobId}?format={format}")]
-        public void UpdateJobClientInfo(string jobId, string format, Stream stream) 
-        {
-            if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
-
-            Response response = new Response();
-            try
-            {
-                format = MapContentType(format);
-                if (format == "raw")
-                {
-                    throw new Exception("");
-                }
-                else
-                {
-                    XElement xElement = _agentProvider.FormatIncomingMessage<org.iringtools.AgentLibrary.Agent.JobClientInfos>(stream, format);
-                    response = _agentProvider.UpdateJobClientInfo(jobId, new XDocument(xElement));
-                }
-            }
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-            PrepareResponse(ref response);
-            _agentProvider.FormatOutgoingMessage<Response>(response, format, true);
-        }
-
-        [Description("Delete job client info from the data base.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteJobClientInfo/{jobId}?format={format}")]
-        public void DeleteJobClientInfo(string jobId, string format) // Completed.
-        {
-            if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
-
-            Response response = new Response();
-            try
-            {
-                format = MapContentType(format);
-                if (format == "raw")
-                {
-                    throw new Exception("");
-                }
-                else
-                {
-                    response = _agentProvider.DeleteJobClientInfo(jobId);
                 }
             }
             catch (Exception ex)
@@ -381,120 +267,6 @@ namespace org.iringtools.services
                 else
                 {
                     response = _agentProvider.DeleteSchedule(scheduleId);
-                }
-            }
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-            PrepareResponse(ref response);
-            _agentProvider.FormatOutgoingMessage<Response>(response, format, true);
-        }
-
-        [Description("Gets jobschedule from the data base.")]
-        [WebGet(UriTemplate = "/jobschedule?jobId={jobId}&scheduleId={scheduleId}&format={format}")]
-        public void GetJobSchedule(string jobId, string scheduleId, string format)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(format))
-                { format = "xml"; }
-
-
-                org.iringtools.AgentLibrary.Agent.JobSchedule jobschedule = _agentProvider.GetJobSchedule(jobId, scheduleId);
-                _agentProvider.FormatOutgoingMessage<org.iringtools.AgentLibrary.Agent.JobSchedule>(jobschedule, format, true);
-            }
-
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetScope, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-        }
-
-        [Description("Insert jobschedule in the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertJobSchedule?format={format}")]
-        public void InsertJobSchedule(string format, Stream stream)
-        {
-            if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
-
-            Response response = new Response();
-            try
-            {
-                format = MapContentType(format);
-                if (format == "raw")
-                {
-                    throw new Exception("");
-                }
-                else
-                {
-                    XElement xElement = _agentProvider.FormatIncomingMessage<org.iringtools.AgentLibrary.Agent.JobSchedules>(stream, format);
-                    response = _agentProvider.InsertJobSchedule(new XDocument(xElement));
-                }
-            }
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-            PrepareResponse(ref response);
-            _agentProvider.FormatOutgoingMessage<Response>(response, format, true);
-        }
-
-        [Description("Update jobschedule in the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/updateJobSchedule?jobId={jobId}&scheduleId={scheduleId}&format={format}")]
-        public void UpdateJobSchedule(string jobId, string scheduleId, string format, Stream stream)
-        {
-            if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
-
-            Response response = new Response();
-            try
-            {
-                format = MapContentType(format);
-                if (format == "raw")
-                {
-                    throw new Exception("");
-                }
-                else
-                {
-                    XElement xElement = _agentProvider.FormatIncomingMessage<org.iringtools.AgentLibrary.Agent.JobSchedules>(stream, format);
-                    response = _agentProvider.UpdateJobSchedule(jobId, scheduleId, new XDocument(xElement));
-                }
-            }
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-            PrepareResponse(ref response);
-            _agentProvider.FormatOutgoingMessage<Response>(response, format, true);
-        }
-
-        [Description("Delete jobschedule from the data base.")]
-        [WebInvoke(Method = "DELETE", UriTemplate = "/deleteJobSchedule?jobId={jobId}&scheduleId={scheduleId}&format={format}")]
-        public void DeleteJobSchedule(string jobId, string scheduleId, string format)
-        {
-            if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
-
-            Response response = new Response();
-            try
-            {
-                format = MapContentType(format);
-                if (format == "raw")
-                {
-                    throw new Exception("");
-                }
-                else
-                {
-                    response = _agentProvider.DeleteJobSchedule(jobId, scheduleId);
                 }
             }
             catch (Exception ex)
