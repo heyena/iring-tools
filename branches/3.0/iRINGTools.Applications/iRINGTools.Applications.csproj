@@ -480,6 +480,10 @@
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Libraries\AgentLibrary\AgentLibrary.csproj">
+      <Project>{16F2A058-13A2-476B-AE2B-696AEDD190C0}</Project>
+      <Name>AgentLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\ApplicationConfigurationLibrary\ApplicationConfigurationLibrary.csproj">
       <Project>{F9971D9C-4D1E-4E5C-A5D3-E7A2989C42D1}</Project>
       <Name>ApplicationConfigurationLibrary</Name>
