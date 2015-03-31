@@ -23,8 +23,8 @@ namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
     {
-        string userName = "WorldTest";
-        //string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        //string userName = "WorldTest";
+        string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
     
         int siteId = 4;
         int platformId = 2;
@@ -98,7 +98,6 @@ namespace org.iringtools.web.controllers
                                 {
                                     nodeType = "async",
                                     type = "FolderNode",
-                                    iconCls = "folder",
                                     id = folder.FolderId.ToString(),
                                     text = folder.FolderName,
                                     expanded = false,
@@ -1227,7 +1226,6 @@ namespace org.iringtools.web.controllers
                 {
                     nodeType = "async",
                     type = "FolderNode",
-                    iconCls = "folder",
                     id = folder.FolderId.ToString(),
                     text = folder.FolderName,
                     expanded = false,
