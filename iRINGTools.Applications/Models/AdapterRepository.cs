@@ -19,6 +19,7 @@ using System.Threading;
 using Microsoft.ServiceModel.Web;
 using org.iringtools.applicationConfig;
 using org.iringtools.UserSecurity;
+using org.iringtools.AgentLibrary;
 
 
 namespace iRINGTools.Web.Models
@@ -35,7 +36,7 @@ namespace iRINGTools.Web.Models
         protected string _hibernateServiceUri = null;
         protected string _referenceDataServiceUri = null;
         protected string _servicesBasePath = string.Empty;
-
+        protected string _agentDataServiceUri = string.Empty;
         public IDictionary<string, string> AuthHeaders { get; set; }
 
         public AdapterRepository()
@@ -68,6 +69,14 @@ namespace iRINGTools.Web.Models
             {
                 _servicesBasePath = _settings["BaseDirectoryPath"].Replace("Applications", "Services");
             }
+
+            _agentDataServiceUri = _settings["AgentConfigServiceUri"];
+            if (_agentDataServiceUri.EndsWith("/"))
+                _agentDataServiceUri = _agentDataServiceUri.Remove(_agentDataServiceUri.Length - 1);
+
+
+
+
         }
 
         public HttpSessionStateBase Session { get; set; }
@@ -1313,5 +1322,65 @@ namespace iRINGTools.Web.Models
 
             return obj;
         }
+
+        //scheduler
+        public string AddSchedular(Guid job_Id, byte isExchange, string AgentScope, string app, string dataObject, string xid, string exchange_Url, DateTime startDate, DateTime endDate, string occurence, string weekdays)
+        {
+            string obj = null;
+
+            try
+            {
+                org.iringtools.AgentLibrary.Agent.Schedule objSchedule = new Agent.Schedule()
+                {
+                    Created_By = "asrivas2",
+                    //Created_DateTime = System.DateTime.Now.ToString(),
+                    Created_DateTime = "2015-03-31",
+
+                    Occurance = occurence,
+                   // Start_DateTime = startDate.ToString(),
+                    Start_DateTime = "2015-03-31",
+                    End_DateTime = "2015-03-31",
+                  // End_DateTime = endDate.ToString(),
+                    Status = "Ready",
+                    Weekday = weekdays,
+                   // Schedule_Id = Guid.Parse("00000000-0000-0000-0000-000000000000")
+                    Schedule_Id = Guid.Empty
+                };
+
+                org.iringtools.AgentLibrary.Agent.Schedules objSchedules = new Agent.Schedules();
+                objSchedules.Add(objSchedule);
+
+
+                org.iringtools.AgentLibrary.Agent.Job job = new Agent.Job()
+                {
+                    Job_id = job_Id,
+                    Is_Exchange = isExchange,
+                    Scope = AgentScope,
+                    App = app,
+                    DataObject = dataObject,
+                    //Xid = xid,
+                    Xid = "xid",
+                    //Exchange_Url = exchange_Url,
+                    Exchange_Url = "exthange URL",
+                    Cache_Page_size = "2000",
+                    schedules = objSchedules
+
+                };
+                WebHttpClient client = CreateWebClient(_agentDataServiceUri);
+                obj = client.Post<org.iringtools.AgentLibrary.Agent.Job>("/insertJob", job, true);
+            }
+
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+            }
+
+            return obj;
+        }
+
+      
+
+
     }
 }
