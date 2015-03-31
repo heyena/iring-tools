@@ -121,7 +121,7 @@ namespace org.iringtools.library
             dataProperties = new List<DataProperty>();
             dataRelationships = new List<DataRelationship>();
             extensionProperties = new List<ExtensionProperty>();
-            aliasDictionary = new Dictionary<string, string>();
+            aliasDictionary = new aliasDictionary();
         }
 
         [DataMember(IsRequired = true, Order = 0)]
@@ -170,7 +170,7 @@ namespace org.iringtools.library
         public string groupName { get; set; }
 
         [DataMember(IsRequired = false, Order = 15, EmitDefaultValue = false)]
-        public Dictionary<string, string> aliasDictionary { get; set; }
+        public aliasDictionary aliasDictionary { get; set; }
 
         [DataMember(IsRequired = false, Order = 16, EmitDefaultValue = false)]
         public string version { get; set; }
@@ -244,7 +244,7 @@ namespace org.iringtools.library
     {
         public DataProperty()
         {
-            aliasDictionary = new Dictionary<string, string>();
+            aliasDictionary = new aliasDictionary();
         }
 
         [DataMember(IsRequired = true, Order = 0)]
@@ -284,7 +284,7 @@ namespace org.iringtools.library
         public string description { get; set; }
 
         [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
-        public Dictionary<string, string> aliasDictionary { get; set; }
+        public aliasDictionary aliasDictionary { get; set; }
 
         [DataMember(IsRequired = false, Order = 13, EmitDefaultValue = false)]
         public string referenceType { get; set; }
@@ -361,15 +361,16 @@ namespace org.iringtools.library
         // Ends]]
     }
 
-    [Serializable]
-    [DataContract(Name = "aliasDictionary", Namespace = "http://www.iringtools.org/library")]
-    public class aliasDictionary
+    //[Serializable]
+    //[DataContract(Name = "aliasDictionary", Namespace = "http://www.iringtools.org/library")]
+    [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "aliasDictionary", ItemName = "KeyValueOfstringstring")]
+    public class aliasDictionary : Dictionary<string, string>
     {
-        [DataMember(IsRequired = false, Order = 0)]
-        public string key { get; set; }
+        //[DataMember(IsRequired = false, Order = 0)]
+        //public string key { get; set; }
 
-        [DataMember(IsRequired = false, Order = 1)]
-        public string value { get; set; }
+        //[DataMember(IsRequired = false, Order = 1)]
+        //public string value { get; set; }
     }
 
     //[[By Deepak 12-Dec14 Statrs

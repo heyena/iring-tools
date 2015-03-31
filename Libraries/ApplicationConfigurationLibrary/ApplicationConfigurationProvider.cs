@@ -1602,17 +1602,32 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public org.iringtools.applicationConfig.DataDictionary GetDictionary(Guid applicationId)
+        public org.iringtools.library.DataDictionary GetDictionary(Guid applicationId)
         {
-            org.iringtools.applicationConfig.DataDictionary dataDictionary = new DataDictionary();
+            org.iringtools.library.DataDictionary dataDictionary = new org.iringtools.library.DataDictionary();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@ApplicationID", Value = applicationId });
 
-                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl);
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl)
+                    .Replace("expressions xmlns=\"http://www.iringtools.org/library\"", "expressions xmlns=\"http://www.iringtools.org/data/filter\"")
+                        .Replace("expression xmlns=\"http://www.iringtools.org/library\"", "expression xmlns=\"http://www.iringtools.org/data/filter\"")
+                            .Replace("values xmlns=\"http://www.iringtools.org/library\"", "values xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("orderExpressions xmlns=\"http://www.iringtools.org/library\"", "orderExpressions xmlns=\"http://www.iringtools.org/data/filter\"")
+                        .Replace("orderExpression xmlns=\"http://www.iringtools.org/library\"", "orderExpression xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("rollupExpressions xmlns=\"http://www.iringtools.org/library\"", "rollupExpressions xmlns=\"http://www.iringtools.org/data/filter\"")
+                        .Replace("rollupExpression xmlns=\"http://www.iringtools.org/library\"", "rollupExpression xmlns=\"http://www.iringtools.org/data/filter\"")
+                            .Replace("rollup xmlns=\"http://www.iringtools.org/library\"", "rollup xmlns=\"http://www.iringtools.org/data/filter\"")
 
-                dataDictionary = utility.Utility.Deserialize<org.iringtools.applicationConfig.DataDictionary>(xmlString, true);
+                    .Replace("isAdmin xmlns=\"http://www.iringtools.org/library\"", "isAdmin xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("dataFilterId xmlns=\"http://www.iringtools.org/library\"", "dataFilterId xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("resourceId xmlns=\"http://www.iringtools.org/library\"", "resourceId xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("dataFilterTypeId xmlns=\"http://www.iringtools.org/library\"", "dataFilterTypeId xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("active xmlns=\"http://www.iringtools.org/library\"", "active xmlns=\"http://www.iringtools.org/data/filter\"")
+                    ;
+
+                dataDictionary = utility.Utility.Deserialize<org.iringtools.library.DataDictionary>(xmlString, true);
             }
             catch (Exception ex)
             {
@@ -1621,17 +1636,34 @@ namespace org.iringtools.applicationConfig
             return dataDictionary;
         }
 
-        public org.iringtools.applicationConfig.DatabaseDictionary GetDatabaseDictionary(Guid applicationId)
+        public org.iringtools.library.DatabaseDictionary GetDatabaseDictionary(Guid applicationId)
         {
-            org.iringtools.applicationConfig.DatabaseDictionary dataDictionary = new DatabaseDictionary();
+            org.iringtools.library.DatabaseDictionary dataDictionary = new org.iringtools.library.DatabaseDictionary();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@ApplicationID", Value = applicationId });
 
-                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl);
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl)
+                    .Replace("expressions xmlns=\"http://www.iringtools.org/library\"", "expressions xmlns=\"http://www.iringtools.org/data/filter\"")
+                        .Replace("expression xmlns=\"http://www.iringtools.org/library\"", "expression xmlns=\"http://www.iringtools.org/data/filter\"")
+                            .Replace("values xmlns=\"http://www.iringtools.org/library\"", "values xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("orderExpressions xmlns=\"http://www.iringtools.org/library\"", "orderExpressions xmlns=\"http://www.iringtools.org/data/filter\"")
+                        .Replace("orderExpression xmlns=\"http://www.iringtools.org/library\"", "orderExpression xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("rollupExpressions xmlns=\"http://www.iringtools.org/library\"", "rollupExpressions xmlns=\"http://www.iringtools.org/data/filter\"")
+                        .Replace("rollupExpression xmlns=\"http://www.iringtools.org/library\"", "rollupExpression xmlns=\"http://www.iringtools.org/data/filter\"")
+                            .Replace("rollup xmlns=\"http://www.iringtools.org/library\"", "rollup xmlns=\"http://www.iringtools.org/data/filter\"")
 
-                dataDictionary = utility.Utility.Deserialize<org.iringtools.applicationConfig.DatabaseDictionary>(xmlString, true);
+                    .Replace("isAdmin xmlns=\"http://www.iringtools.org/library\"", "isAdmin xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("dataFilterId xmlns=\"http://www.iringtools.org/library\"", "dataFilterId xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("resourceId xmlns=\"http://www.iringtools.org/library\"", "resourceId xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("dataFilterTypeId xmlns=\"http://www.iringtools.org/library\"", "dataFilterTypeId xmlns=\"http://www.iringtools.org/data/filter\"")
+                    .Replace("active xmlns=\"http://www.iringtools.org/library\"", "active xmlns=\"http://www.iringtools.org/data/filter\"")
+                    ;
+
+
+            
+                dataDictionary = utility.Utility.Deserialize<org.iringtools.library.DatabaseDictionary>(xmlString, true);
             }
             catch (Exception ex)
             {
