@@ -514,7 +514,10 @@ Ext.define('AM.controller.Directory', {
 
         if (item.itemId == 'cacheupscreen' && node.data.record !== undefined) {
 
-            displayNameCont = node.data.property["Display Name"];   //node.data.record.DisplayName
+            // displayNameCont = node.data.property["Display Name"];   //node.data.record.DisplayName
+
+            var record = Ext.decode(node.raw.record);
+            var displayNameCont = record.displayName;
 
 
         }
