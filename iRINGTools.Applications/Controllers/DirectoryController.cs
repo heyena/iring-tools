@@ -23,8 +23,9 @@ namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
     {
-        //string userName = "WorldTest";
-        string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        string userName = "WorldTest";
+        //string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+    
         int siteId = 4;
         int platformId = 2;
 
@@ -1133,6 +1134,42 @@ namespace org.iringtools.web.controllers
 
             }
         }
+
+
+        public ActionResult saveSchedularData(FormCollection form)
+        {
+
+            try
+            {
+                string success = String.Empty;
+                string displayname = form["displayName"];
+                string applications = form["applications"];
+                string dataObjects = form["dataobj"];
+                string startDate = form["startdat"];
+                // string schdailysttime = form["dailysttime"];
+                // string schweeklycom = form["weeklycom"];
+                string endDate = form["enddat"];
+
+                //   Guid guid = Guid.Parse("00000000-0000-0000-0000-000000000000");
+                Guid guid = Guid.Empty;
+
+                string schcontextName = form["displayName"];
+
+                success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), "daily", "sunday");
+
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.ToString());
+            }
+
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+
+
 
         #region Private Methods
 
