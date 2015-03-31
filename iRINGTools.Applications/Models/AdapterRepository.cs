@@ -1347,7 +1347,7 @@ namespace iRINGTools.Web.Models
                     Status = "Ready",
                     Weekday = weekdays,
                    // Schedule_Id = Guid.Parse("00000000-0000-0000-0000-000000000000")
-                    Schedule_Id = Guid.Empty
+                    ScheduleId = Guid.Empty
                 };
 
                 org.iringtools.AgentLibrary.Agent.Schedules objSchedules = new Agent.Schedules();
@@ -1356,15 +1356,15 @@ namespace iRINGTools.Web.Models
 
                 org.iringtools.AgentLibrary.Agent.Job job = new Agent.Job()
                 {
-                    Job_id = job_Id,
+                    JobId = job_Id,
                     Is_Exchange = isExchange,
-                    Scope = AgentScope,
-                    App = app,
-                    DataObject = dataObject,
+                    //Scope = AgentScope,
+                    //App = app,
+                    //DataObject = dataObject,
                     //Xid = xid,
                     Xid = "xid",
                     //Exchange_Url = exchange_Url,
-                    Exchange_Url = "exthange URL",
+                    //Exchange_Url = "exthange URL",
                     Cache_Page_size = "2000",
                     schedules = objSchedules
 

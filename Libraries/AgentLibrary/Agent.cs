@@ -25,74 +25,55 @@ namespace org.iringtools.AgentLibrary
             public Job()
             {
                 schedules = new Schedules();
-                jobclientinfos = new JobClientInfos();
-                jobschedules = new JobSchedules();
+                //jobclientinfos = new JobClientInfos();
+                //jobschedules = new JobSchedules();
             }
 
-            [DataMember(Name = "job_Id", Order = 0)]
-            public Guid Job_id { get; set; }
+            [DataMember(Name = "jobId", Order = 0)]
+            public Guid JobId { get; set; }
 
-            [DataMember(Name = "isExchange", Order = 1, EmitDefaultValue = false)]
+            [DataMember(Name = "scheduleId", Order = 1)]
+            public Guid ScheduleId { get; set; }
+
+            [DataMember(Name = "dataObjectId", Order = 2)]
+            public Guid DataObjectId { get; set; }
+
+            [DataMember(Name = "isExchange", Order = 3, EmitDefaultValue = false)]
             public Byte Is_Exchange { get; set; }
 
-            [DataMember(Name = "scope", Order = 2, EmitDefaultValue = false)]
-            public string Scope { get; set; }
-
-            [DataMember(Name = "app", Order = 3, EmitDefaultValue = false)]
-            public string App { get; set; }
-
-            [DataMember(Name = "dataObject", Order = 4, EmitDefaultValue = false)]
-            public string DataObject { get; set; }
-
-            [DataMember(Name = "xid", Order = 5, EmitDefaultValue = false)]
+            [DataMember(Name = "xid", Order = 4, EmitDefaultValue = false)]
             public string Xid { get; set; }
 
-            [DataMember(Name = "exchange_Url", Order = 6, EmitDefaultValue = false)]
-            public string Exchange_Url { get; set; }
-
-            [DataMember(Name = "cache_page_size", Order = 7, EmitDefaultValue = false)]
+            [DataMember(Name = "cache_page_size", Order = 5, EmitDefaultValue = false)]
             public string Cache_Page_size { get; set; }
 
-            [DataMember(Name = "jobclientinfos", Order = 8, EmitDefaultValue = false)]
-            public JobClientInfos jobclientinfos { get; set; }
+            [DataMember(Name = "platformId", Order = 6, EmitDefaultValue = false)]
+            public int PlatformId { get; set; }
 
-            [DataMember(Name = "schedules", Order = 9, EmitDefaultValue = false)]
+            [DataMember(Name = "siteId", Order = 7, EmitDefaultValue = false)]
+            public int SiteId { get; set; }
+
+            [DataMember(Name = "next_Start_DateTime", Order = 8, EmitDefaultValue = false)]
+            public string Next_Start_DateTime { get; set; }
+
+            [DataMember(Name = "last_Start_DateTime", Order = 9, EmitDefaultValue = false)]
+            public string Last_Start_DateTime { get; set; }
+
+            [DataMember(Name = "totalRecords", Order = 10, EmitDefaultValue = false)]
+            public int TotalRecords { get; set; }
+
+            [DataMember(Name = "cachedRecords", Order = 11, EmitDefaultValue = false)]
+            public int CachedRecords { get; set; }
+
+            [DataMember(Name = "active", Order = 12)]
+            public Byte Active { get; set; }
+
+            [DataMember(Name = "schedules", Order = 13, EmitDefaultValue = false)]
             public Schedules schedules { get; set; }
 
-            [DataMember(Name = "jobschedules", Order = 10, EmitDefaultValue = false)]
-            public JobSchedules jobschedules { get; set; }
-
         }
 
-        [CollectionDataContract(Name = "jobclientinfos", Namespace = "http://www.iringtools.org/library", ItemName = "jobclientinfo")]
-        public class JobClientInfos : List<JobClientInfo>
-        {
-
-        }
-
-        [DataContract(Name = "jobclientinfo", Namespace = "http://www.iringtools.org/library")]
-        public class JobClientInfo
-        {
-            [DataMember(Name = "Job_Id", Order = 0)]
-            public Guid Job_Id { get; set; }
-
-            [DataMember(Name = "SSo_Url", Order = 1, EmitDefaultValue = false)]
-            public string SSo_Url { get; set; }
-
-            [DataMember(Name = "Client_id", Order = 2, EmitDefaultValue = false)]
-            public string Client_id { get; set; }
-
-            [DataMember(Name = "Client_Secret", Order = 3, EmitDefaultValue = false)]
-            public string Client_Secret { get; set; }
-
-            [DataMember(Name = "Grant_Type", Order = 4, EmitDefaultValue = false)]
-            public string Grant_Type { get; set; }
-
-            [DataMember(Name = "Request_Timeout", Order = 5, EmitDefaultValue = false)]
-            public int Request_Timeout { get; set; }
-        }
-
-
+       
         [CollectionDataContract(Name = "schedules", Namespace = "http://www.iringtools.org/library", ItemName = "schedule")]
         public class Schedules : List<Schedule>
         {
@@ -102,67 +83,29 @@ namespace org.iringtools.AgentLibrary
         [DataContract(Name = "schedule", Namespace = "http://www.iringtools.org/library")]
         public class Schedule
         {
-            [DataMember(Name = "Schedule_Id", Order = 0)]
-            public Guid Schedule_Id { get; set; }
+            [DataMember(Name = "scheduleId", Order = 0)]
+            public Guid ScheduleId { get; set; }
 
-            [DataMember(Name = "Created_DateTime", Order = 1, EmitDefaultValue = false)]
+            [DataMember(Name = "created_DateTime", Order = 1, EmitDefaultValue = false)]
             public string Created_DateTime { get; set; }
 
-            [DataMember(Name = "Created_By", Order = 2, EmitDefaultValue = false)]
+            [DataMember(Name = "created_By", Order = 2, EmitDefaultValue = false)]
             public string Created_By { get; set; }
 
-            [DataMember(Name = "Occurance", Order = 3, EmitDefaultValue = false)]
+            [DataMember(Name = "occurance", Order = 3, EmitDefaultValue = false)]
             public string Occurance { get; set; }
 
-            [DataMember(Name = "Weekday", Order = 4, EmitDefaultValue = false)]
+            [DataMember(Name = "weekday", Order = 4, EmitDefaultValue = false)]
             public string Weekday { get; set; }
 
-            [DataMember(Name = "Start_DateTime", Order = 5, EmitDefaultValue = false)]
+            [DataMember(Name = "start_DateTime", Order = 5, EmitDefaultValue = false)]
             public string Start_DateTime { get; set; }
 
-            [DataMember(Name = "End_DateTime", Order = 6, EmitDefaultValue = false)]
+            [DataMember(Name = "end_DateTime", Order = 6, EmitDefaultValue = false)]
             public string End_DateTime { get; set; }
 
-            [DataMember(Name = "Status", Order = 7, EmitDefaultValue = false)]
+            [DataMember(Name = "status", Order = 7, EmitDefaultValue = false)]
             public string Status { get; set; }
-
-        }
-
-        [CollectionDataContract(Name = "jobschedules", Namespace = "http://www.iringtools.org/library", ItemName = "jobschedule")]
-        public class JobSchedules : List<JobSchedule>
-        {
-
-        }
-
-        [DataContract(Name = "jobschedule", Namespace = "http://www.iringtools.org/library")]
-        public class JobSchedule
-        {
-            [DataMember(Name = "Schedule_Id", Order = 0)]
-            public Guid Schedule_Id { get; set; }
-
-            [DataMember(Name = "Job_Id", Order = 1, EmitDefaultValue = false)]
-            public Guid Job_Id { get; set; }
-
-            [DataMember(Name = "Next_Start_DateTime", Order = 2, EmitDefaultValue = false)]
-            public string Next_Start_DateTime { get; set; }
-
-            [DataMember(Name = "Last_Start_DateTime", Order = 3, EmitDefaultValue = false)]
-            public string Last_Start_DateTime { get; set; }
-
-            [DataMember(Name = "Active", Order = 4)]
-            public Byte Active { get; set; }
-
-            [DataMember(Name = "PlatformId", Order = 5, EmitDefaultValue = false)]
-            public int PlatformId { get; set; }
-
-            [DataMember(Name = "SiteId", Order = 6, EmitDefaultValue = false)]
-            public int SiteId { get; set; }
-
-            [DataMember(Name = "TotalRecords", Order = 7, EmitDefaultValue = false)]
-            public int TotalRecords { get; set; }
-
-            [DataMember(Name = "CachedRecords", Order = 8, EmitDefaultValue = false)]
-            public int CachedRecords { get; set; }
 
         }
 
