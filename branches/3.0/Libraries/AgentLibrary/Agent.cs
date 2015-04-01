@@ -36,7 +36,7 @@ namespace org.iringtools.AgentLibrary
             public Guid ScheduleId { get; set; }
 
             [DataMember(Name = "dataObjectId", Order = 2)]
-            public Guid DataObjectId { get; set; }
+            public string DataObjectId { get; set; }
 
             [DataMember(Name = "isExchange", Order = 3, EmitDefaultValue = false)]
             public Byte Is_Exchange { get; set; }
@@ -65,7 +65,7 @@ namespace org.iringtools.AgentLibrary
             [DataMember(Name = "cachedRecords", Order = 11, EmitDefaultValue = false)]
             public int CachedRecords { get; set; }
 
-            [DataMember(Name = "active", Order = 12)]
+            [DataMember(Name = "active", Order = 12, EmitDefaultValue = false)]
             public Byte Active { get; set; }
 
             [DataMember(Name = "schedules", Order = 13, EmitDefaultValue = false)]
