@@ -1325,8 +1325,8 @@ namespace iRINGTools.Web.Models
         }
 
         //scheduler
-      //  public string AddSchedular(Guid job_Id, byte isExchange, string AgentScope, string app, string dataObject, string xid, string exchange_Url, DateTime startDate, DateTime endDate, string occurence, string weekdays)
-          public string AddSchedular(Guid job_Id, byte isExchange, string AgentScope, string app, string dataObject, string xid, string exchange_Url, string startDate, string endDate, string occurence, string weekdays,int platFormId, int siteId)
+      
+          public string AddSchedular(Guid job_Id, byte isExchange, string AgentScope, string app, string dataObject, string xid, string exchange_Url, string startDate, string endDate, string occurence, int platFormId, int siteId)
       
         
         {
@@ -1344,7 +1344,7 @@ namespace iRINGTools.Web.Models
                     Start_DateTime = startDate,
                     End_DateTime = endDate,
                     Status = "Ready",
-                    Weekday = weekdays,
+                    Weekday = null,
                     ScheduleId = Guid.Empty
                     
                 };
