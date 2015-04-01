@@ -143,6 +143,27 @@ namespace org.iringtools.services
             _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
+    
+        [Description("Drag And Drop Entity.")]
+        [WebGet(UriTemplate = "/entityAfterDrop?resourceType={resourceType}&droppedEntityId={droppedEntityId}&destinationParentEntityId={destinationParentEntityId}&siteId={siteId}&platformId={platformId}&format={format}")]
+        public void EntityAfterDrop(string resourceType, Guid droppedEntityId, Guid destinationParentEntityId,int siteId,int platformId, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                Response response = _applicationConfigurationProvider.InsertEntityAfterDrop(resourceType, droppedEntityId, destinationParentEntityId, siteId, platformId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+ 
         [Description("Gets all applications available from the data base.")]
         [WebGet(UriTemplate = "/apps/{scopeInternalName}?format={format}")]
         public void GetApplications(string scopeInternalName ,string format)

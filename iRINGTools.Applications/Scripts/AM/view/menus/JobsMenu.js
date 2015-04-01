@@ -27,8 +27,23 @@ Ext.define('AM.view.menus.JobsMenu', {
             action: 'editrow',
             itemId: 'editRot',
             icon: 'Content/img/16x16/edit.png',
-            text: 'Edit Row'
-        }
+            text: 'Edit'
+        },
+         {
+             xtype: 'menuitem',
+             action: 'deleterow',
+             itemId: 'deleteRot',
+             icon: 'Content/img/16x16/delete.png',
+             text: 'Delete'
+         },
+          {
+              xtype: 'menuitem',
+              action: 'terminaterow',
+              itemId: 'Terminate',
+              icon: 'Content/img/16x16/edit.png',
+              text: 'Terminate'
+          }
+
       ]
         });
 

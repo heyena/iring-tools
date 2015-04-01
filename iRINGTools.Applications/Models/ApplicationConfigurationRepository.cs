@@ -10,6 +10,7 @@ using log4net;
 using System.Net;
 using System.Collections.Specialized;
 using System.Configuration;
+using org.iringtools.web.Models;
 
 namespace iRINGTools.Web.Models
 {
@@ -187,6 +188,26 @@ namespace iRINGTools.Web.Models
 
             return response;
         }
+
+   
+        public library.Response DragAndDropEntity(string resourceType, Guid droppedEntityId, Guid destinationParentEntityId, int siteId, int platformId)
+        {
+            library.Response response = null;
+
+            try
+            {
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+                response = client.Get<library.Response>(String.Format("/entityAfterDrop?resourceType={0}&droppedEntityId={1}&destinationParentEntityId={2}&siteId={3}&platformId={4}&format=xml", resourceType, droppedEntityId, destinationParentEntityId, siteId, platformId));
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+                throw;
+            }
+
+            return response;
+        }
+      
 
         public Applications GetApplications(string userName, Guid parentContextId)
         {
