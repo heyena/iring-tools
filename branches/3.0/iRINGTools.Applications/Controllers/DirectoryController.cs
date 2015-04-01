@@ -1160,10 +1160,15 @@ namespace org.iringtools.web.controllers
                 string displayname = form["displayName"];
                 string applications = form["applications"];
                 string dataObjects = form["dataobj"];
-                string startDate = form["startdat"];
-                // string schdailysttime = form["dailysttime"];
-                // string schweeklycom = form["weeklycom"];
-                string endDate = form["monthdate"];
+                string startDate = form["startDate"];
+                string occurence = form["occrad"];
+                string startTime= form["startTime"];
+                string endTime = form["endTime"];
+                string endDate = form["endDate"];
+
+                startDate = startDate + " " + startTime;
+                endDate = endDate + " " + endTime;
+
 
                 //   Guid guid = Guid.Parse("00000000-0000-0000-0000-000000000000");
                 Guid guid = Guid.Empty;
@@ -1171,7 +1176,7 @@ namespace org.iringtools.web.controllers
                 string schcontextName = form["displayName"];
 
                //  success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), "daily", "sunday");
-                success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, startDate, endDate, "daily", form["weeklycom"].ToString(),0,0);
+                success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, startDate, endDate, occurence,  0, 0);
 
             }
             catch (Exception e)
