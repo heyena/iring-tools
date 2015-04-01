@@ -193,15 +193,15 @@ namespace org.iringtools.services
     }
 
     [Description("Get manifest for user")]
-    [WebGet(UriTemplate = "/manifest/{userName}?siteId={siteId}&graphId={graphId}&format={format}")]
-    public void GetManifestForUser(string userName, int siteId, Guid graphId, string format)
+    [WebGet(UriTemplate = "/manifest/{userName}?graphId={graphId}&format={format}")]
+    public void GetManifestForUser(string userName, Guid graphId, string format)
     {
         try
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
 
-             Manifest manifest = _dtoProvider.GetManifestForUser(userName, siteId, graphId);
+             Manifest manifest = _dtoProvider.GetManifestForUser(userName,graphId);
             _dtoProvider.FormatOutgoingMessage<Manifest>(manifest, format, true);
         }
         catch (Exception ex)

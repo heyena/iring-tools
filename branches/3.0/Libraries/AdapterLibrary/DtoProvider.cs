@@ -470,7 +470,7 @@ namespace org.iringtools.adapter
         }
 
 
-        public Manifest GetManifestForUser(string userName, int siteId, Guid graphId)
+        public Manifest GetManifestForUser(string userName, Guid graphId)
         {
             Manifest manifest = new Manifest()
             {
@@ -486,201 +486,200 @@ namespace org.iringtools.adapter
                 System.Data.DataTable dt = DBManager.Instance.ExecuteStoredProcedure(_connSecurityDb, "spgNames", nvl);
 
                 string graph = string.Empty; string scope = string.Empty;
-                string app = string.Empty; string appId = string.Empty;
+                string appName = string.Empty; Guid applicationId;
 
-                foreach (System.Data.DataRow row in dt.Rows)
-                {
-                    graph = Convert.ToString(row["GraphName"]);
-                    scope = Convert.ToString(row["ScopeName"]);
-                    app = Convert.ToString(row["AppName"]);
-                    appId = Convert.ToString(row["AppId"]);
-                }
+                System.Data.DataRow row = dt.Rows[0];
+
+                graph = Convert.ToString(row["GraphName"]);
+                scope = Convert.ToString(row["ScopeName"]);
+                appName = Convert.ToString(row["AppName"]);
+                applicationId = Guid.Parse(Convert.ToString(row["AppId"]));
 
                 nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
-                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = appId });
+                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = applicationId });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgValuelistforManifest", nvl);
                 ValueListMaps valueListMaps = utility.Utility.Deserialize<ValueListMaps>(xmlString, true);
 
                 nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
                 nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
 
                 byte[] xmlbyte = DBManager.Instance.ExecuteBytesQuery(_connSecurityDb, "spgGraphBinary", nvl);
                 string bytesToXml = System.Text.Encoding.Default.GetString(xmlbyte);
-                mapping.Mapping _mapping = utility.Utility.Deserialize<mapping.Mapping>(bytesToXml, true); ;
+                //mapping.Mapping _mapping = utility.Utility.Deserialize<mapping.Mapping>(bytesToXml, true); ;
+                bytesToXml = bytesToXml.Replace("<graphMap>", "<graphMap xmlns=\"http://www.iringtools.org/mapping\">");
+                GraphMap graphMap = utility.Utility.Deserialize<GraphMap>(bytesToXml, true); ;
 
-                DatabaseDictionary dataDictionary = dictionaryProvider.GetDictionary( Guid.Parse(appId));
+                DatabaseDictionary dataDictionary = dictionaryProvider.GetDictionary(applicationId);
 
-                foreach (GraphMap graphMap in _mapping.graphMaps)
+                //foreach (GraphMap graphMap in _mapping.graphMaps)
+                //{
+                Graph manifestGraph = null;
+
+                //if (string.IsNullOrEmpty(graph) || graph.ToLower() == graphMap.name.ToLower())
+                //{
+                    manifestGraph = new Graph
+                    {
+                        classTemplatesList = new ClassTemplatesList(),
+                        name = graphMap.name
+                    };
+
+                    manifest.graphs.Add(manifestGraph);
+                //}
+                //else
+                //{
+                //    continue;
+                //}
+
+                //if (manifestGraph == null)
+                //{
+                //    throw new Exception("Graph [" + graph + "] does not exist in mapping.");
+                //}
+
+                string dataObjectName = graphMap.dataObjectName;
+                DataObject dataObject = null;
+
+                foreach (DataObject dataObj in dataDictionary.dataObjects)
                 {
-                    Graph manifestGraph = null;
-
-                    if (string.IsNullOrEmpty(graph) || graph.ToLower() == graphMap.name.ToLower())
+                    if (dataObj.objectName.ToLower() == dataObjectName.ToLower())
                     {
-                        manifestGraph = new Graph
+                        dataObject = dataObj;
+                        break;
+                    }
+                }
+
+                if (dataObject == null)
+                {
+                    throw new Exception("Data Object [" + dataObjectName + "] does not exist in data dictionary.");
+                }
+
+                foreach (var classTemplateMap in graphMap.classTemplateMaps)
+                {
+                    ClassTemplates manifestClassTemplates = new ClassTemplates();
+                    manifestGraph.classTemplatesList.Add(manifestClassTemplates);
+
+                    ClassMap classMap = classTemplateMap.classMap;
+                    List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
+
+                    Keys keys = new Keys();
+
+                    if (templateMaps.Count > 0)
+                    {
+                        foreach (string identifier in classMap.identifiers)
                         {
-                            classTemplatesList = new ClassTemplatesList(),
-                            name = graphMap.name
-                        };
-
-                        manifest.graphs.Add(manifestGraph);
-                    }
-                    else
-                    {
-                        continue;
-                    }
-
-                    if (manifestGraph == null)
-                    {
-                        throw new Exception("Graph [" + graph + "] does not exist in mapping.");
-                    }
-
-                    string dataObjectName = graphMap.dataObjectName;
-                    DataObject dataObject = null;
-
-                    foreach (DataObject dataObj in dataDictionary.dataObjects)
-                    {
-                        if (dataObj.objectName.ToLower() == dataObjectName.ToLower())
-                        {
-                            dataObject = dataObj;
-                            break;
+                            Key key = GetKey(graphMap, classMap, identifier);
+                            keys.Add(key);
                         }
                     }
 
-                    if (dataObject == null)
+                    Class manifestClass = new Class
                     {
-                        throw new Exception("Data Object [" + dataObjectName + "] does not exist in data dictionary.");
-                    }
+                        id = classMap.id,
+                        name = classMap.name,
+                        keys = keys,
+                        index = classMap.index,
+                        path = classMap.path
+                    };
+                    manifestClassTemplates.@class = manifestClass;
 
-                    foreach (var classTemplateMap in graphMap.classTemplateMaps)
+                    foreach (TemplateMap templateMap in templateMaps)
                     {
-                        ClassTemplates manifestClassTemplates = new ClassTemplates();
-                        manifestGraph.classTemplatesList.Add(manifestClassTemplates);
-
-                        ClassMap classMap = classTemplateMap.classMap;
-                        List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-
-                        Keys keys = new Keys();
-
-                        if (templateMaps.Count > 0)
+                        Template manifestTemplate = new Template
                         {
-                            foreach (string identifier in classMap.identifiers)
-                            {
-                                Key key = GetKey(graphMap, classMap, identifier);
-                                keys.Add(key);
-                            }
-                        }
-
-                        Class manifestClass = new Class
-                        {
-                            id = classMap.id,
-                            name = classMap.name,
-                            keys = keys,
-                            index = classMap.index,
-                            path = classMap.path
+                            roles = new Roles(),
+                            id = templateMap.id,
+                            name = templateMap.name,
+                            transferOption = TransferOption.Desired,
                         };
-                        manifestClassTemplates.@class = manifestClass;
+                        manifestClassTemplates.templates.Add(manifestTemplate);
 
-                        foreach (TemplateMap templateMap in templateMaps)
+                        foreach (RoleMap roleMap in templateMap.roleMaps)
                         {
-                            Template manifestTemplate = new Template
+                            Role manifestRole = new Role
                             {
-                                roles = new Roles(),
-                                id = templateMap.id,
-                                name = templateMap.name,
-                                transferOption = TransferOption.Desired,
+                                type = roleMap.type,
+                                id = roleMap.id,
+                                name = roleMap.name,
+                                dataType = roleMap.dataType,
+                                value = roleMap.value,
                             };
-                            manifestClassTemplates.templates.Add(manifestTemplate);
+                            manifestTemplate.roles.Add(manifestRole);
 
-                            foreach (RoleMap roleMap in templateMap.roleMaps)
+                            if (roleMap.type == RoleType.Property ||
+                                roleMap.type == RoleType.DataProperty ||
+                                roleMap.type == RoleType.ObjectProperty)
                             {
-                                Role manifestRole = new Role
+                                if (!String.IsNullOrEmpty(roleMap.propertyName))
                                 {
-                                    type = roleMap.type,
-                                    id = roleMap.id,
-                                    name = roleMap.name,
-                                    dataType = roleMap.dataType,
-                                    value = roleMap.value,
-                                };
-                                manifestTemplate.roles.Add(manifestRole);
+                                    string[] propertyParts = roleMap.propertyName.Split('.');
+                                    string objectName = propertyParts[propertyParts.Length - 2].Trim();
+                                    string propertyName = propertyParts[propertyParts.Length - 1].Trim();
+                                    DataObject dataObj = dataObject;
 
-                                if (roleMap.type == RoleType.Property ||
-                                    roleMap.type == RoleType.DataProperty ||
-                                    roleMap.type == RoleType.ObjectProperty)
-                                {
-                                    if (!String.IsNullOrEmpty(roleMap.propertyName))
+                                    if (propertyParts.Length < 2)
                                     {
-                                        string[] propertyParts = roleMap.propertyName.Split('.');
-                                        string objectName = propertyParts[propertyParts.Length - 2].Trim();
-                                        string propertyName = propertyParts[propertyParts.Length - 1].Trim();
-                                        DataObject dataObj = dataObject;
-
-                                        if (propertyParts.Length < 2)
+                                        throw new Exception("Property [" + roleMap.propertyName + "] is invalid.");
+                                    }
+                                    else if (propertyParts.Length > 2) // related property
+                                    {
+                                        // find related object
+                                        for (int i = 1; i < propertyParts.Length - 1; i++)
                                         {
-                                            throw new Exception("Property [" + roleMap.propertyName + "] is invalid.");
-                                        }
-                                        else if (propertyParts.Length > 2) // related property
-                                        {
-                                            // find related object
-                                            for (int i = 1; i < propertyParts.Length - 1; i++)
+                                            DataRelationship rel = dataObj.dataRelationships.Find(x => x.relationshipName.ToLower() == propertyParts[i].ToLower());
+                                            if (rel == null)
                                             {
-                                                DataRelationship rel = dataObj.dataRelationships.Find(x => x.relationshipName.ToLower() == propertyParts[i].ToLower());
-                                                if (rel == null)
-                                                {
-                                                    throw new Exception("Relationship [" + rel.relationshipName + "] does not exist.");
-                                                }
+                                                throw new Exception("Relationship [" + rel.relationshipName + "] does not exist.");
+                                            }
 
-                                                dataObj = dataDictionary.dataObjects.Find(x => x.objectName.ToLower() == rel.relatedObjectName.ToLower());
-                                                if (dataObj == null)
-                                                {
-                                                    throw new Exception("Related object [" + rel.relatedObjectName + "] is not found.");
-                                                }
+                                            dataObj = dataDictionary.dataObjects.Find(x => x.objectName.ToLower() == rel.relatedObjectName.ToLower());
+                                            if (dataObj == null)
+                                            {
+                                                throw new Exception("Related object [" + rel.relatedObjectName + "] is not found.");
                                             }
                                         }
+                                    }
 
-                                        DataProperty dataProp = dataObj.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
-                                        if (dataProp == null)
-                                        {
-                                            throw new Exception("Property [" + roleMap.propertyName + "] does not exist in data dictionary.");
-                                        }
+                                    DataProperty dataProp = dataObj.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+                                    if (dataProp == null)
+                                    {
+                                        throw new Exception("Property [" + roleMap.propertyName + "] does not exist in data dictionary.");
+                                    }
 
-                                        manifestRole.dataLength = dataProp.dataLength;
-                                        if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
-                                        {
-                                            if (dataProp.dataType == DataType.Date)
-                                                manifestRole.dataType = "xsd:date";
-                                            else if (dataProp.dataType == DataType.DateTime)
-                                                manifestRole.dataType = "xsd:dateTime";
-                                        }
+                                    manifestRole.dataLength = dataProp.dataLength;
+                                    if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
+                                    {
+                                        if (dataProp.dataType == DataType.Date)
+                                            manifestRole.dataType = "xsd:date";
+                                        else if (dataProp.dataType == DataType.DateTime)
+                                            manifestRole.dataType = "xsd:dateTime";
+                                    }
 
-                                        if (dataObj.isKeyProperty(propertyName))
-                                        {
-                                            manifestTemplate.transferOption = TransferOption.Required;
-                                        }
+                                    if (dataObj.isKeyProperty(propertyName))
+                                    {
+                                        manifestTemplate.transferOption = TransferOption.Required;
                                     }
                                 }
+                            }
 
-                                if (roleMap.classMap != null)
+                            if (roleMap.classMap != null)
+                            {
+                                Cardinality cardinality = graphMap.GetCardinality(roleMap, _dictionary, _fixedIdentifierBoundary);
+                                manifestRole.cardinality = cardinality;
+
+                                manifestRole.@class = new Class
                                 {
-                                    Cardinality cardinality = graphMap.GetCardinality(roleMap, _dictionary, _fixedIdentifierBoundary);
-                                    manifestRole.cardinality = cardinality;
-
-                                    manifestRole.@class = new Class
-                                    {
-                                        id = roleMap.classMap.id,
-                                        name = roleMap.classMap.name,
-                                        index = roleMap.classMap.index,
-                                        path = roleMap.classMap.path
-                                    };
-                                }
+                                    id = roleMap.classMap.id,
+                                    name = roleMap.classMap.name,
+                                    index = roleMap.classMap.index,
+                                    path = roleMap.classMap.path
+                                };
                             }
                         }
                     }
                 }
+                //}
 
                 manifest.valueListMaps = valueListMaps;
             }
