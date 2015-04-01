@@ -821,6 +821,22 @@ namespace org.iringtools.web.controllers
             }
         }
 
+        public JsonResult DragAndDropEntity(FormCollection form)
+        {
+
+            Response response = null;
+            Guid destinationParentEntityId = Guid.Parse(form["parentEntityId"]);
+            Guid droppedEntityId = Guid.Parse(form["entityId"]);
+            string resourceType = form["nodeType"].Replace("Node", string.Empty);
+            int platformId = int.Parse(form["platformId"]);
+            int siteId = int.Parse(form["siteId"]);
+            string displayName = form["displayName"];
+            response = _appConfigRepository.DragAndDropEntity(resourceType, droppedEntityId, destinationParentEntityId, siteId, platformId);
+            //return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, message = "nodeCopied" }, JsonRequestBehavior.AllowGet);
+        }
+   
+
         public JsonResult Application(FormCollection form)
         {
             try
@@ -1154,7 +1170,7 @@ namespace org.iringtools.web.controllers
 
                 string schcontextName = form["displayName"];
 
-                // success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), "daily", "sunday");
+               //  success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), "daily", "sunday");
                 success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, startDate, endDate, "daily", form["weeklycom"].ToString(),0,0);
 
             }

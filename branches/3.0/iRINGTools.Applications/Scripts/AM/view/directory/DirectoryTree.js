@@ -18,12 +18,15 @@ Ext.define('AM.view.directory.DirectoryTree', {
     alias: 'widget.directorytree',
 
     stateId: 'directory-treestate',
+    id: 'mytree',
     stateful: false,
-    bodyStyle: 'background:#fff;padding:4px',
+    bodyStyle: 'background:#fff;padding:4px', 
     border: false,
     store: 'DirectoryTreeStore',
+
+
     //rootVisible: false,
-    initComponent: function () {
+    initComponent: function() {
         var me = this;
         Ext.applyIf(me, {
             stateEvents: [
@@ -32,13 +35,24 @@ Ext.define('AM.view.directory.DirectoryTree', {
             ],
             viewConfig: {
                 plugins: [
-                  Ext.create('Ext.tree.plugin.TreeViewDragDrop', {
-                      dragField: 'text',
-                      ddGroup: 'propertyGroup',
-                      dragGroup: 'propertyGroup',
-                      dragText: '{0}',
-                      enableDrop: false
-                  })]
+                    Ext.create('Ext.tree.plugin.TreeViewDragDrop', {
+                        ptype: 'treeviewdragdrop',
+                        dragField: 'text',
+                        ddGroup: 'propertyGroup',
+                        dragGroup: 'propertyGroup'
+//                        dragText: '{0}',
+//                        enableDrop: true,
+//                        enableDrag: true
+
+                    })
+                ],
+                listeners: {
+                    beforedrop: {
+                        fn: me.onBeforeNodeDrop,
+                        scope: me
+
+                    }
+                }
             },
             listeners: {
                 itemclick: {
@@ -51,24 +65,98 @@ Ext.define('AM.view.directory.DirectoryTree', {
         me.callParent(arguments);
     },
 
-    onClick: function (dataview, record, item, index, e, eOpts) {
+    onBeforeNodeDrop: function(node, data, overModel, dropPosition, dropHandler, eOpts) {
+        var me = this;
+        if (overModel.raw.type == data.records[0].parentNode.raw.type || data.records[0].parentNode.raw.type=="SiteNode" ) {
+            var flag = true;
+            for (var i = 0; i < overModel.childNodes.length; i++) {
+                if (overModel.childNodes[i].raw.text == data.records[0].data.text) {
+                    flag = false;
+                }
+            }
+            if (flag) {
+                var parentEntityId = overModel.internalId;
+                var entityId = data.records[0].raw.id;
+                var displayName = overModel.raw.text;
+                var nodeType = overModel.raw.type;
+                var record = Ext.decode(overModel.raw.record);
+                var siteId = record.siteId;
+                var platformId = record.platformId;
+                Ext.Ajax.request({
+                    url: 'directory/DragAndDropEntity',
+                    method: 'POST',
+                    params: {
+                        parentEntityId: parentEntityId,
+                        displayName: displayName,
+                        entityId: entityId,
+                        nodeType: nodeType,
+                        siteId:siteId,
+                        platformId:platformId
+
+                    },
+                    success: function(response, request) {
+                        var objResponseText = Ext.JSON.decode(response.responseText);
+
+//                        var currentNode;
+//                        while (currentNode.firstChild) {
+//                            currentNode.removeChild(currentNode.firstChild);
+//                        }
+
+//                        var index = 0;
+
+//                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
+//                            currentNode.insertChild(index, newNode);
+//                            index++;
+//                        });
+
+                        me.setLoading(false);
+
+                        if (objResponseText["message"] == "nodeCopied") {
+                            showDialog(400, 50, 'Alert', "Node copied successfully!", Ext.Msg.OK, null);
+
+             
+                            me.view.refresh();
+                        } else if (objResponseText["message"] == "duplicateNode") {
+                            showDialog(400, 50, 'Alert', "Node with this name already exists", Ext.Msg.OK, null);
+                        }
+                    },
+                    failure: function(result, request) {
+                        Ext.widget('messagepanel', { title: 'Error', msg: 'Error getting  Drag and Drop Object ' });
+                        me.setLoading(false);
+                    }
+                });
+
+
+
+            } else {
+                showDialog(400, 50, 'Alert', "An enitiy with similar name already exit",  Ext.Msg.OK, null);          }
+            
+        } else {
+            showDialog(400, 50, 'Alert', "Parent nodes are not of same type", Ext.Msg.OK, null);
+        }
+
+        return false;
+    },
+
+    onClick: function(dataview, record, item, index, e, eOpts) {
         var me = this;
         try {
             var pan = dataview.up('panel').up('panel');
             prop = pan.down('propertygrid');
             prop.setSource(record.data.property);
-        } catch (e) { }
+        } catch (e) {
+        }
     },
 
-    getState: function () {
+    getState: function() {
         var me = this;
         var nodes = [], state = me.callParent();
-        me.getRootNode().eachChild(function (child) {
+        me.getRootNode().eachChild(function(child) {
             // function to store state of tree recursively 
-            var storeTreeState = function (node, expandedNodes) {
+            var storeTreeState = function(node, expandedNodes) {
                 if (node.isExpanded() && node.childNodes.length > 0) {
                     expandedNodes.push(node.getPath('text'));
-                    node.eachChild(function (child) {
+                    node.eachChild(function(child) {
                         storeTreeState(child, expandedNodes);
                     });
                 }
@@ -83,27 +171,31 @@ Ext.define('AM.view.directory.DirectoryTree', {
         return state;
     },
 
-    onReload: function (options) {
+    onReload: function(options) {
         var me = this;
         var state = me.getState();
-          me.on('beforeload', function (store, action) {
+
+        me.on('beforeload', function(store, action) {
             me.getStore().getProxy().extraParams.type = 'ScopesNode';
         });
-		var storeProxy = me.store.getProxy();
-        storeProxy.on('exception', function (proxy, response, operation) {
-			var resp = Ext.JSON.decode(response.responseText);
-			var userMsg = resp['message'];
-			var detailMsg = resp['stackTraceDescription'];
-			var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification'});
-			Ext.ComponentQuery.query('#expValue',expPanel)[0].setValue(userMsg);
-			Ext.ComponentQuery.query('#expValue2',expPanel)[0].setValue(detailMsg);
+
+        var storeProxy = me.store.getProxy();
+        storeProxy.on('exception', function(proxy, response, operation) {
+            var resp = Ext.JSON.decode(response.responseText);
+            var userMsg = resp['message'];
+            var detailMsg = resp['stackTraceDescription'];
+            var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+            Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+            Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
         }, me);
+
         me.getEl().mask("Loading", 'x-mask-loading');
+
         me.store.load({
             node: me.getRootNode(),
-            callback: function (records, options, success) {
+            callback: function(records, options, success) {
                 var nodes = state.expandedNodes || [];
-                Ext.each(nodes, function (path) {
+                Ext.each(nodes, function(path) {
                     me.expandPath(path, 'text');
                 });
                 me.getEl().unmask();
@@ -111,7 +203,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
         });
     },
 
-    getSelectedNode: function () {
+    getSelectedNode: function() {
         var me = this;
         var selected = me.getSelectionModel().getSelection();
         return selected[0];

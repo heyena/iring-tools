@@ -15,6 +15,7 @@ using System.ServiceModel.Web;
 using System.Data.Linq;
 using System.Web;
 using System.Data;
+using System.Globalization;
 using org.iringtools.mapping;
 
 
@@ -266,6 +267,47 @@ namespace org.iringtools.applicationConfig
             }
             return applications;
         }
+
+
+
+        public Response InsertEntityAfterDrop(string resourceType, Guid droppedEntityId, Guid destinationParentEntityId, int siteId, int platformId)
+        {
+            Response response = new Response();
+            response.Messages = new Messages();
+
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ResourceType ", Value = resourceType });
+                nvl.Add(new ListItem() { Name = "@DroppedEntityId", Value = droppedEntityId });
+                nvl.Add(new ListItem() { Name = "@DestinationParentEntityId", Value = destinationParentEntityId });
+                nvl.Add(new ListItem() { Name = "@SiteId ", Value = siteId });
+                nvl.Add(new ListItem() { Name = "@PlatFormId", Value = platformId });
+                string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiEntityAfterDrop", nvl);
+
+                switch (output)
+                {
+                    case "1":
+                        PrepareSuccessResponse(response, "nodeCopied");
+                        break;
+                    case "0":
+                        PrepareErrorResponse(response, "duplicateNode");
+                        break;
+                    default:
+                        PrepareErrorResponse(response, output);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Drag and Drop Object " + ex);
+            }
+            return response;
+        }
+
+
+
+
 
         public Folders GetFoldersForUser(string userName, int siteId, int platformId, Guid parentFolderId)
         {
@@ -1618,10 +1660,10 @@ namespace org.iringtools.applicationConfig
             response.StatusList.Add(status);
 
         }
-        private void PrepareSuccessResponse(Response response, string errMsg)
+        private void PrepareSuccessResponse(Response response, string successMsg)
         {
             Status status = new Status { Level = StatusLevel.Success };
-            status.Messages = new Messages { errMsg };
+            status.Messages = new Messages { successMsg };
             response.DateTimeStamp = DateTime.Now;
             response.Level = StatusLevel.Success;
             response.StatusList.Add(status);
