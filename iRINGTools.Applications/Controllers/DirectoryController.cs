@@ -23,9 +23,9 @@ namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
     {
-        //string userName = "WorldTest";
-        string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
-    
+        string userName = "WorldTest";
+       // string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+
         int siteId = 4;
         int platformId = 2;
 
@@ -140,7 +140,7 @@ namespace org.iringtools.web.controllers
                                     expanded = false,
                                     leaf = false,
                                     children = null,
-                                    record = Utility.SerializeJson <Application>(application, true)
+                                    record = Utility.SerializeJson<Application>(application, true)
                                 };
 
                                 nodes.Add(node);
@@ -343,7 +343,7 @@ namespace org.iringtools.web.controllers
                                 node.property.Add("Data Length", property.dataLength.ToString());
                                 node.property.Add("Precison", property.precision.ToString());
                                 node.property.Add("Scale", property.scale.ToString());
-                                
+
                                 if (isKeyProp)
                                 {
                                     node.property.Add("Keytype", keyType);
@@ -1154,8 +1154,8 @@ namespace org.iringtools.web.controllers
 
                 string schcontextName = form["displayName"];
 
-               // success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), "daily", "sunday");
-                success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, startDate, endDate, "daily", form["weeklycom"].ToString());
+                // success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), "daily", "sunday");
+                success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, startDate, endDate, "daily", form["weeklycom"].ToString(),0,0);
 
             }
             catch (Exception e)
@@ -1166,10 +1166,23 @@ namespace org.iringtools.web.controllers
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult getAllJob()
+        {
+            {
+                AgentLibrary.Agent.Jobs result = null;
+                try
+                {
+                   result=  _repository.getAllScheduleJob(2,3);
 
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e.ToString());
+                }
 
-
-
+               return Json(result, JsonRequestBehavior.AllowGet);
+            }
+        }
 
         #region Private Methods
 
