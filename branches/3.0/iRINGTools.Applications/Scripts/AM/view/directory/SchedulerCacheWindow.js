@@ -23,7 +23,7 @@ Ext.define('AM.view.directory.SchedulerCacheWindow', {
 
     node: '',
     border: false,
-    height: 465,
+    height: 395,
     width: 590,
     layout: {
         type: 'fit'
