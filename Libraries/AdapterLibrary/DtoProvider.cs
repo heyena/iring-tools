@@ -513,7 +513,7 @@ namespace org.iringtools.adapter
                 string bytesToXml = System.Text.Encoding.Default.GetString(xmlbyte);
                 mapping.Mapping _mapping = utility.Utility.Deserialize<mapping.Mapping>(bytesToXml, true); ;
 
-                DatabaseDictionary dataDictionary = dictionaryProvider.GetDBDictionary(appId);
+                DatabaseDictionary dataDictionary = dictionaryProvider.GetDictionary( Guid.Parse(appId));
 
                 foreach (GraphMap graphMap in _mapping.graphMaps)
                 {
@@ -1339,7 +1339,7 @@ namespace org.iringtools.adapter
 
                 //Reinitializing the values from database
                 _mapping = utility.Utility.Deserialize<mapping.Mapping>(bytesToXml, true); ;
-                _dictionary = dictionaryProvider.GetDataDictionary(appId);
+                _dictionary = dictionaryProvider.GetDictionary(Guid.Parse(appId));
                 _graphMap = _mapping.FindGraphMap(graphName);
 
                 if (_graphMap == null)
