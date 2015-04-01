@@ -410,7 +410,7 @@ namespace org.iringtools.applicationConfig
         public string SortOrder { get; set; }
 
     }
-    */
+   
     [CollectionDataContract(Name = "valueMaps", Namespace = "http://www.iringtools.org/library", ItemName = "valueMap")]
     public class ValueMaps : List<ValueMap>
     {
@@ -469,7 +469,7 @@ namespace org.iringtools.applicationConfig
         public ValueListMaps valueListMaps { get; set; }
     }
 
-
+     */
 
     //[CollectionDataContract(Name = "job", Namespace = "http://www.iringtools.org/library", ItemName = "job")]
     //public class Jobs : List<Job>
