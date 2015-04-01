@@ -13,6 +13,7 @@ using System.Configuration;
 using System.IO;
 using System.Xml.Linq;
 using System.Net;
+using org.iringtools.mapping;
 
 namespace org.iringtools.services
 {
