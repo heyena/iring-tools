@@ -1325,7 +1325,7 @@ namespace iRINGTools.Web.Models
 
         //scheduler
       //  public string AddSchedular(Guid job_Id, byte isExchange, string AgentScope, string app, string dataObject, string xid, string exchange_Url, DateTime startDate, DateTime endDate, string occurence, string weekdays)
-          public string AddSchedular(Guid job_Id, byte isExchange, string AgentScope, string app, string dataObject, string xid, string exchange_Url, string startDate, string endDate, string occurence, string weekdays)
+          public string AddSchedular(Guid job_Id, byte isExchange, string AgentScope, string app, string dataObject, string xid, string exchange_Url, string startDate, string endDate, string occurence, string weekdays,int platFormId, int siteId)
       
         
         {
@@ -1341,13 +1341,11 @@ namespace iRINGTools.Web.Models
 
                     Occurance = occurence,
                     Start_DateTime = startDate,
-                  //  Start_DateTime = "2015-03-31",
-                  //  End_DateTime = "2015-03-31",
-                   End_DateTime = endDate,
+                    End_DateTime = endDate,
                     Status = "Ready",
                     Weekday = weekdays,
-                   // Schedule_Id = Guid.Parse("00000000-0000-0000-0000-000000000000")
                     ScheduleId = Guid.Empty
+                    
                 };
 
                 org.iringtools.AgentLibrary.Agent.Schedules objSchedules = new Agent.Schedules();
@@ -1366,6 +1364,13 @@ namespace iRINGTools.Web.Models
                     //Exchange_Url = exchange_Url,
                     //Exchange_Url = "exthange URL",
                     Cache_Page_size = "2000",
+                    ScheduleId = Guid.Empty,
+                    PlatformId = platFormId,
+                    SiteId = siteId,
+                    DataObjectId = Guid.Empty,
+                    TotalRecords = 0,
+                    CachedRecords =0,
+                    Active =1,
                     schedules = objSchedules
 
                 };
@@ -1381,6 +1386,25 @@ namespace iRINGTools.Web.Models
 
             return obj;
         }
+
+          public Agent.Jobs getAllScheduleJob(int intPlatFormId, int intSiteId)
+          {
+              Agent.Jobs obj = null;
+
+              try
+              {
+                  WebHttpClient client = CreateWebClient(_agentDataServiceUri);
+                  obj = client.Get<Agent.Jobs>(String.Format("/alljobs?platformId={0}&siteId={1}&format=xml", intPlatFormId, intSiteId));
+              }
+
+              catch (Exception ex)
+              {
+                  _logger.Error(ex.ToString());
+                  throw;
+              }
+
+              return obj;
+          }
 
       
 
