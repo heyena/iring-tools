@@ -20,6 +20,7 @@ using Microsoft.ServiceModel.Web;
 using org.iringtools.applicationConfig;
 using org.iringtools.UserSecurity;
 using org.iringtools.AgentLibrary;
+using System.Globalization;
 
 
 namespace iRINGTools.Web.Models
@@ -1336,8 +1337,8 @@ namespace iRINGTools.Web.Models
                 org.iringtools.AgentLibrary.Agent.Schedule objSchedule = new Agent.Schedule()
                 {
                     Created_By = "asrivas2",
-                    //Created_DateTime = System.DateTime.Now.ToString(),
-                    Created_DateTime = "2015-03-31",
+                    Created_DateTime = System.DateTime.Now.ToString("d", DateTimeFormatInfo.InvariantInfo),
+                   // Created_DateTime =  "2015-03-31",
 
                     Occurance = occurence,
                     Start_DateTime = startDate,
