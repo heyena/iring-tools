@@ -45,18 +45,18 @@ Ext.define('AM.view.directory.NewJobForm', {
 
 
         var weekDaysStore = Ext.create('Ext.data.Store', {
-        fields: ['weekdays'],
-        data: [
-        { "weekdays": "Monday"    },
-        { "weekdays": "Tuesday"   },
+            fields: ['weekdays'],
+            data: [
+        { "weekdays": "Monday" },
+        { "weekdays": "Tuesday" },
         { "weekdays": "Wednesday" },
-        { "weekdays": "Thursday"  },
-        { "weekdays": "Friday"    },
-        { "weekdays": "Saturday"  },
-        { "weekdays": "Sunday"    }
-            
+        { "weekdays": "Thursday" },
+        { "weekdays": "Friday" },
+        { "weekdays": "Saturday" },
+        { "weekdays": "Sunday" }
+
         ]
-     
+
         });
 
 
@@ -103,8 +103,8 @@ Ext.define('AM.view.directory.NewJobForm', {
                             name: 'applications',
                             itemId: 'appcombo',
                             store: 'apptempStore',
-                            //                  forceSelection: true,
-                            //                  triggerAction: 'all',
+                            //forceSelection: true,
+                            //triggerAction: 'all',
                             displayField: 'display',
                             valueField: 'display'
 
@@ -139,42 +139,32 @@ Ext.define('AM.view.directory.NewJobForm', {
                 items: [{
                     xtype: 'container',
                     layout: 'hbox',
+                    defaultType: 'radiofield',
                     margin: '10 0 0 0',
                     items: [{
-                        xtype: 'radio',
+                        //xtype: 'radio',
+                        boxLabel: 'Daily',
+                        inputValue: 'Daily',
                         name: 'occrad',
-                        margin: '0 3 0 0 ',
+                        margin: '4 160 0 0 ',
                         allowBlank: false
-                    }, {
-                        xtype: 'label',
-                        name: 'labtex',
-                        text: 'Daily',
-                        margin: '4 50 0 0 ',
-                        allowBlank: false
-                    }, {
-                        xtype: 'label',
-                        name: 'st',
-                        text: 'Start',
-                        margin: '4 87 0 0 ',
-                        allowBlank: false
-                    }, {
-                        xtype: 'datefield',
-                        labelWidth: 110,
-                        emptyText: 'Select Date',
-                        minValue:(new Date()),
-                        name: 'startdat',
-                        margin: '0 30 0 0 ',
-                        allowBlank: false
-                    }, {
-                        xtype: 'datefield',
-                        name: 'dailysttime',
-                        minValue: (new Date()),
-//                        minValue: '6:00 AM',
-//                        maxValue: '8:00 PM',
-//                        increment: 30,
-                        emptyText: 'Select End Date',
-                        anchor: '100%'
-                    }]
+                    },
+                   {
+                   //xtype: 'radio',
+                   boxLabel: 'Weekly',
+                   inputValue: 'Weekly',
+                   name: 'occrad',
+                   margin: '4 170 0 0 ',
+                   allowBlank: false
+               }, {
+                   //xtype: 'radio',
+                   boxLabel: 'Monthly',
+                   inputValue: 'Monthly',
+                   name: 'occrad',
+                   margin: '4 40 0 0 ',
+                   allowBlank: false
+               }
+                  ]
                 }]
 
             }, {
@@ -187,46 +177,50 @@ Ext.define('AM.view.directory.NewJobForm', {
                 items: [{
                     xtype: 'container',
                     layout: 'hbox',
-                    items: [{
-                        xtype: 'radio',
-                        name: 'occrad',
-                        margin: '0 3 0 0 ',
-                        allowBlank: false
-                    }, {
-                        xtype: 'label',
-                        name: 'labtex',
-                        text: 'Weekly',
-                        margin: '4 40 0 0 ',
-                        allowBlank: false
-                    }, {
-                        xtype: 'label',
-                        name: 'wd',
-                        text: 'WeekDays',
-                        margin: '4 50 0 0 ',
-                        allowBlank: false
-                    }, {
-                        xtype: 'combo',
-                        labelWidth: 110,
-                        emptyText: 'Options',
-                        name: 'weeklycom',
-                        margin: '0 30 0 0 ',
-                        allowBlank: false,
-                        store: weekDaysStore,
-                       // queryMode: 'local',
-                       //forceSelection: true,
-                       //triggerAction: 'all',
-                        displayField: 'weekdays',
-                        valueField: 'weekdays'
-                    }, {
-                        xtype: 'datefield',
-                        name: 'wktimein',
-                        minValue: (new Date()),
-//                      minValue: '6:00 AM',
-//                      maxValue: '8:00 PM',
-//                      increment: 30,
-                        emptyText: 'Select End Date',
-                        anchor: '100%'
-                    }]
+                    items: [
+                         {
+                             xtype: 'datefield',
+                             fieldLabel: 'Start DateTime',
+                             name: 'startDate',
+                             minValue: (new Date()),
+                             emptyText: 'Select Start Date',
+                             width: 220,
+                             anchor: '100%'
+                         }, {
+                             xtype: 'timefield',
+                             name: 'startTime',
+                             minValue: '00:00',
+                             maxValue: '24:00',
+                             width: 60,
+                             format: 'H:i',
+                             increment: 1,
+                             emptyText: 'Time',
+                             margin: '0 10 0 0',
+                             anchor: '100%'
+                         }, {
+                             xtype: 'datefield',
+                             fieldLabel: 'End DateTime',
+                             name: 'endDate',
+                             minValue: (new Date()),
+                             emptyText: 'Select End Date',
+                             labelWidth: 80,
+                             width: 180,
+                             disabled: false,
+                             itemId: 'myEndDateCombo',
+                             anchor: '100%'
+                         }, {
+                             xtype: 'timefield',
+                             name: 'endTime',
+                             minValue: '00:00',
+                             maxValue: '24:00',
+                             width: 60,
+                             format: 'H:i',
+                             increment: 1,
+                             emptyText: 'Time',
+                             disabled: false,
+                             itemId: 'myEndTimeCombo',
+                             anchor: '100%'
+                         }]
                 }]
 
             }, {
@@ -240,43 +234,21 @@ Ext.define('AM.view.directory.NewJobForm', {
                     xtype: 'container',
                     layout: 'hbox',
                     margin: '10 0 5 0',
-                    items: [{
-                        xtype: 'radio',
-                        name: 'occrad',
-                        margin: '0 3 0 0 ',
-                        allowBlank: false
-                    }, {
-                        xtype: 'label',
-                        name: 'labtex',
-                        text: 'Monthly',
-                        margin: '4 40 0 0 ',
-                        allowBlank: false
-                    }, {
-                        xtype: 'label',
-                        name: 'labtex',
-                        text: 'End',
-                        margin: '4 80 0 0 ',
-                        allowBlank: false
-                    }, {
-                        xtype: 'radio',
-                        name: 'occrad',
-                        margin: '0 3 0 0 ',
-                        allowBlank: false
-                    }, {
-                        xtype: 'label',
-                        name: 'labtex',
-                        text: 'No end Date',
-                        margin: '4 98 0 0 ',
-                        allowBlank: false
-                    }, {
-                        xtype: 'datefield',
-                        labelWidth: 110,
-                        emptyText: 'Select End Date',
-                        name: 'monthdate',
-                        minValue: (new Date()),
-                        margin: '0 30 0 0 ',
-                        allowBlank: false
-                    }]
+                    items: [
+                     {
+                         xtype: 'checkboxfield',
+                         boxLabel: 'No End Date',
+                         name: 'chkBox',
+                         margin: '4 0 0 295',
+                         checked:false,
+                         //inputValue: '1',
+                         listeners: {
+                             change: function (cb, checked) {
+                                 Ext.ComponentQuery.query('#myEndDateCombo')[0].setDisabled(checked);
+                                 Ext.ComponentQuery.query('#myEndTimeCombo')[0].setDisabled(checked);
+                             }
+                         }
+                        }]
                 }]
 
 
@@ -318,18 +290,20 @@ Ext.define('AM.view.directory.NewJobForm', {
         var endpointName = me.getForm().findField('displayName').getValue();
         var appls = me.getForm().findField('applications').getValue();
         var dataobj = me.getForm().findField('dataobj').getValue();
-        var datest = me.getForm().findField('startdat').getValue();
-        var dstime = me.getForm().findField('dailysttime').getValue();
-        var wkdays = me.getForm().findField('weeklycom').getValue();
-        var wktime = me.getForm().findField('wktimein').getValue();
-        var mondat = me.getForm().findField('monthdate').getValue();
+        var startDate = me.getForm().findField('startDate').getValue();
+        var startTime = me.getForm().findField('startTime').getValue();
+        var endDate = me.getForm().findField('endDate').getValue();
+        var endTime = me.getForm().findField('endTime').getValue();
+//        var mondat = me.getForm().findField('monthdate').getValue();
+//        var ouccarance = me.getForm().findField('monthdate').getValue();
+        var ouccaradio = me.getForm().findField('occrad').getValue();
 
         me.getForm().submit({
             waitMsg: 'Saving Data...',
             success: function (response, request) {
-                 //Ext.example.msg('Notification', 'Newjob saved successfully!');
+                //Ext.example.msg('Notification', 'Newjob saved successfully!');
                 win.fireEvent('save', me);
-               
+
                 Ext.Msg.alert('Success', action.result.msg);
             },
             failure: function (response, request) {
