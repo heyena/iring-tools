@@ -1368,7 +1368,7 @@ namespace iRINGTools.Web.Models
                     ScheduleId = Guid.Empty,
                     PlatformId = platFormId,
                     SiteId = siteId,
-                    DataObjectId = Guid.Empty,
+                    DataObjectId = string.Empty,
                     TotalRecords = 0,
                     CachedRecords =0,
                     Active =1,

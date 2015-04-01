@@ -107,7 +107,7 @@ namespace org.iringtools.AgentLibrary
 
                         NameValueList nvl = new NameValueList();
              
-                        nvl.Add(new ListItem() { Name = "@DataObjectId", Value = job.DataObjectId });
+                        nvl.Add(new ListItem() { Name = "@DataObjectIds", Value = Convert.ToString (job.DataObjectId) });
                         nvl.Add(new ListItem() { Name = "@Is_exchange", Value = Convert.ToString(job.Is_Exchange) });
                         nvl.Add(new ListItem() { Name = "@Xid", Value = job.Xid });
                         nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = cachePageSize});
