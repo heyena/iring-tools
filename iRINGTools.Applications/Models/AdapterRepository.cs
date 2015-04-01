@@ -1363,7 +1363,7 @@ namespace iRINGTools.Web.Models
                     Xid = "xid",
                     //Exchange_Url = exchange_Url,
                     //Exchange_Url = "exthange URL",
-                    Cache_Page_size = "2000",
+                    Cache_Page_size = "0",
                     ScheduleId = Guid.Empty,
                     PlatformId = platFormId,
                     SiteId = siteId,
