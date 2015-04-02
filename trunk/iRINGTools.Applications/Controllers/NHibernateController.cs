@@ -357,13 +357,14 @@ namespace org.iringtools.web.controllers
                 string dbInstance = form["dbInstance"];
                 string dbName = form["dbName"];
                 string portNumber = form["portNumber"];
+                string serName = form["serName"];
                 string dbUserName = form["dbUserName"];
                 string dbPassword = form["dbPassword"];
                 string dbSchema = form["dbSchema"];
 
              var connStr = (dbProvider1 != "-1") ? "Data Source=" + dbServer+ "\\" + dbInstance+ ";" + "Initial Catalog=" +
             dbName + ";User ID=" + dbUserName+ ";Password=" + dbPassword: "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=" + dbServer + ")(PORT=" +
-            portNumber + "))(CONNECT_DATA=(" + dbServer + "=" + dbInstance +
+            portNumber + "))(CONNECT_DATA=(" + serName + "=" + dbInstance +
             ")));User Id=" + dbUserName + ";Password=" + dbPassword;
                  //
 
@@ -401,7 +402,7 @@ namespace org.iringtools.web.controllers
                         conElts = GetConnectionElements(dbProvider, connStr);
                         conElts["dbSchema"] = dictionary.SchemaName;
                         root.properties.Add("connectionInfo", conElts);
-                    
+              
                     }
 
                    
