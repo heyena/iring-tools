@@ -243,7 +243,6 @@ namespace org.iringtools.adapter
 
             return cacheInfo;
         }
-
         public Manifest GetManifest(string scope, string app, string graph)
         {
             Manifest manifest = new Manifest()
@@ -330,6 +329,7 @@ namespace org.iringtools.adapter
                         };
                         manifestClassTemplates.@class = manifestClass;
 
+
                         foreach (TemplateMap templateMap in templateMaps)
                         {
                             Template manifestTemplate = new Template
@@ -351,15 +351,35 @@ namespace org.iringtools.adapter
                                 //find column name from roleMap.Use the column name to find DBdatatype, precision and scale from dataProperties.
                                 if (roleMap.propertyName != null && dataObject != null)
                                 {
-                                    string strPropertyName = roleMap.propertyName;
-                                    strPropertyName = strPropertyName.Substring(strPropertyName.LastIndexOf('.') + 1);
+                                    string strColumnName = roleMap.propertyName;
+                                    strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
 
-                                    DataProperty dataProperty = dataObject.dataProperties.Where(x => x.propertyName == strPropertyName).FirstOrDefault();
+
+                                    DataProperty dataProperty = dataObject.dataProperties.Where(x => x.propertyName == strColumnName).FirstOrDefault();
+                                    ExtensionProperty extensionProperty = null;
                                     if (dataProperty != null)
                                     {
                                         strDataType = dataProperty.dataType.ToString();
                                         intPrecision = Convert.ToInt16(dataProperty.precision);
                                         intScale = Convert.ToInt16(dataProperty.scale);
+                                    }
+                                    else
+                                    {
+                                        if (dataObject.extensionProperties != null)
+                                        {
+                                            extensionProperty = dataObject.extensionProperties.Where(x => x.propertyName == strColumnName).FirstOrDefault();
+                                            if (extensionProperty != null)
+                                            {
+                                                strDataType = extensionProperty.dataType.ToString();
+                                                intPrecision = Convert.ToInt16(extensionProperty.precision);
+                                                intScale = Convert.ToInt16(extensionProperty.scale);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _logger.Info("No Extension property in the dataObject ");
+                                        }
+
                                     }
                                 }
 
@@ -374,7 +394,6 @@ namespace org.iringtools.adapter
                                     dbDataType = strDataType,
                                     precision = intPrecision,
                                     scale = intScale,
-
                                 };
 
                                 manifestTemplate.roles.Add(manifestRole);
@@ -414,23 +433,42 @@ namespace org.iringtools.adapter
                                         }
 
                                         DataProperty dataProp = dataObj.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+                                        ExtensionProperty extensionProp = null;
                                         if (dataProp == null)
                                         {
-                                            throw new Exception("Property [" + roleMap.propertyName + "] does not exist in data dictionary.");
+                                            extensionProp = dataObj.extensionProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+                                            if (extensionProp == null)
+                                            {
+                                                throw new Exception("Property [" + roleMap.propertyName + "] does not exist in data dictionary.");
+                                            }
+                                            else
+                                            {
+                                                manifestRole.dataLength = extensionProp.dataLength;
+                                                if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
+                                                {
+                                                    if (extensionProp.dataType == DataType.Date)
+                                                        manifestRole.dataType = "xsd:date";
+                                                    else if (extensionProp.dataType == DataType.DateTime)
+                                                        manifestRole.dataType = "xsd:dateTime";
+                                                }
+                                            }
                                         }
-
-                                        manifestRole.dataLength = dataProp.dataLength;
-                                        if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
+                                        else
                                         {
-                                            if (dataProp.dataType == DataType.Date)
-                                                manifestRole.dataType = "xsd:date";
-                                            else if (dataProp.dataType == DataType.DateTime)
-                                                manifestRole.dataType = "xsd:dateTime";
-                                        }
 
-                                        if (dataObj.isKeyProperty(propertyName))
-                                        {
-                                            manifestTemplate.transferOption = TransferOption.Required;
+                                            manifestRole.dataLength = dataProp.dataLength;
+                                            if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
+                                            {
+                                                if (dataProp.dataType == DataType.Date)
+                                                    manifestRole.dataType = "xsd:date";
+                                                else if (dataProp.dataType == DataType.DateTime)
+                                                    manifestRole.dataType = "xsd:dateTime";
+                                            }
+
+                                            if (dataObj.isKeyProperty(propertyName))
+                                            {
+                                                manifestTemplate.transferOption = TransferOption.Required;
+                                            }
                                         }
                                     }
                                 }
@@ -555,130 +593,195 @@ namespace org.iringtools.adapter
                     throw new Exception("Data Object [" + dataObjectName + "] does not exist in data dictionary.");
                 }
 
-                foreach (var classTemplateMap in graphMap.classTemplateMaps)
-                {
-                    ClassTemplates manifestClassTemplates = new ClassTemplates();
-                    manifestGraph.classTemplatesList.Add(manifestClassTemplates);
-
-                    ClassMap classMap = classTemplateMap.classMap;
-                    List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-
-                    Keys keys = new Keys();
-
-                    if (templateMaps.Count > 0)
+                     foreach (var classTemplateMap in graphMap.classTemplateMaps)
                     {
-                        foreach (string identifier in classMap.identifiers)
+                        ClassTemplates manifestClassTemplates = new ClassTemplates();
+                        manifestGraph.classTemplatesList.Add(manifestClassTemplates);
+
+                        ClassMap classMap = classTemplateMap.classMap;
+                        List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
+
+                        Keys keys = new Keys();
+
+                        if (templateMaps.Count > 0)
                         {
-                            Key key = GetKey(graphMap, classMap, identifier);
-                            keys.Add(key);
+                            foreach (string identifier in classMap.identifiers)
+                            {
+                                Key key = GetKey(graphMap, classMap, identifier);
+                                keys.Add(key);
+                            }
                         }
-                    }
 
-                    Class manifestClass = new Class
-                    {
-                        id = classMap.id,
-                        name = classMap.name,
-                        keys = keys,
-                        index = classMap.index,
-                        path = classMap.path
-                    };
-                    manifestClassTemplates.@class = manifestClass;
-
-                    foreach (TemplateMap templateMap in templateMaps)
-                    {
-                        Template manifestTemplate = new Template
+                        Class manifestClass = new Class
                         {
-                            roles = new Roles(),
-                            id = templateMap.id,
-                            name = templateMap.name,
-                            transferOption = TransferOption.Desired,
+                            id = classMap.id,
+                            name = classMap.name,
+                            keys = keys,
+                            index = classMap.index,
+                            path = classMap.path
                         };
-                        manifestClassTemplates.templates.Add(manifestTemplate);
+                        manifestClassTemplates.@class = manifestClass;
 
-                        foreach (RoleMap roleMap in templateMap.roleMaps)
+
+                        foreach (TemplateMap templateMap in templateMaps)
                         {
-                            Role manifestRole = new Role
+                            Template manifestTemplate = new Template
                             {
-                                type = roleMap.type,
-                                id = roleMap.id,
-                                name = roleMap.name,
-                                dataType = roleMap.dataType,
-                                value = roleMap.value,
+                                roles = new Roles(),
+                                id = templateMap.id,
+                                name = templateMap.name,
+                                transferOption = TransferOption.Desired,
                             };
-                            manifestTemplate.roles.Add(manifestRole);
+                            manifestClassTemplates.templates.Add(manifestTemplate);
 
-                            if (roleMap.type == RoleType.Property ||
-                                roleMap.type == RoleType.DataProperty ||
-                                roleMap.type == RoleType.ObjectProperty)
+                            //loop thorough all roleMap and assign following nodes to roles.
+                            foreach (RoleMap roleMap in templateMap.roleMaps)
                             {
-                                if (!String.IsNullOrEmpty(roleMap.propertyName))
-                                {
-                                    string[] propertyParts = roleMap.propertyName.Split('.');
-                                    string objectName = propertyParts[propertyParts.Length - 2].Trim();
-                                    string propertyName = propertyParts[propertyParts.Length - 1].Trim();
-                                    DataObject dataObj = dataObject;
+                                string strDataType = "";
+                                int intPrecision = 0;
+                                int intScale = 0;
 
-                                    if (propertyParts.Length < 2)
+                                //find column name from roleMap.Use the column name to find DBdatatype, precision and scale from dataProperties.
+                                if (roleMap.propertyName != null && dataObject != null)
+                                {
+                                    string strColumnName = roleMap.propertyName;
+                                    strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
+
+
+                                    DataProperty dataProperty = dataObject.dataProperties.Where(x => x.propertyName == strColumnName).FirstOrDefault();
+                                    ExtensionProperty extensionProperty = null;
+                                    if (dataProperty != null)
                                     {
-                                        throw new Exception("Property [" + roleMap.propertyName + "] is invalid.");
+                                        strDataType = dataProperty.dataType.ToString();
+                                        intPrecision = Convert.ToInt16(dataProperty.precision);
+                                        intScale = Convert.ToInt16(dataProperty.scale);
                                     }
-                                    else if (propertyParts.Length > 2) // related property
+                                    else
                                     {
-                                        // find related object
-                                        for (int i = 1; i < propertyParts.Length - 1; i++)
+                                        if (dataObject.extensionProperties != null)
                                         {
-                                            DataRelationship rel = dataObj.dataRelationships.Find(x => x.relationshipName.ToLower() == propertyParts[i].ToLower());
-                                            if (rel == null)
+                                            extensionProperty = dataObject.extensionProperties.Where(x => x.propertyName == strColumnName).FirstOrDefault();
+                                            if (extensionProperty != null)
                                             {
-                                                throw new Exception("Relationship [" + rel.relationshipName + "] does not exist.");
+                                                strDataType = extensionProperty.dataType.ToString();
+                                                intPrecision = Convert.ToInt16(extensionProperty.precision);
+                                                intScale = Convert.ToInt16(extensionProperty.scale);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _logger.Info("No Extension property in the dataObject ");
+                                        }
+                                       
+                                    }
+                                }
+
+                                //assign valus to the following nodes.
+                                Role manifestRole = new Role
+                                {
+                                    type = roleMap.type,
+                                    id = roleMap.id,
+                                    name = roleMap.name,
+                                    dataType = roleMap.dataType,
+                                    value = roleMap.value,
+                                    dbDataType = strDataType,
+                                    precision = intPrecision,
+                                    scale = intScale,
+                                };
+
+                                manifestTemplate.roles.Add(manifestRole);
+
+                                if (roleMap.type == RoleType.Property ||
+                                    roleMap.type == RoleType.DataProperty ||
+                                    roleMap.type == RoleType.ObjectProperty)
+                                {
+                                    if (!String.IsNullOrEmpty(roleMap.propertyName))
+                                    {
+                                        string[] propertyParts = roleMap.propertyName.Split('.');
+                                        string objectName = propertyParts[propertyParts.Length - 2].Trim();
+                                        string propertyName = propertyParts[propertyParts.Length - 1].Trim();
+                                        DataObject dataObj = dataObject;
+
+                                        if (propertyParts.Length < 2)
+                                        {
+                                            throw new Exception("Property [" + roleMap.propertyName + "] is invalid.");
+                                        }
+                                        else if (propertyParts.Length > 2) // related property
+                                        {
+                                            // find related object
+                                            for (int i = 1; i < propertyParts.Length - 1; i++)
+                                            {
+                                                DataRelationship rel = dataObj.dataRelationships.Find(x => x.relationshipName.ToLower() == propertyParts[i].ToLower());
+                                                if (rel == null)
+                                                {
+                                                    throw new Exception("Relationship [" + rel.relationshipName + "] does not exist.");
+                                                }
+
+                                                dataObj = dataDictionary.dataObjects.Find(x => x.objectName.ToLower() == rel.relatedObjectName.ToLower());
+                                                if (dataObj == null)
+                                                {
+                                                    throw new Exception("Related object [" + rel.relatedObjectName + "] is not found.");
+                                                }
+                                            }
+                                        }
+
+                                        DataProperty dataProp = dataObj.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+                                        ExtensionProperty extensionProp = null;
+                                        if (dataProp == null)
+                                        {
+                                            extensionProp = dataObj.extensionProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
+                                            if (extensionProp == null)
+                                            {
+                                                throw new Exception("Property [" + roleMap.propertyName + "] does not exist in data dictionary.");
+                                            }
+                                            else
+                                            {
+                                                manifestRole.dataLength = extensionProp.dataLength;
+                                                if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
+                                                {
+                                                    if (extensionProp.dataType == DataType.Date)
+                                                        manifestRole.dataType = "xsd:date";
+                                                    else if (extensionProp.dataType == DataType.DateTime)
+                                                        manifestRole.dataType = "xsd:dateTime";
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+
+                                            manifestRole.dataLength = dataProp.dataLength;
+                                            if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
+                                            {
+                                                if (dataProp.dataType == DataType.Date)
+                                                    manifestRole.dataType = "xsd:date";
+                                                else if (dataProp.dataType == DataType.DateTime)
+                                                    manifestRole.dataType = "xsd:dateTime";
                                             }
 
-                                            dataObj = dataDictionary.dataObjects.Find(x => x.objectName.ToLower() == rel.relatedObjectName.ToLower());
-                                            if (dataObj == null)
+                                            if (dataObj.isKeyProperty(propertyName))
                                             {
-                                                throw new Exception("Related object [" + rel.relatedObjectName + "] is not found.");
+                                                manifestTemplate.transferOption = TransferOption.Required;
                                             }
                                         }
                                     }
-
-                                    DataProperty dataProp = dataObj.dataProperties.Find(x => x.propertyName.ToLower() == propertyName.ToLower());
-                                    if (dataProp == null)
-                                    {
-                                        throw new Exception("Property [" + roleMap.propertyName + "] does not exist in data dictionary.");
-                                    }
-
-                                    manifestRole.dataLength = dataProp.dataLength;
-                                    if (manifestRole.dataType == "xsd:dateTime" || manifestRole.dataType == "xsd:date")
-                                    {
-                                        if (dataProp.dataType == DataType.Date)
-                                            manifestRole.dataType = "xsd:date";
-                                        else if (dataProp.dataType == DataType.DateTime)
-                                            manifestRole.dataType = "xsd:dateTime";
-                                    }
-
-                                    if (dataObj.isKeyProperty(propertyName))
-                                    {
-                                        manifestTemplate.transferOption = TransferOption.Required;
-                                    }
                                 }
-                            }
 
-                            if (roleMap.classMap != null)
-                            {
-                                Cardinality cardinality = graphMap.GetCardinality(roleMap, _dictionary, _fixedIdentifierBoundary);
-                                manifestRole.cardinality = cardinality;
-
-                                manifestRole.@class = new Class
+                                if (roleMap.classMap != null)
                                 {
-                                    id = roleMap.classMap.id,
-                                    name = roleMap.classMap.name,
-                                    index = roleMap.classMap.index,
-                                    path = roleMap.classMap.path
-                                };
+                                    Cardinality cardinality = graphMap.GetCardinality(roleMap, _dictionary, _fixedIdentifierBoundary);
+                                    manifestRole.cardinality = cardinality;
+
+                                    manifestRole.@class = new Class
+                                    {
+                                        id = roleMap.classMap.id,
+                                        name = roleMap.classMap.name,
+                                        index = roleMap.classMap.index,
+                                        path = roleMap.classMap.path
+                                    };
+                                }
                             }
                         }
                     }
-                }
                 //}
 
                 manifest.valueListMaps = valueListMaps;
@@ -1392,7 +1495,6 @@ namespace org.iringtools.adapter
 
                 _graphMap = _mapping.FindGraphMap(graph);
                 DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
-                AddNewDataProperties(_graphMap, dataObject);
                 List<string> identifiers = new List<string> { id };
                 List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
 
@@ -1428,7 +1530,7 @@ namespace org.iringtools.adapter
 
                     _graphMap = _mapping.FindGraphMap(graph);
                     DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
-
+                    AddNewDataProperties(_graphMap, dataObject);
                     List<DataTransferIndex> dataTrasferIndexList = dataTransferIndices.DataTransferIndexList;
                     List<string> identifiers = new List<string>();
 
@@ -1636,6 +1738,7 @@ namespace org.iringtools.adapter
             }
         }
 
+
         public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
         {
             Response response = new Response();
@@ -1667,11 +1770,31 @@ namespace org.iringtools.adapter
 
                 _graphMap = _mapping.FindGraphMap(graph);
 
+                // collecting mapped properties
+                List<string> mappedProps = new List<string>();
+                foreach (ClassTemplateMap ctm in _graphMap.classTemplateMaps)
+                {
+                    foreach (TemplateMap tm in ctm.templateMaps)
+                    {
+                        foreach (RoleMap rm in tm.roleMaps)
+                        {
+                            if (rm.type == RoleType.DataProperty ||
+                                rm.type == RoleType.ObjectProperty ||
+                                rm.type == RoleType.Property)
+                            {
+                                int index = rm.propertyName.LastIndexOf('.');
+                                mappedProps.Add(rm.propertyName.Substring(index + 1));
+                            }
+                        }
+                    }
+                }
+
                 DataObject objectType = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
                 List<DataTransferObject> dataTransferObjectList = dataTransferObjects.DataTransferObjectList;
 
                 // extract deleted identifiers from data transfer objects
                 List<IDataObject> deletedDataObjects = new List<IDataObject>();
+                List<IDataObject> setNullsDataObjects = new List<IDataObject>();
 
                 for (int i = 0; i < dataTransferObjectList.Count; i++)
                 {
@@ -1686,11 +1809,52 @@ namespace org.iringtools.adapter
 
                         dataTransferObjectList.RemoveAt(i--);
                     }
+                    else if (dataTransferObjectList[i].transferType == TransferType.SetNulls)
+                    {
+                        string identifier = dataTransferObjectList[i].identifier;
+
+                        SerializableDataObject sdo = new SerializableDataObject()
+                        {
+                            Id = identifier,
+                            Type = objectType.objectName,
+                            State = ObjectState.Update
+                        };
+
+                        // set nulls for all mapped properties in manifest
+                        foreach (string prop in mappedProps)
+                        {
+                            sdo.Dictionary[prop] = null;
+                        }
+
+                        // set key properties
+                        if (objectType.keyProperties.Count == 1)
+                        {
+                            sdo.Dictionary[objectType.keyProperties[0].keyPropertyName] = identifier;
+                        }
+                        else if (objectType.keyProperties.Count > 1)
+                        {
+                            string[] parts = identifier.Split(
+                                new string[] { objectType.keyDelimeter }, StringSplitOptions.None);
+
+                            for (int j = 0; j < parts.Length; j++)
+                            {
+                                sdo.Dictionary[objectType.keyProperties[j].keyPropertyName] = parts[j];
+                            }
+                        }
+
+                        setNullsDataObjects.Add(sdo);
+                        dataTransferObjectList.RemoveAt(i--);
+                    }
                 }
 
                 if (deletedDataObjects.Count > 0)
                 {
                     response.Append(_dataLayerGateway.Update(objectType, deletedDataObjects));
+                }
+
+                if (setNullsDataObjects.Count > 0)
+                {
+                    response.Append(_dataLayerGateway.Update(objectType, setNullsDataObjects));
                 }
 
                 if (dataTransferObjectList.Count > 0)
@@ -2433,10 +2597,10 @@ namespace org.iringtools.adapter
                             if (roleMap.propertyName != null)
                             {
                                 //string strTableName= roleMap.
-                                string strPropertyName = roleMap.propertyName;
-                                strPropertyName = strPropertyName.Substring(strPropertyName.LastIndexOf('.') + 1);
+                                string strColumnName = roleMap.propertyName;
+                                strColumnName = strColumnName.Substring(strColumnName.LastIndexOf('.') + 1);
 
-                                DataProperty dataProperty = dataObject.dataProperties.Where(x => x.propertyName == strPropertyName).FirstOrDefault();
+                                DataProperty dataProperty = dataObject.dataProperties.Where(x => x.columnName == strColumnName).FirstOrDefault();
                                 if (dataProperty != null)
                                 {
                                     roleMap.dbDataType = dataProperty.dataType.ToString();
@@ -2449,5 +2613,7 @@ namespace org.iringtools.adapter
                 }
             }
         }
+
+
     }
 }

@@ -249,6 +249,8 @@ namespace org.iringtools.adapter
     Change,
     [EnumMember]
     Delete,
+    [EnumMember]
+    SetNulls
   }
 
   [CollectionDataContract(Name = "values", Namespace = "http://www.iringtools.org/dxfr/dto", ItemName = "value")]
