@@ -44,22 +44,7 @@ namespace org.iringtools.adapter
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@ApplicationID", Value = applicationId });
 
-                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl)
-                    .Replace("expressions xmlns=\"http://www.iringtools.org/library\"", "expressions xmlns=\"http://www.iringtools.org/data/filter\"")
-                        .Replace("expression xmlns=\"http://www.iringtools.org/library\"", "expression xmlns=\"http://www.iringtools.org/data/filter\"")
-                            .Replace("values xmlns=\"http://www.iringtools.org/library\"", "values xmlns=\"http://www.iringtools.org/data/filter\"")
-                    .Replace("orderExpressions xmlns=\"http://www.iringtools.org/library\"", "orderExpressions xmlns=\"http://www.iringtools.org/data/filter\"")
-                        .Replace("orderExpression xmlns=\"http://www.iringtools.org/library\"", "orderExpression xmlns=\"http://www.iringtools.org/data/filter\"")
-                    .Replace("rollupExpressions xmlns=\"http://www.iringtools.org/library\"", "rollupExpressions xmlns=\"http://www.iringtools.org/data/filter\"")
-                        .Replace("rollupExpression xmlns=\"http://www.iringtools.org/library\"", "rollupExpression xmlns=\"http://www.iringtools.org/data/filter\"")
-                            .Replace("rollup xmlns=\"http://www.iringtools.org/library\"", "rollup xmlns=\"http://www.iringtools.org/data/filter\"")
-
-                    .Replace("isAdmin xmlns=\"http://www.iringtools.org/library\"", "isAdmin xmlns=\"http://www.iringtools.org/data/filter\"")
-                    .Replace("dataFilterId xmlns=\"http://www.iringtools.org/library\"", "dataFilterId xmlns=\"http://www.iringtools.org/data/filter\"")
-                    .Replace("resourceId xmlns=\"http://www.iringtools.org/library\"", "resourceId xmlns=\"http://www.iringtools.org/data/filter\"")
-                    .Replace("dataFilterTypeId xmlns=\"http://www.iringtools.org/library\"", "dataFilterTypeId xmlns=\"http://www.iringtools.org/data/filter\"")
-                    .Replace("active xmlns=\"http://www.iringtools.org/library\"", "active xmlns=\"http://www.iringtools.org/data/filter\"")
-                    ;
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl);
 
 
 
