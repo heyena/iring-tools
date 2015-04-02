@@ -165,14 +165,19 @@
     background-image: url(../img/relation.png);
 }
 
-.x-tree-node-collapsed .folder
+.folder
 {
-    background-image: url(../img/folder-close.png);
+    background-image: url(../img/folder.png);
 }
 
-.x-tree-node-expanded .folder
+.site
 {
-    background-image: url(../img/folder-open.png);
+    background-image: url(../img/site.png) !important;
+}
+
+.x-grid-tree-node-expanded .context
+{
+    background-image: url(../img/context.png) !important;
 }
 
 .blue-fade
@@ -214,11 +219,6 @@
 .delete
 {
     color: #00df00;
-}
-
-.folder
-{
-    background-image: url(../img/folder.png);
 }
 
 .headerLnkBlack
