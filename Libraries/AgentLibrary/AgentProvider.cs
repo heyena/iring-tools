@@ -176,7 +176,7 @@ namespace org.iringtools.AgentLibrary
                         nvl.Add(new ListItem() { Name = "@ScheduleId", Value = job.ScheduleId });
                         nvl.Add(new ListItem() { Name = "@DataObjectId", Value = job.DataObjectId });
                         nvl.Add(new ListItem() { Name = "@Is_exchange", Value = Convert.ToString(job.Is_Exchange) });
-                        nvl.Add(new ListItem() { Name = "@Xid", Value = job.Xid });
+                        nvl.Add(new ListItem() { Name = "@Xid", Value = Convert.ToString(job.Xid) });
                         nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = cachePageSize });
                         nvl.Add(new ListItem() { Name = "@PlatformId", Value = Convert.ToString(job.PlatformId) });
                         nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(job.SiteId) });
