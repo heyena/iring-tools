@@ -327,5 +327,10 @@ namespace iRINGTools.Web.Models
         }
 
         #endregion
+
+        internal org.iringtools.mapping.ValueListMaps GetValueListMaps(string userName, Guid applicationId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

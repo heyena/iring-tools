@@ -186,7 +186,7 @@ Ext.define('AM.view.directory.ApplicationForm', {
                         var objResponseText = Ext.JSON.decode(request.response.responseText);
 
                         if (objResponseText["message"] == "duplicateApplication") {
-                            showDialog(400, 50, 'Alert', "Context with this internal name already exists", Ext.Msg.OK, null);
+                            showDialog(400, 50, 'Alert', "Application with this name already exists", Ext.Msg.OK, null);
                             return;
                         }
 
@@ -215,10 +215,10 @@ Ext.define('AM.view.directory.ApplicationForm', {
                         me.setLoading(false);
 
                         if (objResponseText["message"] == "applicationAdded") {
-                            showDialog(400, 50, 'Alert', "Context added successfully!", Ext.Msg.OK, null);
+                            showDialog(400, 50, 'Alert', "Application added successfully!", Ext.Msg.OK, null);
                         }
                         if (objResponseText["message"] == "applicationUpdated") {
-                            showDialog(400, 50, 'Alert', "Context updated successfully!", Ext.Msg.OK, null);
+                            showDialog(400, 50, 'Alert', "Application updated successfully!", Ext.Msg.OK, null);
                         }
                     },
                     failure: function (response, request) {

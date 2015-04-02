@@ -23,8 +23,8 @@ namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
     {
-        string userName = "WorldTest";
-       // string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        //string userName = "WorldTest";
+        string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
 
         int siteId = 4;
         int platformId = 2;
@@ -98,6 +98,7 @@ namespace org.iringtools.web.controllers
                                 {
                                     nodeType = "async",
                                     type = "FolderNode",
+                                    iconCls = "folder",
                                     id = folder.FolderId.ToString(),
                                     text = folder.FolderName,
                                     expanded = false,
@@ -1260,6 +1261,7 @@ namespace org.iringtools.web.controllers
                 {
                     nodeType = "async",
                     type = "FolderNode",
+                    iconCls = "folder",
                     id = folder.FolderId.ToString(),
                     text = folder.FolderName,
                     expanded = false,
@@ -1299,7 +1301,7 @@ namespace org.iringtools.web.controllers
             List<JsonTreeNode> applicationNode = new List<JsonTreeNode>();
             org.iringtools.applicationConfig.DataDictionary dataDictionary = _appConfigRepository.GetDictionary(applicationId);
             org.iringtools.applicationConfig.Graphs graphs = _appConfigRepository.GetGraphs(userName, applicationId);
-            //org.iringtools.applicationConfig.ValueListMaps valueListMaps = _appConfigRepository.GetValueListMaps(userName, applicationId);
+            ValueListMaps valueListMaps = _appConfigRepository.GetValueListMaps(userName, applicationId);
 
             JsonTreeNode dataObjectsNode = new JsonTreeNode()
             {
@@ -1364,6 +1366,38 @@ namespace org.iringtools.web.controllers
             }
 
             applicationNode.Add(graphsNode);
+
+            JsonTreeNode valueListMapsNode = new JsonTreeNode()
+            {
+                nodeType = "async",
+                type = "valueListMapsNode",
+                iconCls = "valueLists",
+                id = dataDictionary.dictionaryId.ToString(),
+                text = "ValueLists",
+                expanded = false,
+                leaf = false,
+                record = Utility.SerializeJson<ValueListMaps>(valueListMaps, true)
+            };
+
+            foreach (ValueListMap valueListMap in valueListMaps)
+            {
+                JsonTreeNode node = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = "ValueListMapNode",
+                    iconCls = "valueList",
+                    id = valueListMap.valueMaps.ToString(),
+                    text = valueListMap.name,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = Utility.SerializeJson<ValueListMap>(valueListMap, true)
+                };
+
+                valueListMapsNode.children.Add(node);
+            }
+
+            applicationNode.Add(valueListMapsNode);
 
             return applicationNode;
         }
