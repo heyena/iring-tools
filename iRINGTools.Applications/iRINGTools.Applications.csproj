@@ -163,7 +163,9 @@
     <Compile Include="Models\RefDataRepository.cs" />
     <Compile Include="Models\SecurityRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Content\img\context.png" />
     <Content Include="Content\img\extension.png" />
+    <Content Include="Content\img\site.png" />
     <Content Include="Scripts\AM\controller\SQLConfig.js" />
   </ItemGroup>
   <ItemGroup>
