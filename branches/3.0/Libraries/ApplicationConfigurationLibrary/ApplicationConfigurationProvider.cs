@@ -1070,18 +1070,17 @@ namespace org.iringtools.applicationConfig
             }
         }
 
-        public DataFilters GetDataFiltersForUser(string userName, int siteId, Guid resourceId)
+        public org.iringtools.library.DataFilters GetDataFiltersForUser(string userName, Guid resourceId)
         {
-            DataFilters datafilters = new DataFilters();
+            org.iringtools.library.DataFilters datafilters = new org.iringtools.library.DataFilters();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
                 nvl.Add(new ListItem() { Name = "@ResourceId", Value = Convert.ToString(resourceId) });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDataFilterByUser", nvl);
-                datafilters = utility.Utility.Deserialize<org.iringtools.applicationConfig.DataFilters>(xmlString, true);
+                datafilters = utility.Utility.Deserialize<org.iringtools.library.DataFilters>(xmlString, true);
             }
             catch (Exception ex)
             {
@@ -1090,30 +1089,45 @@ namespace org.iringtools.applicationConfig
             return datafilters;
         }
 
-        public Response InsertDataFilter(string resourceId, string siteId, string dataFilterTypeId, XDocument xml)
+        public Response InsertDataFilter(XDocument xml)
         {
             Response response = new Response();
+            response.Messages = new Messages();
 
             try
             {
-                //Exchange exchange = Utility.DeserializeDataContract<Exchange>(xml.ToString());
-                
                 string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
-
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    NameValueList nvl = new NameValueList();
-                    nvl.Add(new ListItem() { Name = "@ResourceId", Value = resourceId });
-                    nvl.Add(new ListItem() { Name = "@DataFilterTypeId", Value = dataFilterTypeId });
-                    nvl.Add(new ListItem() { Name = "@SiteId", Value = siteId });
-                    nvl.Add(new ListItem() { Name = "@RawXml", Value = rawXml });
-                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiDataFilter", nvl);
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@rawXml", Value = rawXml });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiDataFilter", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "datafiltersadded");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    
 
                 }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("DataFilter added successfully.");
+                //using (var dc = new DataContext(_connSecurityDb))
+                //{
+                //    NameValueList nvl = new NameValueList();
+                //    nvl.Add(new ListItem() { Name = "@rawXml", Value = rawXml });
+                //    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spiDataFilter", nvl);
+
+                //}
+
+                //response.DateTimeStamp = DateTime.Now;
+                //response.Messages = new Messages();
+                //response.Messages.Add("DataFilter added successfully.");
             }
             catch (Exception ex)
             {
@@ -1130,45 +1144,45 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public Response UpdateDataFilter(string resourceId, string siteId, string dataFilterTypeId, XDocument xml)
-        {
-            Response response = new Response();
+        //public Response UpdateDataFilter(string resourceId, string siteId, string dataFilterTypeId, XDocument xml)
+        //{
+        //    Response response = new Response();
 
-            try
-            {
-                //Exchange exchange = Utility.DeserializeDataContract<Exchange>(xml.ToString());
+        //    try
+        //    {
+        //        //Exchange exchange = Utility.DeserializeDataContract<Exchange>(xml.ToString());
 
-                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+        //        string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                    NameValueList nvl = new NameValueList();
-                    nvl.Add(new ListItem() { Name = "@ResourceId", Value = resourceId });
-                    nvl.Add(new ListItem() { Name = "@DataFilterTypeId", Value = dataFilterTypeId });
-                    nvl.Add(new ListItem() { Name = "@SiteId", Value = siteId });
-                    nvl.Add(new ListItem() { Name = "@RawXml", Value = rawXml });
-                    DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuDataFilter", nvl);
+        //        using (var dc = new DataContext(_connSecurityDb))
+        //        {
+        //            NameValueList nvl = new NameValueList();
+        //            nvl.Add(new ListItem() { Name = "@ResourceId", Value = resourceId });
+        //            nvl.Add(new ListItem() { Name = "@DataFilterTypeId", Value = dataFilterTypeId });
+        //            nvl.Add(new ListItem() { Name = "@SiteId", Value = siteId });
+        //            nvl.Add(new ListItem() { Name = "@RawXml", Value = rawXml });
+        //            DBManager.Instance.ExecuteNonQueryStoredProcedure(_connSecurityDb, "spuDataFilter", nvl);
 
-                }
+        //        }
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Messages = new Messages();
-                response.Messages.Add("DataFilter updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error udpating DataFilter: " + ex);
+        //        response.DateTimeStamp = DateTime.Now;
+        //        response.Messages = new Messages();
+        //        response.Messages.Add("DataFilter updated successfully.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.Error("Error udpating DataFilter: " + ex);
 
-                Status status = new Status { Level = StatusLevel.Error };
-                status.Messages = new Messages { ex.Message };
+        //        Status status = new Status { Level = StatusLevel.Error };
+        //        status.Messages = new Messages { ex.Message };
 
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Error;
-                response.StatusList.Add(status);
-            }
+        //        response.DateTimeStamp = DateTime.Now;
+        //        response.Level = StatusLevel.Error;
+        //        response.StatusList.Add(status);
+        //    }
 
-            return response;
-        }
+        //    return response;
+        //}
 
         public Response DeleteDataFilter(string resourceId)
         {

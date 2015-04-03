@@ -662,16 +662,16 @@ namespace org.iringtools.services
         }
 
         [Description("Get datafilter collection for user")]
-        [WebGet(UriTemplate = "/datafilters/{userName}?siteId={siteId}&resourceId={resourceId}&format={format}")]
-        public void GetDataFiltersForUser(string userName, int siteId, Guid resourceId, string format)
+        [WebGet(UriTemplate = "/datafilters/{userName}?resourceId={resourceId}&format={format}")]
+        public void GetDataFiltersForUser(string userName, Guid resourceId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                org.iringtools.applicationConfig.DataFilters dataFilters = _applicationConfigurationProvider.GetDataFiltersForUser(userName, siteId, resourceId);
-                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.DataFilters>(dataFilters, format, true);
+                org.iringtools.library.DataFilters dataFilters = _applicationConfigurationProvider.GetDataFiltersForUser(userName, resourceId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.library.DataFilters>(dataFilters, format, true);
             }
             catch (Exception ex)
             {
@@ -682,8 +682,8 @@ namespace org.iringtools.services
         }
 
         [Description("Insert DataFilter to the data base.")]
-        [WebInvoke(Method = "POST", UriTemplate = "/insertDataFilter?resourceId={resourceId}&siteId={siteId}&dataFilterTypeId={dataFilterTypeId}&format={format}")]
-        public void InsertDataFilter(string resourceId, string siteId, string dataFilterTypeId, string format, Stream stream)
+        [WebInvoke(Method = "POST", UriTemplate = "/insertDataFilter?format={format}")]
+        public void InsertDataFilter(string format, Stream stream)
         {
             if (string.IsNullOrEmpty(format))
             { format = "xml"; }
@@ -698,8 +698,8 @@ namespace org.iringtools.services
                 }
                 else
                 {
-                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.DataFilters>(stream, format);
-                    response = _applicationConfigurationProvider.InsertDataFilter(resourceId, siteId,dataFilterTypeId, new XDocument(xElement));
+                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.library.DataFilter>(stream, format);
+                    response = _applicationConfigurationProvider.InsertDataFilter(new XDocument(xElement));
                 }
             }
             catch (Exception ex)
@@ -743,36 +743,36 @@ namespace org.iringtools.services
             _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
-        [Description("Update DataFilter to the data base.")]
-        [WebInvoke(Method = "PUT", UriTemplate = "/udpateDataFilter?resourceId={resourceId}&siteId={siteId}&dataFilterTypeId={dataFilterTypeId}&format={format}")]
-        public void UpdateDataFilter(string resourceId, string siteId, string dataFilterTypeId, string format, Stream stream)
-        {
-            if (string.IsNullOrEmpty(format))
-            { format = "xml"; }
+        //[Description("Update DataFilter to the data base.")]
+        //[WebInvoke(Method = "PUT", UriTemplate = "/udpateDataFilter?resourceId={resourceId}&siteId={siteId}&dataFilterTypeId={dataFilterTypeId}&format={format}")]
+        //public void UpdateDataFilter(string resourceId, string siteId, string dataFilterTypeId, string format, Stream stream)
+        //{
+        //    if (string.IsNullOrEmpty(format))
+        //    { format = "xml"; }
 
-            Response response = new Response();
-            try
-            {
-                format = MapContentType(format);
-                if (format == "raw")
-                {
-                    throw new Exception("");
-                }
-                else
-                {
-                    XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.DataFilters>(stream, format);
-                    response = _applicationConfigurationProvider.UpdateDataFilter(resourceId, siteId, dataFilterTypeId, new XDocument(xElement));
-                }
-            }
-            catch (Exception ex)
-            {
-                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
-                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
-                objCustomErrorLog.throwJsonResponse(_CustomError);
-            }
-            PrepareResponse(ref response);
-            _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
-        }
+        //    Response response = new Response();
+        //    try
+        //    {
+        //        format = MapContentType(format);
+        //        if (format == "raw")
+        //        {
+        //            throw new Exception("");
+        //        }
+        //        else
+        //        {
+        //            XElement xElement = _applicationConfigurationProvider.FormatIncomingMessage<org.iringtools.applicationConfig.DataFilters>(stream, format);
+        //            response = _applicationConfigurationProvider.UpdateDataFilter(resourceId, siteId, dataFilterTypeId, new XDocument(xElement));
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+        //        _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+        //        objCustomErrorLog.throwJsonResponse(_CustomError);
+        //    }
+        //    PrepareResponse(ref response);
+        //    _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+        //}
 
         [Description("Get exchange collection for user")]
         [WebGet(UriTemplate = "/exchanges/{userName}?commodityId={commodityId}&format={format}")]
