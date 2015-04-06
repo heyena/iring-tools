@@ -38,1252 +38,1285 @@ using log4net;
 
 namespace org.iringtools.utility
 {
-  public class MultiPartMessage
-  {
-    public MultipartMessageType type { get; set; }
-    public string name { get; set; }
-    public object message { get; set; }
-    public string fileName { get; set; }
-    public string mimeType { get; set; }
-  }
-
-  public enum MultipartMessageType
-  {
-    File,
-    FormData,
-  }
-
-  public class WebHttpClient : IWebHttpClient
-  {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(WebHttpClient));
-
-    private string _boundary = Guid.NewGuid().ToString().Replace("-", "");
-    private string _baseUri = String.Empty;
-    private NetworkCredential _credentials = null;
-    private IWebProxy _proxy = null;
-    private string _appKey = String.Empty;
-    private string _accessToken = String.Empty;
-    private string _contentType = String.Empty;
-    private int _timeout = 300000;
-
-    private const string NEW_LINE = "\r\n";
-    private Encoding encoding = Encoding.UTF8;
-
-    public IDictionary<string, string> Headers { get; set; }
-
-    public WebHttpClient(string baseUri)
+    public class MultiPartMessage
     {
-      _baseUri = baseUri;
-
-      Headers = new Dictionary<string, string>();
-
-      object accessToken = ConfigurationManager.AppSettings["AccessToken"];
-      if (accessToken != null)
-        _accessToken = accessToken.ToString();
-
-      object appKey = ConfigurationManager.AppSettings["AppKey"];
-      if (appKey != null)
-        _appKey = appKey.ToString();
+        public MultipartMessageType type { get; set; }
+        public string name { get; set; }
+        public object message { get; set; }
+        public string fileName { get; set; }
+        public string mimeType { get; set; }
     }
 
-    public WebHttpClient(string baseUri, string userName, string password)
-      : this(baseUri, userName, password, String.Empty)
+    public enum MultipartMessageType
     {
+        File,
+        FormData,
+        RawFile,
+        RawData
     }
 
-    public int Timeout { get { return _timeout; } set { _timeout = value; } }
-
-    public WebHttpClient(string baseUri, string userName, string password, string domain)
-      : this(baseUri)
+    public class WebHttpClient : IWebHttpClient
     {
-      if (userName != String.Empty && userName != null && domain != String.Empty && domain != null)
-      {
-        _credentials = new NetworkCredential(userName, password, domain);
-      }
-      else if (userName != String.Empty && userName != null)
-      {
-        _credentials = new NetworkCredential(userName, password);
-      }
-    }
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(WebHttpClient));
 
-    public WebHttpClient(string baseUri, string proxyUserName, string proxyPassword, string proxyDomain, string proxyHost, int proxyPort)
-      : this(baseUri)
-    {
-      if (proxyHost != String.Empty && proxyHost != null)
-      {
-        if (proxyUserName != String.Empty && proxyUserName != null && proxyDomain != String.Empty && proxyDomain != null)
+        private string _boundary = Guid.NewGuid().ToString().Replace("-", "");
+        private string _baseUri = String.Empty;
+        private NetworkCredential _credentials = null;
+        private IWebProxy _proxy = null;
+        private string _appKey = String.Empty;
+        private string _accessToken = String.Empty;
+        private string _contentType = String.Empty;
+        private int _timeout = 300000;
+
+        private const string NEW_LINE = "\r\n";
+        private Encoding encoding = Encoding.UTF8;
+
+        public IDictionary<string, string> Headers { get; set; }
+
+        public WebHttpClient(string baseUri)
         {
-          _proxy = new WebProxy(proxyHost, proxyPort);
-          _proxy.Credentials = new NetworkCredential(proxyUserName, proxyPassword, proxyDomain);
-          ;
+            _baseUri = baseUri;
+
+            Headers = new Dictionary<string, string>();
+
+            object accessToken = ConfigurationManager.AppSettings["AccessToken"];
+            if (accessToken != null)
+                _accessToken = accessToken.ToString();
+
+            object appKey = ConfigurationManager.AppSettings["AppKey"];
+            if (appKey != null)
+                _appKey = appKey.ToString();
         }
-        else if (proxyUserName != String.Empty && proxyUserName != null)
+
+        public WebHttpClient(string baseUri, string userName, string password)
+            : this(baseUri, userName, password, String.Empty)
         {
-          _proxy = new WebProxy(proxyHost, proxyPort);
-          _proxy.Credentials = new NetworkCredential(proxyUserName, proxyPassword);
         }
-      }
-    }
 
-    public WebHttpClient(string baseUri, NetworkCredential credentials, string proxyHost, int proxyPort, NetworkCredential proxyCredentials)
-      : this(baseUri)
-    {
-      _credentials = credentials;
+        public int Timeout { get { return _timeout; } set { _timeout = value; } }
 
-      if (proxyHost != String.Empty && proxyHost != null)
-      {
-        _proxy = new WebProxy(proxyHost, proxyPort);
-        _proxy.Credentials = proxyCredentials;
-      }
-    }
-
-    public WebHttpClient(string baseUri, NetworkCredential credentials, IWebProxy webProxy)
-      : this(baseUri)
-    {
-      _credentials = credentials;
-      _proxy = webProxy;
-    }
-
-    public WebHttpClient(string baseUri, NetworkCredential credentials)
-      : this(baseUri)
-    {
-      _credentials = credentials;
-    }
-
-    public bool Async { get; set; }
-
-    public string UserName { get; set; }
-
-    public string AccessToken
-    {
-      get
-      {
-        try
+        public WebHttpClient(string baseUri, string userName, string password, string domain)
+            : this(baseUri)
         {
-          if (
-            WebOperationContext.Current != null &&
-            WebOperationContext.Current.IncomingRequest != null &&
-            WebOperationContext.Current.IncomingRequest.Headers != null &&
-            WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
-          {
-            if (WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
+            if (userName != String.Empty && userName != null && domain != String.Empty && domain != null)
             {
-              _accessToken = WebOperationContext.Current.IncomingRequest.Headers["Authorization"];
+                _credentials = new NetworkCredential(userName, password, domain);
             }
-          }
-          else if (HttpContext.Current != null &&
-            HttpContext.Current.Request.Cookies != null &&
-            HttpContext.Current.Request.Cookies.Count > 0)
-          {
-            if (HttpContext.Current.Request.Cookies["Authorization"] != null)
+            else if (userName != String.Empty && userName != null)
             {
-              HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
-              _accessToken = authorizationCookie.Value;
+                _credentials = new NetworkCredential(userName, password);
             }
-          }
-        }
-        catch (Exception)
-        {
-          _logger.Warn("Unable to obtain authorization token from request headers.");
         }
 
-        return _accessToken;
-      }
-      set
-      {
-        _accessToken = value;
-      }
-    }
-
-    public string AppKey
-    {
-      get
-      {
-        try
+        public WebHttpClient(string baseUri, string proxyUserName, string proxyPassword, string proxyDomain, string proxyHost, int proxyPort)
+            : this(baseUri)
         {
-          if (
-            WebOperationContext.Current != null &&
-            WebOperationContext.Current.IncomingRequest != null &&
-            WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
-          {
-            if (WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != null &&
-                WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != String.Empty)
+            if (proxyHost != String.Empty && proxyHost != null)
             {
-              _appKey = WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"];
+                if (proxyUserName != String.Empty && proxyUserName != null && proxyDomain != String.Empty && proxyDomain != null)
+                {
+                    _proxy = new WebProxy(proxyHost, proxyPort);
+                    _proxy.Credentials = new NetworkCredential(proxyUserName, proxyPassword, proxyDomain);
+                    ;
+                }
+                else if (proxyUserName != String.Empty && proxyUserName != null)
+                {
+                    _proxy = new WebProxy(proxyHost, proxyPort);
+                    _proxy.Credentials = new NetworkCredential(proxyUserName, proxyPassword);
+                }
             }
-          }
-          else if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
-          {
-              if (HttpContext.Current.Request.Cookies["X-myPSN-AppKey"] != null &&
-                  HttpContext.Current.Request.Cookies["X-myPSN-AppKey"].ToString() != String.Empty)
+        }
+
+        public WebHttpClient(string baseUri, NetworkCredential credentials, string proxyHost, int proxyPort, NetworkCredential proxyCredentials)
+            : this(baseUri)
+        {
+            _credentials = credentials;
+
+            if (proxyHost != String.Empty && proxyHost != null)
             {
-              HttpCookie appKeyCookie = HttpContext.Current.Request.Cookies["X-myPSN-AppKey"];
-              _appKey = appKeyCookie.Value;
+                _proxy = new WebProxy(proxyHost, proxyPort);
+                _proxy.Credentials = proxyCredentials;
             }
-          }
         }
-        catch (Exception)
+
+        public WebHttpClient(string baseUri, NetworkCredential credentials, IWebProxy webProxy)
+            : this(baseUri)
         {
-          _logger.Warn("Unable to obtain application key from request headers.");
+            _credentials = credentials;
+            _proxy = webProxy;
         }
 
-        return _appKey;
-      }
-      set
-      {
-        _appKey = value;
-      }
-    }
-
-    public string ContentType
-    {
-      get
-      {
-        return _contentType;
-      }
-      set
-      {
-        _contentType = value;
-      }
-    }
-
-    /// <summary>
-    /// HttpUtility.UrlEncode does not encode alpha-numeric characters such as _ - . ' ( ) * and !
-    /// This function encodes these characters to create a fully encoded uri
-    /// </summary>
-    private static string FullEncodeUri(string semiEncodedUri)
-    {
-      string fullEncodedUri = string.Empty;
-
-      fullEncodedUri = semiEncodedUri.Replace("'", "%22");
-      fullEncodedUri = fullEncodedUri.Replace("(", "%28");
-      fullEncodedUri = fullEncodedUri.Replace(")", "%29");
-      fullEncodedUri = fullEncodedUri.Replace("+", "%20");
-
-      return fullEncodedUri;
-    }
-
-    public static string GetUri(string relativeUri)
-    {
-      string semiEncodedUri = string.Empty;
-      string encodedUri = string.Empty;
-      //.Net does not allow certain characters in a uri, hence the uri has to be encoded 
-      semiEncodedUri = HttpUtility.UrlEncode(relativeUri);
-
-      //encode alpha-numberic characters that are not encoded by HttpUtility.UrlEncode
-      encodedUri = FullEncodeUri(semiEncodedUri);
-
-      return encodedUri;
-    }
-
-    //TODO: delete hardcoded Authorization & AppKey
-    private void PrepareHeaders(WebRequest request)
-    {
-      try
-      {
-        var ac = AccessToken;
-        var ak = AppKey;
-
-        if (!string.IsNullOrEmpty(ac))
+        public WebHttpClient(string baseUri, NetworkCredential credentials)
+            : this(baseUri)
         {
-          _logger.Debug("Authorization: " + AccessToken);
-          request.Headers.Add("Authorization", AccessToken);
+            _credentials = credentials;
         }
-        if (!string.IsNullOrEmpty(ak))
+
+        public bool Async { get; set; }
+
+        public string UserName { get; set; }
+
+        public string AccessToken
         {
-          _logger.Debug("X-myPSN-AppKey: " + AppKey);
-          request.Headers.Add("X-myPSN-AppKey", AppKey);
+            get
+            {
+                try
+                {
+                    if (
+                      WebOperationContext.Current != null &&
+                      WebOperationContext.Current.IncomingRequest != null &&
+                      WebOperationContext.Current.IncomingRequest.Headers != null &&
+                      WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+                    {
+                        if (WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
+                        {
+                            _accessToken = WebOperationContext.Current.IncomingRequest.Headers["Authorization"];
+                        }
+                    }
+                    else if (HttpContext.Current != null &&
+                      HttpContext.Current.Request.Cookies != null &&
+                      HttpContext.Current.Request.Cookies.Count > 0)
+                    {
+                        if (HttpContext.Current.Request.Cookies["Authorization"] != null)
+                        {
+                            HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
+                            _accessToken = authorizationCookie.Value;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    _logger.Warn("Unable to obtain authorization token from request headers.");
+                }
+
+                return _accessToken;
+            }
+            set
+            {
+                _accessToken = value;
+            }
         }
 
-        request.Headers.Add("async", Async ? "True" : "False");
-
-        if (!string.IsNullOrEmpty(UserName))
+        public string AppKey
         {
-            _logger.Debug("UserName: " + UserName);
-            request.Headers.Add("UserName", UserName);
+            get
+            {
+                try
+                {
+                    if (
+                      WebOperationContext.Current != null &&
+                      WebOperationContext.Current.IncomingRequest != null &&
+                      WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+                    {
+                        if (WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != null &&
+                            WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != String.Empty)
+                        {
+                            _appKey = WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"];
+                        }
+                    }
+                    else if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
+                    {
+                        if (HttpContext.Current.Request.Cookies["X-myPSN-AppKey"] != null &&
+                            HttpContext.Current.Request.Cookies["X-myPSN-AppKey"].ToString() != String.Empty)
+                        {
+                            HttpCookie appKeyCookie = HttpContext.Current.Request.Cookies["X-myPSN-AppKey"];
+                            _appKey = appKeyCookie.Value;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    _logger.Warn("Unable to obtain application key from request headers.");
+                }
+
+                return _appKey;
+            }
+            set
+            {
+                _appKey = value;
+            }
         }
 
-        if (Headers != null)
+        public string ContentType
         {
-          foreach (var pair in Headers)
-          {
-            request.Headers.Add(pair.Key, pair.Value);
-          }
+            get
+            {
+                return _contentType;
+            }
+            set
+            {
+                _contentType = value;
+            }
         }
-      }
-      catch (Exception e)
-      {
-        _logger.Error("Error preparing headers: " + e);
-        throw e;
-      }
-    }
 
-    private void PrepareCredentials(WebRequest request)
-    {
-      if (_credentials == null)
-      {
-        request.Credentials = CredentialCache.DefaultCredentials;
-        _logger.Debug("Use default credentials.");
-      }
-      else
-      {
-        request.Credentials = _credentials;
-        _logger.Debug("Use saved credentials.");
-      }
-
-      if (_proxy != null)
-      {
-        request.Proxy = _proxy;
-        _logger.Debug("Use proxy.");
-      }
-    }
-
-    // callback used to validate the certificate in an SSL conversation
-    private static bool ValidateRemoteCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors policyErrors)
-    {
-      if (Convert.ToBoolean(ConfigurationManager.AppSettings["IgnoreSslErrors"]))
-      {
-        // allow any old dodgy certificate...
-        return true;
-      }
-      else
-      {
-        return policyErrors == SslPolicyErrors.None;
-      }
-    }
-
-    public T Get<T>(string relativeUri)
-    {
-      return Get<T>(relativeUri, true);
-    }
-
-    public T Get<T>(string relativeUri, bool useDataContractSerializer)
-    {
-      try
-      {
-        if (relativeUri.Contains(" ")) HttpUtility.HtmlEncode(relativeUri);
-
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing GET request to URL: {0}.", uri));
-
-        WebRequest request = HttpWebRequest.Create(uri);
-
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        request.Method = "Get";
-        request.Timeout = Timeout;
-
-        // allows for validation of SSL conversations
-        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-          ValidateRemoteCertificate
-        );
-
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-        _logger.Debug("Response status code: " + response.StatusCode);
-        _logger.Debug("Response content type: " + response.ContentType);
-        _logger.Debug("Response content length: " + response.ContentLength);
-
-        if (response.StatusCode == HttpStatusCode.Accepted)
+        /// <summary>
+        /// HttpUtility.UrlEncode does not encode alpha-numeric characters such as _ - . ' ( ) * and !
+        /// This function encodes these characters to create a fully encoded uri
+        /// </summary>
+        private static string FullEncodeUri(string semiEncodedUri)
         {
-          string statusUrl = response.Headers["location"];
-          return (T)Convert.ChangeType(statusUrl, typeof(T));
+            string fullEncodedUri = string.Empty;
+
+            fullEncodedUri = semiEncodedUri.Replace("'", "%22");
+            fullEncodedUri = fullEncodedUri.Replace("(", "%28");
+            fullEncodedUri = fullEncodedUri.Replace(")", "%29");
+            fullEncodedUri = fullEncodedUri.Replace("+", "%20");
+
+            return fullEncodedUri;
         }
-        else
+
+        public static string GetUri(string relativeUri)
         {
-          Stream responseStream = response.GetResponseStream();
+            string semiEncodedUri = string.Empty;
+            string encodedUri = string.Empty;
+            //.Net does not allow certain characters in a uri, hence the uri has to be encoded 
+            semiEncodedUri = HttpUtility.UrlEncode(relativeUri);
 
-          if (typeof(T) == typeof(String))
-          {
-            StreamReader reader = new StreamReader(responseStream);
-            string responseStr = reader.ReadToEnd();
-            reader.Close();
+            //encode alpha-numberic characters that are not encoded by HttpUtility.UrlEncode
+            encodedUri = FullEncodeUri(semiEncodedUri);
 
-            return (T)Convert.ChangeType(responseStr, typeof(T));
-          }
-          else
-          {
-            return Utility.DeserializeFromStream<T>(responseStream.ToMemoryStream(), useDataContractSerializer);
-          }
+            return encodedUri;
         }
-      }
-      catch (Exception exception)
-      {
-        string uri = _baseUri + relativeUri;
-        throw new Exception("Error while executing HTTP GET request [" + uri + "].", exception);
-      }
-    }
 
-    public Stream GetStream(string relativeUri)
-    {
-        string contentType;
-        return GetStream(relativeUri, null, out contentType);
-    }
-
-    public Stream GetStream(string relativeUri, out string contentType)
-    {
-      return GetStream(relativeUri, null, out contentType);
-    }
-
-    private Stream GetStream(string relativeUri, string acceptType)
-    {
-      string contentType;
-      return GetStream(relativeUri, acceptType, out contentType);
-    }
-   
-    private Stream GetStream(string relativeUri, string acceptType, out string contentType)
-    {
-      try
-      {
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Getting stream from URL [{0}]...", uri));
-
-        WebRequest request = HttpWebRequest.Create(uri);
-
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        //Add Accept header
-        if (!string.IsNullOrEmpty(acceptType))
+        //TODO: delete hardcoded Authorization & AppKey
+        private void PrepareHeaders(WebRequest request)
         {
-            ((HttpWebRequest)request).Accept = acceptType;
+            try
+            {
+                var ac = AccessToken;
+                var ak = AppKey;
+
+                if (!string.IsNullOrEmpty(ac))
+                {
+                    _logger.Debug("Authorization: " + AccessToken);
+                    request.Headers.Add("Authorization", AccessToken);
+                }
+                if (!string.IsNullOrEmpty(ak))
+                {
+                    _logger.Debug("X-myPSN-AppKey: " + AppKey);
+                    request.Headers.Add("X-myPSN-AppKey", AppKey);
+                }
+
+                request.Headers.Add("async", Async ? "True" : "False");
+
+                if (!string.IsNullOrEmpty(UserName))
+                {
+                    _logger.Debug("UserName: " + UserName);
+                    request.Headers.Add("UserName", UserName);
+                }
+
+                if (Headers != null)
+                {
+                    foreach (var pair in Headers)
+                    {
+                        request.Headers.Add(pair.Key, pair.Value);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error preparing headers: " + e);
+                throw e;
+            }
         }
-        
-        request.Method = "Get";
-        request.Timeout = Timeout;
 
-        // allows for validation of SSL conversations
-        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-          ValidateRemoteCertificate
-        );
-        
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-        contentType = response.ContentType;
-
-        if (response.StatusCode == HttpStatusCode.Accepted)
+        private void PrepareCredentials(WebRequest request)
         {
-          string statusUrl = response.Headers["location"];
-          byte[] byteArray = Encoding.ASCII.GetBytes(statusUrl);
-          return new MemoryStream(byteArray);
+            if (_credentials == null)
+            {
+                request.Credentials = CredentialCache.DefaultCredentials;
+                _logger.Debug("Use default credentials.");
+            }
+            else
+            {
+                request.Credentials = _credentials;
+                _logger.Debug("Use saved credentials.");
+            }
+
+            if (_proxy != null)
+            {
+                request.Proxy = _proxy;
+                _logger.Debug("Use proxy.");
+            }
         }
-        else
+
+        // callback used to validate the certificate in an SSL conversation
+        private static bool ValidateRemoteCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors policyErrors)
         {
-          Stream responseStream = response.GetResponseStream();
-          return responseStream.ToMemoryStream();
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IgnoreSslErrors"]))
+            {
+                // allow any old dodgy certificate...
+                return true;
+            }
+            else
+            {
+                return policyErrors == SslPolicyErrors.None;
+            }
         }
-      }
-      catch (Exception e)
-      {
-        String error = String.Empty;
 
-        _logger.Error(e.ToString());
-
-        if (e.GetType() == typeof(WebException))
+        public T Get<T>(string relativeUri)
         {
-            HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
-            Stream responseStream = response.GetResponseStream();
-            error = Utility.SerializeFromStream(responseStream);
-            if (error.Contains("<html>"))
-                error = error.Remove(error.IndexOf("<html>"));
+            return Get<T>(relativeUri, true);
         }
-        else
+
+        public T Get<T>(string relativeUri, bool useDataContractSerializer)
         {
-            error = e.Message;
+            try
+            {
+                if (relativeUri.Contains(" ")) HttpUtility.HtmlEncode(relativeUri);
+
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing GET request to URL: {0}.", uri));
+
+                WebRequest request = HttpWebRequest.Create(uri);
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                request.Method = "Get";
+                request.Timeout = Timeout;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                _logger.Debug("Response status code: " + response.StatusCode);
+                _logger.Debug("Response content type: " + response.ContentType);
+                _logger.Debug("Response content length: " + response.ContentLength);
+
+                if (response.StatusCode == HttpStatusCode.Accepted)
+                {
+                    string statusUrl = response.Headers["location"];
+                    return (T)Convert.ChangeType(statusUrl, typeof(T));
+                }
+                else
+                {
+                    Stream responseStream = response.GetResponseStream();
+
+                    if (typeof(T) == typeof(String))
+                    {
+                        StreamReader reader = new StreamReader(responseStream);
+                        string responseStr = reader.ReadToEnd();
+                        reader.Close();
+
+                        return (T)Convert.ChangeType(responseStr, typeof(T));
+                    }
+                    else
+                    {
+                        return Utility.DeserializeFromStream<T>(responseStream.ToMemoryStream(), useDataContractSerializer);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+                throw new Exception("Error while executing HTTP GET request [" + uri + "].", exception);
+            }
         }
 
-        string uri = _baseUri + relativeUri;
-        throw new Exception("Error getting data from URL [" + uri + "]. " + error);
-      }
-    }
-
-    public String GetMessage(string relativeUri)
-    {
-      try
-      {
-        Stream stream = GetStream(relativeUri);
-        string message = Utility.SerializeFromStream(stream);
-        return message;
-      }
-      catch (Exception e)
-      {
-        throw e;
-      }
-    }
-
-    public String GetJson(string relativeUri)
-    {
-        try
+        public Stream GetStream(string relativeUri)
         {
-            Stream stream = GetStream(relativeUri, "application/json");
-            string message = Utility.SerializeFromStream(stream);
-            return message;
+            string contentType;
+            return GetStream(relativeUri, null, out contentType);
         }
-        catch (Exception e)
+
+        public Stream GetStream(string relativeUri, out string contentType)
         {
-            throw e;
+            return GetStream(relativeUri, null, out contentType);
         }
-    }
 
-    public R Post<T, R>(string relativeUri, T requestEntity)
-    {
-      return Post<T, R>(relativeUri, requestEntity, true);
-    }
-
-    public R Post<T, R>(string relativeUri, T requestEntity, bool useDataContractSerializer)
-    {
-      try
-      {
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
-
-        MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        request.Timeout = Timeout;
-        request.Method = "POST";
-        request.ContentType = "text/xml";
-        request.ContentLength = stream.Length;
-
-        // allows for validation of SSL conversations
-        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-          ValidateRemoteCertificate
-        );
-
-        request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
-
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        Stream responseStream = response.GetResponseStream();
-
-        if (typeof(R) == typeof(String))
+        private Stream GetStream(string relativeUri, string acceptType)
         {
-          StreamReader reader = new StreamReader(responseStream);
-          string responseStr = reader.ReadToEnd();
-          reader.Close();
-
-          return (R)Convert.ChangeType(responseStr, typeof(R));
+            string contentType;
+            return GetStream(relativeUri, acceptType, out contentType);
         }
-        else
+
+        private Stream GetStream(string relativeUri, string acceptType, out string contentType)
         {
-          return Utility.DeserializeFromStream<R>(responseStream.ToMemoryStream(), useDataContractSerializer);
-        }
-      }
-      catch (Exception e)
-      {
-        String error = String.Empty;
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Getting stream from URL [{0}]...", uri));
 
-        if (e.GetType() == typeof(WebException))
+                WebRequest request = HttpWebRequest.Create(uri);
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                //Add Accept header
+                if (!string.IsNullOrEmpty(acceptType))
+                {
+                    ((HttpWebRequest)request).Accept = acceptType;
+                }
+
+                request.Method = "Get";
+                request.Timeout = Timeout;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                contentType = response.ContentType;
+
+                if (response.StatusCode == HttpStatusCode.Accepted)
+                {
+                    string statusUrl = response.Headers["location"];
+                    byte[] byteArray = Encoding.ASCII.GetBytes(statusUrl);
+                    return new MemoryStream(byteArray);
+                }
+                else
+                {
+                    Stream responseStream = response.GetResponseStream();
+                    return responseStream.ToMemoryStream();
+                }
+            }
+            catch (Exception e)
+            {
+                String error = String.Empty;
+
+                _logger.Error(e.ToString());
+
+                if (e.GetType() == typeof(WebException))
+                {
+                    HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
+                    Stream responseStream = response.GetResponseStream();
+                    error = Utility.SerializeFromStream(responseStream);
+                    if (error.Contains("<html>"))
+                        error = error.Remove(error.IndexOf("<html>"));
+                }
+                else
+                {
+                    error = e.Message;
+                }
+
+                string uri = _baseUri + relativeUri;
+                throw new Exception("Error getting data from URL [" + uri + "]. " + error);
+            }
+        }
+
+        public String GetMessage(string relativeUri)
         {
-          HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
-          Stream responseStream = response.GetResponseStream();
-          error = Utility.SerializeFromStream(responseStream);
+            try
+            {
+                Stream stream = GetStream(relativeUri);
+                string message = Utility.SerializeFromStream(stream);
+                return message;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
-        else
+
+        public String GetJson(string relativeUri)
         {
-          error = e.ToString();
+            try
+            {
+                Stream stream = GetStream(relativeUri, "application/json");
+                string message = Utility.SerializeFromStream(stream);
+                return message;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
-        string uri = _baseUri + relativeUri;
-        throw new Exception("Error with HTTP POST from URI [" + uri + "]. " + error);
-      }
-    }
-
-    public R Post<T, R>(string relativeUri, T requestEntity, string format, bool useDataContractSerializer)
-    {
-      try
-      {
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
-
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-
-        request.Timeout = Timeout;
-        request.Method = "POST";
-
-        MemoryStream stream = null;
-
-        if (format == null || format.ToLower() == "xml")
+        public R Post<T, R>(string relativeUri, T requestEntity)
         {
-          stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
-          request.ContentType = "text/xml";
-          request.ContentLength = stream.Length;
+            return Post<T, R>(relativeUri, requestEntity, true);
         }
-        else if (format.ToLower() == "json")
+
+        public R Post<T, R>(string relativeUri, T requestEntity, bool useDataContractSerializer)
         {
-          stream = Utility.SerializeToStreamJSON<T>(requestEntity, useDataContractSerializer);
-          request.ContentType = "application/json";
-          request.ContentLength = stream.Length;
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
+
+                MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                request.Timeout = Timeout;
+                request.Method = "POST";
+                request.ContentType = "text/xml";
+                request.ContentLength = stream.Length;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream responseStream = response.GetResponseStream();
+
+                if (typeof(R) == typeof(String))
+                {
+                    StreamReader reader = new StreamReader(responseStream);
+                    string responseStr = reader.ReadToEnd();
+                    reader.Close();
+
+                    return (R)Convert.ChangeType(responseStr, typeof(R));
+                }
+                else
+                {
+                    return Utility.DeserializeFromStream<R>(responseStream.ToMemoryStream(), useDataContractSerializer);
+                }
+            }
+            catch (Exception e)
+            {
+                String error = String.Empty;
+
+                if (e.GetType() == typeof(WebException))
+                {
+                    HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
+                    Stream responseStream = response.GetResponseStream();
+                    error = Utility.SerializeFromStream(responseStream);
+                }
+                else
+                {
+                    error = e.ToString();
+                }
+
+                string uri = _baseUri + relativeUri;
+                throw new Exception("Error with HTTP POST from URI [" + uri + "]. " + error);
+            }
         }
-        else
+
+        public R Post<T, R>(string relativeUri, T requestEntity, string format, bool useDataContractSerializer)
         {
-          throw new Exception("Format " + format + " not allowed.");
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+                request.Timeout = Timeout;
+                request.Method = "POST";
+
+                MemoryStream stream = null;
+
+                if (format == null || format.ToLower() == "xml")
+                {
+                    stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
+                    request.ContentType = "text/xml";
+                    request.ContentLength = stream.Length;
+                }
+                else if (format.ToLower() == "json")
+                {
+                    stream = Utility.SerializeToStreamJSON<T>(requestEntity, useDataContractSerializer);
+                    request.ContentType = "application/json";
+                    request.ContentLength = stream.Length;
+                }
+                else
+                {
+                    throw new Exception("Format " + format + " not allowed.");
+                }
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                if (response.StatusCode == HttpStatusCode.Accepted)
+                {
+                    string statusUrl = response.Headers["location"];
+                    return (R)Convert.ChangeType(statusUrl, typeof(R));
+                }
+                else
+                {
+                    Stream responseStream = response.GetResponseStream();
+
+                    if (typeof(R) == typeof(String))
+                    {
+                        StreamReader reader = new StreamReader(responseStream);
+                        string responseStr = reader.ReadToEnd();
+                        reader.Close();
+
+                        return (R)Convert.ChangeType(responseStr, typeof(R));
+                    }
+                    else
+                    {
+                        return Utility.DeserializeFromStream<R>(responseStream.ToMemoryStream(), useDataContractSerializer);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                String error = String.Empty;
+
+                if (e.GetType() == typeof(WebException))
+                {
+                    HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
+                    Stream responseStream = response.GetResponseStream();
+                    error = Utility.SerializeFromStream(responseStream);
+                }
+                else
+                {
+                    error = e.ToString();
+                }
+
+                string uri = _baseUri + relativeUri;
+                throw new Exception("Error with HTTP POST from URI [" + uri + "]. " + error);
+            }
         }
 
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        // allows for validation of SSL conversations
-        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-          ValidateRemoteCertificate
-        );
-
-        request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
-
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-        if (response.StatusCode == HttpStatusCode.Accepted)
+        public T PostMessage<T>(string relativeUri, string requestMessage, bool useDataContractSerializer)
         {
-          string statusUrl = response.Headers["location"];
-          return (R)Convert.ChangeType(statusUrl, typeof(R));
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
+
+                MemoryStream stream = new MemoryStream();
+                StreamWriter writer = new StreamWriter(stream);
+                writer.Write(requestMessage);
+                writer.Flush();
+                byte[] bytes = stream.ToArray();
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                request.Timeout = Timeout;
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = bytes.Length;
+
+                System.Net.ServicePointManager.Expect100Continue = false;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(bytes, 0, bytes.Length);
+                requestStream.Flush();
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream responseStream = response.GetResponseStream();
+
+                T responseEntity = Utility.DeserializeFromStream<T>(responseStream, useDataContractSerializer);
+                return responseEntity;
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
         }
-        else
+
+        public string PutStream(string relativeUri, Stream stream)
         {
-          Stream responseStream = response.GetResponseStream();
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing PUT to URL [{0}]...", uri));
 
-          if (typeof(R) == typeof(String))
-          {
-            StreamReader reader = new StreamReader(responseStream);
-            string responseStr = reader.ReadToEnd();
-            reader.Close();
+                byte[] bytes = ((MemoryStream)stream).ToArray();
 
-            return (R)Convert.ChangeType(responseStr, typeof(R));
-          }
-          else
-          {
-            return Utility.DeserializeFromStream<R>(responseStream.ToMemoryStream(), useDataContractSerializer);
-          }
+                if (String.IsNullOrEmpty(_contentType))
+                {
+                    _contentType = "application/octet-stream";
+                }
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                request.Timeout = Timeout;
+                request.Method = "PUT";
+                request.ContentType = _contentType;
+                request.ContentLength = bytes.Length;
+
+                System.Net.ServicePointManager.Expect100Continue = false;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(bytes, 0, bytes.Length);
+                requestStream.Flush();
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+                return responseMessage;
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+
+                throw new Exception("Error while executing HTTP PUT request on " + uri + ".", exception);
+            }
         }
-      }
-      catch (Exception e)
-      {
-        String error = String.Empty;
 
-        if (e.GetType() == typeof(WebException))
+        public string PutJson(string relativeUri, string requestMessage)
         {
-          HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
-          Stream responseStream = response.GetResponseStream();
-          error = Utility.SerializeFromStream(responseStream);
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing PUT to URL [{0}]...", uri));
+
+                MemoryStream stream = new MemoryStream();
+                StreamWriter writer = new StreamWriter(stream);
+                writer.Write(requestMessage);
+                writer.Flush();
+                byte[] bytes = stream.ToArray();
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                request.Timeout = Timeout;
+                request.Method = "PUT";
+                request.ContentType = "application/json";
+                request.ContentLength = bytes.Length;
+
+                System.Net.ServicePointManager.Expect100Continue = false;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(bytes, 0, bytes.Length);
+                requestStream.Flush();
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+                return responseMessage;
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
         }
-        else
+
+        public string PostStream(string relativeUri, Stream stream)
         {
-          error = e.ToString();
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing POST stream to URL [{0}]...", uri));
+
+                byte[] bytes = ((MemoryStream)stream).ToArray();
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                request.Timeout = Timeout;
+                request.Method = "POST";
+                request.ContentType = "application/octet-stream";
+                request.ContentLength = bytes.Length;
+
+                System.Net.ServicePointManager.Expect100Continue = false;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(bytes, 0, bytes.Length);
+                requestStream.Flush();
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                string responseMessage;
+
+                if (response.StatusCode == HttpStatusCode.Accepted)
+                {
+                    responseMessage = response.Headers["location"];
+                }
+                else
+                {
+                    Stream responseStream = response.GetResponseStream();
+                    responseMessage = Utility.SerializeFromStream(responseStream);
+                }
+
+                return responseMessage;
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
         }
 
-        string uri = _baseUri + relativeUri;
-        throw new Exception("Error with HTTP POST from URI [" + uri + "]. " + error);
-      }
-    }
-
-    public T PostMessage<T>(string relativeUri, string requestMessage, bool useDataContractSerializer)
-    {
-      try
-      {
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
-
-        MemoryStream stream = new MemoryStream();
-        StreamWriter writer = new StreamWriter(stream);
-        writer.Write(requestMessage);
-        writer.Flush();
-        byte[] bytes = stream.ToArray();
-
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        request.Timeout = Timeout;
-        request.Method = "POST";
-        request.ContentType = "application/x-www-form-urlencoded";
-        request.ContentLength = bytes.Length;
-
-        System.Net.ServicePointManager.Expect100Continue = false;
-
-        // allows for validation of SSL conversations
-        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-          ValidateRemoteCertificate
-        );
-
-        Stream requestStream = request.GetRequestStream();
-        requestStream.Write(bytes, 0, bytes.Length);
-        requestStream.Flush();
-
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        Stream responseStream = response.GetResponseStream();
-        
-        T responseEntity = Utility.DeserializeFromStream<T>(responseStream, useDataContractSerializer);
-        return responseEntity;
-      }
-      catch (Exception exception)
-      {
-        string uri = _baseUri + relativeUri;
-
-        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-      }
-    }
-
-    public string PutStream(string relativeUri, Stream stream)
-    {
-      try
-      {
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing PUT to URL [{0}]...", uri));
-
-        byte[] bytes = ((MemoryStream)stream).ToArray();
-
-        if (String.IsNullOrEmpty(_contentType))
+        /// <summary>
+        ///  calling the service to post the content
+        /// </summary>
+        /// <param name="relativeUri">relative uri of service</param>
+        /// <param name="stream">stream of file</param>
+        /// <param name="filename">file name</param>
+        /// <returns>response</returns>
+        public string PostStreamUpload(string relativeUri, Stream stream, string filename)
         {
-          _contentType = "application/octet-stream";
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing POST stream to URL [{0}]...", uri));
+
+                System.Net.ServicePointManager.Expect100Continue = false;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
+                request.Method = "POST";
+                request.ContentType = "application/octet-stream";
+                request.KeepAlive = false;
+                request.Timeout = Timeout;
+
+
+                request.Headers.Add("FileName", filename);
+                Stream serverStream = request.GetRequestStream();
+                stream.Seek(0, SeekOrigin.Begin);
+
+                const int bufferSize = 65536; // 64K
+
+                byte[] buffer = new byte[bufferSize];
+                int bytesRead = 0;
+                while ((bytesRead = stream.Read(buffer, 0, bufferSize)) > 0)
+                {
+                    serverStream.Write(buffer, 0, bytesRead);
+                }
+                stream.Close();
+                serverStream.Close();
+
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                string responseMessage;
+
+
+                if (response.StatusCode == HttpStatusCode.Accepted)
+                {
+                    responseMessage = response.Headers["location"];
+                }
+                else
+                {
+                    Stream responseStream = response.GetResponseStream();
+                    responseMessage = Utility.SerializeFromStream(responseStream);
+                }
+
+                return responseMessage;
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
         }
 
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+        public string PostMessage(string relativeUri, string requestMessage, bool useDataContractSerializer)
+        {
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing POST message to URL [{0}]...", uri));
 
-        PrepareCredentials(request);
-        PrepareHeaders(request);
+                MemoryStream stream = new MemoryStream();
+                StreamWriter writer = new StreamWriter(stream);
+                writer.Write(requestMessage);
+                writer.Flush();
+                byte[] bytes = stream.ToArray();
 
-        request.Timeout = Timeout;
-        request.Method = "PUT";
-        request.ContentType = _contentType;
-        request.ContentLength = bytes.Length;
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
-        System.Net.ServicePointManager.Expect100Continue = false;
+                PrepareCredentials(request);
+                PrepareHeaders(request);
 
-        // allows for validation of SSL conversations
-        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-          ValidateRemoteCertificate
-        );
+                request.Timeout = Timeout;
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = bytes.Length;
 
-        Stream requestStream = request.GetRequestStream();
-        requestStream.Write(bytes, 0, bytes.Length);
-        requestStream.Flush();
+                System.Net.ServicePointManager.Expect100Continue = false;
 
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
 
-        string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(bytes, 0, bytes.Length);
+                requestStream.Flush();
 
-        return responseMessage;
-      }
-      catch (Exception exception)
-      {
-        string uri = _baseUri + relativeUri;
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-        throw new Exception("Error while executing HTTP PUT request on " + uri + ".", exception);
-      }
-    }
+                string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
 
-    public string PutJson(string relativeUri, string requestMessage)
-    {
-        try
+                return responseMessage;
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
+        }
+
+        public string PostJson(string relativeUri, string requestMessage)
+        {
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing POST json to URL [{0}]...", uri));
+
+                MemoryStream stream = new MemoryStream();
+                StreamWriter writer = new StreamWriter(stream);
+                writer.Write(requestMessage);
+                writer.Flush();
+                byte[] bytes = stream.ToArray();
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                request.Timeout = Timeout;
+                request.Method = "POST";
+                request.ContentType = "application/json";
+                request.ContentLength = bytes.Length;
+
+                System.Net.ServicePointManager.Expect100Continue = false;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(bytes, 0, bytes.Length);
+                requestStream.Flush();
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+                return responseMessage;
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
+        }
+
+        public R PutMessage<T, R>(string relativeUri, T requestEntity, bool useDataContractSerializer)
+        {
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing PUT message to URL [{0}]...", uri));
+
+                MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                request.Timeout = Timeout;
+                request.Method = "PUT";
+                request.ContentType = "text/xml";
+                request.ContentLength = stream.Length;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                R responseEntity = Utility.DeserializeFromStream<R>(response.GetResponseStream(), useDataContractSerializer);
+
+                return responseEntity;
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
+        }
+
+        //public void PostMultipartMessage(string relativeUri, List<MultiPartMessage> requestMessages)
+        //{
+        //  try
+        //  {
+        //    // Encoding encoding = Encoding.UTF8;
+        //    string uri = _baseUri + relativeUri;
+        //    _logger.Debug(string.Format("Performing POST multipart message to URL [{0}]...", uri));
+
+        //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+        //    request.ContentType = "multipart/form-data; boundary=" + _boundary;
+        //    request.Method = "POST";
+        //    request.Timeout = Timeout;
+        //    MemoryStream stream = new MemoryStream();
+        //    string header = string.Empty;
+
+        //    foreach (MultiPartMessage requestMessage in requestMessages)
+        //    {
+        //      if (requestMessage.type == MultipartMessageType.File)
+        //      {
+        //        header = string.Format("--{0}\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
+        //        stream.Write(encoding.GetBytes(header), 0, header.Length);
+
+        //        //byte[] fileData = (byte[])requestMessage.message;
+        //        //stream.Write(fileData, 0, fileData.Length);
+
+        //        Stream fileData = (Stream)requestMessage.message;
+        //        fileData.CopyTo(stream);
+        //        //add linefeed to enable multiple posts
+        //        stream.Write(encoding.GetBytes("\r\n"), 0, 2);
+        //      }
+        //      else
+        //      {
+        //        header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n", _boundary, requestMessage.name, requestMessage.message);
+        //        stream.Write(encoding.GetBytes(header), 0, header.Length);
+        //      }
+
+        //    }
+
+        //    header = string.Format("--{0}--\r\n", _boundary);
+        //    stream.Write(encoding.GetBytes(header), 0, header.Length);
+
+        //    PrepareCredentials(request);
+        //    PrepareHeaders(request);
+
+        //    request.ContentLength = stream.Length;
+        //    request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+        //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        //    stream.Close();
+
+        //    string message = Utility.SerializeFromStream(response.GetResponseStream());
+        //    //Handle the fact that dotNetRDF return 200 for parsing errors.
+        //    if (response.StatusCode == HttpStatusCode.OK && message.StartsWith("Parsing Error"))
+        //    {
+        //      throw new Exception(message);
+        //    }
+        //  }
+        //  catch (Exception exception)
+        //  {
+        //    string uri = _baseUri + relativeUri;
+
+        //    throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+        //  }
+        //}
+
+        public void PostMultipartMessage(string relativeUri, List<MultiPartMessage> requestMessages, ref string response)
+        {
+            try
+            {
+                // Encoding encoding = Encoding.UTF8;
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing POST multipart message to URL [{0}]...", uri));
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+                request.ContentType = "multipart/form-data; boundary=" + _boundary;
+                request.Method = "POST";
+                request.Timeout = Timeout;
+                MemoryStream stream = new MemoryStream();
+                string header = string.Empty;
+
+                foreach (MultiPartMessage requestMessage in requestMessages)
+                {
+                    Stream fileData = null;
+                    switch (requestMessage.type)
+                    {
+                        case MultipartMessageType.File:
+                            header = string.Format("--{0}\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
+                            stream.Write(encoding.GetBytes(header), 0, header.Length);
+
+                            //byte[] fileData = (byte[])requestMessage.message;
+                            //stream.Write(fileData, 0, fileData.Length);
+
+                            fileData = (Stream)requestMessage.message;
+                            fileData.CopyTo(stream);
+                            //add linefeed to enable multiple posts
+                            stream.Write(encoding.GetBytes("\r\n"), 0, 2);
+                            break;
+
+                        case MultipartMessageType.FormData:
+                            header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n", _boundary, requestMessage.name, requestMessage.message);
+                            stream.Write(encoding.GetBytes(header), 0, header.Length);
+                            break;
+
+                        case MultipartMessageType.RawFile:
+                            header = string.Format("--{0}\r\nX-Filename=\"{1}\"\r\n\r\n", _boundary, requestMessage.fileName);
+                            stream.Write(encoding.GetBytes(header), 0, header.Length);
+
+                            fileData = (Stream)requestMessage.message;
+                            fileData.CopyTo(stream);
+
+                            //add linefeed to enable multiple posts
+                            stream.Write(encoding.GetBytes("\r\n"), 0, 2);
+                            break;
+
+                        case MultipartMessageType.RawData:
+                            header = string.Format("--{0}\r\n\r\n{1}\r\n", _boundary, requestMessage.message);
+                            stream.Write(encoding.GetBytes(header), 0, header.Length);
+                            break;
+                    }
+                }
+
+                header = string.Format("--{0}--\r\n", _boundary);
+                stream.Write(encoding.GetBytes(header), 0, header.Length);
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                request.ContentLength = stream.Length;
+                request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+
+                HttpWebResponse httpResponse = null;
+                try
+                {
+                    httpResponse = (HttpWebResponse)request.GetResponse();
+
+                    response = Utility.SerializeFromStream(httpResponse.GetResponseStream());
+                }
+                catch (WebException e)
+                {
+                    httpResponse = (HttpWebResponse)e.Response;
+
+                    response = Utility.SerializeFromStream(httpResponse.GetResponseStream());
+
+                    throw e;
+                }
+
+                stream.Close();
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
+        }
+
+        public string ForwardPost(string relativeUri, HttpRequestBase requestBase)
         {
             string uri = _baseUri + relativeUri;
-            _logger.Debug(string.Format("Performing PUT to URL [{0}]...", uri));
-
-            MemoryStream stream = new MemoryStream();
-            StreamWriter writer = new StreamWriter(stream);
-            writer.Write(requestMessage);
-            writer.Flush();
-            byte[] bytes = stream.ToArray();
+            _logger.Debug(string.Format("Performing forward POST to URL [{0}]...", uri));
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            Stream webStream = null;
 
-            PrepareCredentials(request);
-            PrepareHeaders(request);
+            try
+            {
+                request.ContentType = requestBase.ContentType;
+                request.ContentLength = requestBase.ContentLength;
+                request.Method = "POST";
+                request.Timeout = Timeout;
 
-            request.Timeout = Timeout;
-            request.Method = "PUT";
-            request.ContentType = "application/json";
-            request.ContentLength = bytes.Length;
+                PrepareCredentials(request);
+                PrepareHeaders(request);
 
-            System.Net.ServicePointManager.Expect100Continue = false;
+                webStream = request.GetRequestStream();
+                requestBase.InputStream.CopyTo(webStream);
 
-            // allows for validation of SSL conversations
-            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-              ValidateRemoteCertificate
-            );
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
+            finally
+            {
+                if (null != webStream)
+                {
+                    webStream.Flush();
+                    webStream.Close();    // might need additional exception handling here
+                }
+            }
 
-            Stream requestStream = request.GetRequestStream();
-            requestStream.Write(bytes, 0, bytes.Length);
-            requestStream.Flush();
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                return Utility.SerializeFromStream(response.GetResponseStream());
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
 
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-            string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
-
-            return responseMessage;
         }
-        catch (Exception exception)
-        {
-            string uri = _baseUri + relativeUri;
 
-            throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+        public string Post<T>(string relativeUri, T requestEntity, bool useDataContractSerializer)
+        {
+            try
+            {
+                string uri = _baseUri + relativeUri;
+                _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
+
+                MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+                PrepareCredentials(request);
+                PrepareHeaders(request);
+
+                request.Timeout = Timeout;
+                request.Method = "POST";
+                request.ContentType = "application/xml";
+                request.ContentLength = stream.Length;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+                return responseMessage;
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
         }
     }
-
-    public string PostStream(string relativeUri, Stream stream)
-    {
-      try
-      {
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing POST stream to URL [{0}]...", uri));
-
-        byte[] bytes = ((MemoryStream)stream).ToArray();
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        request.Timeout = Timeout;
-        request.Method = "POST";
-        request.ContentType = "application/octet-stream";
-        request.ContentLength = bytes.Length;
-
-        System.Net.ServicePointManager.Expect100Continue = false;
-
-        // allows for validation of SSL conversations
-        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-          ValidateRemoteCertificate
-        );
-
-        Stream requestStream = request.GetRequestStream();
-        requestStream.Write(bytes, 0, bytes.Length);
-        requestStream.Flush();
-
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        string responseMessage;
-
-        if (response.StatusCode == HttpStatusCode.Accepted)
-        {
-          responseMessage = response.Headers["location"];
-        }
-        else
-        {
-          Stream responseStream = response.GetResponseStream();
-          responseMessage = Utility.SerializeFromStream(responseStream);
-        }
-
-        return responseMessage;
-      }
-      catch (Exception exception)
-      {
-        string uri = _baseUri + relativeUri;
-
-        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-      }
-    }
-
-    /// <summary>
-    ///  calling the service to post the content
-    /// </summary>
-    /// <param name="relativeUri">relative uri of service</param>
-    /// <param name="stream">stream of file</param>
-    /// <param name="filename">file name</param>
-    /// <returns>response</returns>
-    public string PostStreamUpload(string relativeUri, Stream stream, string filename)
-    {
-      try
-      {
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing POST stream to URL [{0}]...", uri));
-
-        System.Net.ServicePointManager.Expect100Continue = false;
-
-        // allows for validation of SSL conversations
-        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-          ValidateRemoteCertificate
-        );
-
-        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
-        request.Method = "POST";
-        request.ContentType = "application/octet-stream";
-        request.KeepAlive = false;
-        request.Timeout = Timeout;
-    
-
-        request.Headers.Add("FileName", filename);
-        Stream serverStream = request.GetRequestStream();
-        stream.Seek(0, SeekOrigin.Begin);
-
-        const int bufferSize = 65536; // 64K
-
-        byte[] buffer = new byte[bufferSize];
-        int bytesRead = 0;
-        while ((bytesRead = stream.Read(buffer, 0, bufferSize)) > 0)
-        {
-          serverStream.Write(buffer, 0, bytesRead);
-        }
-        stream.Close();
-        serverStream.Close();
-
-
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        string responseMessage;
-
-
-        if (response.StatusCode == HttpStatusCode.Accepted)
-        {
-          responseMessage = response.Headers["location"];
-        }
-        else
-        {
-          Stream responseStream = response.GetResponseStream();
-          responseMessage = Utility.SerializeFromStream(responseStream);
-        }
-
-        return responseMessage;
-      }
-      catch (Exception exception)
-      {
-        string uri = _baseUri + relativeUri;
-
-        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-      }
-    }
-
-    public string PostMessage(string relativeUri, string requestMessage, bool useDataContractSerializer)
-    {
-      try
-      {
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing POST message to URL [{0}]...", uri));
-
-        MemoryStream stream = new MemoryStream();
-        StreamWriter writer = new StreamWriter(stream);
-        writer.Write(requestMessage);
-        writer.Flush();
-        byte[] bytes = stream.ToArray();
-
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        request.Timeout = Timeout;
-        request.Method = "POST";
-        request.ContentType = "application/x-www-form-urlencoded";
-        request.ContentLength = bytes.Length;
-
-        System.Net.ServicePointManager.Expect100Continue = false;
-
-        // allows for validation of SSL conversations
-        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-          ValidateRemoteCertificate
-        );
-
-        Stream requestStream = request.GetRequestStream();
-        requestStream.Write(bytes, 0, bytes.Length);
-        requestStream.Flush();
-
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-        string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
-
-        return responseMessage;
-      }
-      catch (Exception exception)
-      {
-        string uri = _baseUri + relativeUri;
-
-        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-      }
-    }
-
-    public string PostJson(string relativeUri, string requestMessage)
-    {
-        try
-        {
-            string uri = _baseUri + relativeUri;
-            _logger.Debug(string.Format("Performing POST json to URL [{0}]...", uri));
-
-            MemoryStream stream = new MemoryStream();
-            StreamWriter writer = new StreamWriter(stream);
-            writer.Write(requestMessage);
-            writer.Flush();
-            byte[] bytes = stream.ToArray();
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-
-            PrepareCredentials(request);
-            PrepareHeaders(request);
-
-            request.Timeout = Timeout;
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            request.ContentLength = bytes.Length;
-
-            System.Net.ServicePointManager.Expect100Continue = false;
-
-            // allows for validation of SSL conversations
-            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-              ValidateRemoteCertificate
-            );
-
-            Stream requestStream = request.GetRequestStream();
-            requestStream.Write(bytes, 0, bytes.Length);
-            requestStream.Flush();
-
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-            string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
-
-            return responseMessage;
-        }
-        catch (Exception exception)
-        {
-            string uri = _baseUri + relativeUri;
-
-            throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-        }
-    }
-
-    public R PutMessage<T, R>(string relativeUri, T requestEntity, bool useDataContractSerializer)
-    {
-      try
-      {
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing PUT message to URL [{0}]...", uri));
-
-        MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        request.Timeout = Timeout;
-        request.Method = "PUT";
-        request.ContentType = "text/xml";
-        request.ContentLength = stream.Length;
-
-        // allows for validation of SSL conversations
-        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-          ValidateRemoteCertificate
-        );
-
-        request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
-
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        R responseEntity = Utility.DeserializeFromStream<R>(response.GetResponseStream(), useDataContractSerializer);
-
-        return responseEntity;
-      }
-      catch (Exception exception)
-      {
-        string uri = _baseUri + relativeUri;
-
-        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-      }
-    }
-
-    public void PostMultipartMessage(string relativeUri, List<MultiPartMessage> requestMessages)
-    {
-      try
-      {
-        // Encoding encoding = Encoding.UTF8;
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing POST multipart message to URL [{0}]...", uri));
-
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-        request.ContentType = "multipart/form-data; boundary=" + _boundary;
-        request.Method = "POST";
-        request.Timeout = Timeout;
-        MemoryStream stream = new MemoryStream();
-        string header = string.Empty;
-
-        foreach (MultiPartMessage requestMessage in requestMessages)
-        {
-          if (requestMessage.type == MultipartMessageType.File)
-          {
-            header = string.Format("--{0}\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
-            stream.Write(encoding.GetBytes(header), 0, header.Length);
-
-            //byte[] fileData = (byte[])requestMessage.message;
-            //stream.Write(fileData, 0, fileData.Length);
-
-            Stream fileData = (Stream)requestMessage.message;
-            fileData.CopyTo(stream);
-            //add linefeed to enable multiple posts
-            stream.Write(encoding.GetBytes("\r\n"), 0, 2);
-          }
-          else
-          {
-            header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n", _boundary, requestMessage.name, requestMessage.message);
-            stream.Write(encoding.GetBytes(header), 0, header.Length);
-          }
-
-        }
-
-        header = string.Format("--{0}--\r\n", _boundary);
-        stream.Write(encoding.GetBytes(header), 0, header.Length);
-
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        request.ContentLength = stream.Length;
-        request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        stream.Close();
-
-        string message = Utility.SerializeFromStream(response.GetResponseStream());
-        //Handle the fact that dotNetRDF return 200 for parsing errors.
-        if (response.StatusCode == HttpStatusCode.OK && message.StartsWith("Parsing Error"))
-        {
-          throw new Exception(message);
-        }
-      }
-      catch (Exception exception)
-      {
-        string uri = _baseUri + relativeUri;
-
-        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-      }
-    }
-    public string PostMultipartMessage(string relativeUri, List<MultiPartMessage> requestMessages, bool isreturn)
-    {
-      try
-      {
-        // Encoding encoding = Encoding.UTF8;
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing POST multipart message to URL [{0}]...", uri));
-
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-        request.ContentType = "multipart/form-data; boundary=" + _boundary;
-        request.Method = "POST";
-        request.Timeout = Timeout;
-        MemoryStream stream = new MemoryStream();
-        string header = string.Empty;
-
-        foreach (MultiPartMessage requestMessage in requestMessages)
-        {
-          if (requestMessage.type == MultipartMessageType.File)
-          {
-            header = string.Format("--{0}\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
-            stream.Write(encoding.GetBytes(header), 0, header.Length);
-
-            //byte[] fileData = (byte[])requestMessage.message;
-            //stream.Write(fileData, 0, fileData.Length);
-
-            Stream fileData = (Stream)requestMessage.message;
-            fileData.CopyTo(stream);
-            //add linefeed to enable multiple posts
-            stream.Write(encoding.GetBytes("\r\n"), 0, 2);
-          }
-          else
-          {
-            header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n", _boundary, requestMessage.name, requestMessage.message);
-            stream.Write(encoding.GetBytes(header), 0, header.Length);
-          }
-
-        }
-
-        header = string.Format("--{0}--\r\n", _boundary);
-        stream.Write(encoding.GetBytes(header), 0, header.Length);
-
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        request.ContentLength = stream.Length;
-        request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        stream.Close();
-
-        string message = Utility.SerializeFromStream(response.GetResponseStream());
-
-        return message;
-      }
-      catch (Exception exception)
-      {
-        string uri = _baseUri + relativeUri;
-
-        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-      }
-    }
-
-    public string ForwardPost(string relativeUri, HttpRequestBase requestBase)
-    {
-      string uri = _baseUri + relativeUri;
-      _logger.Debug(string.Format("Performing forward POST to URL [{0}]...", uri));
-
-      HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-      Stream webStream = null;
-
-      try
-      {
-        request.ContentType = requestBase.ContentType;
-        request.ContentLength = requestBase.ContentLength;
-        request.Method = "POST";
-        request.Timeout = Timeout;
-
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        webStream = request.GetRequestStream();
-        requestBase.InputStream.CopyTo(webStream);
-
-      }
-      catch (Exception exception)
-      {
-        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-      }
-      finally
-      {
-        if (null != webStream)
-        {
-          webStream.Flush();
-          webStream.Close();    // might need additional exception handling here
-        }
-      }
-
-      try
-      {
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        return Utility.SerializeFromStream(response.GetResponseStream());
-      }
-      catch (Exception exception)
-      {
-        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-      }
-
-    }
-
-    public string Post<T>(string relativeUri, T requestEntity, bool useDataContractSerializer)
-    {
-      try
-      {
-        string uri = _baseUri + relativeUri;
-        _logger.Debug(string.Format("Performing POST to URL [{0}]...", uri));
-
-        MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-
-        PrepareCredentials(request);
-        PrepareHeaders(request);
-
-        request.Timeout = Timeout;
-        request.Method = "POST";
-        request.ContentType = "application/xml";
-        request.ContentLength = stream.Length;
-
-        // allows for validation of SSL conversations
-        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
-          ValidateRemoteCertificate
-        );
-
-        request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
-
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
-
-        return responseMessage;
-      }
-      catch (Exception exception)
-      {
-        string uri = _baseUri + relativeUri;
-
-        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
-      }
-    }
-  }
 }

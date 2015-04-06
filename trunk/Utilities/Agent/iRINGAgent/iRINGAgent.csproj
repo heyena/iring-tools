@@ -81,6 +81,12 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Bechtel.SETROUTE.DataLayer">
+      <HintPath>..\..\..\..\..\svncorp-dmz\iringtools_datalayers\sr_datalayer\trunk\SRDataLayer\bin\Debug\Bechtel.SETROUTE.DataLayer.dll</HintPath>
+    </Reference>
+    <Reference Include="IWDataLayer">
+      <HintPath>..\..\..\..\..\svncorp-dmz\iringtools_datalayers\iw_datalayer\trunk\IWDataLayer\bin\Debug\IWDataLayer.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
@@ -96,6 +102,12 @@
     <Reference Include="Ninject.Extensions.Xml, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ExternalBinaries\Ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="SqlDataLayer">
+      <HintPath>..\..\..\..\..\svncorp-dmz\iringtools_datalayers\sql_datalayer\trunk\SqlDataLayer\bin\Debug\SqlDataLayer.dll</HintPath>
+    </Reference>
+    <Reference Include="SSOIdentityProvider">
+      <HintPath>..\..\..\..\..\svncorp-dmz\security\csharp\SSOIdentityProvider\bin\Debug\SSOIdentityProvider.dll</HintPath>
     </Reference>
     <Reference Include="StaticDust.Configuration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=21c5f8854d868864">
       <SpecificVersion>False</SpecificVersion>
