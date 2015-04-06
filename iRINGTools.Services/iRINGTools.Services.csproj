@@ -51,6 +51,9 @@
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Bechtel.SETROUTE.DataLayer">
+      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\sr_datalayer\trunk\SRDataLayer\bin\Debug\Bechtel.SETROUTE.DataLayer.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.Core.dll</HintPath>
@@ -86,7 +89,7 @@
       <HintPath>..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="SSOIdentityProvider">
-      <HintPath>..\..\..\svncorp-dmz\iringtools_datalayers\security\csharp\SSOIdentityProvider\bin\Debug\SSOIdentityProvider.dll</HintPath>
+      <HintPath>..\..\..\svncorp-dmz\security\csharp\SSOIdentityProvider\bin\Debug\SSOIdentityProvider.dll</HintPath>
     </Reference>
     <Reference Include="StaticDust.Configuration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=21c5f8854d868864">
       <SpecificVersion>False</SpecificVersion>
