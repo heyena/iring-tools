@@ -835,8 +835,7 @@ namespace org.iringtools.web.controllers
             response = _appConfigRepository.DragAndDropEntity(resourceType, droppedEntityId, destinationParentEntityId, siteId, platformId);
             //return Json(new { success = true, message = response.StatusText }, JsonRequestBehavior.AllowGet);
             return Json(new { success = true, message = "nodeCopied" }, JsonRequestBehavior.AllowGet);
-        }
-   
+        }   
 
         public JsonResult Application(FormCollection form)
         {
@@ -1151,7 +1150,6 @@ namespace org.iringtools.web.controllers
             }
         }
 
-
         public ActionResult saveSchedularData(FormCollection form)
         {
 
@@ -1315,22 +1313,25 @@ namespace org.iringtools.web.controllers
                 record = Utility.SerializeJson<org.iringtools.applicationConfig.DataDictionary>(dataDictionary, true)
             };
 
-            foreach (org.iringtools.applicationConfig.DataObject dataObject in dataDictionary.dataObjects)
+            if (dataDictionary != null)
             {
-                JsonTreeNode node = new JsonTreeNode
+                foreach (org.iringtools.applicationConfig.DataObject dataObject in dataDictionary.dataObjects)
                 {
-                    nodeType = "async",
-                    type = "DataObjectNode",
-                    iconCls = "dataObjects",
-                    id = dataObject.dataObjectId.ToString(),
-                    text = dataObject.objectName,
-                    expanded = false,
-                    leaf = false,
-                    children = null,
-                    record = Utility.SerializeJson<org.iringtools.applicationConfig.DataObject>(dataObject, true)
-                };
+                    JsonTreeNode node = new JsonTreeNode
+                    {
+                        nodeType = "async",
+                        type = "DataObjectNode",
+                        iconCls = "dataObjects",
+                        id = dataObject.dataObjectId.ToString(),
+                        text = dataObject.objectName,
+                        expanded = false,
+                        leaf = false,
+                        children = null,
+                        record = Utility.SerializeJson<org.iringtools.applicationConfig.DataObject>(dataObject, true)
+                    };
 
-                dataObjectsNode.children.Add(node);
+                    dataObjectsNode.children.Add(node);
+                }
             }
 
             applicationNode.Add(dataObjectsNode);
@@ -1347,22 +1348,25 @@ namespace org.iringtools.web.controllers
                 record = Utility.SerializeJson<org.iringtools.applicationConfig.Graphs>(graphs, true)
             };
 
-            foreach (org.iringtools.applicationConfig.Graph graph in graphs)
+            if (graphs != null)
             {
-                JsonTreeNode node = new JsonTreeNode
+                foreach (org.iringtools.applicationConfig.Graph graph in graphs)
                 {
-                    nodeType = "async",
-                    type = "GraphNode",
-                    iconCls = "graph",
-                    id = graph.GraphId.ToString(),
-                    text = graph.GraphName,
-                    expanded = false,
-                    leaf = false,
-                    children = null,
-                    record = Utility.SerializeJson<org.iringtools.applicationConfig.Graph>(graph, true)
-                };
+                    JsonTreeNode node = new JsonTreeNode
+                    {
+                        nodeType = "async",
+                        type = "GraphNode",
+                        iconCls = "graph",
+                        id = graph.GraphId.ToString(),
+                        text = graph.GraphName,
+                        expanded = false,
+                        leaf = false,
+                        children = null,
+                        record = Utility.SerializeJson<org.iringtools.applicationConfig.Graph>(graph, true)
+                    };
 
-                graphsNode.children.Add(node);
+                    graphsNode.children.Add(node);
+                }
             }
 
             applicationNode.Add(graphsNode);
@@ -1379,22 +1383,25 @@ namespace org.iringtools.web.controllers
                 record = Utility.SerializeJson<ValueListMaps>(valueListMaps, true)
             };
 
-            foreach (ValueListMap valueListMap in valueListMaps)
+            if (valueListMaps != null)
             {
-                JsonTreeNode node = new JsonTreeNode
+                foreach (ValueListMap valueListMap in valueListMaps)
                 {
-                    nodeType = "async",
-                    type = "ValueListMapNode",
-                    iconCls = "valueList",
-                    id = valueListMap.valueMaps.ToString(),
-                    text = valueListMap.name,
-                    expanded = false,
-                    leaf = false,
-                    children = null,
-                    record = Utility.SerializeJson<ValueListMap>(valueListMap, true)
-                };
+                    JsonTreeNode node = new JsonTreeNode
+                    {
+                        nodeType = "async",
+                        type = "ValueListMapNode",
+                        iconCls = "valueList",
+                        id = valueListMap.valueMaps.ToString(),
+                        text = valueListMap.name,
+                        expanded = false,
+                        leaf = false,
+                        children = null,
+                        record = Utility.SerializeJson<ValueListMap>(valueListMap, true)
+                    };
 
-                valueListMapsNode.children.Add(node);
+                    valueListMapsNode.children.Add(node);
+                }
             }
 
             applicationNode.Add(valueListMapsNode);
