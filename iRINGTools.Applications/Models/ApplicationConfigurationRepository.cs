@@ -281,7 +281,7 @@ namespace iRINGTools.Web.Models
 
         public DataDictionary GetDictionary(Guid applicationId)
         {
-            org.iringtools.applicationConfig.DataDictionary dataDictionary = null;
+            org.iringtools.applicationConfig.DataDictionary dataDictionary = new DataDictionary();
 
             //try
             //{
@@ -299,7 +299,7 @@ namespace iRINGTools.Web.Models
 
         public Graphs GetGraphs(string userName, Guid applicationId)
         {
-            org.iringtools.applicationConfig.Graphs graphs = null;
+            org.iringtools.applicationConfig.Graphs graphs = new Graphs();
 
             //try
             //{
@@ -317,7 +317,7 @@ namespace iRINGTools.Web.Models
 
         public ValueListMaps GetValueListMaps(string userName, Guid applicationId)
         {
-            ValueListMaps valueListMaps = null;
+            ValueListMaps valueListMaps = new ValueListMaps();
 
             //try
             //{
