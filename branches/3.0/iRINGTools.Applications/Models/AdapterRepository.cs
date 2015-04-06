@@ -1368,7 +1368,7 @@ namespace iRINGTools.Web.Models
                     ScheduleId = Guid.Empty,
                     PlatformId = platFormId,
                     SiteId = siteId,
-                    DataObjectId = string.Empty,
+                    DataObjectId = Guid.Empty.ToString(),
                     TotalRecords = 0,
                     CachedRecords =0,
                     Active =1,
@@ -1407,7 +1407,24 @@ namespace iRINGTools.Web.Models
               return obj;
           }
 
-      
+          public Agent.Job getScheduleJob(Guid jobId)
+          {
+              Agent.Job obj = null;
+
+              try
+              {
+                  WebHttpClient client = CreateWebClient(_agentDataServiceUri);
+                  obj = client.Get<Agent.Job>(String.Format("/job?jobId={0}&format=xml", jobId));
+              }
+
+              catch (Exception ex)
+              {
+                  _logger.Error(ex.ToString());
+                  throw;
+              }
+
+              return obj;
+          }
 
 
     }
