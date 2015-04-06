@@ -23,8 +23,8 @@ namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
     {
-        //string userName = "WorldTest";
-        string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        string userName = "WorldTest";
+        //string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
 
         int siteId = 4;
         int platformId = 2;
@@ -1203,6 +1203,29 @@ namespace org.iringtools.web.controllers
                return Json(result, JsonRequestBehavior.AllowGet);
             }
         }
+
+        public ActionResult getScheduleJob(FormCollection form)
+        {
+            {
+                AgentLibrary.Agent.Job result = null;
+                try
+                {
+                    result = _repository.getScheduleJob(Guid.Parse(form["jobId"]));
+
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e.ToString());
+                }
+
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+
+
+
 
         #region Private Methods
 
