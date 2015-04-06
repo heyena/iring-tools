@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using org.iringtools.applicationConfig;
 using library = org.iringtools.library;
+using org.iringtools.mapping;
 
 namespace iRINGTools.Web.Models
 {
@@ -33,8 +34,10 @@ namespace iRINGTools.Web.Models
 
         library.Response DeleteApplication(Application application);
 
-        org.iringtools.applicationConfig.DataDictionary GetDictionary(Guid guid);
+        DataDictionary GetDictionary(Guid guid);
 
-        org.iringtools.applicationConfig.Graphs GetGraphs(string userName, Guid applicationId);
+        Graphs GetGraphs(string userName, Guid applicationId);
+
+        ValueListMaps GetValueListMaps(string userName, Guid applicationId);
     }
 }

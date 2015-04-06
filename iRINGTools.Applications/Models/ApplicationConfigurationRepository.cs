@@ -11,17 +11,17 @@ using System.Net;
 using System.Collections.Specialized;
 using System.Configuration;
 using org.iringtools.web.Models;
+using org.iringtools.mapping;
 
 namespace iRINGTools.Web.Models
 {
     internal class ApplicationConfigurationRepository : IApplicationConfigurationRepository
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ApplicationConfigurationRepository));
-        private library.CustomError _CustomError = null;
+        //private library.CustomError _CustomError = null;
         protected library.ServiceSettings _settings;
         protected string _proxyHost;
         protected string _proxyPort;
-        //AdapterRepository adapter;
 
         string applicationConfigurationServiceUri = null;
 
@@ -188,7 +188,6 @@ namespace iRINGTools.Web.Models
 
             return response;
         }
-
    
         public library.Response DragAndDropEntity(string resourceType, Guid droppedEntityId, Guid destinationParentEntityId, int siteId, int platformId)
         {
@@ -206,8 +205,7 @@ namespace iRINGTools.Web.Models
             }
 
             return response;
-        }
-      
+        }      
 
         public Applications GetApplications(string userName, Guid parentContextId)
         {
@@ -281,40 +279,58 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public org.iringtools.applicationConfig.DataDictionary GetDictionary(Guid applicationId)
+        public DataDictionary GetDictionary(Guid applicationId)
         {
             org.iringtools.applicationConfig.DataDictionary dataDictionary = null;
 
-            try
-            {
-                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                dataDictionary = client.Get<org.iringtools.applicationConfig.DataDictionary>(String.Format("/GetDictionary?applicationId={0}&format=xml", applicationId));
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex.ToString());
-                throw;
-            }
+            //try
+            //{
+            //    WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+            //    dataDictionary = client.Get<org.iringtools.applicationConfig.DataDictionary>(String.Format("/GetDictionary?applicationId={0}&format=xml", applicationId));
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger.Error(ex.ToString());
+            //    throw;
+            //}
 
             return dataDictionary;
         }
 
-        public org.iringtools.applicationConfig.Graphs GetGraphs(string userName, Guid applicationId)
+        public Graphs GetGraphs(string userName, Guid applicationId)
         {
             org.iringtools.applicationConfig.Graphs graphs = null;
 
-            try
-            {
-                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                graphs = client.Get<org.iringtools.applicationConfig.Graphs>(String.Format("/graphs/{0}?applicationId={1}&format=xml", userName, applicationId));
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex.ToString());
-                throw;
-            }
+            //try
+            //{
+            //    WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+            //    graphs = client.Get<org.iringtools.applicationConfig.Graphs>(String.Format("/graphs/{0}?applicationId={1}&format=xml", userName, applicationId));
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger.Error(ex.ToString());
+            //    throw;
+            //}
 
             return graphs;
+        }
+
+        public ValueListMaps GetValueListMaps(string userName, Guid applicationId)
+        {
+            ValueListMaps valueListMaps = null;
+
+            //try
+            //{
+            //    WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+            //    valueListMaps = client.Get<ValueListMaps>(String.Format("/valueListMaps/{0}?applicationId={1}&format=xml", userName, applicationId));
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger.Error(ex.ToString());
+            //    throw;
+            //}
+
+            return valueListMaps;
         }
 
         #region Protected Member Functions
@@ -327,10 +343,5 @@ namespace iRINGTools.Web.Models
         }
 
         #endregion
-
-        internal org.iringtools.mapping.ValueListMaps GetValueListMaps(string userName, Guid applicationId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
