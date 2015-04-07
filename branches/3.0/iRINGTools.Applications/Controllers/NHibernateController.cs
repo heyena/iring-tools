@@ -24,6 +24,7 @@ namespace org.iringtools.web.controllers
 
         public NHibernateController() : this(new AdapterRepository()) { }
 
+
         public NHibernateController(AdapterRepository repository)
             : base()
         {
@@ -111,7 +112,8 @@ namespace org.iringtools.web.controllers
 
                 objectsTree.Add(root);
 
-                DatabaseDictionary dictionary = _repository.GetDBDictionary(scope, app);
+                //  DatabaseDictionary dictionary = _repository.GetDBDictionary(scope, app);
+                DatabaseDictionary dictionary = _repository.GetDBDictionary(Guid.Parse(Request.Params["applicationId"]));
 
                 Dictionary<string, string> conElts = null;
                 if (dictionary != null && !string.IsNullOrEmpty(dictionary.ConnectionString))
@@ -342,7 +344,372 @@ namespace org.iringtools.web.controllers
             }
         }
 
-        //Sql Configuration -28/11/2014
+        ////Sql Configuration -28/11/2014
+        //public ActionResult ObjectsTreeSql(FormCollection form)
+        //{
+        //    try
+        //    {
+
+        //        string scope = form["scope"];
+        //        string app = form["app"];
+        //        string selectedTables = form["selectedTables"];
+
+        //        _repository.Session = Session;
+
+        //        List<Node> objectsTree = new List<Node>();
+
+        //        Node root = new Node()
+        //        {
+        //            text = "Data Objects",
+        //            type = "dataObjects",
+        //            iconCls = "folder",
+        //            expanded = true,
+        //            children = new List<Node>(),
+        //            properties = new Dictionary<string, object>()
+        //        };
+
+        //        objectsTree.Add(root);
+
+        //        DatabaseDictionary dictionary = _repository.GetDBDictionary(scope, app);
+
+        //        Dictionary<string, string> conElts = null;
+        //        if (dictionary != null && !string.IsNullOrEmpty(dictionary.ConnectionString))
+        //        {
+        //            string dbProvider = dictionary.Provider;
+        //            string conStr = Utility.DecodeFrom64(dictionary.ConnectionString);
+
+        //            conElts = GetConnectionElements(dbProvider, conStr);
+        //            conElts["dbSchema"] = dictionary.SchemaName;
+        //            root.properties.Add("connectionInfo", conElts);
+        //        }
+        //        else
+        //        {
+        //            conElts = new Dictionary<string, string>();
+        //            conElts.Add("dbProvider", form["dbProvider"]);
+        //            conElts.Add("dbServer", form["dbServer"]);
+        //            conElts.Add("dbInstance", form["dbInstance"]);
+        //            conElts.Add("serName", form["serName"]);
+        //            conElts.Add("dbName", form["dbName"]);
+        //            conElts.Add("dbSchema", form["dbSchema"]);
+        //            conElts.Add("dbUserName", form["dbUserName"]);
+        //            conElts.Add("dbPassword", form["dbPassword"]);
+        //            conElts.Add("portNumber", form["portNumber"]);
+        //        }
+
+        //        List<DataObject> dbObjects = null;
+        //        if (!string.IsNullOrEmpty(conElts["dbServer"]))
+        //        {
+        //            //
+        //            // get available tables
+        //            //
+        //            List<string> availTables = _repository.GetTableNames(scope, app, conElts);
+        //            root.properties.Add("tableNames", availTables);
+
+        //            //
+        //            // get selected tables metadata
+        //            //
+        //            List<string> configTables = null;
+
+        //            if (!string.IsNullOrEmpty(selectedTables))
+        //            {
+        //                string[] array = selectedTables.Split(',');
+        //                configTables = new List<string>(array);
+        //            }
+        //            else if (dictionary != null && dictionary.dataObjects.Count > 0)
+        //            {
+        //                configTables = new List<string>();
+
+        //                foreach (DataObject dataObject in dictionary.dataObjects)
+        //                {
+        //                    configTables.Add(dataObject.tableName);
+        //                }
+        //            }
+
+        //            if (configTables != null && configTables.Count > 0)
+        //            {
+        //                dbObjects = _repository.GetDBObjects(scope, app, conElts, configTables);
+        //            }
+        //        }
+
+        //        if (dbObjects != null)
+        //        {
+        //            bool checkDictionary = (dictionary != null && dictionary.dataObjects != null && dictionary.dataObjects.Count > 0);
+        //            List<Node> objectNodes = root.children;
+
+        //            List<string> availTables = new List<string>();
+
+        //            foreach (DataObject dbObject in dbObjects)
+        //            {
+        //                availTables.Add(dbObject.tableName);
+
+        //                Node keyPropertiesNode = new Node()
+        //                {
+        //                    text = "Keys",
+        //                    type = "keys",
+        //                    iconCls = "folder",
+        //                    expanded = true,
+        //                    children = new List<Node>()
+        //                };
+
+        //                Node dataPropertiesNode = new Node()
+        //                {
+        //                    text = "Properties",
+        //                    type = "properties",
+        //                    iconCls = "folder",
+        //                    expanded = true,
+        //                    children = new List<Node>()
+        //                };
+
+        //                //Extention Properties___Starts
+        //                Node extensionPropertiesNode = new Node()
+        //                {
+        //                    text = "Extension",
+        //                    type = "extension",
+        //                    iconCls = "folder",
+        //                    expanded = true,
+        //                    children = new List<Node>()
+        //                };
+        //                //Extention Properties___Ends
+
+        //                Node relationshipsNode = new Node()
+        //                {
+        //                    text = "Relationships",
+        //                    type = "relationships",
+        //                    iconCls = "folder",
+        //                    expanded = true,
+        //                    children = new List<Node>()
+        //                };
+
+        //                //Creating list to contain data and key properties names
+        //                DataObject tempDataObject = dictionary.dataObjects.Find(dObj => dObj.objectName == dbObject.objectName);
+        //                List<string> dataPropertyNamesCollection = new List<string>();
+        //                List<string> keyPropertyNamesCollection = new List<string>();
+
+        //                if (tempDataObject != null && tempDataObject.dataProperties != null && tempDataObject.dataProperties.Count > 0)
+        //                {
+        //                    foreach (DataProperty dProp in tempDataObject.dataProperties)
+        //                    {
+        //                        KeyProperty commonProperties = tempDataObject.keyProperties.Find(kProp => kProp.keyPropertyName == dProp.propertyName);
+
+        //                        if (commonProperties == null)
+        //                        {
+        //                            dataPropertyNamesCollection.Add(dProp.propertyName);
+        //                        }
+        //                        else
+        //                        {
+        //                            keyPropertyNamesCollection.Add(dProp.propertyName);
+        //                        }
+        //                    }
+        //                }
+
+        //                // create object node
+        //                Node dataObjectNode = new Node()
+        //                {
+        //                    text = dbObject.tableName,
+        //                    type = "dataObject",
+        //                    iconCls = "treeObject",
+        //                    children = new List<Node>() { keyPropertiesNode, dataPropertiesNode, extensionPropertiesNode, relationshipsNode },
+        //                    properties = new Dictionary<string, object>() { 
+        //                        {"keyProperties", keyPropertyNamesCollection},{"dataProperties", dbObject.dataProperties}, {"aliasDataProperties", dataPropertyNamesCollection} 
+        //                    }
+        //                };
+
+        //                DataObject dictObject = null;
+
+        //                //
+        //                // apply what has been configured in dictionary to db object
+        //                //
+        //                if (checkDictionary)
+        //                {
+        //                    dictObject = dictionary.dataObjects.Find(x => x.tableName == dbObject.tableName);
+        //                }
+
+        //                if (dictObject == null)  // has not been configured
+        //                {
+        //                    dataObjectNode.properties.Add("objectNamespace", ONS_PREFIX + scope + "." + app);
+        //                    dataObjectNode.properties.Add("objectName", dbObject.objectName);
+        //                    dataObjectNode.properties.Add("tableName", dbObject.tableName);
+        //                    dataObjectNode.properties.Add("keyDelimiter", dbObject.keyDelimeter);
+        //                    dataObjectNode.properties.Add("description", dbObject.description);
+
+        //                    if (dbObject.aliasDictionary != null && dbObject.aliasDictionary.Count > 0)
+        //                    {
+        //                        dataObjectNode.properties.Add("aliasDictionary", dbObject.aliasDictionary["TABLE_NAME_IN"]);
+        //                    }
+        //                }
+        //                else  // has been configured, apply object configurations
+        //                {
+        //                    dataObjectNode.properties.Add("objectNamespace", ONS_PREFIX + scope + "." + app);
+        //                    dataObjectNode.properties.Add("objectName", dictObject.objectName);
+        //                    dataObjectNode.properties.Add("tableName", dictObject.tableName);
+        //                    dataObjectNode.properties.Add("keyDelimiter", dictObject.keyDelimeter);
+        //                    dataObjectNode.properties.Add("description", dictObject.description);
+
+        //                    if (dictObject.aliasDictionary != null && dictObject.aliasDictionary.Count > 0)
+        //                    {
+        //                        dataObjectNode.properties.Add("aliasDictionary", dictObject.aliasDictionary["TABLE_NAME_IN"]);
+        //                    }
+
+        //                    // apply relationship configurations
+        //                    foreach (DataRelationship relationship in dictObject.dataRelationships)
+        //                    {
+        //                        Node relationshipNode = new Node()
+        //                        {
+        //                            text = relationship.relationshipName,
+        //                            type = "relationship",
+        //                            iconCls = "relationship",
+        //                            leaf = true,
+        //                            properties = new Dictionary<string, object>()
+        //                            {
+        //                                {"name", relationship.relationshipName},
+        //                                {"type", relationship.relationshipType.ToString() },
+        //                                {"sourceObject", dictObject.objectName},
+        //                                {"relatedObject", relationship.relatedObjectName},
+        //                                {"propertyMaps", relationship.propertyMaps}
+        //                            }
+        //                        };
+
+        //                        relationshipsNode.children.Add(relationshipNode);
+        //                    }
+        //                }
+
+        //                if (dictObject != null && dictObject.dataProperties != null && dictObject.dataProperties.Count > 0)
+        //                {
+        //                    foreach (DataProperty dictProperty in dictObject.dataProperties)
+        //                    {
+        //                        //DataProperty dictProperty = dictObject.dataProperties.Find(x => x.propertyName == dbProperty.propertyName);
+
+        //                        if (dictProperty != null)   // property has been configured
+        //                        {
+        //                            Dictionary<string, object> properties = new Dictionary<string, object>()
+        //                            {
+        //                                {"columnName", dictProperty.columnName},
+        //                                {"propertyName", dictProperty.propertyName},
+        //                                {"aliasDictionary",dictProperty.aliasDictionary != null && dictProperty.aliasDictionary.ContainsKey("COLUMN_NAME_IN") ? dictProperty.aliasDictionary["COLUMN_NAME_IN"] : null},
+        //                                {"dataType", dictProperty.dataType},
+        //                                {"dataLength", dictProperty.dataLength},
+        //                                {"isNullable", dictProperty.isNullable},
+        //                                {"keyType", dictProperty.keyType},
+        //                                {"numberOfDecimals", dictProperty.numberOfDecimals},
+        //                                {"isReadOnly", dictProperty.isReadOnly},
+        //                                {"showOnIndex", dictProperty.showOnIndex},
+        //                                {"showOnSearch", dictProperty.showOnSearch},
+        //                                {"isHidden", dictProperty.isHidden},
+        //                                {"isVirtual", dictProperty.isVirtual},
+        //                                {"precision", dictProperty.precision},
+        //                                {"scale", dictProperty.scale}
+        //                            };
+
+        //                            bool isKey = false;
+
+        //                            if (dictObject.isKeyProperty(dictProperty.propertyName))
+        //                            {
+        //                                Node keyPropertyNode = new Node()
+        //                                {
+        //                                    text = dictProperty.propertyName,
+        //                                    type = "keyProperty",
+        //                                    iconCls = "treeKey",
+        //                                    leaf = true,
+        //                                    properties = properties
+        //                                };
+
+        //                                keyPropertiesNode.children.Add(keyPropertyNode);
+        //                                isKey = true;
+        //                            }
+        //                            else if (!isKey)
+        //                            {
+        //                                Node dataPropertyNode = new Node()
+        //                                {
+        //                                    text = dictProperty.propertyName,
+        //                                    type = "dataProperty",
+        //                                    iconCls = "treeProperty",
+        //                                    leaf = true,
+        //                                    properties = properties
+        //                                };
+
+        //                                dataPropertiesNode.children.Add(dataPropertyNode);
+        //                            }
+        //                        }
+        //                    }
+        //                }
+
+        //                //Extension Properties___Starts
+        //                if (dictObject != null && dictObject.extensionProperties != null && dictObject.extensionProperties.Count > 0)
+        //                    foreach (ExtensionProperty extProperty in dictObject.extensionProperties)
+        //                    {
+        //                        Dictionary<string, object> properties = new Dictionary<string, object>()
+        //                            {
+        //                                {"columnName", extProperty.columnName},
+        //                                {"propertyName", extProperty.propertyName},
+        //                                {"dataType", extProperty.dataType},
+        //                                {"dataLength", extProperty.dataLength},
+        //                                {"isNullable", extProperty.isNullable},
+        //                                {"keyType", extProperty.keyType},
+        //                                {"showOnIndex", extProperty.showOnIndex},
+        //                                {"precision", extProperty.precision},
+        //                                {"scale", extProperty.scale},
+        //                                {"definition", extProperty.definition}//[[By Deepak 12-Dec14,
+        //                                //{"parameters", extProperty.parameters}//Ends]]
+        //                            };
+
+        //                        Node extensionPropertyNode = new Node()
+        //                        {
+        //                            text = extProperty.propertyName,
+        //                            type = "extensionProperty",
+        //                            iconCls = "treeExtension",
+        //                            leaf = true,
+        //                            properties = properties
+        //                        };
+
+        //                        extensionPropertiesNode.children.Add(extensionPropertyNode);
+
+        //                        //hg - if extension is part of key add it to keys collection
+        //                        if (dictObject.isKeyProperty(extProperty.columnName))
+        //                        {
+        //                            Node keyPropertyNode = new Node()
+        //                            {
+        //                                text = extProperty.columnName,
+        //                                type = "keyProperty",
+        //                                iconCls = "treeKey",
+        //                                leaf = true,
+        //                                properties = properties
+        //                            };
+
+        //                            keyPropertiesNode.children.Add(keyPropertyNode);
+        //                        }
+        //                    }
+
+        //                objectNodes.Add(dataObjectNode);
+
+        //                List<string> extensionColoumn = new List<string>();
+        //                foreach (var extension in dbObject.dataProperties)
+        //                {
+        //                    extensionColoumn.Add(extension.propertyName);
+        //                }
+        //                dataObjectNode.properties.Add("extensionColoumn", extensionColoumn);
+        //                //Extension Properties___Ends
+        //            }
+
+        //            foreach (Node dataObjectNode in objectNodes)
+        //            {
+        //                dataObjectNode.properties.Add("tableNames", availTables);
+        //            }
+        //        }
+
+        //        return Json(objectsTree);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        //return Json(new { success = false, message = e.ToString() });
+        //        _logger.Error(e.ToString());
+        //        _CustomErrorLog = new CustomErrorLog();
+        //        _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUItree, e, _logger);
+        //        return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
+
+
+        //Sql Configuration -2/04/2015
         public ActionResult ObjectsTreeSql(FormCollection form)
         {
             try
@@ -351,6 +718,7 @@ namespace org.iringtools.web.controllers
                 string scope = form["scope"];
                 string app = form["app"];
                 string selectedTables = form["selectedTables"];
+                Guid applicationId = Guid.Parse(form["applicationId"]);
 
                 //for edit sqlconfiguration
                 string dbProvider1 = Convert.ToString(form["dbProvider"].ToLower().IndexOf("mssql"));
@@ -384,7 +752,8 @@ namespace org.iringtools.web.controllers
 
                 objectsTree.Add(root);
 
-                DatabaseDictionary dictionary = _repository.GetDBDictionary(scope, app);
+                //  DatabaseDictionary dictionary = _repository.GetDBDictionary(scope, app);
+                DatabaseDictionary dictionary = _repository.GetDBDictionary(applicationId);
 
                 Dictionary<string, string> conElts = null;
                 if (dictionary != null && !string.IsNullOrEmpty(dictionary.ConnectionString))
@@ -548,7 +917,7 @@ namespace org.iringtools.web.controllers
                             dictObject = dictionary.dataObjects.Find(x => x.tableName == dbObject.tableName);
                         }
 
-                        if (dictObject == null)  // has not been configured
+                        if (dictObject == null) // has not been configured
                         {
                             dataObjectNode.properties.Add("objectNamespace", ONS_PREFIX + scope + "." + app);
                             dataObjectNode.properties.Add("objectName", dbObject.objectName);
@@ -558,10 +927,11 @@ namespace org.iringtools.web.controllers
 
                             if (dbObject.aliasDictionary != null && dbObject.aliasDictionary.Count > 0)
                             {
-                                dataObjectNode.properties.Add("aliasDictionary", dbObject.aliasDictionary["TABLE_NAME_IN"]);
+                                dataObjectNode.properties.Add("aliasDictionary",
+                                    dbObject.aliasDictionary["TABLE_NAME_IN"]);
                             }
                         }
-                        else  // has been configured, apply object configurations
+                        else // has been configured, apply object configurations
                         {
                             dataObjectNode.properties.Add("objectNamespace", ONS_PREFIX + scope + "." + app);
                             dataObjectNode.properties.Add("objectName", dictObject.objectName);
@@ -571,19 +941,24 @@ namespace org.iringtools.web.controllers
 
                             if (dictObject.aliasDictionary != null && dictObject.aliasDictionary.Count > 0)
                             {
-                                dataObjectNode.properties.Add("aliasDictionary", dictObject.aliasDictionary["TABLE_NAME_IN"]);
+                                dataObjectNode.properties.Add("aliasDictionary",
+                                    dictObject.aliasDictionary["TABLE_NAME_IN"]);
                             }
 
                             // apply relationship configurations
-                            foreach (DataRelationship relationship in dictObject.dataRelationships)
+
+
+                            if (dictObject.dataRelationships != null)
                             {
-                                Node relationshipNode = new Node()
+                                foreach (DataRelationship relationship in dictObject.dataRelationships)
                                 {
-                                    text = relationship.relationshipName,
-                                    type = "relationship",
-                                    iconCls = "relationship",
-                                    leaf = true,
-                                    properties = new Dictionary<string, object>()
+                                    Node relationshipNode = new Node()
+                                    {
+                                        text = relationship.relationshipName,
+                                        type = "relationship",
+                                        iconCls = "relationship",
+                                        leaf = true,
+                                        properties = new Dictionary<string, object>()
                                     {
                                         {"name", relationship.relationshipName},
                                         {"type", relationship.relationshipType.ToString() },
@@ -591,11 +966,15 @@ namespace org.iringtools.web.controllers
                                         {"relatedObject", relationship.relatedObjectName},
                                         {"propertyMaps", relationship.propertyMaps}
                                     }
-                                };
+                                    };
 
-                                relationshipsNode.children.Add(relationshipNode);
+                                    relationshipsNode.children.Add(relationshipNode);
+                                }
+
                             }
+
                         }
+
 
                         if (dictObject != null && dictObject.dataProperties != null && dictObject.dataProperties.Count > 0)
                         {
@@ -732,6 +1111,47 @@ namespace org.iringtools.web.controllers
             }
         }
 
+
+
+        //public ActionResult SaveDBDictionary()
+        //{
+        //    try
+        //    {
+
+        //        string scope = Request.Params["scope"];
+        //        string app = Request.Params["app"];
+
+        //        var reader = new StreamReader(Request.InputStream);
+        //        var json = reader.ReadToEnd();
+
+        //        DatabaseDictionary dictionary = Utility.FromJson<DatabaseDictionary>(json);
+        //        Response response = _repository.SaveDBDictionary(scope, app, dictionary);
+
+        //        if (response.Level == StatusLevel.Success)
+        //        {
+        //            string dictKey = string.Format("Dictionary.{0}.{1}", scope, app);
+        //            Session[dictKey] = dictionary;
+        //            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        //        }
+        //        else
+        //        {
+        //            return Json(new { success = false, message = response.Messages, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
+
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        //return Json(new { success = true, message = e.ToString() });
+        //        //  return null;
+        //        _logger.Error(e.ToString());
+        //        _CustomErrorLog = new CustomErrorLog();
+        //        _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUISaveDBDirectory, e, _logger);
+        //        return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
+
+
+        #region :for save dictionary
         public ActionResult SaveDBDictionary()
         {
             try
@@ -739,12 +1159,13 @@ namespace org.iringtools.web.controllers
 
                 string scope = Request.Params["scope"];
                 string app = Request.Params["app"];
-
+               // Guid applicationId = Guid.Parse(Request.Params["applicationId"]);
                 var reader = new StreamReader(Request.InputStream);
                 var json = reader.ReadToEnd();
 
                 DatabaseDictionary dictionary = Utility.FromJson<DatabaseDictionary>(json);
-                Response response = _repository.SaveDBDictionary(scope, app, dictionary);
+               // dictionary.applicationId = applicationId;
+                Response response = _repository.SaveDBDictionary(dictionary);
 
                 if (response.Level == StatusLevel.Success)
                 {
@@ -768,6 +1189,13 @@ namespace org.iringtools.web.controllers
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        #endregion
+
+
+
+
+
 
         private string GetOracleConnectionElement(string conStr, string element)
         {

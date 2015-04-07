@@ -31,6 +31,10 @@ Ext.define('AM.view.sqlconfig.SqlConnectionPanel', {
                 name: 'app'
             },
             {
+                hidden: true,
+                name: 'applicationId'
+            },
+            {
                 xtype: 'combobox',
                 itemId: 'providerCombo',
                 fieldLabel: 'Provider',

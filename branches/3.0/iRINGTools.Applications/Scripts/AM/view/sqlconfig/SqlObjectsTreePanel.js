@@ -18,6 +18,7 @@
                 url: 'NHibernate/ObjectsTreeSql',
                 extraParams: {
                     scope: null,
+                    applicationId:null,
                     app: null,
                     dbProvider: null,
                     dbServer: null,
