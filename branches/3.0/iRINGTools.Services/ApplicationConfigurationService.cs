@@ -999,15 +999,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get valueList collection for user")]
-        [WebGet(UriTemplate = "/valueList/{userName}?siteId={siteId}&applicationId={applicationId}&format={format}")]
-        public void GetValueListForUser(string userName, int siteId, Guid applicationId, string format)
+        [WebGet(UriTemplate = "/valueList/{userName}?applicationId={applicationId}&format={format}")]
+        public void GetValueListForUser(string userName, Guid applicationId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                ValueListMaps valueListMaps = _applicationConfigurationProvider.GetValueListForUser(userName, siteId, applicationId);
+                ValueListMaps valueListMaps = _applicationConfigurationProvider.GetValueListForUser(userName, applicationId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<ValueListMaps>(valueListMaps, format, true);
             }
             catch (Exception ex)

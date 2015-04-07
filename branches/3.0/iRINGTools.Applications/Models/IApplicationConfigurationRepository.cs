@@ -18,13 +18,13 @@ namespace iRINGTools.Web.Models
 
         library.Response UpdateFolder(Folder updatedFolder);
 
-        Contexts GetContexts(string userName, Guid parentFolderId);
+        org.iringtools.applicationConfig.Contexts GetContexts(string userName, Guid parentFolderId);
 
-        library.Response AddContext(Context newContext);
+        library.Response AddContext(org.iringtools.applicationConfig.Context newContext);
 
-        library.Response UpdateContext(Context updatedContext);
+        library.Response UpdateContext(org.iringtools.applicationConfig.Context updatedContext);
 
-        library.Response DeleteContext(Context context);
+        library.Response DeleteContext(org.iringtools.applicationConfig.Context context);
 
         Applications GetApplications(string userName, Guid parentContextId);
 
@@ -34,7 +34,7 @@ namespace iRINGTools.Web.Models
 
         library.Response DeleteApplication(Application application);
 
-        DataDictionary GetDictionary(Guid guid);
+        library.DataDictionary GetDictionary(Guid applicationId);
 
         Graphs GetGraphs(string userName, Guid applicationId);
 
