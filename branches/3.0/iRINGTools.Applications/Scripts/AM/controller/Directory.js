@@ -450,6 +450,37 @@ Ext.define('AM.controller.Directory', {
         win.show();
     },
 
+    onDeleteApplication: function (item, e, eOpts) {
+        var tree = this.getDirTree();
+        var node = tree.getSelectedNode();
+
+        Ext.Ajax.request({
+            url: 'directory/Application',
+            method: 'POST',
+            params: {
+                record: node.data.record,
+                state: 'delete'
+            },
+            success: function (response, request) {
+                var resp = Ext.decode(response.responseText);
+                if (resp.success) {
+                    var parentNode = node.parentNode;
+                    parentNode.removeChild(node);
+                    tree.getSelectionModel().select(parentNode);
+                    tree.view.refresh();
+                }
+            },
+            failure: function (response, request) {
+                var resp = Ext.decode(response.responseText);
+                var userMsg = resp['message'];
+                var detailMsg = resp['stackTraceDescription'];
+                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+            }
+        });
+    },
+
     // Start onCacheUpdate
     onCacheUpdate: function (item, e, eOpts) {
         var me = this;
@@ -703,38 +734,6 @@ Ext.define('AM.controller.Directory', {
                 }
 
                 //tree.onReload();
-            },
-            failure: function (response, request) {
-                var resp = Ext.decode(response.responseText);
-                var userMsg = resp['message'];
-                var detailMsg = resp['stackTraceDescription'];
-                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
-                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-            }
-        });
-    },
-
-    onDeleteApplication: function (item, e, eOpts) {
-        var tree = this.getDirTree();
-        var node = tree.getSelectedNode();
-
-        Ext.Ajax.request({
-            url: 'directory/Application',
-            method: 'POST',
-            params: {
-                nodeId: node.data.id,
-                parentNodeId: node.data.parentId,
-                state: "delete"
-            },
-            success: function (response, request) {
-                var resp = Ext.decode(response.responseText);
-                if (resp.success) {
-                    var parentNode = node.parentNode;
-                    parentNode.removeChild(node);
-                    tree.getSelectionModel().select(parentNode);
-                    tree.view.refresh();
-                }
             },
             failure: function (response, request) {
                 var resp = Ext.decode(response.responseText);

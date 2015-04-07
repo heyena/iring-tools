@@ -886,7 +886,7 @@ namespace org.iringtools.web.controllers
                     tempApplication.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));
 
                     response = _appConfigRepository.UpdateApplication(tempApplication);
-                    nodes = PopulateApplicationChildrenNodes(tempApplication.ApplicationId);
+                    nodes = PopulateApplicationNodes(tempApplication.ContextId);
                 }
                 else if (form["State"] == "delete")
                 {
