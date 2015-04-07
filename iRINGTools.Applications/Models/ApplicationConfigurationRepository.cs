@@ -338,6 +338,24 @@ namespace iRINGTools.Web.Models
             return valueListMaps;
         }
 
+        public DataLayers GetDataLayers(int siteId, int platformId)
+        {
+            DataLayers dataLayers = new DataLayers();
+
+            try
+            {
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+                dataLayers = client.Get<DataLayers>(String.Format("/GetDataLayers?siteId={0}&platformId={1}&format=xml", siteId, platformId));
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+                throw;
+            }
+
+            return dataLayers;
+        }
+
         #region Protected Member Functions
 
         protected WebHttpClient CreateWebClient(string baseUri)

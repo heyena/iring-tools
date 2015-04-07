@@ -1058,6 +1058,26 @@ namespace org.iringtools.services
             }
         }
 
+        [Description("Get data layers")]
+        [WebGet(UriTemplate = "/GetDataLayers?siteId={siteId}&platformId={platformId}&format={format}")]
+        public void GetDataLayers(int siteId, int platformId, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                { format = "xml"; }
+
+                DataLayers dataLayers = _applicationConfigurationProvider.GetDataLayers(siteId, platformId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<DataLayers>(dataLayers, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
 
         //[Description("Insert schedular details to the data base.")]
         //[WebInvoke(Method = "POST", UriTemplate = "/insertJob?format={format}")]

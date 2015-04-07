@@ -1618,6 +1618,25 @@ namespace org.iringtools.applicationConfig
             return application;
         }
 
+        public DataLayers GetDataLayers(int siteId, int platformId)
+        {
+            DataLayers dataLayers = new DataLayers();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = siteId });
+                nvl.Add(new ListItem() { Name = "@PlatformId", Value = platformId });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDataLayers", nvl);
+                dataLayers = utility.Utility.Deserialize<DataLayers>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  valueListMaps: " + ex);
+            }
+            return dataLayers;
+        }
+
 
         /// <summary>
         /// insert job

@@ -403,7 +403,7 @@ Ext.define('AM.controller.Directory', {
             form.getForm().findField('displayName').setValue(record.displayName);
             form.getForm().findField('description').setValue(record.description);
             form.getForm().findField('internalName').setValue(record.internalName);
-            form.getForm().findField('dataLayerCombo').setValue(record.assembly);
+            form.getForm().findField('dataLayerCombo').setValue(record.assembly.substring(record.assembly.lastIndexOf(' ') + 1, record.assembly.length));
 
             form.getForm().findField('internalName').setReadOnly(true);
 
