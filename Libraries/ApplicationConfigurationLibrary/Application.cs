@@ -68,6 +68,7 @@ namespace org.iringtools.applicationConfig
             Permissions = new Permissions();
             ApplicationSettings = new ApplicationSettings();
             Groups = new Groups();
+            //Bindings = new ApplicationBindings();
         }
 
         [DataMember(Name = "contextId", Order = 0)]
@@ -102,6 +103,25 @@ namespace org.iringtools.applicationConfig
 
         [DataMember(Name = "groups", Order = 10, EmitDefaultValue = false)]
         public Groups Groups { get; set; }
+
+        [DataMember(Name = "applicationBinding", Order = 11, EmitDefaultValue = false)]
+        public ApplicationBinding Binding { get; set; }
+    }
+
+    [DataContract(Name = "applicationBinding", Namespace = "http://www.iringtools.org/library")]
+    public class ApplicationBinding
+    {
+        [DataMember(Name = "moduleName", Order = 0)]
+        public string ModuleName { get; set; }
+
+        [DataMember(Name = "bindName", Order = 1)]
+        public string BindName { get; set; }
+
+        [DataMember(Name = "service", Order = 2)]
+        public string Service { get; set; }
+
+        [DataMember(Name = "to", Order = 3)]
+        public string To { get; set; }
     }
 
     [CollectionDataContract(Name = "graphs", Namespace = "http://www.iringtools.org/library", ItemName = "graph")]

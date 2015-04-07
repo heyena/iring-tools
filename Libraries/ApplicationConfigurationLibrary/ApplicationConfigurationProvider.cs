@@ -564,6 +564,7 @@ namespace org.iringtools.applicationConfig
 
                 string groupXml = application.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 string appSettingsXml = application.ApplicationSettings.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string bindingXml = application.Binding.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -580,6 +581,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = groupXml });
                         nvl.Add(new ListItem() { Name = "@AppSettingsList", Value = appSettingsXml });
+                        nvl.Add(new ListItem() { Name = "@Binding", Value = bindingXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiApplication", nvl);
 
@@ -1557,14 +1559,13 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
-        public ValueListMaps GetValueListForUser(string userName, int siteId, Guid applicationId)
+        public ValueListMaps GetValueListForUser(string userName, Guid applicationId)
         {
             ValueListMaps valueListMaps = new ValueListMaps();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
                 nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationId) });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgValuelist", nvl);

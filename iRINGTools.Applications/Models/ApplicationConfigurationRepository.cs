@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using org.iringtools.web.Models;
 using org.iringtools.mapping;
+using org.iringtools.library;
 
 namespace iRINGTools.Web.Models
 {
@@ -24,6 +25,7 @@ namespace iRINGTools.Web.Models
         protected string _proxyPort;
 
         string applicationConfigurationServiceUri = null;
+        string dictionaryServiceUri = null;
 
         public ApplicationConfigurationRepository()
         {
@@ -39,7 +41,9 @@ namespace iRINGTools.Web.Models
             if (applicationConfigurationServiceUri.EndsWith("/"))
                 applicationConfigurationServiceUri = applicationConfigurationServiceUri.Remove(applicationConfigurationServiceUri.Length - 1);
 
-
+            dictionaryServiceUri = _settings["DictionaryServiceUri"];
+            if (applicationConfigurationServiceUri.EndsWith("/"))
+                applicationConfigurationServiceUri = applicationConfigurationServiceUri.Remove(applicationConfigurationServiceUri.Length - 1);
         }
 
         public Folders GetFolders(string userName, int siteId, int platformId, Guid parentFolderId)
@@ -116,9 +120,9 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public Contexts GetContexts(string userName, Guid parentFolderId)
+        public org.iringtools.applicationConfig.Contexts GetContexts(string userName, Guid parentFolderId)
         {
-            Contexts contexts = null;
+            org.iringtools.applicationConfig.Contexts contexts = null;
 
             try
             {
@@ -135,14 +139,14 @@ namespace iRINGTools.Web.Models
             return contexts;
         }
 
-        public library.Response AddContext(Context newContext)
+        public library.Response AddContext(org.iringtools.applicationConfig.Context newContext)
         {
             library.Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                response = client.Post<Context, library.Response>(String.Format("/insertContext?format=xml"), newContext, true);
+                response = client.Post<org.iringtools.applicationConfig.Context, library.Response>(String.Format("/insertContext?format=xml"), newContext, true);
             }
             catch (Exception ex)
             {
@@ -153,14 +157,14 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public library.Response UpdateContext(Context updatedContext)
+        public library.Response UpdateContext(org.iringtools.applicationConfig.Context updatedContext)
         {
             library.Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                response = client.Put<Context, library.Response>(String.Format("/updateContext?format=xml"), updatedContext, true);
+                response = client.Put<org.iringtools.applicationConfig.Context, library.Response>(String.Format("/updateContext?format=xml"), updatedContext, true);
             }
             catch (Exception ex)
             {
@@ -171,14 +175,14 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public library.Response DeleteContext(Context context)
+        public library.Response DeleteContext(org.iringtools.applicationConfig.Context context)
         {
             library.Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                response = client.Delete<Context, library.Response>(String.Format("/deleteContext/{0}?format=xml", context.ContextId), context, true);
+                response = client.Delete<org.iringtools.applicationConfig.Context, library.Response>(String.Format("/deleteContext/{0}?format=xml", context.ContextId), context, true);
             }
             catch (Exception ex)
             {
@@ -279,20 +283,21 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public DataDictionary GetDictionary(Guid applicationId)
+        public org.iringtools.library.DataDictionary GetDictionary(Guid applicationId)
         {
-            org.iringtools.applicationConfig.DataDictionary dataDictionary = new DataDictionary();
+            org.iringtools.library.DataDictionary dataDictionary = new org.iringtools.library.DataDictionary();
 
-            //try
-            //{
-            //    WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-            //    dataDictionary = client.Get<org.iringtools.applicationConfig.DataDictionary>(String.Format("/GetDictionary?applicationId={0}&format=xml", applicationId));
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex.ToString());
-            //    throw;
-            //}
+            try
+            {
+                WebHttpClient client = CreateWebClient(dictionaryServiceUri);
+                org.iringtools.library.DatabaseDictionary databaseDictionary = client.Get<org.iringtools.library.DatabaseDictionary>(String.Format("/GetDictionary?applicationId={0}&format=xml", applicationId));
+                dataDictionary = Utility.Deserialize<org.iringtools.library.DataDictionary>((Utility.Serialize<org.iringtools.library.DatabaseDictionary>(databaseDictionary)).ToString(), true);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+                throw;
+            }
 
             return dataDictionary;
         }
@@ -301,16 +306,16 @@ namespace iRINGTools.Web.Models
         {
             org.iringtools.applicationConfig.Graphs graphs = new Graphs();
 
-            //try
-            //{
-            //    WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-            //    graphs = client.Get<org.iringtools.applicationConfig.Graphs>(String.Format("/graphs/{0}?applicationId={1}&format=xml", userName, applicationId));
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex.ToString());
-            //    throw;
-            //}
+            try
+            {
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+                graphs = client.Get<org.iringtools.applicationConfig.Graphs>(String.Format("/graphs/{0}?applicationId={1}&format=xml", userName, applicationId));
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+                throw;
+            }
 
             return graphs;
         }
@@ -319,16 +324,16 @@ namespace iRINGTools.Web.Models
         {
             ValueListMaps valueListMaps = new ValueListMaps();
 
-            //try
-            //{
-            //    WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-            //    valueListMaps = client.Get<ValueListMaps>(String.Format("/valueListMaps/{0}?applicationId={1}&format=xml", userName, applicationId));
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.Error(ex.ToString());
-            //    throw;
-            //}
+            try
+            {
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+                valueListMaps = client.Get<ValueListMaps>(String.Format("/valueList/{0}?applicationId={1}&format=xml", userName, applicationId));
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+                throw;
+            }
 
             return valueListMaps;
         }
