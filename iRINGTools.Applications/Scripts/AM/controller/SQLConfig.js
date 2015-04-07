@@ -105,15 +105,24 @@
     scope: '',
     app: '',
     dataview: null,
+    applicationId:'',
 
     onSQLConfig: function (dirNode) {
         var me = this;
         me.dirNode = dirNode;
-        me.scope = dirNode.parentNode.data.property['Internal Name'];
-        me.app = dirNode.data.property['Internal Name'];
+        var applicationInternalName = Ext.decode(dirNode.raw.record).internalName;
+        var scopeInternalName = Ext.decode(dirNode.parentNode.raw.record).internalName;
+        me.applicationId = Ext.decode(dirNode.raw.record).applicationId;
+       // me.scope = dirNode.parentNode.data.property['Internal Name'];
+        //me.app = dirNode.data.property['Internal Name'];
+
+
+        me.scope = scopeInternalName;
+        me.app = applicationInternalName;
 
         var contentPanel = me.getContentPanel();
         var title = 'SQLConfig.' + me.scope + '.' + me.app;
+      //  var title = 'SQLConfig.' + scopeInternalName + '.' + applicationInternalName;
         var configPanel = contentPanel.down('sqlmainconfigpanel[title=' + title + ']');
 
         if (!configPanel) {
@@ -135,6 +144,7 @@
         var params = treePanel.getStore().proxy.extraParams;
         params.scope = me.scope;
         params.app = me.app;
+        params.applicationId = me.applicationId;
         configPanel.setLoading();
         treePanel.store.load({
             callback: function (records, operation, success) {
@@ -258,6 +268,7 @@
 
         form.findField('scope').setValue(me.scope);
         form.findField('app').setValue(me.app);
+        form.findField('applicationId').setValue(applicationId);
 
         if (form.isValid()) {
             configPanel.setLoading();
@@ -519,8 +530,8 @@
         Ext.each(props, function (prop) {
             Ext.each(dataProps, function (dataProp) {
                 if (dataProp.propertyName === prop) {
-                    // add to properties node
                     propsNode.appendChild({
+                    // add to properties node
                         text: prop,
                         type: 'dataProperty',
                         iconCls: 'treeProperty',
@@ -661,7 +672,9 @@
             enableSearch: false,
             enableSummary: false,
             dataVersion: null,
-            description: null
+            description: null,
+            applicationId:me.applicationId
+
         };
 
         var valid = true;
@@ -840,7 +853,8 @@
                 timeout: 300000,  // 5 min
                 params: {
                     scope: me.scope,
-                    app: me.app
+                    app: me.app,
+                    applicationId:applicationId
                 },
                 jsonData: dbDictionary,
                 success: function (response, request) {

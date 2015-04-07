@@ -38,6 +38,7 @@ namespace iRINGTools.Web.Models
         protected string _referenceDataServiceUri = null;
         protected string _servicesBasePath = string.Empty;
         protected string _agentDataServiceUri = string.Empty;
+        protected string _dictionaryServiceUri = string.Empty;
         public IDictionary<string, string> AuthHeaders { get; set; }
 
         public AdapterRepository()
@@ -74,6 +75,10 @@ namespace iRINGTools.Web.Models
             _agentDataServiceUri = _settings["AgentConfigServiceUri"];
             if (_agentDataServiceUri.EndsWith("/"))
                 _agentDataServiceUri = _agentDataServiceUri.Remove(_agentDataServiceUri.Length - 1);
+
+            _dictionaryServiceUri = _settings["DictionaryServiceUri"];
+            if (_dictionaryServiceUri.EndsWith("/"))
+                _dictionaryServiceUri = _dictionaryServiceUri.Remove(_dictionaryServiceUri.Length - 1);
 
 
 
@@ -208,6 +213,32 @@ namespace iRINGTools.Web.Models
 
             return obj;
         }
+
+
+
+        //getGropupUsers 18/2/2015
+        //public UserGroups GetGroupUsers(string groupId, string format)
+        //{
+        //    UserGroups items = null;
+        //    _logger.Debug("In SecurityRepository GetGroupUsers");
+        //    try
+        //    {
+        //        WebHttpClient client = CreateWebClient(_adapterServiceUri);
+        //        items = client.Get<UserGroups>("/groupUsers?groupId=" + groupId + "&format=" + format);
+
+        //        _logger.Debug("Successfully called Security Service.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.Error(ex.ToString());
+        //        throw ex;
+
+        //    }
+        //    return items;
+        //}
+
+        ////
+
 
         public List<Dictionary<string, string>> GetSecurityGroups()
         {
@@ -1010,12 +1041,38 @@ namespace iRINGTools.Web.Models
             return providers;
         }
 
-        public org.iringtools.library.DatabaseDictionary GetDBDictionary(string scope, string application)
+        //public org.iringtools.library.DatabaseDictionary GetDBDictionary(string scope, string application)
+        //{
+        //    try
+        //    {
+        //        WebHttpClient client = CreateWebClient(_hibernateServiceUri);
+        //        org.iringtools.library.DatabaseDictionary dbDictionary = client.Get<org.iringtools.library.DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
+
+        //        string connStr = dbDictionary.ConnectionString;
+        //        if (!String.IsNullOrEmpty(connStr))
+        //        {
+        //            dbDictionary.ConnectionString = Utility.EncodeTo64(connStr);
+        //        }
+
+        //        return dbDictionary;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.Error(e.ToString());
+        //        throw;
+
+        //    }
+        //}
+
+        #region for getting DBDICTIONARY
+
+        public org.iringtools.library.DatabaseDictionary GetDBDictionary(Guid applicationId)
         {
             try
             {
-                WebHttpClient client = CreateWebClient(_hibernateServiceUri);
-                org.iringtools.library.DatabaseDictionary dbDictionary = client.Get<org.iringtools.library.DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
+                WebHttpClient client = CreateWebClient(_dictionaryServiceUri);
+                org.iringtools.library.DatabaseDictionary dbDictionary = client.Get<org.iringtools.library.DatabaseDictionary>(String.Format("/GetDictionary?applicationId={0} &format=xml", applicationId));
+                //folders = client.Get<Folders>(String.Format("/folders/{0}?siteId={1}&platformId={2}&parentFolderId={3}&format=xml", userName, siteId, platformId, parentFolderId));
 
                 string connStr = dbDictionary.ConnectionString;
                 if (!String.IsNullOrEmpty(connStr))
@@ -1033,14 +1090,46 @@ namespace iRINGTools.Web.Models
             }
         }
 
-        public Response SaveDBDictionary(string scope, string app, org.iringtools.library.DatabaseDictionary dictionary)
+        #endregion
+
+
+        //public Response SaveDBDictionary(string scope, string app, org.iringtools.library.DatabaseDictionary dictionary)
+        //{
+        //    Response response = null;
+
+        //    try
+        //    {
+        //        WebHttpClient client = CreateWebClient(_hibernateServiceUri);
+        //        response = client.Post<org.iringtools.library.DatabaseDictionary, Response>("/" + scope + "/" + app + "/dictionary", dictionary);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //response = new Response()
+        //        //{
+        //        //    Level = StatusLevel.Error,
+        //        //    Messages = new Messages() { ex.ToString() }
+        //        //};
+
+        //        return PrepareErrorResponse(ex, ErrorMessages.errUISaveDBDirectory);
+
+        //    }
+
+        //    return response;
+        //}
+        #region  Repository for dictionary save in database
+        public Response SaveDBDictionary( org.iringtools.library.DatabaseDictionary dictionary)
         {
             Response response = null;
 
             try
             {
-                WebHttpClient client = CreateWebClient(_hibernateServiceUri);
-                response = client.Post<org.iringtools.library.DatabaseDictionary, Response>("/" + scope + "/" + app + "/dictionary", dictionary);
+                WebHttpClient client = CreateWebClient(_dictionaryServiceUri);
+              //  response = client.Post<org.iringtools.library.DatabaseDictionary, Response>("/InsertDictionary?format=xml", dictionary,true);
+                response = client.Post<org.iringtools.library.DatabaseDictionary, Response>("/InsertDictionary?format=xml", dictionary, true);
+
+
+               // response = client.Post<Folder, library.Response>(String.Format("/insertFolder?format=xml"), newFolder, true);
+                //  response = client.Post<Context, library.Response>(String.Format("/insertContext?format=xml"), newContext, true);
             }
             catch (Exception ex)
             {
@@ -1057,6 +1146,7 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
+        #endregion 
         public List<string> GetTableNames(string scope, string app, Dictionary<string, string> conElts)
         {
             var uri = String.Format("/{0}/{1}/tables", scope, app);
