@@ -506,7 +506,7 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-                DataLayers dataLayers = _repository.GetDataLayers();
+                DataLayers dataLayers = _appConfigRepository.GetDataLayers(siteId, platformId);
 
                 JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
                 container.items = dataLayers;
