@@ -1359,7 +1359,7 @@ namespace org.iringtools.web.controllers
             {
                 nodeType = "async",
                 type = "DataObjectsNode",
-                iconCls = "dataObjects",
+                iconCls = "folder",
                 id = "DataObjectsNode-" + applicationId.ToString(),
                 text = "Data Objects",
                 expanded = false,
@@ -1369,11 +1369,16 @@ namespace org.iringtools.web.controllers
 
             foreach (org.iringtools.library.DataObject dataObject in dataDictionary.dataObjects)
             {
+                if (dataObjectsNode.children == null)
+                {
+                    dataObjectsNode.children = new List<JsonTreeNode>();
+                }
+
                 JsonTreeNode node = new JsonTreeNode
                 {
                     nodeType = "async",
                     type = "DataObjectNode",
-                    iconCls = "dataObjects",
+                    iconCls = "treeObject",
                     id = dataObject.dataObjectId.ToString(),
                     text = dataObject.objectName,
                     expanded = false,
@@ -1391,7 +1396,7 @@ namespace org.iringtools.web.controllers
             {
                 nodeType = "async",
                 type = "GraphsNode",
-                iconCls = "graphs",
+                iconCls = "folder",
                 id = "GraphsNode-" + applicationId.ToString(),
                 text = "Graphs",
                 expanded = false,
@@ -1401,11 +1406,16 @@ namespace org.iringtools.web.controllers
 
             foreach (org.iringtools.applicationConfig.Graph graph in graphs)
             {
+                if (graphsNode.children == null)
+                {
+                    graphsNode.children = new List<JsonTreeNode>();
+                }
+
                 JsonTreeNode node = new JsonTreeNode
                 {
                     nodeType = "async",
                     type = "GraphNode",
-                    iconCls = "graph",
+                    iconCls = "treeGraph",
                     id = graph.GraphId.ToString(),
                     text = graph.GraphName,
                     expanded = false,
@@ -1422,8 +1432,8 @@ namespace org.iringtools.web.controllers
             JsonTreeNode valueListMapsNode = new JsonTreeNode()
             {
                 nodeType = "async",
-                type = "ValueListMapsNode",
-                iconCls = "valueLists",
+                type = "ValueListsNode",
+                iconCls = "folder",
                 id = "ValueListMapsNode-" + applicationId.ToString(),
                 text = "ValueLists",
                 expanded = false,
@@ -1434,11 +1444,16 @@ namespace org.iringtools.web.controllers
 
             foreach (ValueListMap valueListMap in valueListMaps)
             {
+                if (valueListMapsNode.children == null)
+                {
+                    valueListMapsNode.children = new List<JsonTreeNode>();
+                }
+
                 JsonTreeNode node = new JsonTreeNode
                 {
                     nodeType = "async",
-                    type = "ValueListMapNode",
-                    iconCls = "valueList",
+                    type = "ValueListNode",
+                    iconCls = "valuemap",
                     id = valueListMap.valueMaps.ToString(),
                     text = valueListMap.name,
                     expanded = false,
@@ -1451,7 +1466,7 @@ namespace org.iringtools.web.controllers
             }
 
             applicationNodes.Add(valueListMapsNode);
-
+            
             return applicationNodes;
         }
 
