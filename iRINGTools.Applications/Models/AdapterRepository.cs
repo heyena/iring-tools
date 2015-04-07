@@ -1041,28 +1041,28 @@ namespace iRINGTools.Web.Models
             return providers;
         }
 
-        //public org.iringtools.library.DatabaseDictionary GetDBDictionary(string scope, string application)
-        //{
-        //    try
-        //    {
-        //        WebHttpClient client = CreateWebClient(_hibernateServiceUri);
-        //        org.iringtools.library.DatabaseDictionary dbDictionary = client.Get<org.iringtools.library.DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
+        public org.iringtools.library.DatabaseDictionary GetDBDictionary(string scope, string application)
+        {
+            try
+            {
+                WebHttpClient client = CreateWebClient(_hibernateServiceUri);
+                org.iringtools.library.DatabaseDictionary dbDictionary = client.Get<org.iringtools.library.DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
 
-        //        string connStr = dbDictionary.ConnectionString;
-        //        if (!String.IsNullOrEmpty(connStr))
-        //        {
-        //            dbDictionary.ConnectionString = Utility.EncodeTo64(connStr);
-        //        }
+                string connStr = dbDictionary.ConnectionString;
+                if (!String.IsNullOrEmpty(connStr))
+                {
+                    dbDictionary.ConnectionString = Utility.EncodeTo64(connStr);
+                }
 
-        //        return dbDictionary;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _logger.Error(e.ToString());
-        //        throw;
+                return dbDictionary;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.ToString());
+                throw;
 
-        //    }
-        //}
+            }
+        }
 
         #region for getting DBDICTIONARY
 
