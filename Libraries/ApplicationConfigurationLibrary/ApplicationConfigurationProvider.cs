@@ -627,6 +627,7 @@ namespace org.iringtools.applicationConfig
 
                 string groupXml = application.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 string appSettingsXml = application.ApplicationSettings.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+                string bindingXml = application.Binding.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
@@ -644,6 +645,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = groupXml });
                         nvl.Add(new ListItem() { Name = "@AppSettingsList", Value = appSettingsXml });
+                        nvl.Add(new ListItem() { Name = "@Binding", Value = bindingXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuApplication", nvl);
 
