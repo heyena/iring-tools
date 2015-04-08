@@ -42,8 +42,8 @@ namespace iRINGTools.Web.Models
                 applicationConfigurationServiceUri = applicationConfigurationServiceUri.Remove(applicationConfigurationServiceUri.Length - 1);
 
             dictionaryServiceUri = _settings["DictionaryServiceUri"];
-            if (applicationConfigurationServiceUri.EndsWith("/"))
-                applicationConfigurationServiceUri = applicationConfigurationServiceUri.Remove(applicationConfigurationServiceUri.Length - 1);
+            if (dictionaryServiceUri.EndsWith("/"))
+                dictionaryServiceUri = dictionaryServiceUri.Remove(dictionaryServiceUri.Length - 1);
         }
 
         public Folders GetFolders(string userName, int siteId, int platformId, Guid parentFolderId)
