@@ -839,35 +839,33 @@ namespace org.iringtools.web.controllers
                     record = Utility.DeserializeJson<org.iringtools.applicationConfig.Application>(form["record"].ToString(), true);
                 }
 
-                string assemblyName = form["assembly"].ToString();
-
                 Application tempApplication = new Application()
                 {
                     DisplayName = form["displayName"],//form["Name"],
                     InternalName = form["internalName"],
                     Description = form["description"],
-                    Assembly = assemblyName,
+                    Assembly = form["assembly"],
                     DXFRUrl = "http://localhost:56789/dxfr",
                     ContextId = record.ContextId
                 };
 
                 //Handling DataLayer binding
-                if (!string.IsNullOrEmpty(assemblyName.ToString()))
+                if (!string.IsNullOrEmpty(tempApplication.Assembly))
                 {
                     tempApplication.Binding = new ApplicationBinding();
                     tempApplication.Binding.ModuleName = "DataLayerBinding";
                     tempApplication.Binding.BindName = "DataLayer";
-                    tempApplication.Binding.To = assemblyName;
+                    tempApplication.Binding.To = tempApplication.Assembly;
                     tempApplication.Binding.Service = (typeof(IDataLayer)).AssemblyQualifiedName;
 
-                    if (Type.GetType(assemblyName).BaseType.ToString() == "org.iringtools.library.BaseLightweightDataLayer") //added for ilightweight2 datalayer
+                    if (Type.GetType(tempApplication.Assembly).BaseType.ToString() == "org.iringtools.library.BaseLightweightDataLayer") //added for ilightweight2 datalayer
                     {
-                        if (typeof(ILightweightDataLayer).IsAssignableFrom(Type.GetType(assemblyName)))
+                        if (typeof(ILightweightDataLayer).IsAssignableFrom(Type.GetType(tempApplication.Assembly)))
                         {
                             tempApplication.Binding.Service = (typeof(ILightweightDataLayer2)).AssemblyQualifiedName;
                         }
                     }
-                    else if (typeof(ILightweightDataLayer2).IsAssignableFrom(Type.GetType(assemblyName)))
+                    else if (typeof(ILightweightDataLayer2).IsAssignableFrom(Type.GetType(tempApplication.Assembly)))
                     {
                         tempApplication.Binding.Service = (typeof(ILightweightDataLayer2)).AssemblyQualifiedName;
                     }
