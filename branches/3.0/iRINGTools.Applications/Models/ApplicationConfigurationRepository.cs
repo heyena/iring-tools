@@ -338,6 +338,26 @@ namespace iRINGTools.Web.Models
             return valueListMaps;
         }
 
+        public AppSettings GetAppSettings()
+        {
+            AppSettings items = null;
+            logger.Debug("In ApplicatonConfigRepository GetAppSettings");
+            try
+            {
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+                items = client.Get<AppSettings>("/appSettings?format=xml");
+
+                logger.Debug("Successfully called Adpter Service.");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+                throw ex;
+
+            }
+            return items;
+        }
+
         public DataLayers GetDataLayers(int siteId, int platformId)
         {
             DataLayers dataLayers = new DataLayers();

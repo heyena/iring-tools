@@ -23,9 +23,10 @@ namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
     {
-        string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
 
-        int siteId = 4;
+        //string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        string userName = "WorldTest";
+            int siteId = 4;
         int platformId = 2;
 
         private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
@@ -926,6 +927,27 @@ namespace org.iringtools.web.controllers
             }
         }
 
+
+        public JsonResult GetAppSettings(FormCollection form)
+        {
+            try
+            {
+                AppSettings settings = _appConfigRepository.GetAppSettings();
+
+                JsonContainer<AppSettings> container = new JsonContainer<AppSettings>();
+                container.items = settings;
+                container.success = true;
+                // container.total = settings.count;
+
+                return Json(container, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetGroupsInAUser, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+        }
         public JsonResult DeleteScope(FormCollection form)
         {
             try

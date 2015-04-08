@@ -1639,7 +1639,23 @@ namespace org.iringtools.applicationConfig
             return dataLayers;
         }
 
+        public AppSettings GetAppSettings()
+        {
+            AppSettings settings = new AppSettings();
 
+            try
+            {
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgAppSettings", null);
+                settings = utility.Utility.Deserialize<library.AppSettings>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting Settings mapped with a user: " + ex);
+                throw ex;
+            }
+
+            return settings;
+        }
         /// <summary>
         /// insert job
         /// </summary>

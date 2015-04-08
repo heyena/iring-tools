@@ -246,6 +246,7 @@
     <Content Include="Scripts\AM\model\SpreadsheetModel.js" />
     <Content Include="Scripts\AM\model\TableSelectModel.js" />
     <Content Include="Scripts\AM\model\VirtualPropertyModel.js" />
+    <Content Include="Scripts\AM\store\AppSettingsStore.js" />
     <Content Include="Scripts\AM\store\AvailItemsStore.js" />
     <Content Include="Scripts\AM\store\BaseUrlStore.js" />
     <Content Include="Scripts\AM\store\ContextStore.js" />
@@ -254,6 +255,7 @@
     <Content Include="Scripts\AM\store\DataLayerStore.js" />
     <Content Include="Scripts\AM\store\DirectoryTreeStore.js" />
     <Content Include="Scripts\AM\store\FileDownloadStore.js" />
+    <Content Include="Scripts\AM\store\JobStore.js" />
     <Content Include="Scripts\AM\store\MappingStore.js" />
     <Content Include="Scripts\AM\store\MultiStore.js" />
     <Content Include="Scripts\AM\store\PermissionsS.js" />

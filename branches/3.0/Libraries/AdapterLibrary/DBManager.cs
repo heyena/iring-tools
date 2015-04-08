@@ -259,10 +259,12 @@ namespace org.iringtools.adapter
             dbCmd.CommandText = spName;
             dbCmd.Connection = conn;
 
-
-            foreach (ListItem item in spParamters)
+            if (spParamters != null)
             {
-                dbCmd.Parameters.Add(new SqlParameter(item.Name, item.Value));
+                foreach (ListItem item in spParamters)
+                {
+                    dbCmd.Parameters.Add(new SqlParameter(item.Name, item.Value));
+                }
             }
 
             dbCmd.CommandTimeout = 0;

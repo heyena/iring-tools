@@ -1077,7 +1077,25 @@ namespace org.iringtools.services
                 objCustomErrorLog.throwJsonResponse(_CustomError);
             }
         }
+         [Description("Get AppSettings")]
+         [WebGet(UriTemplate = "/appSettings?format={format}")]
+        public void getAppSettings(string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                    format = "xml";
 
+                AppSettings settings = _applicationConfigurationProvider.GetAppSettings();
+                _applicationConfigurationProvider.FormatOutgoingMessage<AppSettings>(settings, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
 
         //[Description("Insert schedular details to the data base.")]
         //[WebInvoke(Method = "POST", UriTemplate = "/insertJob?format={format}")]
