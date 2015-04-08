@@ -581,6 +581,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = groupXml });
                         nvl.Add(new ListItem() { Name = "@AppSettingsList", Value = appSettingsXml });
+                        nvl.Add(new ListItem() { Name = "@DataMode", Value = application.ApplicationDataMode.ToString() });
                         nvl.Add(new ListItem() { Name = "@Binding", Value = bindingXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiApplication", nvl);
@@ -645,6 +646,7 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@Assembly", Value = application.Assembly });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = groupXml });
                         nvl.Add(new ListItem() { Name = "@AppSettingsList", Value = appSettingsXml });
+                        nvl.Add(new ListItem() { Name = "@DataMode", Value = application.ApplicationDataMode.ToString() });
                         nvl.Add(new ListItem() { Name = "@Binding", Value = bindingXml });
 
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuApplication", nvl);

@@ -857,17 +857,20 @@ namespace org.iringtools.web.controllers
                     tempApplication.Binding.BindName = "DataLayer";
                     tempApplication.Binding.To = tempApplication.Assembly;
                     tempApplication.Binding.Service = (typeof(IDataLayer)).AssemblyQualifiedName;
+                    tempApplication.ApplicationDataMode = applicationConfig.Application.DataMode.Live;
 
                     if (Type.GetType(tempApplication.Assembly).BaseType.ToString() == "org.iringtools.library.BaseLightweightDataLayer") //added for ilightweight2 datalayer
                     {
                         if (typeof(ILightweightDataLayer).IsAssignableFrom(Type.GetType(tempApplication.Assembly)))
                         {
                             tempApplication.Binding.Service = (typeof(ILightweightDataLayer2)).AssemblyQualifiedName;
+                            tempApplication.ApplicationDataMode = applicationConfig.Application.DataMode.Live;
                         }
                     }
                     else if (typeof(ILightweightDataLayer2).IsAssignableFrom(Type.GetType(tempApplication.Assembly)))
                     {
                         tempApplication.Binding.Service = (typeof(ILightweightDataLayer2)).AssemblyQualifiedName;
+                        tempApplication.ApplicationDataMode = applicationConfig.Application.DataMode.Cache;
                     }
                 }
 

@@ -63,6 +63,12 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "application", Namespace = "http://www.iringtools.org/library")]
     public class Application
     {
+        public enum DataMode
+        {
+            Live,
+            Cache
+        }
+
         public Application()
         {
             Permissions = new Permissions();
@@ -104,7 +110,10 @@ namespace org.iringtools.applicationConfig
         [DataMember(Name = "groups", Order = 10, EmitDefaultValue = false)]
         public Groups Groups { get; set; }
 
-        [DataMember(Name = "applicationBinding", Order = 11, EmitDefaultValue = false)]
+        [DataMember(Name = "dataMode", Order = 11, EmitDefaultValue = false)]
+        public DataMode ApplicationDataMode { get; set; }
+
+        [DataMember(Name = "applicationBinding", Order = 12, EmitDefaultValue = false)]
         public ApplicationBinding Binding { get; set; }
     }
 
