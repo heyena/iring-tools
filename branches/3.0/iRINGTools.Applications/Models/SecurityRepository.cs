@@ -583,7 +583,7 @@ namespace iRINGTools.Web.Models
         public Groups GetRoleGroups(string roleId, string format)
         {
             Groups items = null;
-            _logger.Debug("In SecurityRepository GetUserGroups");
+            _logger.Debug("In SecurityRepository GetRoleGroups");
             try
             {
                 WebHttpClient client = CreateWebClient(_adapterServiceUri);
@@ -745,6 +745,26 @@ namespace iRINGTools.Web.Models
 
             }
             return sites;
+        }
+
+        public Groups GetUserGroups(string userName, string format)
+        {
+            Groups items = null;
+            _logger.Debug("In SecurityRepository GetUserGroups");
+            try
+            {
+                WebHttpClient client = CreateWebClient(_adapterServiceUri);
+                items = client.Get<Groups>("/groupsUser?userName=" + userName + "&format=" + format);
+
+                _logger.Debug("Successfully called Security Service.");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw ex;
+
+            }
+            return items;
         }
 
         #region Private Methods
