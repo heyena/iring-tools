@@ -98,7 +98,7 @@ namespace org.iringtools.applicationConfig
         public Permissions Permissions { get; set; }
 
         [DataMember(Name = "applicationSettings", Order = 9, EmitDefaultValue = false)]
-        public ApplicationSettings ApplicationSettings { get; set; }
+        public org.iringtools.library.AppSettings ApplicationSettings { get; set; }
 
         [DataMember(Name = "groups", Order = 10, EmitDefaultValue = false)]
         public Groups Groups { get; set; }
@@ -339,11 +339,11 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "applicationSetting", Namespace = "http://www.iringtools.org/library")]
     public class ApplicationSetting
     {
-        [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
-        public string Name { get; set; }
+        [DataMember(Name = "id", Order = 0, EmitDefaultValue = false)]
+        public string Id { get; set; }
 
-        [DataMember(Name = "value", Order = 1, EmitDefaultValue = false)]
-        public string Value { get; set; }
+        [DataMember(Name = "name", Order = 1, EmitDefaultValue = false)]
+        public string Name { get; set; }
     }
     /*
     [CollectionDataContract(Name = "dataFilters", Namespace = "http://www.iringtools.org/data/filter", ItemName = "dataFilter")]
