@@ -268,7 +268,7 @@
 
         form.findField('scope').setValue(me.scope);
         form.findField('app').setValue(me.app);
-        form.findField('applicationId').setValue(applicationId);
+        form.findField('applicationId').setValue(me.applicationId);
 
         if (form.isValid()) {
             configPanel.setLoading();
