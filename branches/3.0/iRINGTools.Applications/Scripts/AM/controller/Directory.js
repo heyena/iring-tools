@@ -8,7 +8,8 @@ Ext.define('AM.controller.Directory', {
         'FileDownloadModel',
         'VirtualPropertyModel',
         'PermissionsM',
-        'ResourceGroupModel'
+        'ResourceGroupModel',
+        'JobModel'
     ],
 
     stores: [
@@ -16,9 +17,9 @@ Ext.define('AM.controller.Directory', {
         'DataLayerStore',
         'FileDownloadStore',
         'VirtualPropertyStore',
-        'PermissionsS',
-        'ResourceGroupStore'
-
+        'PermissionsS',        
+        'ResourceGroupStore',
+        'JobStore'
 
     ],
 
@@ -904,13 +905,13 @@ Ext.define('AM.controller.Directory', {
     onConfigureEndpoint: function (item, e, eOpts) {
         var me = this;
         var node = me.getDirTree().getSelectedNode();
-        var datalayer = node.data.record.DataLayer;
+        var datalayer = Ext.decode(node.data.record).assembly;
 
         switch (datalayer) {
-            case 'NHibernateLibrary':
+            case 'org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary':
                 me.application.fireEvent('nhconfig', node);
                 break;
-            case 'SqlDataLayer':
+            case 'org.iringtools.adapter.datalayer.SqlDataLayer, SqlDataLayer':
                 me.application.fireEvent('sqlconfig', node);
                 break;
             default:
