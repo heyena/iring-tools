@@ -19,6 +19,7 @@ Ext.define('AM.controller.Directory', {
         'VirtualPropertyStore',
         'PermissionsS',
         'ResourceGroupStore',
+        'AppSettingsStore',
         'JobStore'
 
     ],
@@ -524,7 +525,7 @@ Ext.define('AM.controller.Directory', {
 
         var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
         context = node.data.record.context;
-        //apps = node.childNodes;
+        apps = node.childNodes;
 
         var tempStore = Ext.create('Ext.data.Store', {
             fields: ['display'],
@@ -544,6 +545,23 @@ Ext.define('AM.controller.Directory', {
 
 
         });
+        //        var tempStore = Ext.create('Ext.data.Store', {
+        //            fields: ['display', 'value'],
+        //            storeId: 'apptempStore',
+        //            //autoLoad:true,
+        //            listeners: {
+        //                'load': function () {
+        //                    var arr = node.childNodes;
+        //                    Ext.each(arr, function (item, index) {
+        //                        tempStore.insert(index, { display: node.childNodes[0].raw.text });
+        //                       
+        //                    })
+        //                }
+
+        //            }
+
+
+        //        });
 
         if (item.itemId == 'cacheupscreen' && node.data.record !== undefined) {
 
@@ -551,22 +569,26 @@ Ext.define('AM.controller.Directory', {
 
             var record = Ext.decode(node.raw.record);
             var displayNameCont = record.displayName;
-
+            var siteId = Ext.decode(node.parentNode.raw.record).siteId;
+            var platformId = Ext.decode(node.parentNode.raw.record).platformId;
 
         }
 
         var win = Ext.widget('cachewindow');
         var form = win.down('form');
+        form.node = node;
 
 
         win.on('cancel', function () {
             win.destroy();
         }, me);
 
-        //var displayName1 = tempStore2.getAt(0);
-        // var disp = displayName1.get('display');
+
         form.getForm().findField('displayName').setValue(displayNameCont);
-        //form.getForm().findField('applications').setValue(disp);
+        form.getForm().findField('siteId').setValue(siteId);
+        form.getForm().findField('platformId').setValue(platformId);
+        //form.getForm().findField('applications').setValue(apps[0].raw.text);
+
 
 
         win.show();
@@ -1890,11 +1912,16 @@ Ext.define('AM.controller.Directory', {
             layout: 'column',
             items: [
       {
-          xtype: 'textfield',
+          xtype: 'combobox',
           name: nameID,
           value: key,
           columnWidth: '0.30',
-          allowBlank: true
+          allowBlank: true,
+          itemId: 'appSettingsCombo',
+          //store: 'AppSettingsStore',
+          emptyText:'Select Key',
+          displayField: 'Keys',
+          valueField: 'Keys'
       },
       {
           xtype: 'textarea',
