@@ -854,7 +854,7 @@
                 params: {
                     scope: me.scope,
                     app: me.app,
-                    applicationId:applicationId
+                    applicationId:me.applicationId
                 },
                 jsonData: dbDictionary,
                 success: function (response, request) {
