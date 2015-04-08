@@ -1064,6 +1064,26 @@ namespace org.iringtools.services
             _userSecurityProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
+        [Description("Return all groups that the user belongs to from the database.")]
+        [WebGet(UriTemplate = "/groupsUser?userName={userName}&format={format}")]
+        public void GetGroupsUser(string userName, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                    format = "xml";
+
+                Groups groups = _userSecurityProvider.GetGroupsUser(userName);
+                _userSecurityProvider.FormatOutgoingMessage<Groups>(groups, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+
         #region Private Methods
         private string MapContentType(string format)
         {

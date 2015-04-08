@@ -501,5 +501,21 @@ namespace org.iringtools.web.controllers
             
         }
 
+        public JsonResult getUserGroups(FormCollection form)
+        {
+            try
+            {
+                string userName = form["UserName"];
+                Groups userGroups = _repository.GetUserGroups(userName, "xml");
+                return Json(userGroups, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetGroupsInAUser, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }

@@ -1369,6 +1369,26 @@ namespace org.iringtools.UserSecurity
             return response;
         }
 
+        public Groups GetGroupsUser(string userName)
+        {
+            Groups groups = new Groups();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGroupUser", nvl);
+                groups = utility.Utility.Deserialize<Groups>(xmlString, true);
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting Groups mapped with a user: " + ex);
+                throw ex;
+            }
+            return groups;
+        }
+
         #region Private Methods
         private void PrepareErrorResponse(Response response, string errMsg)
         {
