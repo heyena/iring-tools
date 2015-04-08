@@ -1916,12 +1916,13 @@ Ext.define('AM.controller.Directory', {
           name: nameID,
           value: key,
           columnWidth: '0.30',
-          allowBlank: true,
           itemId: 'appSettingsCombo',
-          //store: 'AppSettingsStore',
+          store: 'AppSettingsStore',
+          queryMode: 'local',
+          autoSelect: false,
           emptyText:'Select Key',
-          displayField: 'Keys',
-          valueField: 'Keys'
+          displayField: 'Value',
+          valueField: 'Key'
       },
       {
           xtype: 'textarea',

@@ -24,8 +24,7 @@ namespace org.iringtools.web.controllers
     public class DirectoryController : BaseController
     {
 
-        //string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
-        string userName = "WorldTest";
+        string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
             int siteId = 4;
         int platformId = 2;
 
@@ -393,52 +392,52 @@ namespace org.iringtools.web.controllers
                     //        return Json(nodes, JsonRequestBehavior.AllowGet);
                     //    }
 
-                    //case "RelationshipNode":
-                    //    {
-                    //        string keytype, datatype;
-                    //        string context = form["node"];
-                    //        string related = form["related"];
-                    //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                    case "RelationshipNode":
+                        {
+                            string keytype, datatype;
+                            string context = form["node"];
+                            string related = form["related"];
+                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-                    //        if (!String.IsNullOrEmpty(related))
-                    //        {
-                    //            string scopeName = context.Split('/')[0];
-                    //            string applicationName = context.Split('/')[1];
-                    //            org.iringtools.library.DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
-                    //            org.iringtools.library.DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName.ToUpper() == related.ToUpper());
+                            if (!String.IsNullOrEmpty(related))
+                            {
+                                string scopeName = context.Split('/')[0];
+                                string applicationName = context.Split('/')[1];
+                                org.iringtools.library.DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
+                                org.iringtools.library.DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName.ToUpper() == related.ToUpper());
 
-                    //            foreach (org.iringtools.library.DataProperty property in dataObject.dataProperties)
-                    //            {
-                    //                keytype = getKeyType(property.propertyName, dataObject.dataProperties);
-                    //                datatype = property.dataType.ToString();
+                                foreach (org.iringtools.library.DataProperty property in dataObject.dataProperties)
+                                {
+                                    keytype = getKeyType(property.propertyName, dataObject.dataProperties);
+                                    datatype = property.dataType.ToString();
 
-                    //                JsonTreeNode node = new JsonTreeNode
-                    //                {
-                    //                    nodeType = "async",
-                    //                    type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
-                    //                    iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty",
-                    //                    id = context + "/" + property.propertyName,
-                    //                    text = property.propertyName,
-                    //                    expanded = true,
-                    //                    leaf = true,
-                    //                    children = new List<JsonTreeNode>(),
-                    //                    record = new
-                    //                    {
-                    //                        Name = property.propertyName,
-                    //                        Keytype = keytype,
-                    //                        Datatype = datatype
-                    //                    }
-                    //                };
-                    //                node.property = new Dictionary<string, string>();
-                    //                node.property.Add("Name", property.propertyName);
-                    //                node.property.Add("Type", keytype);
-                    //                node.property.Add("Related", datatype);
-                    //                nodes.Add(node);
-                    //            }
-                    //        }
+                                    JsonTreeNode node = new JsonTreeNode
+                                    {
+                                        nodeType = "async",
+                                        type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
+                                        iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty",
+                                        id = context + "/" + property.propertyName,
+                                        text = property.propertyName,
+                                        expanded = true,
+                                        leaf = true,
+                                        children = new List<JsonTreeNode>(),
+                                        record = new
+                                        {
+                                            Name = property.propertyName,
+                                            Keytype = keytype,
+                                            Datatype = datatype
+                                        }
+                                    };
+                                    node.property = new Dictionary<string, string>();
+                                    node.property.Add("Name", property.propertyName);
+                                    node.property.Add("Type", keytype);
+                                    node.property.Add("Related", datatype);
+                                    nodes.Add(node);
+                                }
+                            }
 
-                    //        return Json(nodes, JsonRequestBehavior.AllowGet);
-                    //    }
+                            return Json(nodes, JsonRequestBehavior.AllowGet);
+                        }
 
                     //case "GraphsNode":
                     //    {
@@ -934,10 +933,10 @@ namespace org.iringtools.web.controllers
             {
                 AppSettings settings = _appConfigRepository.GetAppSettings();
 
-                JsonContainer<AppSettings> container = new JsonContainer<AppSettings>();
-                container.items = settings;
+                JsonContainer<List<Setting>> container = new JsonContainer<List<Setting>>();
+                container.items = settings.Settings;
                 container.success = true;
-                // container.total = settings.count;
+                container.total = settings.Settings.Count;
 
                 return Json(container, JsonRequestBehavior.AllowGet);
             }
