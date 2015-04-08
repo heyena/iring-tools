@@ -1389,6 +1389,8 @@ namespace org.iringtools.web.controllers
                 };
 
                 dataObjectsNode.children.Add(node);
+
+                PopulatePropertiesNodes(ref node, dataObject);
             }
 
             applicationNodes.Add(dataObjectsNode);
@@ -1469,6 +1471,82 @@ namespace org.iringtools.web.controllers
             applicationNodes.Add(valueListMapsNode);
             
             return applicationNodes;
+        }
+
+        private void PopulatePropertiesNodes(ref JsonTreeNode node, library.DataObject dataObject)
+        {
+            List<JsonTreeNode> propertiesNodes = new List<JsonTreeNode>();
+
+            if (node.children == null)
+            {
+                node.children = new List<JsonTreeNode>();
+            }
+
+            foreach(library.DataProperty dataProperty in dataObject.dataProperties)
+            {
+                bool isKeyProp = dataObject.isKeyProperty(dataProperty.propertyName);
+
+                JsonTreeNode propNode = new JsonTreeNode
+                {
+                    nodeType = "async",
+                    type = isKeyProp ? "KeyDataPropertyNode" : "DataPropertyNode",
+                    iconCls = isKeyProp ? "treeKey" : "treeProperty",
+                    id = dataProperty.dataPropertyId.ToString(),
+                    text = dataProperty.propertyName,
+                    expanded = false,
+                    leaf = true,
+                    children = null,
+                    record = Utility.SerializeJson<library.DataProperty>(dataProperty, true)
+                };
+
+                node.children.Add(propNode);
+            }
+
+            if (dataObject.extensionProperties != null)
+            {
+                foreach (library.ExtensionProperty extensionProp in dataObject.extensionProperties)
+                {
+                    JsonTreeNode extensionNode = new JsonTreeNode
+                    {
+                        nodeType = "async",
+                        type = "ExtensionNode",
+                        iconCls = "treeExtension",
+                        id = extensionProp.extensionPropertyId.ToString(),
+                        text = extensionProp.propertyName,
+                        expanded = false,
+                        leaf = true,
+                        children = null,
+                        record = Utility.SerializeJson<library.ExtensionProperty>(extensionProp, true)
+                    };
+
+                    node.children.Add(extensionNode);
+                }
+            }
+
+            if (dataObject.dataRelationships != null)
+            {
+                foreach (org.iringtools.library.DataRelationship relation in dataObject.dataRelationships)
+                {
+                    JsonTreeNode relationshipNode = new JsonTreeNode
+                    {
+                        nodeType = "async",
+                        type = "RelationshipNode",
+                        iconCls = "treeRelation",
+                        id = relation.relationshipId.ToString(),
+                        text = relation.relationshipName,
+                        expanded = false,
+                        leaf = false,
+                        children = null,
+                        record = Utility.SerializeJson<library.DataRelationship>(relation, true)
+                    };
+                    //relationshipNode.property = new Dictionary<string, string>();
+                    //relationshipNode.property.Add("Name", relation.relationshipName);
+                    //relationshipNode.property.Add("Type", relation.relationshipType.ToString());
+                    //relationshipNode.property.Add("Related", relation.relatedObjectName);
+
+                    node.children.Add(relationshipNode);
+                }
+            }
         }
 
         #endregion
