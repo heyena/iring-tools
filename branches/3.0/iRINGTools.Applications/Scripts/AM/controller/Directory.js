@@ -1921,8 +1921,8 @@ Ext.define('AM.controller.Directory', {
           queryMode: 'local',
           autoSelect: false,
           emptyText:'Select Key',
-          displayField: 'name',
-          valueField: 'id'
+          displayField: 'Name',
+          valueField: 'Id'
       },
       {
           xtype: 'textarea',

@@ -21,7 +21,7 @@ Ext.define('AM.store.AppSettingsStore', {
         cfg = cfg || {};
         me.callParent([Ext.apply({
             autoLoad: true,
-            fields:['id','name'],
+            fields:['Id','Name'],
             storeId: 'AppSettingsStore',
             proxy: {
                 type: 'ajax',
