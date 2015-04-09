@@ -66,7 +66,7 @@ namespace org.iringtools.applicationConfig
         public Application()
         {
             Permissions = new Permissions();
-            ApplicationSettings = new ApplicationSettings();
+            ApplicationSettings = new library.AppSettings();
             Groups = new Groups();
         }
 
