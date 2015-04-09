@@ -338,14 +338,14 @@ namespace iRINGTools.Web.Models
             return valueListMaps;
         }
 
-        public AppSettings GetAppSettings()
+        public ApplicationSettings GetAppSettings()
         {
-            AppSettings items = null;
+            ApplicationSettings items = null;
             logger.Debug("In ApplicatonConfigRepository GetAppSettings");
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                items = client.Get<AppSettings>("/appSettings?format=xml");
+                items = client.Get<ApplicationSettings>("/appSettings?format=xml");
 
                 logger.Debug("Successfully called Adpter Service.");
             }

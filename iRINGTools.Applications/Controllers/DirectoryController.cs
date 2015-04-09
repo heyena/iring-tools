@@ -906,12 +906,12 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-                AppSettings settings = _appConfigRepository.GetAppSettings();
+                ApplicationSettings settings = _appConfigRepository.GetAppSettings();
 
-                JsonContainer<List<Setting>> container = new JsonContainer<List<Setting>>();
-                container.items = settings.Settings;
+                JsonContainer<ApplicationSettings> container = new JsonContainer<ApplicationSettings>();
+                container.items = settings;
                 container.success = true;
-                container.total = settings.Settings.Count;
+                container.total = settings.Count;
 
                 return Json(container, JsonRequestBehavior.AllowGet);
             }
