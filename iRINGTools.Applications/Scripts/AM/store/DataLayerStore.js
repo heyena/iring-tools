@@ -33,7 +33,7 @@ Ext.define('AM.store.DataLayerStore', {
           baseUrl: null
         },
         timeout: 600000,
-        url: 'directory/datalayers',
+        url: 'directory/GetDataLayers',
         reader: {
           type: 'json',
           root: 'items'

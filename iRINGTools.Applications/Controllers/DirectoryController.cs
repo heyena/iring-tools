@@ -502,7 +502,7 @@ namespace org.iringtools.web.controllers
             }
         }
 
-        public ActionResult DataLayers()
+        public ActionResult GetDataLayers()
         {
             try
             {
