@@ -24,7 +24,7 @@ Ext.define('AM.store.DataLayerStore', {
     var me = this;
     cfg = cfg || {};
     me.callParent([Ext.apply({
-      autoLoad: false,
+      autoLoad: true,
       model: 'AM.model.DataLayerModel',
       storeId: 'dataLayerStore',
       proxy: {

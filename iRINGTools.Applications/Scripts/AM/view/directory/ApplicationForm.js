@@ -96,9 +96,16 @@ Ext.define('AM.view.directory.ApplicationForm', {
             name: 'description'
         },
         {
-            xtype: 'datalayercombo',
-            name: 'dataLayerCombo',
-            value: ''
+//            xtype: 'datalayercombo',
+//            name: 'dataLayerCombo',
+//            value: ''
+          xtype: 'combobox',
+          fieldLabel: 'Data Layer',
+          store: 'DataLayerStore',
+          queryMode: 'local',
+          autoSelect: false,
+          displayField: 'name',
+          valueField: 'assembly'
         },
         {
             xtype: 'checkboxlistcombo',
