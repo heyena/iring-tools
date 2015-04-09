@@ -849,31 +849,6 @@ namespace org.iringtools.web.controllers
                     ContextId = record.ContextId
                 };
 
-                //Handling DataLayer binding
-                if (!string.IsNullOrEmpty(tempApplication.Assembly))
-                {
-                    tempApplication.Binding = new ApplicationBinding();
-                    tempApplication.Binding.ModuleName = "DataLayerBinding";
-                    tempApplication.Binding.BindName = "DataLayer";
-                    tempApplication.Binding.To = tempApplication.Assembly;
-                    tempApplication.Binding.Service = (typeof(IDataLayer)).AssemblyQualifiedName;
-                    tempApplication.ApplicationDataMode = applicationConfig.DataMode.Live;
-
-                    if (Type.GetType(tempApplication.Assembly).BaseType.ToString() == "org.iringtools.library.BaseLightweightDataLayer") //added for ilightweight2 datalayer
-                    {
-                        if (typeof(ILightweightDataLayer).IsAssignableFrom(Type.GetType(tempApplication.Assembly)))
-                        {
-                            tempApplication.Binding.Service = (typeof(ILightweightDataLayer2)).AssemblyQualifiedName;
-                            tempApplication.ApplicationDataMode = applicationConfig.DataMode.Live;
-                        }
-                    }
-                    else if (typeof(ILightweightDataLayer2).IsAssignableFrom(Type.GetType(tempApplication.Assembly)))
-                    {
-                        tempApplication.Binding.Service = (typeof(ILightweightDataLayer2)).AssemblyQualifiedName;
-                        tempApplication.ApplicationDataMode = applicationConfig.DataMode.Cache;
-                    }
-                }
-
                 if (form["state"] == "new")
                 {
                     tempApplication.Groups.AddRange(GetSelectedGroups(form["ResourceGroups"]));

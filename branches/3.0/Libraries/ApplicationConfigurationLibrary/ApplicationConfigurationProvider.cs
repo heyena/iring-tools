@@ -268,8 +268,6 @@ namespace org.iringtools.applicationConfig
             return applications;
         }
 
-
-
         public Response InsertEntityAfterDrop(string resourceType, Guid droppedEntityId, Guid destinationParentEntityId, int siteId, int platformId)
         {
             Response response = new Response();
@@ -304,10 +302,6 @@ namespace org.iringtools.applicationConfig
             }
             return response;
         }
-
-
-
-
 
         public Folders GetFoldersForUser(string userName, int siteId, int platformId, Guid parentFolderId)
         {
@@ -562,6 +556,9 @@ namespace org.iringtools.applicationConfig
             {
                 Application application = Utility.DeserializeDataContract<Application>(xml.ToString());
 
+                ApplicationDataModeAndBindingHandling(ref application);
+
+
                 string groupXml = application.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 string appSettingsXml = application.ApplicationSettings.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 string bindingXml = application.Binding.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
@@ -625,6 +622,8 @@ namespace org.iringtools.applicationConfig
             try
             {
                 Application application = Utility.DeserializeDataContract<Application>(xml.ToString());
+
+                ApplicationDataModeAndBindingHandling(ref application);
 
                 string groupXml = application.Groups.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
                 string appSettingsXml = application.ApplicationSettings.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
@@ -1656,12 +1655,12 @@ namespace org.iringtools.applicationConfig
 
             return settings;
         }
+
         /// <summary>
         /// insert job
         /// </summary>
         /// <param name="response"></param>
         /// <param name="errMsg"></param>
-
 
         //  public Response InsertJob(Job job )
         //public Response InsertJob(XDocument xml)
@@ -1705,6 +1704,7 @@ namespace org.iringtools.applicationConfig
         //}
 
         #region Private Methods
+
         private void PrepareErrorResponse(Response response, string errMsg)
         {
             Status status = new Status { Level = StatusLevel.Error };
@@ -1714,6 +1714,7 @@ namespace org.iringtools.applicationConfig
             response.StatusList.Add(status);
 
         }
+
         private void PrepareSuccessResponse(Response response, string successMsg)
         {
             Status status = new Status { Level = StatusLevel.Success };
@@ -1722,6 +1723,7 @@ namespace org.iringtools.applicationConfig
             response.Level = StatusLevel.Success;
             response.StatusList.Add(status);
         }
+
         private void PrepareWarningResponse(Response response, string errMsg)
         {
             Status status = new Status { Level = StatusLevel.Warning };
@@ -1730,8 +1732,40 @@ namespace org.iringtools.applicationConfig
             response.Level = StatusLevel.Warning;
             response.StatusList.Add(status);
         }
+
+        private static void ApplicationDataModeAndBindingHandling(ref Application application)
+        {
+            //Handling DataLayer binding
+            if (!string.IsNullOrEmpty(application.Assembly))
+            {
+                string typeName = application.Assembly.Split(new string[] { ", " }, StringSplitOptions.None)[0];
+                string dataLayerName = application.Assembly.Split(new string[] { ", " }, StringSplitOptions.None)[1];
+
+                application.Binding = new ApplicationBinding();
+                application.Binding.ModuleName = "DataLayerBinding";
+                application.Binding.BindName = "DataLayer";
+                application.Binding.To = application.Assembly;
+                application.Binding.Service = (typeof(IDataLayer)).AssemblyQualifiedName;
+                application.ApplicationDataMode = applicationConfig.DataMode.Live;
+
+                System.Reflection.Assembly dataLayerAssembly = System.Reflection.Assembly.Load(dataLayerName);
+
+                if (dataLayerAssembly.GetType(typeName).BaseType.ToString() == "org.iringtools.library.BaseLightweightDataLayer") //added for ilightweight2 datalayer
+                {
+                    if (typeof(ILightweightDataLayer).IsAssignableFrom(dataLayerAssembly.GetType(typeName)))
+                    {
+                        application.Binding.Service = (typeof(ILightweightDataLayer2)).AssemblyQualifiedName;
+                        application.ApplicationDataMode = applicationConfig.DataMode.Live;
+                    }
+                }
+                else if (typeof(ILightweightDataLayer2).IsAssignableFrom(dataLayerAssembly.GetType(typeName)))
+                {
+                    application.Binding.Service = (typeof(ILightweightDataLayer2)).AssemblyQualifiedName;
+                    application.ApplicationDataMode = applicationConfig.DataMode.Cache;
+                }
+            }
+        }
+
         #endregion
-
-
     }
 }
