@@ -844,7 +844,7 @@ namespace org.iringtools.web.controllers
                     DisplayName = form["displayName"],//form["Name"],
                     InternalName = form["internalName"],
                     Description = form["description"],
-                    Assembly = form["assembly"],
+                    Assembly = form["dataLayerCombo"],
                     DXFRUrl = "http://localhost:56789/dxfr",
                     ContextId = record.ContextId
                 };
