@@ -434,19 +434,19 @@ Ext.define('AM.controller.Directory', {
             win.close();
         }, me);
 
-        var dlCmb = me.getDatalayerCombo();
+//        var dlCmb = me.getDatalayerCombo();
 
-        dlCmb.on('select', function (combo, records, eopts) {
-            if (records !== null && node.data.record !== null) {
-                form.getForm().findField('assembly').setValue(records[0].data.assembly);
-            }
-        }, me);
+//        dlCmb.on('select', function (combo, records, eopts) {
+//            if (records !== null && node.data.record !== null) {
+//                form.getForm().findField('assembly').setValue(records[0].data.assembly);
+//            }
+//        }, me);
 
-        dlCmb.on('afterrender', function (combo, eopts) {
-            if (assembly != undefined && assembly !== '') {
-                combo.setValue(assembly.substring(assembly.indexOf(',') + 2));
-            }
-        }, me);
+//        dlCmb.on('afterrender', function (combo, eopts) {
+//            if (assembly != undefined && assembly !== '') {
+//                combo.setValue(assembly.substring(assembly.indexOf(',') + 2));
+//            }
+//        }, me);
 
         form.getForm().findField('state').setValue(state);
         win.show();
