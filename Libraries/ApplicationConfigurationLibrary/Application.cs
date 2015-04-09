@@ -340,7 +340,7 @@ namespace org.iringtools.applicationConfig
     public class ApplicationSetting
     {
         [DataMember(Name = "id", Order = 0, EmitDefaultValue = false)]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         [DataMember(Name = "name", Order = 1, EmitDefaultValue = false)]
         public string Name { get; set; }

@@ -1079,15 +1079,15 @@ namespace org.iringtools.services
         }
          [Description("Get AppSettings")]
          [WebGet(UriTemplate = "/appSettings?format={format}")]
-        public void getAppSettings(string format)
+        public void GetAppSettings(string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                     format = "xml";
 
-                AppSettings settings = _applicationConfigurationProvider.GetAppSettings();
-                _applicationConfigurationProvider.FormatOutgoingMessage<AppSettings>(settings, format, true);
+                ApplicationSettings settings = _applicationConfigurationProvider.GetAppSettings();
+                _applicationConfigurationProvider.FormatOutgoingMessage<ApplicationSettings>(settings, format, true);
             }
             catch (Exception ex)
             {

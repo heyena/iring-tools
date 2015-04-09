@@ -1638,14 +1638,14 @@ namespace org.iringtools.applicationConfig
             return dataLayers;
         }
 
-        public AppSettings GetAppSettings()
+        public ApplicationSettings GetAppSettings()
         {
-            AppSettings settings = new AppSettings();
+            ApplicationSettings settings = new ApplicationSettings();
 
             try
             {
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgAppSettings", null);
-                settings = utility.Utility.Deserialize<library.AppSettings>(xmlString, true);
+                settings = utility.Utility.Deserialize<ApplicationSettings>(xmlString, true);
             }
             catch (Exception ex)
             {
