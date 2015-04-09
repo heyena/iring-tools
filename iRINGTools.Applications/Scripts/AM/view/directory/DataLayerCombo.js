@@ -21,7 +21,6 @@ Ext.define('AM.view.directory.DataLayerCombo', {
   editable: false,
   displayField: 'name',
   hiddenName: 'Assembly',
-  store: 'DataLayerStore',
   valueField: 'assembly',
 
   initComponent: function() {
