@@ -81,14 +81,6 @@
     <Reference Include="iRINGLibrary">
       <HintPath>..\..\iRINGTools.Services\bin\iRINGLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="IWDataLayer, Version=1.2.0.6, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\IWDataLayer\bin\Debug\IWDataLayer.dll</HintPath>
-    </Reference>
-    <Reference Include="IWDataLayerLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\IWDataLayer\bin\Debug\IWDataLayerLib.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>lib\log4net.dll</HintPath>
     </Reference>
