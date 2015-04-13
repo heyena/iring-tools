@@ -5,7 +5,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using org.iringtools.UserSecurity;
 
-namespace org.iringtools.applicationConfig
+namespace org.iringtools.applicationConfig_Retire
 {
     [Serializable]
     [DataContract(Name = "dataDictionary", Namespace = "http://www.iringtools.org/library")]
