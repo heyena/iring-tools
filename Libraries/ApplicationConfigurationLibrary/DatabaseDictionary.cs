@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ComponentModel;
 
-namespace org.iringtools.applicationConfig
+namespace org.iringtools.applicationConfig_Retire
 {
     [Serializable]
     [DataContract(Name = "databaseDictionary", Namespace = "http://www.iringtools.org/library")]

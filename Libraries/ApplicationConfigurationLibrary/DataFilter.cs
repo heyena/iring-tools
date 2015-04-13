@@ -35,7 +35,7 @@ using System.Collections;
 using org.iringtools.utility;
 using org.iringtools.library;
 
-namespace org.iringtools.applicationConfig
+namespace org.iringtools.applicationConfig_Retire
 {
     [CollectionDataContract(Name = "dataFilters", Namespace = "http://www.iringtools.org/library", ItemName = "dataFilter")]
     public class DataFilters : List<DataFilter>
@@ -143,7 +143,7 @@ namespace org.iringtools.applicationConfig
 
                         if (expression.Equals(this.Expressions.Last()))
                         {
-                            expression.LogicalOperator = iringtools.applicationConfig.LogicalOperator.None;
+                            expression.LogicalOperator = LogicalOperator.None;
                         }
                         string sqlExpression = ResolveSqlExpression(dataObject, expression, objectAlias);
                         whereClause.Append(sqlExpression);
