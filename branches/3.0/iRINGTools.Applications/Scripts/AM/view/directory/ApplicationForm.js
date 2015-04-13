@@ -74,11 +74,6 @@ Ext.define('AM.view.directory.ApplicationForm', {
             name: 'state'
         },
         {
-            xtype: 'hiddenfield',
-            itemId: 'assembly',
-            name: 'assembly'
-        },
-        {
             xtype: 'textfield',
             fieldLabel: 'Application Name',
             name: 'displayName',
@@ -161,6 +156,7 @@ Ext.define('AM.view.directory.ApplicationForm', {
         {
             xtype: 'fieldset',
             border: false,
+            name: 'fldsetcontainer',
             height: 200,
             id: 'settingfieldset',
             autoScroll: true
@@ -176,6 +172,19 @@ Ext.define('AM.view.directory.ApplicationForm', {
         var win = me.up('window');
         var form = me.getForm();
         var state = form.findField('state').getValue();
+        var appSettingsItems = me.items.map['settingfieldset'].items.items;
+        var appSettingStore = Ext.create('Ext.data.Store', { fields: ['key', 'value'] });
+
+        Ext.each(appSettingsItems, function (appSetting) {
+            var settingCombo = appSetting.items.items[0];
+            var storeIndex = settingCombo.getStore().find(settingCombo.valueField, settingCombo.getValue());
+
+            var appSettingName = settingCombo.getStore().getAt(storeIndex).get(settingCombo.displayField);
+            var appSettingValue = appSetting.items.items[1].getValue();
+
+            appSettingStore.add({ key: appSettingName, value: appSettingValue });
+        });
+
         var node = me.node;
         var ResourceGroups = me.getForm().findField('ResourceGroups').getValue();
 
@@ -185,7 +194,8 @@ Ext.define('AM.view.directory.ApplicationForm', {
                     waitMsg: 'Saving Data...',
                     method: 'POST',
                     params: {
-                        record: node.get('record')
+                        record: node.get('record'),
+                        applicationSettings: Ext.encode(Ext.pluck(appSettingStore.data.items, 'data'))
                     },
                     success: function (response, request) {
                         var objResponseText = Ext.JSON.decode(request.response.responseText);
