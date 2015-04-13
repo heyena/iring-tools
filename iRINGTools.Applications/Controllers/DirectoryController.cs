@@ -25,7 +25,7 @@ namespace org.iringtools.web.controllers
     {
 
         string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
-            int siteId = 4;
+        int siteId = 4;
         int platformId = 2;
 
         private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
@@ -825,13 +825,15 @@ namespace org.iringtools.web.controllers
 
                 string success = String.Empty;
 
-                library.Configuration configuration = new Configuration
+                AppSettings applicationSettings = new AppSettings
                 {
-                    AppSettings = new AppSettings
-                    {
-                        Settings = new List<Setting>()
-                    }
+                    Settings = new List<Setting>()
                 };
+
+                if (form["applicationSettings"] != null)
+                {
+                    applicationSettings.Settings.AddRange(Utility.DeserializeJson<List<Setting>>(form["applicationSettings"], true));
+                }
 
                 // TODO: Need to change the name of property (and its attribute) DisplayName to ContextName in Context class
                 if (record.CacheConnStr == null)
@@ -846,7 +848,8 @@ namespace org.iringtools.web.controllers
                     Description = form["description"],
                     Assembly = form["dataLayerCombo"],
                     DXFRUrl = "http://localhost:56789/dxfr",
-                    ContextId = record.ContextId
+                    ContextId = record.ContextId,
+                    ApplicationSettings = applicationSettings
                 };
 
                 if (form["state"] == "new")
@@ -900,7 +903,6 @@ namespace org.iringtools.web.controllers
                 }
             }
         }
-
 
         public JsonResult GetAppSettings(FormCollection form)
         {

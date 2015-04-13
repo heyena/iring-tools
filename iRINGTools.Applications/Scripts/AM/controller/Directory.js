@@ -409,6 +409,15 @@ Ext.define('AM.controller.Directory', {
 
             form.getForm().findField('internalName').setReadOnly(true);
 
+//            if (node.data.record.Configuration.AppSettings.Settings[i].Key != "iRINGCacheConnStr") {
+//                key = node.data.record.Configuration.AppSettings.Settings[i].Key;
+//                value = node.data.record.Configuration.AppSettings.Settings[i].Value;
+//                var newSetting = me.addSettings();
+//                newSetting[0].items[0].allowBlank = false;
+//                if (component.items.map['settingfieldset'])
+//                    component.items.map['settingfieldset'].add(newSetting);
+//            }
+
             var groupArray = [];
             Ext.each(record.groups, function (eachGroup) {
                 groupArray.push(eachGroup.groupId);
@@ -433,20 +442,6 @@ Ext.define('AM.controller.Directory', {
         win.on('Cancel', function () {
             win.close();
         }, me);
-
-//        var dlCmb = me.getDatalayerCombo();
-
-//        dlCmb.on('select', function (combo, records, eopts) {
-//            if (records !== null && node.data.record !== null) {
-//                form.getForm().findField('assembly').setValue(records[0].data.assembly);
-//            }
-//        }, me);
-
-//        dlCmb.on('afterrender', function (combo, eopts) {
-//            if (assembly != undefined && assembly !== '') {
-//                combo.setValue(assembly.substring(assembly.indexOf(',') + 2));
-//            }
-//        }, me);
 
         form.getForm().findField('state').setValue(state);
         win.show();
@@ -1231,48 +1226,13 @@ Ext.define('AM.controller.Directory', {
 
     onAddSettings: function (button, e, eOpts) {
         var me = this;
-        var nameID;
-        var valueID;
+        
         var myFieldSet = Ext.getCmp('settingfieldset');
-        if (myFieldSet.items.items.length >= 1) {
-            var nameID = 'key' + (myFieldSet.items.items.length + 1);
-            var valueID = 'value' + (myFieldSet.items.items.length + 1);
-        } else {
-            var nameID = 'key1';
-            var valueID = 'value1';
-        }
-        var newSetting = me.addSettings("", "", nameID, valueID);
+        
+        var newSetting = me.addSettings();
         myFieldSet.add(newSetting);
         myFieldSet.doLayout();
-        myFieldSet.items.items[myFieldSet.items.length - 1].items.items[0].allowBlank = false;
-
-    },
-
-    onApplicationFormAfterRender: function (component, eOpts) {
-        //Adding settings into setting Field set.
-        var key = '';
-        var value = '';
-        var me = this;
-        var tree = me.getDirTree();
-        var node = tree.getSelectedNode();
-        if (node.data.record != null) {
-            if (node.data.record.Configuration != null) {
-                if (node.data.record.Configuration.AppSettings != null) {
-                    if (node.data.record.Configuration.AppSettings.Settings != null) {
-                        for (var i = 0; i < node.data.record.Configuration.AppSettings.Settings.length; i++) {
-                            if (node.data.record.Configuration.AppSettings.Settings[i].Key != "iRINGCacheConnStr") {
-                                key = node.data.record.Configuration.AppSettings.Settings[i].Key;
-                                value = node.data.record.Configuration.AppSettings.Settings[i].Value;
-                                var newSetting = me.addSettings(key, value, ('key' + i), ('value' + i));
-                                newSetting[0].items[0].allowBlank = false;
-                                if (component.items.map['settingfieldset'])
-                                    component.items.map['settingfieldset'].add(newSetting);
-                            }
-                        }
-                    }
-                }
-            }
-        } // End of adding settings.
+        myFieldSet.items.items[myFieldSet.items.length - 1].items.items[1].allowBlank = false;
     },
 
     onRefreshDataObjectCache: function (item, e, eOpts) {
@@ -1746,9 +1706,6 @@ Ext.define('AM.controller.Directory', {
             "button[action=addsettings]": {
                 click: this.onAddSettings
             },
-            "form": {
-                afterrender: this.onApplicationFormAfterRender
-            },
             "menuitem[action=refreshdataobjectcache]": {
                 click: this.onRefreshDataObjectCache
             },
@@ -1905,7 +1862,7 @@ Ext.define('AM.controller.Directory', {
         var graph = node.data.text;
     },
 
-    addSettings: function (key, value, nameID, valueID) {
+    addSettings: function () {
         return [{
             xtype: 'container',
             margin: '10 20 0 96',
@@ -1913,8 +1870,6 @@ Ext.define('AM.controller.Directory', {
             items: [
       {
           xtype: 'combobox',
-          name: nameID,
-          value: key,
           columnWidth: '0.30',
           itemId: 'appSettingsCombo',
           store: 'AppSettingsStore',
@@ -1926,8 +1881,6 @@ Ext.define('AM.controller.Directory', {
       },
       {
           xtype: 'textarea',
-          name: valueID,
-          value: value,
           columnWidth: '0.60',
           grow: false,
           margin: '0 0 0 3'
