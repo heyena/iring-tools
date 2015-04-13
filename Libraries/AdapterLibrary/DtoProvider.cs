@@ -561,7 +561,8 @@ namespace org.iringtools.adapter
                     manifestGraph = new Graph
                     {
                         classTemplatesList = new ClassTemplatesList(),
-                        name = graphMap.name
+                        name = graphMap.name,
+                        dataObjectName = graphMap.dataObjectName
                     };
 
                     manifest.graphs.Add(manifestGraph);
@@ -584,6 +585,7 @@ namespace org.iringtools.adapter
                     if (dataObj.objectName.ToLower() == dataObjectName.ToLower())
                     {
                         dataObject = dataObj;
+                        manifestGraph.dataObjectId = dataObj.dataObjectId.ToString();
                         break;
                     }
                 }

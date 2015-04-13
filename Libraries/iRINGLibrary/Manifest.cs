@@ -95,6 +95,9 @@ namespace org.iringtools.dxfr.manifest
 
         private org.iringtools.dxfr.manifest.ClassTemplatesList classTemplatesListField;
 
+        private string dataObjectNameField;
+        private string dataObjectIdField;
+
         public Graph()
         {
             classTemplatesList = new ClassTemplatesList();
@@ -123,6 +126,31 @@ namespace org.iringtools.dxfr.manifest
             set
             {
                 this.classTemplatesListField = value;
+            }
+        }
+
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
+        public string dataObjectName
+        {
+            get
+            {
+                return this.dataObjectNameField;
+            }
+            set
+            {
+                this.dataObjectNameField = value;
+            }
+        }
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+        public string dataObjectId
+        {
+            get
+            {
+                return this.dataObjectIdField;
+            }
+            set
+            {
+                this.dataObjectIdField = value;
             }
         }
     }
