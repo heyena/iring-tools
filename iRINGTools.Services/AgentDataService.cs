@@ -30,8 +30,8 @@ namespace org.iringtools.services
         }
 
         [Description("Gets all jobs from the data base.")]
-        [WebGet(UriTemplate = "/alljobs?userName={userName}&siteId={siteId}&platformId={platformId}&format={format}")]
-        public void GetAllJobs(string userName, int siteId, int platformId, string format) 
+        [WebGet(UriTemplate = "/alljobs?userName={userName}&siteId={siteId}&platformId={platformId}&isExchange={isExchange}&format={format}")]
+        public void GetAllJobs(string userName, int siteId, int platformId, int isExchange, string format) 
         {
             try
             {
@@ -39,7 +39,7 @@ namespace org.iringtools.services
                 { format = "xml"; }
 
 
-                org.iringtools.AgentLibrary.Agent.Jobs jobs = _agentProvider.GetAllJobs(userName, siteId, platformId);
+                org.iringtools.AgentLibrary.Agent.Jobs jobs = _agentProvider.GetAllJobs(userName, siteId, platformId, isExchange);
                 _agentProvider.FormatOutgoingMessage<org.iringtools.AgentLibrary.Agent.Jobs>(jobs, format, true);
             }
 

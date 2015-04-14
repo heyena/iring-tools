@@ -282,111 +282,191 @@ BEGIN TRY
 		AND Groups.Active = 1)
 		
 	  
-	  IF @isXSitesAdminGroupMember = 1
-		BEGIN
-			IF @IsExchange = 0 
-				BEGIN
+		IF @isXSitesAdminGroupMember = 1
+			BEGIN
+				IF @IsExchange = 0 
+					BEGIN
+						WITH XMLNAMESPACES ( DEFAULT 'http://www.iringtools.org/library')
+						select distinct(
+						SELECT 
+							j.JobId as jobId,
+							j.ScheduleId as scheduleId,
+							j.DataObjectId as dataObjectId,
+							j.Is_Exchange as isExchange,
+							j.Xid as xid,
+							j.Cache_Page_Size as cache_page_size,
+							j.PlatformId as platformId,
+							j.SiteId as siteId,
+							j.Next_Start_DateTime as next_Start_DateTime,
+							j.Last_Start_DateTime as last_Start_DateTime,
+							j.TotalRecords as totalRecords,
+							j.CachedRecords as cachedRecords,
+							j.Active as Active,
+							(
+							  select 
+								s.scheduleid as scheduleId,
+								s.created_datetime as created_DateTime, 
+								s.Created_By as created_By, 
+								s.occurance as occurance, 
+								s.[weekday] as weekday, 
+								s.start_datetime as start_DateTime, 
+								s.end_datetime as end_DateTime, 
+								s.[status] as status
+								from schedule s
+								where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
+							) as 'schedules'
+							from job j
+							where j.Active = 1 and j.platformid = @PlatformId and j.Is_Exchange = 0
+							for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
+					END
+				ELSE
 					WITH XMLNAMESPACES ( DEFAULT 'http://www.iringtools.org/library')
-					select distinct(
-					SELECT 
-						j.JobId as jobId,
-						j.ScheduleId as scheduleId,
-						j.DataObjectId as dataObjectId,
-						j.Is_Exchange as isExchange,
-						j.Xid as xid,
-						j.Cache_Page_Size as cache_page_size,
-						j.PlatformId as platformId,
-						j.SiteId as siteId,
-						j.Next_Start_DateTime as next_Start_DateTime,
-						j.Last_Start_DateTime as last_Start_DateTime,
-						j.TotalRecords as totalRecords,
-						j.CachedRecords as cachedRecords,
-						j.Active as Active,
-						(
-						  select 
-							s.scheduleid as scheduleId,
-							s.created_datetime as created_DateTime, 
-							s.Created_By as created_By, 
-							s.occurance as occurance, 
-							s.[weekday] as weekday, 
-							s.start_datetime as start_DateTime, 
-							s.end_datetime as end_DateTime, 
-							s.[status] as status
-							from schedule s
-							where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
-						) as 'schedules'
-						from job j
-						where j.Active = 1 and j.platformid = @PlatformId
-						for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
-				END
-			ELSE
-				WITH XMLNAMESPACES ( DEFAULT 'http://www.iringtools.org/library')
-					select distinct(
-					SELECT 
-						j.JobId as jobId,
-						j.ScheduleId as scheduleId,
-						j.DataObjectId as dataObjectId,
-						j.Is_Exchange as isExchange,
-						j.Xid as xid,
-						j.Cache_Page_Size as cache_page_size,
-						j.PlatformId as platformId,
-						j.SiteId as siteId,
-						j.Next_Start_DateTime as next_Start_DateTime,
-						j.Last_Start_DateTime as last_Start_DateTime,
-						j.TotalRecords as totalRecords,
-						j.CachedRecords as cachedRecords,
-						j.Active as Active,
-						(
-						  select 
-							s.scheduleid as scheduleId,
-							s.created_datetime as created_DateTime, 
-							s.Created_By as created_By, 
-							s.occurance as occurance, 
-							s.[weekday] as weekday, 
-							s.start_datetime as start_DateTime, 
-							s.end_datetime as end_DateTime, 
-							s.[status] as status
-							from schedule s
-							where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
-						) as 'schedules'
-						from job j
-						where j.Active = 1 and j.platformid = 3
-						for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
-					
-		END
+						select distinct(
+						SELECT 
+							j.JobId as jobId,
+							j.ScheduleId as scheduleId,
+							j.DataObjectId as dataObjectId,
+							j.Is_Exchange as isExchange,
+							j.Xid as xid,
+							j.Cache_Page_Size as cache_page_size,
+							j.PlatformId as platformId,
+							j.SiteId as siteId,
+							j.Next_Start_DateTime as next_Start_DateTime,
+							j.Last_Start_DateTime as last_Start_DateTime,
+							j.TotalRecords as totalRecords,
+							j.CachedRecords as cachedRecords,
+							j.Active as Active,
+							(
+							  select 
+								s.scheduleid as scheduleId,
+								s.created_datetime as created_DateTime, 
+								s.Created_By as created_By, 
+								s.occurance as occurance, 
+								s.[weekday] as weekday, 
+								s.start_datetime as start_DateTime, 
+								s.end_datetime as end_DateTime, 
+								s.[status] as status
+								from schedule s
+								where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
+							) as 'schedules'
+							from job j
+							where j.Active = 1 and j.platformid = 3 and j.Is_Exchange = 1
+							for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
+						
+			END
 		ELSE
-			WITH XMLNAMESPACES ( DEFAULT 'http://www.iringtools.org/library')   
-			select distinct(
-				SELECT 
-				j.JobId as jobId,
-				j.ScheduleId as scheduleId,
-				j.DataObjectId as dataObjectId,
-				j.Is_Exchange as isExchange,
-				j.Xid as xid,
-				j.Cache_Page_Size as cache_page_size,
-				j.PlatformId as platformId,
-				j.SiteId as siteId,
-				j.Next_Start_DateTime as next_Start_DateTime,
-				j.Last_Start_DateTime as last_Start_DateTime,
-				j.TotalRecords as totalRecords,
-				j.CachedRecords as cachedRecords,
-				j.Active as Active,
-				(
-				  select 
-					s.scheduleid as scheduleId,
-					s.created_datetime as created_DateTime, 
-					s.Created_By as created_By, 
-					s.occurance as occurance, 
-					s.[weekday] as weekday, 
-					s.start_datetime as start_DateTime, 
-					s.end_datetime as end_DateTime, 
-					s.[status] as status
-					from schedule s
-					where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
-				) as 'schedules'
-				from job j
-				where j.PlatformId = @PlatformId and j.SiteId = @SiteId and j.Active = 1 
-				for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
+			IF @IsExchange = 0 
+				Begin
+					if @PlatformId = 3
+						Begin
+							WITH XMLNAMESPACES ( DEFAULT 'http://www.iringtools.org/library')   
+							select distinct(
+								SELECT 
+								j.JobId as jobId,
+								j.ScheduleId as scheduleId,
+								j.DataObjectId as dataObjectId,
+								j.Is_Exchange as isExchange,
+								j.Xid as xid,
+								j.Cache_Page_Size as cache_page_size,
+								j.PlatformId as platformId,
+								j.SiteId as siteId,
+								j.Next_Start_DateTime as next_Start_DateTime,
+								j.Last_Start_DateTime as last_Start_DateTime,
+								j.TotalRecords as totalRecords,
+								j.CachedRecords as cachedRecords,
+								j.Active as Active,
+								(
+								  select 
+									s.scheduleid as scheduleId,
+									s.created_datetime as created_DateTime, 
+									s.Created_By as created_By, 
+									s.occurance as occurance, 
+									s.[weekday] as weekday, 
+									s.start_datetime as start_DateTime, 
+									s.end_datetime as end_DateTime, 
+									s.[status] as status
+									from schedule s
+									where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
+								) as 'schedules'
+								from job j
+								where j.PlatformId = 1 and j.PlatformId = 2 and j.Is_Exchange = 0 and j.Active = 1 
+								for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
+						End
+					Else 
+						Begin
+							WITH XMLNAMESPACES ( DEFAULT 'http://www.iringtools.org/library')   
+							select distinct(
+								SELECT 
+								j.JobId as jobId,
+								j.ScheduleId as scheduleId,
+								j.DataObjectId as dataObjectId,
+								j.Is_Exchange as isExchange,
+								j.Xid as xid,
+								j.Cache_Page_Size as cache_page_size,
+								j.PlatformId as platformId,
+								j.SiteId as siteId,
+								j.Next_Start_DateTime as next_Start_DateTime,
+								j.Last_Start_DateTime as last_Start_DateTime,
+								j.TotalRecords as totalRecords,
+								j.CachedRecords as cachedRecords,
+								j.Active as Active,
+								(
+								  select 
+									s.scheduleid as scheduleId,
+									s.created_datetime as created_DateTime, 
+									s.Created_By as created_By, 
+									s.occurance as occurance, 
+									s.[weekday] as weekday, 
+									s.start_datetime as start_DateTime, 
+									s.end_datetime as end_DateTime, 
+									s.[status] as status
+									from schedule s
+									where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
+								) as 'schedules'
+								from job j
+								where j.PlatformId = @PlatformId and j.Is_Exchange = 0 and j.Active = 1 
+								for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
+						End
+				End		
+			Else
+				Begin
+					If @PlatformId = 3
+						Begin
+							WITH XMLNAMESPACES ( DEFAULT 'http://www.iringtools.org/library')   
+							select distinct(
+								SELECT 
+								j.JobId as jobId,
+								j.ScheduleId as scheduleId,
+								j.DataObjectId as dataObjectId,
+								j.Is_Exchange as isExchange,
+								j.Xid as xid,
+								j.Cache_Page_Size as cache_page_size,
+								j.PlatformId as platformId,
+								j.SiteId as siteId,
+								j.Next_Start_DateTime as next_Start_DateTime,
+								j.Last_Start_DateTime as last_Start_DateTime,
+								j.TotalRecords as totalRecords,
+								j.CachedRecords as cachedRecords,
+								j.Active as Active,
+								(
+								  select 
+									s.scheduleid as scheduleId,
+									s.created_datetime as created_DateTime, 
+									s.Created_By as created_By, 
+									s.occurance as occurance, 
+									s.[weekday] as weekday, 
+									s.start_datetime as start_DateTime, 
+									s.end_datetime as end_DateTime, 
+									s.[status] as status
+									from schedule s
+									where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
+								) as 'schedules'
+								from job j
+								where j.SiteId = @SiteId and j.PlatformId = @PlatformId and j.Is_Exchange = 1 and j.Active = 1 
+								for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
+						End	
+				
+			End
 			 			
 	END
 END TRY
@@ -444,13 +524,13 @@ BEGIN TRY
 				Insert into schedule (ScheduleId, Created_DateTime, Created_By, Occurance, Weekday, Start_DateTime, End_DateTime, Status)
 				select 
 				@ScheduleId,
-				convert(datetime, T.N.value('(created_DateTime)[1]', 'NVARCHAR(100)'), 121),
+				convert(varchar, getdate(), 121),
 				T.N.value('(created_By)[1]', 'NVARCHAR(250)') as Created_By,
 				T.N.value('(occurance)[1]', 'NVARCHAR(50)') as Occurance,
 				T.N.value('(weekday)[1]', 'NVARCHAR(50)') as Weekday,
 				convert(datetime, T.N.value('(start_DateTime)[1]', 'NVARCHAR(100)'), 121) ,
 				convert(datetime, T.N.value('(end_DateTime)[1]', 'NVARCHAR(100)'), 121),
-				T.N.value('(status)[1]', 'NVARCHAR(50)') as Status
+				'Ready'
 				from @Schedules.nodes('schedules/schedule') as T(N)
 				
 				-- insert into job table
