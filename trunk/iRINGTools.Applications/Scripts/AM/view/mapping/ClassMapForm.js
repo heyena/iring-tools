@@ -202,13 +202,13 @@ Ext.define('AM.view.mapping.ClassMapForm', {
             copy: false,
             overClass: 'over',
             notifyOver: function (dragSource, event, data) {
-                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
+                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'ExtensionNode')
                     return this.dropNotAllowed;
                 else
                     return this.dropAllowed;
             },
             notifyDrop: function (dragSource, event, data) {
-                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {
+                if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'ExtensionNode') {
                     return false;
                 }
                 else {
