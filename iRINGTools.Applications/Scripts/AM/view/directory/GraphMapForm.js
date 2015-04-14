@@ -172,19 +172,19 @@ Ext.define('AM.view.directory.GraphMapForm', {
     var propertyDd = new Ext.dd.DropTarget(ptarget.getEl(), {
       ddGroup: 'propertyGroup',
       notifyEnter: function (propertyDd, e, data) {
-        if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
+        if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'ExtensionNode')
         return this.dropNotAllowed;
         else
         return this.dropAllowed;
       },
       notifyOver: function (propertyDd, e, data) {
-        if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
+          if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'ExtensionNode')
         return this.dropNotAllowed;
         else
         return this.dropAllowed;
       },  
       notifyDrop: function (propertyDd, e, data) {
-        if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {
+          if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'ExtensionNode') {
           return false;
         }
         else {
