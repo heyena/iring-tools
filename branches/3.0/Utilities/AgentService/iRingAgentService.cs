@@ -308,6 +308,13 @@ namespace iRINGAgentService
                 idSQLMap[_configList[k].JobId] = updateSQL;
                 DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
 
+                if (occurance.Equals("Immediate"))
+                {
+                    updateSQL = string.Format(UPDATE_SQL_TPL, "Job", "Active = 0 ", " where JobId = '" + _configList[k].JobId + "'");
+                    idSQLMap[_configList[k].JobId] = updateSQL;
+                    DBManager.Instance.ExecuteUpdate(_agentConnStr, idSQLMap);
+                }
+
                 //if currenttime is greater than enddatetime then set active flag to 0
                 if (currentDateTime >= endDateTime)
                 {
@@ -333,6 +340,10 @@ namespace iRINGAgentService
             string grantType = string.Empty;
             string requestTimeout = string.Empty;
             string exchangeUrl = string.Empty;
+            string siteId = string.Empty;
+            string platformId = string.Empty;
+            string sSql = string.Empty;
+            DataTable agentConfig;
 
             try
             {
@@ -342,31 +353,36 @@ namespace iRINGAgentService
                 //_agentConnStr = EncryptionUtility.Decrypt(_agentConnStr);
                 _agentConnStr = settings.Get("SecurityConnection");
 
-                //get job schedule configuration
-                string sConfigSql = "select SSo_Url, Client_Id, Client_Secret, Grant_Type, Request_Timeout, exchange_url from JobClientInfo";
+                //get platformd and site id from webconfig
+                siteId = "2";
+                platformId = "2";
+
+                //get job schedule configuration info
+                string sConfigSql = "select SsoUri, ClientId, ClientSecret, GrantType, RequestTimeout, ExchangeManagerUri from GlobalSettings where siteid = " + siteId + " and platformId = " + platformId;
                 DataTable jobConfig = DBManager.Instance.ExecuteQuery(_agentConnStr, sConfigSql);
                 if (jobConfig != null && jobConfig.Rows.Count > 0)
                 {
                     foreach (DataRow dataRow in jobConfig.Rows)
                     {
-                        ssoUrl = dataRow["SSo_Url"].ToString();
-                        clientId = dataRow["Client_Id"].ToString();
-                        clientSecret = dataRow["Client_Secret"].ToString();
-                        grantType = dataRow["Grant_Type"].ToString();
-                        requestTimeout = dataRow["Request_Timeout"].ToString();
-                        exchangeUrl = dataRow["exchange_url"].ToString();
+                        ssoUrl = dataRow["SsoUri"].ToString();
+                        clientId = dataRow["ClientId"].ToString();
+                        clientSecret = dataRow["ClientSecret"].ToString();
+                        grantType = dataRow["GrantType"].ToString();
+                        requestTimeout = dataRow["RequestTimeout"].ToString();
+                        exchangeUrl = dataRow["ExchangeManagerUri"].ToString();
                     }
                 }
               
                 _configList.Clear();
-                string sSql = "select a.jobid,a.is_exchange,f.internalname as context,e.internalname as app,c.objectname,a.xid,a.cache_page_size, " +
+                // gat cache related info
+                sSql = "select a.jobid,a.is_exchange,f.internalname as context,e.internalname as app,c.objectname,a.xid,a.cache_page_size, " +
                             "b.scheduleid,b.occurance,b.weekday,b.start_datetime,b.end_datetime,b.status, " +
                             "a.next_start_datetime,a.last_start_datetime,a.active " +
                             "from job a, schedule b, DataObjects c, Dictionary d, Applications e, contexts f " +
                             "where a.scheduleid = b.scheduleid and a.dataobjectid = c.dataobjectid and c.dictionaryid = d.dictionaryid " +
-                            "and d.applicationid = e.applicationid and e.contextid = f.contextid ";
+                            "and d.applicationid = e.applicationid and e.contextid = f.contextid and a.is_exchange = 0 and a.siteid = " + siteId + " and a.platformid = " + platformId;
 
-                DataTable agentConfig = DBManager.Instance.ExecuteQuery(_agentConnStr, sSql);
+                agentConfig = DBManager.Instance.ExecuteQuery(_agentConnStr, sSql);
                 if (agentConfig != null && agentConfig.Rows.Count > 0)
                 {
                     foreach (DataRow dataRow in agentConfig.Rows)
@@ -402,7 +418,56 @@ namespace iRINGAgentService
                         }
                         catch (Exception ex)
                         {
-                            _eventLog1.WriteEntry(string.Format("Error getting configuration data.", ex));
+                            _eventLog1.WriteEntry(string.Format("Error getting cache configuration data.", ex));
+                            throw ex;
+                        }
+                    }
+                }
+
+                sSql = "select a.jobid,a.is_exchange,f.internalname as context,e.internalname as app,c.objectname,a.xid,a.cache_page_size, " +
+                            "b.scheduleid,b.occurance,b.weekday,b.start_datetime,b.end_datetime,b.status, " +
+                            "a.next_start_datetime,a.last_start_datetime,a.active " +
+                            "from job a, schedule b, DataObjects c, Dictionary d, Applications e, contexts f " +
+                            "where a.scheduleid = b.scheduleid and a.dataobjectid = c.dataobjectid and c.dictionaryid = d.dictionaryid " +
+                            "and d.applicationid = e.applicationid and e.contextid = f.contextid and a.is_exchange = 1 and a.siteid = " + siteId;
+
+                agentConfig = DBManager.Instance.ExecuteQuery(_agentConnStr, sSql);
+                if (agentConfig != null && agentConfig.Rows.Count > 0)
+                {
+                    foreach (DataRow dataRow in agentConfig.Rows)
+                    {
+                        try
+                        {
+                            _configList.Add(new AgentConfig
+                            {
+
+                                JobId = dataRow["JobId"].ToString(),
+                                IsExchange = Convert.ToInt32(dataRow["is_exchange"]),
+                                Scope = dataRow["context"].ToString(),
+                                App = dataRow["app"].ToString(),
+                                DataObject = dataRow["objectname"].ToString(),
+                                ExchangeId = dataRow["xid"] != DBNull.Value ? dataRow["xid"].ToString() : null,
+                                ExchangeUrl = exchangeUrl,
+                                CachePageSize = dataRow["cache_page_size"].ToString(),
+                                SsoUrl = ssoUrl,
+                                ClientId = clientId,
+                                ClientSecret = clientSecret,
+                                GrantType = grantType,
+                                RequestTimeout = Convert.ToInt32(requestTimeout),
+                                ScheduleId = dataRow["scheduleid"].ToString(),
+                                Occurance = dataRow["occurance"].ToString(),
+                                Weekday = string.IsNullOrEmpty(dataRow["weekday"].ToString()) ? "" : dataRow["weekday"].ToString(),
+                                StartDateTime = Convert.ToDateTime(dataRow["start_datetime"]),
+                                EndDateTime = Convert.ToDateTime(dataRow["end_datetime"]),
+                                Status = dataRow["status"].ToString(),
+                                NextStartDateTime = Convert.ToDateTime(dataRow["next_start_datetime"]),
+                                LastStartDateTime = dataRow["last_start_datetime"] != DBNull.Value ? Convert.ToDateTime(dataRow["last_start_datetime"]) : DateTime.MinValue,
+                                Active = Convert.ToInt32(dataRow["active"])
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            _eventLog1.WriteEntry(string.Format("Error getting cache configuration data.", ex));
                             throw ex;
                         }
                     }
