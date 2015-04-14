@@ -56,6 +56,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentLibrary", "Libraries\A
 		{46FB3942-D0A5-4BFF-97B0-739E56BFB111} = {46FB3942-D0A5-4BFF-97B0-739E56BFB111}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGAgentService", "Utilities\AgentService\iRINGAgentService.csproj", "{C5809555-9A03-48B1-B5AB-9A86E1EF670A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
