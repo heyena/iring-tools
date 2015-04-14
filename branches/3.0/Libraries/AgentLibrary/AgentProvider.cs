@@ -108,9 +108,16 @@ namespace org.iringtools.AgentLibrary
 
                         NameValueList nvl = new NameValueList();
              
-                        nvl.Add(new ListItem() { Name = "@DataObjectIds", Value = Convert.ToString (job.DataObjectId) });
+                        if (job.DataObjectId != null)
+                           nvl.Add(new ListItem() { Name = "@DataObjectIds", Value = Convert.ToString(job.DataObjectId) });
+                        else
+                            nvl.Add(new ListItem() { Name = "@DataObjectIds", Value = DBNull.Value });
+
                         nvl.Add(new ListItem() { Name = "@Is_exchange", Value = Convert.ToString(job.Is_Exchange) });
-                        nvl.Add(new ListItem() { Name = "@Xid", Value = job.Xid });
+                        if (job.Xid != null)
+                            nvl.Add(new ListItem() { Name = "@Xid", Value = job.Xid });
+                        else
+                            nvl.Add(new ListItem() { Name = "@Xid", Value = DBNull.Value });
                         nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = cachePageSize});
                         nvl.Add(new ListItem() { Name = "@PlatformId", Value = Convert.ToString(job.PlatformId) });
                         nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(job.SiteId) });
@@ -502,7 +509,10 @@ namespace org.iringtools.AgentLibrary
             Status status = new Status { Level = StatusLevel.Success };
             status.Messages = new Messages { errMsg };
             response.DateTimeStamp = DateTime.Now;
-            response.Level = StatusLevel.Success;
+            if (errMsg.IndexOf("duplicate") != -1)
+                response.Level = StatusLevel.Warning;
+            else
+                response.Level = StatusLevel.Success;
             response.StatusList.Add(status);
         }
         #endregion
