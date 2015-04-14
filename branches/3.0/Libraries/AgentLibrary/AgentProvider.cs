@@ -41,15 +41,16 @@ namespace org.iringtools.AgentLibrary
             }
         }
 
-        public org.iringtools.AgentLibrary.Agent.Jobs GetAllJobs(string userName, int siteId, int platformId )
+        public org.iringtools.AgentLibrary.Agent.Jobs GetAllJobs(string userName, int siteId, int platformId, int isExchange)
         {
             org.iringtools.AgentLibrary.Agent.Jobs jobs = new org.iringtools.AgentLibrary.Agent.Jobs();
             try
             {
                 NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@UserName", Value = Convert.ToString(userName) });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
-                nvl.Add(new ListItem() { Name = "@PlatformId", Value = Convert.ToString(platformId) });
+                nvl.Add(new ListItem() { Name = "@UserName", Value = Convert.ToString(userName)});
+                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId)});
+                nvl.Add(new ListItem() { Name = "@PlatformId", Value = Convert.ToString(platformId)});
+                nvl.Add(new ListItem() { Name = "@IsExchange", Value = Convert.ToString(isExchange)});
                
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgAllJobs", nvl);
                 xmlString = HttpUtility.HtmlDecode(xmlString);
