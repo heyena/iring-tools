@@ -24,14 +24,14 @@ Ext.define('AM.view.menus.GraphMenu', {
       items: [
         {
           xtype: 'menuitem',
-          action: 'editnewgraph',
-          itemId: 'editgraph',
+          action: 'newOrEditGraph',
+          itemId: 'editGraph',
           icon: 'Content/img/16x16/edit.png',
           text: 'Edit GraphMap'
         },
         {
           xtype: 'menuitem',
-          action: 'deletegraph',
+          action: 'deleteGraph',
           icon: 'Content/img/16x16/delete.png',
           text: 'Delete GraphMap'
         },
