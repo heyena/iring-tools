@@ -24,7 +24,8 @@ Ext.define('AM.view.menus.GraphsMenu', {
       items: [
         {
           xtype: 'menuitem',
-          action: 'editnewgraph',
+          action: 'newOrEditGraph',
+          itemId: 'newGraph',
           icon: 'Content/img/16x16/document-new.png',
           text: 'New GraphMap'
         }
