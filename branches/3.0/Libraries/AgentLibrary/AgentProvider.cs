@@ -506,7 +506,12 @@ namespace org.iringtools.AgentLibrary
         }
         private void PrepareSuccessResponse(Response response, string errMsg)
         {
-            Status status = new Status { Level = StatusLevel.Success };
+            Status status;
+            if (errMsg.IndexOf("duplicate") != -1)
+                status = new Status { Level = StatusLevel.Warning };
+            else
+                status = new Status { Level = StatusLevel.Success };
+
             status.Messages = new Messages { errMsg };
             response.DateTimeStamp = DateTime.Now;
             if (errMsg.IndexOf("duplicate") != -1)
