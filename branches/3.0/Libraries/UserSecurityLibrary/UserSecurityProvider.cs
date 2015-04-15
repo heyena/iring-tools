@@ -1227,7 +1227,7 @@ namespace org.iringtools.UserSecurity
 
             using (var dc = new DataContext(_connSecurityDb))
             {
-                lstGroup = dc.ExecuteQuery<Group>("spgRoleGroups @RoleId = {0}, @SiteId = {1}", iRoleId, _siteID).ToList();
+                lstGroup = dc.ExecuteQuery<Group>("spgRoleGroups @RoleId = {0}", iRoleId).ToList();
             }
 
             Groups groups = new Groups();
