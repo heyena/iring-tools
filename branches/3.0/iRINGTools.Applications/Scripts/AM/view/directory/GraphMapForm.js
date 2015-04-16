@@ -31,6 +31,11 @@ Ext.define('AM.view.directory.GraphMapForm', {
                   name: 'className'
               }, {
                   xtype: 'hiddenfield',
+                  name: 'classId'
+              }, 
+              
+              {
+                  xtype: 'hiddenfield',
                   name: 'contextId'
               }, {
                   xtype: 'hiddenfield',
@@ -226,7 +231,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
                         me.getForm().findField('oldClassUrl').setValue(tempClassUrl);
                     }
                     me.getForm().findField('className').setValue(data.records[0].data.record.Label);
-                    // me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
+                     me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
                     var msg = 'Class Label: ' + data.records[0].data.record.Label;
                     //ctarget.update(msg);
                     ctarget.update(data.records[0].data.record.Label);
