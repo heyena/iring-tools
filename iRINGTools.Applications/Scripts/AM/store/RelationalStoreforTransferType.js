@@ -1,6 +1,6 @@
 
 
-Ext.define('df.store.RelationalStoreforTransferType', {
+Ext.define('AM.store.RelationalStoreforTransferType', {
     extend: 'Ext.data.Store',
     alias: 'store.relationalStoreforTransferType',
 

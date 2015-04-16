@@ -580,8 +580,8 @@ Ext.define('AM.controller.Directory', {
 
 
         form.getForm().findField('displayName').setValue(displayNameCont);
-        form.getForm().findField('siteId').setValue(siteId);
-        form.getForm().findField('platformId').setValue(platformId);
+//        form.getForm().findField('siteId').setValue(siteId);
+//        form.getForm().findField('platformId').setValue(platformId);
         //form.getForm().findField('applications').setValue(apps[0].raw.text);
 
 
@@ -826,10 +826,10 @@ Ext.define('AM.controller.Directory', {
         var node = tree.getSelectedNode();
         var content = me.getMainContent();
         var contextName = node.parentNode.parentNode.parentNode.data.property['Internal Name'];
-        var endpointName = node.parentNode.parentNode.data.property['Internal Name'];
+        var applicationId = node.parentNode.data.parentId;
 
         var graph = node.data.text;
-        var title = contextName + '.' + endpointName + '.' + graph;
+        var title = contextName + '.' + applicationId + '.' + graph;
         var gridPanel = content.down('dynamicgrid[title=' + title + ']');
         var checkboxForGrid = Ext.getElementById('gridCheckbox').checked;
         if (!gridPanel) {
@@ -847,19 +847,9 @@ Ext.define('AM.controller.Directory', {
                     params.limit = store.pageSize;
                 }
 
-                params.app = endpointName; //node.parentNode.parentNode.data.property.Name;
-                params.scope = contextName; //node.parentNode.parentNode.parentNode.data.property.Name ;
+                params.app = applicationId;
+                params.scope = contextName;
                 params.graph = graph;
-                //                if (checkboxForGrid) {
-                //                    params.limit = 100000;
-                //                    store.pageSize = 100;
-                //                    //store.buffered = true;
-                //                    //store.leadingBufferZone = 300;
-                //                    //gridPanel.verticalScrollerType = 'paginggridscroller';
-                //                    //gridPanel.loadMask = true;
-                //                    if (gridPanel.dockedItems.length >= 2)
-                //                        gridPanel.dockedItems.removeAt(1);
-                //                }
             }, me);
 
             gridProxy.on('exception', function (proxy, response, operation) {
@@ -871,18 +861,14 @@ Ext.define('AM.controller.Directory', {
                 var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
                 Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                 Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-                //Ext.widget('messagepanel', { title: 'Error', msg: msg });
             }, me);
             gridStore.load({
                 callback: function (records, response) {
                     if (records != undefined) {
                         if (records[0]) {
                             gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
-                            //content.getEl().unmask();
                         } else {
                             if (response) {
-                                //showDialog(200, 50, 'Warning', 'Authentication failure', Ext.Msg.OK, null);
-                                //showDialog(500, 300, 'Error', response.response.responseText, Ext.Msg.OK, null);
                             }
                             return true;
                         }
@@ -1778,14 +1764,13 @@ Ext.define('AM.controller.Directory', {
         var tree = this.getDirTree();
         var node = tree.getSelectedNode();
 
-        var contextName = node.parentNode.parentNode.parentNode.data.property['Internal Name'];
-        var endpointName = node.parentNode.parentNode.data.property['Internal Name'];
+        var contextName = node.parentNode.parentNode.parentNode.data.text;
+        var appName = node.parentNode.parentNode.data.text;
         var graph = node.data.text;
 
-        var relURI = "Directory/getDataFilter";
-        var reqParam = { scope: contextName, app: endpointName, graph: graph, start: 0, limit: 25 };
+        var relURI = "Directory/GetDataFilter";
+        var reqParam = { scope: contextName, app: appName, graph: graph, start: 0, limit: 25 };
         var getColsUrl = 'GridManager/pages';
-        var oeUrl = 'Directory/getDataFilter';
         panelDisable();
         var dfcontroller = me.application.getController("df.controller.DataFilter");
         dfcontroller.dataFiltersMenuItem(centerPanel, node, relURI, reqParam, getColsUrl, "dobj");
@@ -1803,7 +1788,7 @@ Ext.define('AM.controller.Directory', {
         var endpointName = node.parentNode.parentNode.data.property['Internal Name'];
         var graph = node.data.text;
         var ctx = '?scope =' + contextName + '&app=' + endpointName + '&graph=' + graph;
-        var relURI = "Directory/dataFilter";
+        var relURI = "Directory/SaveDataFilter";
         var reqParam = { scope: contextName, app: endpointName, graph: graph };
         dfcontroller.saveDataFilter(node, reqParam, ctx, relURI, button);
 

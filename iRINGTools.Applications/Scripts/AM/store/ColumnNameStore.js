@@ -1,17 +1,17 @@
 
-Ext.define('df.store.ColumnNameStore', {
+Ext.define('AM.store.ColumnNameStore', {
     extend: 'Ext.data.Store',
     alias: 'store.columnNameStore',
 
     requires: [
-        'df.model.Names'
+        'AM.model.Names'
     ],
 
     constructor: function(cfg) {
     	var me = this;
         cfg = cfg || {};
         me.callParent([Ext.apply({
-            model: 'df.model.Names',
+            model: 'AM.model.Names',
             storeId: 'ColumnNameStore',
             proxy: {
                 type: 'ajax',
