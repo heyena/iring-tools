@@ -15,7 +15,7 @@
 
   <link rel="stylesheet" type="text/css" href="<%: Url.Content("~/Content/css/adaptermanager-gray.css") %>" />
   <script type="text/javascript" src="<%: Url.Content("~/Scripts/AM/utilities/utilities.js") %>"></script>
-  <script type="text/javascript" src="<%: Url.Content("~/Scripts/common/QuickFilter.js") %>"></script>
+  <script type="text/javascript" src="<%: Url.Content("~/Scripts/AM/view/common/QuickFilter.js") %>"></script>
   <script type="text/javascript" src="<%: Url.Content("~/app.js") %>"></script>   
 </head>
 <body> 

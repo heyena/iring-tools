@@ -1772,13 +1772,13 @@ Ext.define('AM.controller.Directory', {
         var reqParam = { scope: contextName, app: appName, graph: graph, start: 0, limit: 25 };
         var getColsUrl = 'GridManager/pages';
         panelDisable();
-        var dfcontroller = me.application.getController("df.controller.DataFilter");
+        var dfcontroller = me.application.getController("AM.controller.DataFilter");
         dfcontroller.dataFiltersMenuItem(centerPanel, node, relURI, reqParam, getColsUrl, "dobj");
     },
 
     saveDataFilter: function (button, e, eOpts) {
         var me = this;
-        var dfcontroller = me.application.getController("df.controller.DataFilter");
+        var dfcontroller = me.application.getController("AM.controller.DataFilter");
         var filterFor = button.up('window').down('dataFilterForm').getForm().findField('filterFor').getValue();
         var directoryTree = me.getDirTree();
         var node = directoryTree.getSelectedNode();

@@ -1,6 +1,6 @@
 
 
-Ext.define('AM.view.DataFilterForm', {
+Ext.define('AM.view.directory.DataFilterForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.dataFilterForm',
     height: 400,

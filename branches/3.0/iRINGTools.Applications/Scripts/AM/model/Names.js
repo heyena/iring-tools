@@ -13,7 +13,7 @@
 * Do NOT hand edit this file.
 */
 
-Ext.define('AM.model.DataFilterModel', {
+Ext.define('AM.model.Names', {
     extend: 'Ext.data.Model',
 
     fields: [
