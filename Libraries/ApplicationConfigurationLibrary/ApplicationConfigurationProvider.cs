@@ -1075,16 +1075,15 @@ namespace org.iringtools.applicationConfig
             }
         }
 
-        public org.iringtools.library.DataFilters GetDataFiltersForUser(string userName, Guid resourceId)
+        public org.iringtools.library.DataFilters GetDataFilters(Guid resourceId)
         {
             org.iringtools.library.DataFilters datafilters = new org.iringtools.library.DataFilters();
             try
             {
                 NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                 nvl.Add(new ListItem() { Name = "@ResourceId", Value = Convert.ToString(resourceId) });
 
-                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDataFilterByUser", nvl);
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDataFilter", nvl);
                 datafilters = utility.Utility.Deserialize<org.iringtools.library.DataFilters>(xmlString, true);
             }
             catch (Exception ex)
