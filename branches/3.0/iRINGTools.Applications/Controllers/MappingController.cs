@@ -23,6 +23,7 @@ using System.Text;
 using log4net;
 using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace org.iringtools.web.controllers
 {
@@ -40,6 +41,10 @@ namespace org.iringtools.web.controllers
         private string qName = string.Empty;
         private CustomError _CustomError = null;
         private CustomErrorLog _CustomErrorLog = null;
+
+
+        //string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        string userName = "WorldTest";
 
 
         public MappingController() : this(new MappingRepository()) { }
@@ -870,7 +875,9 @@ namespace org.iringtools.web.controllers
                 string delimiter = form["delimiter"];
                 string className = form["className"];
                 string classId = form["classId"];
-
+                Guid applicationId = Guid.Parse(form["applicationId"]); 
+                Guid contextId=Guid.Parse(form["applicationId"]);
+                
                 string context = string.Format("{0}/{1}/Graphs", scope, app);
                 Mapping mapping = GetMapping(scope, app);
                 GraphMap graphMap = null;
@@ -973,7 +980,9 @@ namespace org.iringtools.web.controllers
                         mapping.graphMaps.Add(graphMap);
                     }
                 }
-                DoUpdateMapping(scope, app, mapping);
+                //DoUpdateMapping(scope, app, mapping,applicationId);
+
+                DoUpdateMapping(scope, app, graphMap, applicationId);
 
                 graphNode = new JsonTreeNode
                 {
@@ -1011,11 +1020,46 @@ namespace org.iringtools.web.controllers
             string scope = form["scope"];
             string application = form["application"];
             Mapping mapping = GetMapping(scope, application);
-
+            Guid applicationId = Guid.Parse(form["applicationId"]);
             foreach (var graph in mapping.graphMaps)
                 graph.RearrangeIndexAndPath();
 
             return DoUpdateMapping(scope, application, mapping);
+        }
+
+        public JsonResult DoUpdateMapping(string scope, string application, GraphMap mapping,Guid applicationId)
+        {
+            try
+            {
+
+                org.iringtools.applicationConfig.Graph graph = new applicationConfig.Graph()
+                {
+
+                    ApplicationId = applicationId,
+                    graph = ObjectToByteArray(mapping),
+                    GraphId = Guid.Empty,
+                    GraphName = mapping.name.ToString()
+                };
+                
+              //  _repository.UpdateMapping(scope, application, mapping);
+
+                _repository.UpdateMapping(scope, application, graph, userName);
+
+
+                string key = string.Format(_keyFormat, scope, application);
+                Session.Remove(key);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                //return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIUpdateMap, ex, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
+                //return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+            }
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult DoUpdateMapping(string scope, string application, Mapping mapping)
@@ -1040,6 +1084,8 @@ namespace org.iringtools.web.controllers
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
+
+
         public JsonResult DeleteGraphMap(FormCollection form)
         {
             try
@@ -1049,7 +1095,7 @@ namespace org.iringtools.web.controllers
                 Mapping mapping = GetMapping(scope, application);
                 string graphName = form["mappingNode"].Split('/')[4];
                 GraphMap graphMap = mapping.FindGraphMap(graphName);
-
+                Guid applicationId = Guid.Parse(form["applicationId"]);
                 if (graphMap != null)
                 {
                     mapping.graphMaps.Remove(graphMap);
@@ -1350,6 +1396,7 @@ namespace org.iringtools.web.controllers
                 string application = context[1];
                 Mapping mapping = GetMapping(scope, application);
                 string deleteValueList = form["valueList"];
+                Guid applicationId = Guid.Parse(form["applicationId"]);
                 var valueListMap = mapping.valueListMaps.Find(c => c.name == deleteValueList);
                 if (valueListMap != null)
                     mapping.valueListMaps.Remove(valueListMap);
@@ -1405,7 +1452,7 @@ namespace org.iringtools.web.controllers
 
                 Mapping mapping = GetMapping(scope, application);
                 ValueListMap valuelistMap = null;
-
+                Guid applicationId = Guid.Parse(form["applicationId"]);
                 if (mapping.valueListMaps != null)
                     valuelistMap = mapping.valueListMaps.Find(c => c.name == valueList);
 
@@ -1483,7 +1530,7 @@ namespace org.iringtools.web.controllers
                 string oldClassUrl = form["oldClassUrl"];
                 Mapping mapping = GetMapping(scope, application);
                 ValueListMap valuelistMap = null;
-
+                Guid applicationId = Guid.Parse(form["applicationId"]);
                 if (mapping.valueListMaps != null)
                     valuelistMap = mapping.valueListMaps.Find(c => c.name == valueList);
 
@@ -1512,6 +1559,7 @@ namespace org.iringtools.web.controllers
                 Mapping sourceMapping = GetMapping(sourceScope, sourceApplication);
                 Mapping targetMapping = GetMapping(targetScope, targetApplication);
                 ValueListMap valuelistMap = null;
+                Guid applicationId = Guid.Empty;  //Guid.Parse(form["applicationId"]);
                 // copy complete valueList having multiples valueList items.
                 if (sourceMapping.valueListMaps != null)
                 {
@@ -1553,7 +1601,7 @@ namespace org.iringtools.web.controllers
             {
                 string oldValueList = "";
                 ValueListMap valueListMap = null;
-
+                Guid applicationId = Guid.Parse(form["applicationId"]);
                 string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 string scope = context[0];
 
@@ -1880,5 +1928,19 @@ namespace org.iringtools.web.controllers
 
             return Json(new { success = false }, JsonRequestBehavior.AllowGet);
         }
+
+
+        private byte[] ObjectToByteArray(Object obj)
+        {
+            if (obj == null)
+                return null;
+            BinaryFormatter bf = new BinaryFormatter();
+            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+            {
+                bf.Serialize(ms, obj);
+                return ms.ToArray();
+            }
+        }
+
     }
 }
