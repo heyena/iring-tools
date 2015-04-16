@@ -1,4 +1,4 @@
-Ext.define('AM.view.DataFilterWindow', {
+Ext.define('AM.view.directory.DataFilterWindow', {
     extend: 'Ext.window.Window',
     alias: 'widget.dataFilterWindow',
 

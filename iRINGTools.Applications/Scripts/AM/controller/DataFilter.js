@@ -15,8 +15,8 @@ Ext.define('AM.controller.DataFilter', {
 	],
 
     views: [
-		'DataFilterForm',
-		'DataFilterWin'
+		'directory.DataFilterForm',
+		'directory.DataFilterWindow'
 	],
 
     refs: [
@@ -78,7 +78,7 @@ abc: function () {
 
 dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, filterFor, oeUrl) {
     var me = this;
-    var view = Ext.widget('dataFilterWin');
+    var view = Ext.widget('dataFilterWindow');
     view.setTitle("Configure Data Filter");
     // getting propertiesName...
 
