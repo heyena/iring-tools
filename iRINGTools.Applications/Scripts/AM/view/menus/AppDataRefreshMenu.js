@@ -67,6 +67,13 @@ Ext.define('AM.view.menus.AppDataRefreshMenu', {
 		  hidden:true,
 		  itemId:'showCacheInfo',
           icon: 'Content/img/16x16/document-save.png'
+      },
+        {
+            xtype: 'menuitem',
+            action: 'cacheupdate',
+            icon: 'Content/img/16x16/document-new.png',
+            itemId: 'cacheupscreen',
+            text: 'Cache Update'
         }
       ]
     });

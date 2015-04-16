@@ -482,114 +482,148 @@ Ext.define('AM.controller.Directory', {
     // Start onCacheUpdate
     onCacheUpdate: function (item, e, eOpts) {
         var me = this;
-        var context, displayName, apps;
+        var contextName, applicationName, dataObjectName;
         var tree = me.getDirTree();
-        var node = tree.getSelectedNode();
+        var currentNode = tree.getSelectedNode();
+        var currentNodeRecord = currentNode.data.record;
+        var currentNodeType = currentNode.data.type;
         var objResponseText;
-        Ext.Ajax.request({
-            url: 'directory/getnode',
-            form: me.form,
-            method: 'POST',
-            params: {
-                nodedetails: node.data,
-                jsonData: node.data,
-                contentType: 'application/json',
-                type: 'ContextNode',
-                'node': node.internalId,
-                'parentnodeid': node.parentNode.internalId,
-                'nodename': node.data.record.FolderName
-            },
-            success: function (response, request) {
-                objResponseText = Ext.decode(response.responseText);
-                var parentNode = node.parentNode;
-                // parentNode.removeChild(node);
-                // tree.getSelectionModel().select(parentNode);
-                //tree.view.refresh();
-                // me.getDirTree().onReload();
-
-            },
-            failure: function (response, request) {
-                objResponseText = Ext.decode(response.responseText);
-                var userMsg = objResponseText['message'];
-                var detailMsg = objResponseText['stackTraceDescription'];
-                var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
-                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-            }
-        })
-
-        var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
-        context = node.data.record.context;
-        apps = node.childNodes;
-
-        var tempStore = Ext.create('Ext.data.Store', {
-            fields: ['display'],
-            storeId: 'apptempStore',
-            //autoLoad:true,
-            listeners: {
-                'load': function () {
-                    var arr = objResponseText;
-                    Ext.each(arr, function (temp, index) {
-                        tempStore.insert(index, { display: temp.record.DisplayName });
-
-
-                    })
-                }
-
-            }
-
-
-        });
-        //        var tempStore = Ext.create('Ext.data.Store', {
-        //            fields: ['display', 'value'],
-        //            storeId: 'apptempStore',
-        //            //autoLoad:true,
-        //            listeners: {
-        //                'load': function () {
-        //                    var arr = node.childNodes;
-        //                    Ext.each(arr, function (item, index) {
-        //                        tempStore.insert(index, { display: node.childNodes[0].raw.text });
-        //                       
-        //                    })
-        //                }
-
-        //            }
-
-
-        //        });
-
-        if (item.itemId == 'cacheupscreen' && node.data.record !== undefined) {
-
-            // displayNameCont = node.data.property["Display Name"];   //node.data.record.DisplayName
-
-            var record = Ext.decode(node.raw.record);
-            var displayNameCont = record.displayName;
-            var siteId = Ext.decode(node.parentNode.raw.record).siteId;
-            var platformId = Ext.decode(node.parentNode.raw.record).platformId;
-
-        }
 
         var win = Ext.widget('cachewindow');
         var form = win.down('form');
-        form.node = node;
+        form.node = currentNode;
 
+        if (currentNodeType == 'ContextNode') {
+            Ext.Ajax.request({
+                url: 'directory/GetNodesForCache',
+                form: me.form,
+                method: 'POST',
+                params: {
+                    type: currentNodeType,
+                    record: currentNodeRecord
+                },
+                success: function (response, request) {
+                    //                        if (currentNodeType == 'ContextNode') {
+                    var applicationStore = Ext.create('Ext.data.Store', { fields: ['appId', 'appName'] });
+                    var dataObjectStore = Ext.create('Ext.data.Store', { fields: ['dataObjId', 'dataObjName'] });
 
-        win.on('cancel', function () {
-            win.destroy();
-        }, me);
+                    while (currentNode.firstChild) {
+                        currentNode.removeChild(currentNode.firstChild);
+                    }
 
+                    var index = 0;
 
-        form.getForm().findField('displayName').setValue(displayNameCont);
-//        form.getForm().findField('siteId').setValue(siteId);
-//        form.getForm().findField('platformId').setValue(platformId);
-        //form.getForm().findField('applications').setValue(apps[0].raw.text);
+                    Ext.each(Ext.JSON.decode(response.responseText).currentNodesChildren, function (eachChildNode) {
+                        currentNode.insertChild(index, eachChildNode);
+                        applicationStore.add({ appId: eachChildNode.id, appName: eachChildNode.text });
 
+                        var dataObjectsNode = currentNode.childNodes[index].childNodes[0];
 
+                        if (dataObjectsNode != null) {
+                            Ext.each(dataObjectsNode.children, function (eachDataObjectNode) {
+                                dataObjectStore.add({ dataObjId: eachDataObjectNode.id, dataObjName: eachDataObjectNode.text });
+                            });
+                        }
 
-        win.show();
+                        index++;
+                    });
+
+                    form.getForm().findField('applicationName').bindStore(applicationStore);
+                    form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
+                    form.getForm().findField('contextName').setValue(currentNode.data.text);
+
+                    win.on('cancel', function () {
+                        win.destroy();
+                    }, me);
+
+                    win.show();
+                },
+                failure: function (response, request) {
+                    //TODO:
+                }
+            })
+        }
+        else if (currentNodeType == 'ApplicationNode') {
+            Ext.Ajax.request({
+                url: 'directory/GetNodesForCache',
+                form: me.form,
+                method: 'POST',
+                params: {
+                    type: currentNodeType,
+                    record: currentNodeRecord
+                },
+                success: function (response, request) {
+
+                    var dataObjectStore = Ext.create('Ext.data.Store', { fields: ['dataObjId', 'dataObjName'] });
+
+                    while (currentNode.firstChild) {
+                        currentNode.removeChild(currentNode.firstChild);
+                    }
+
+                    var index = 0;
+
+                    Ext.each(Ext.JSON.decode(response.responseText).currentNodesChildren, function (eachChildNode) {
+                        eachChildNode.insertChild(index, eachChildNode);
+
+                        if (index = 0 && eachChildNode.children != null) {
+                            Ext.each(eachChildNode.children, function (eachDataObjectNode) {
+                                dataObjectStore.add({ dataObjId: eachDataObjectNode.id, dataObjName: eachDataObjectNode.text });
+                            });
+                        }
+
+                        index++;
+                    });
+
+                    form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
+                    form.getForm().findField('applicationName').setValue(currentNode.data.text);
+                    form.getForm().findField('contextName').setValue(currentNode.parentNode.data.text);
+
+                    win.on('cancel', function () {
+                        win.destroy();
+                    }, me);
+
+                    win.show();
+                },
+                failure: function (response, request) {
+                    //TODO:
+                }
+            })
+        }
+        else if (currentNodeType == 'DataObjectsNode') {
+            var dataObjectStore = Ext.create('Ext.data.Store', { fields: ['dataObjId', 'dataObjName'] });
+
+            var dataObjectsNode = currentNode.children;
+
+            if (dataObjectsNode != null) {
+                Ext.each(dataObjectsNode, function (eachChildNode) {
+                    dataObjectStore.add({ dataObjId: eachDataObjectNode.id, dataObjName: eachDataObjectNode.text });
+                });
+            }
+
+            form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
+            form.getForm().findField('applicationName').setValue(currentNode.parentNode.data.text);
+            form.getForm().findField('contextName').setValue(currentNode.parentNode.parentNode.data.text);
+
+            win.on('cancel', function () {
+                win.destroy();
+            }, me);
+
+            win.show();
+        }
+        else if (currentNodeType == 'DataObjectNode') {
+            form.getForm().findField('dataObjectName').setValue(currentNode.data.text);
+            form.getForm().findField('contextName').setValue(currentNode.parentNode.parentNode.parentNode.data.text);
+            form.getForm().findField('applicationName').setValue(currentNode.parentNode.parentNode.data.text);
+
+            win.on('cancel', function () {
+                win.destroy();
+            }, me);
+
+            win.show();
+        }
     },
-
     //End onCacheUpdate
+
 
     //Start onEditrow
     onEditrow: function (item, e, eOpts) {

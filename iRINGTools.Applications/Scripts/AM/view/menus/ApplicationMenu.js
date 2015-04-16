@@ -27,7 +27,7 @@ Ext.define('AM.view.menus.ApplicationMenu', {
             action: 'newOrEditApplication',
             itemId: 'editApplication',
             icon: 'Content/img/16x16/edit.png',
-            text: 'Edit Application'
+            text: 'Edit Application23'
         },
         {
             xtype: 'menuitem',
@@ -58,6 +58,13 @@ Ext.define('AM.view.menus.ApplicationMenu', {
             action: 'filedownload',
             icon: 'Content/img/16x16/document-down.png',
             text: 'Download File'
+        },
+        {
+            xtype: 'menuitem',
+            action: 'cacheupdate',
+            icon: 'Content/img/16x16/document-new.png',
+            itemId: 'cacheupscreen',
+            text: 'Cache Update'
         }
       ]
         });
