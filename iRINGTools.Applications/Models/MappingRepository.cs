@@ -19,7 +19,7 @@ namespace iRINGTools.Web.Models
         private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingRepository));
         private WebHttpClient _adapterServiceClient = null;
         private string _refDataServiceURI = string.Empty;
-
+        private WebHttpClient _appConfigServiceClient = null;
         public MappingRepository()
         {
           NameValueCollection settings = ConfigurationManager.AppSettings;
@@ -30,15 +30,21 @@ namespace iRINGTools.Web.Models
           string proxyHost = _settings["ProxyHost"];
           string proxyPort = _settings["ProxyPort"];
           string adapterServiceUri = _settings["AdapterServiceUri"];
+          string applicationConfigServiceUri = _settings["ApplicationConfigServiceUri"];
 
           if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
           {
             WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
             _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
+            _appConfigServiceClient = new WebHttpClient(applicationConfigServiceUri, null, webProxy);
+
+
           }
           else
           {
             _adapterServiceClient = new WebHttpClient(adapterServiceUri);
+            _appConfigServiceClient = new WebHttpClient(applicationConfigServiceUri);
+
 
           }
           #endregion
@@ -72,5 +78,20 @@ namespace iRINGTools.Web.Models
                 _logger.Error(ex.ToString());
             }
         }
+
+        public void UpdateMapping(string scopeName, string applicationName, org.iringtools.applicationConfig.Graph graph, string userName)
+        {
+           // XElement mappingXml = XElement.Parse(Utility.SerializeDataContract<Mapping>(mapping));
+            try
+            {
+               // _adapterServiceClient.Post<XElement>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), mappingXml, true);
+                _appConfigServiceClient.Post<org.iringtools.applicationConfig.Graph>(String.Format("/insertGraph/{0}?format=xml", userName), graph,true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
+        }
+
     }
 }
