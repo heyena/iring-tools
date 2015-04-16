@@ -670,7 +670,7 @@ namespace org.iringtools.mapping
             graphMaps = new GraphMaps();
             valueListMaps = new ValueListMaps();
         }
-
+       
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
         public org.iringtools.mapping.GraphMaps graphMaps
         {
@@ -903,6 +903,7 @@ namespace org.iringtools.mapping
     }
 
     [System.Runtime.Serialization.DataContractAttribute(Name = "classMap", Namespace = "http://www.iringtools.org/mapping")]
+    [Serializable]
     public partial class ClassMap
     {
         private string nameField;
@@ -1032,21 +1033,25 @@ namespace org.iringtools.mapping
     }
 
     [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "templateMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "templateMap")]
+    [Serializable]
     public class TemplateMaps : System.Collections.Generic.List<org.iringtools.mapping.TemplateMap>
     {
     }
 
     [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "identifiers", Namespace = "http://www.iringtools.org/mapping", ItemName = "identifier")]
+    [Serializable]
     public class Identifiers : System.Collections.Generic.List<string>
     {
     }
 
     [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "keyMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "keyMap")]
+    [Serializable]
     public class KeyMaps : System.Collections.Generic.List<org.iringtools.mapping.KeyMap>
     {
     }
 
     [System.Runtime.Serialization.DataContractAttribute(Name = "templateMap", Namespace = "http://www.iringtools.org/mapping")]
+    [Serializable]
     public partial class TemplateMap
     {
         private string idField;
@@ -1145,6 +1150,7 @@ namespace org.iringtools.mapping
     }
 
     [System.Runtime.Serialization.DataContractAttribute(Name = "roleMap", Namespace = "http://www.iringtools.org/mapping")]
+    [Serializable]
     public partial class RoleMap
     {
         private org.iringtools.mapping.RoleType typeField;
