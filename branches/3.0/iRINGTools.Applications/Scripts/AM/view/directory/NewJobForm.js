@@ -25,40 +25,7 @@ Ext.define('AM.view.directory.NewJobForm', {
             url: 'directory/saveSchedularData'
         }, me.initialConfig);
 
-        var tempStore = Ext.create('Ext.data.Store', {
-            fields: ['display'],
-            listeners: {
-                'load': function () {
-                    var arr = Ext.getStore('DirectoryTreeStore').tree.root.childNodes;
-                    Ext.each(arr, function (item, index) {
-                        tempStore.insert(index, {
-                            display: item.data.property["Display Name"]
-                        });
-
-                    })
-                }
-
-            }
-
-
-        });
-
-
-        var weekDaysStore = Ext.create('Ext.data.Store', {
-            fields: ['weekdays'],
-            data: [
-        { "weekdays": "Monday" },
-        { "weekdays": "Tuesday" },
-        { "weekdays": "Wednesday" },
-        { "weekdays": "Thursday" },
-        { "weekdays": "Friday" },
-        { "weekdays": "Saturday" },
-        { "weekdays": "Sunday" }
-
-        ]
-
-        });
-
+        var applicationStore = Ext.create('Ext.data.Store', { fields: ['appId', 'appName'] });
 
         Ext.applyIf(me, {
 
@@ -75,55 +42,54 @@ Ext.define('AM.view.directory.NewJobForm', {
                         xtype: 'container',
                         layout: 'hbox',
                         margin: '15 0 5 0',
-                        items: [{
-                            xtype: 'label',
-                            name: 'cont',
-                            text: 'Context',
-                            margin: '4 61 0 0 ',
-                            allowBlank: false
-                        }, {
+                        items: [
+                           {
+                               xtype: 'label',
+                               name: 'contextLabel',
+                               text: 'Context',
+                               margin: '4 61 0 0 '
+                           }, {
 
-                            xtype: 'combobox',
-                            itemId: 'scopecombo',
-                            margin: '4 40 0 0 ',
-                            labelWidth: 110,
-                            name: 'displayName',
-                            editable: false
-
-
-
-                        }, {
-                            xtype: 'label',
-                            name: 'exch',
-                            text: 'App',
-                            margin: '4 40 0 0 ',
-                            allowBlank: false
-                        }, {
-                            xtype: 'combobox',
-                            name: 'applications',
-                            itemId: 'appcombo',
-                            store: 'apptempStore',
-                            //forceSelection: true,
-                            //triggerAction: 'all',
-                            displayField: 'display',
-                            valueField: 'display'
-
-                        }]
+                               xtype: 'combobox',
+                               itemId: 'contextCombo',
+                               margin: '4 40 0 0 ',
+                               labelWidth: 110,
+                               name: 'contextName',
+                               editable: false
+                           }, {
+                               xtype: 'label',
+                               name: 'applicationLabel',
+                               text: 'Application',
+                               margin: '4 40 0 0 '
+                           }, {
+                               xtype: 'combobox',
+                               name: 'applicationName',
+                               itemId: 'appCombo',
+                               store: applicationStore,
+                               displayField: 'appName',
+                               valueField: 'appId',
+                               queryMode: 'local',
+                               autoSelect: false,
+                               editable: false
+                           }]
                     }, {
                         xtype: 'container',
                         layout: 'hbox',
                         margin: '17 0 15 0',
                         items: [{
                             xtype: 'label',
-                            name: 'exchurl',
+                            name: 'dataObjectLabel',
                             text: 'DataObject',
-                            margin: '4 42 0 0 ',
-                            allowBlank: false
+                            margin: '4 42 0 0 '
                         }, {
                             labelWidth: 110,
-                            xtype: 'combobox',
-                            name: 'dataobj',
-                            allowBlank: false
+                            xtype: 'checkboxlistcombo',
+                            multiSelect: true,
+                            name: 'dataObjectName',
+                            itemId: 'dataObjCombo',
+                            valueField: 'dataObjId',
+                            displayField: 'dataObjName',
+                            editable: false
                         }]
                     }
                 ]
@@ -142,34 +108,48 @@ Ext.define('AM.view.directory.NewJobForm', {
                     defaultType: 'radiofield',
                     margin: '10 0 0 0',
                     items: [{
-                        //xtype: 'radio',
+                        boxLabel: 'Immediate',
+                        inputValue: 'Immediate',
+                        name: 'occuranceRadio',
+                        margin: '4 80 0 0 ',
+                        allowBlank: false,
+                        listeners: {
+                            change: function (cb, checked) {
+                                Ext.ComponentQuery.query('#fldContainer')[0].setDisabled(checked);
+                                Ext.ComponentQuery.query('#checkBox')[0].setDisabled(checked);
+                                Ext.ComponentQuery.query('#myEndDateCombo')[0].setDisabled(checked);
+                                Ext.ComponentQuery.query('#myEndTimeCombo')[0].setDisabled(checked);
+                            }
+                        }
+                    }, {
                         boxLabel: 'Daily',
                         inputValue: 'Daily',
-                        name: 'occrad',
-                        margin: '4 160 0 0 ',
+                        name: 'occuranceRadio',
+                        margin: '4 80 0 0 ',
                         allowBlank: false
                     },
                    {
-                   //xtype: 'radio',
-                   boxLabel: 'Weekly',
-                   inputValue: 'Weekly',
-                   name: 'occrad',
-                   margin: '4 170 0 0 ',
-                   allowBlank: false
-               }, {
-                   //xtype: 'radio',
-                   boxLabel: 'Monthly',
-                   inputValue: 'Monthly',
-                   name: 'occrad',
-                   margin: '4 40 0 0 ',
-                   allowBlank: false
-               }
+                       
+                       boxLabel: 'Weekly',
+                       inputValue: 'Weekly',
+                       name: 'occuranceRadio',
+                       margin: '4 80 0 0 ',
+                       allowBlank: false
+                   }, {
+                      
+                       boxLabel: 'Monthly',
+                       inputValue: 'Monthly',
+                       name: 'occuranceRadio',
+                       margin: '4 40 0 0 ',
+                       allowBlank: false
+                   }
                   ]
                 }]
 
             }, {
                 xtype: 'fieldset',
                 border: 0,
+                itemId: 'fldContainer',
                 layout: 'anchor',
                 defaults: {
                     anchor: '100%'
@@ -197,29 +177,6 @@ Ext.define('AM.view.directory.NewJobForm', {
                              emptyText: 'Time',
                              margin: '0 10 0 0',
                              anchor: '100%'
-                         }, {
-                             xtype: 'datefield',
-                             fieldLabel: 'End DateTime',
-                             name: 'endDate',
-                             minValue: (new Date()),
-                             emptyText: 'Select End Date',
-                             labelWidth: 80,
-                             width: 180,
-                             disabled: false,
-                             itemId: 'myEndDateCombo',
-                             anchor: '100%'
-                         }, {
-                             xtype: 'timefield',
-                             name: 'endTime',
-                             minValue: '00:00',
-                             maxValue: '24:00',
-                             width: 60,
-                             format: 'H:i',
-                             increment: 1,
-                             emptyText: 'Time',
-                             disabled: false,
-                             itemId: 'myEndTimeCombo',
-                             anchor: '100%'
                          }]
                 }]
 
@@ -234,21 +191,44 @@ Ext.define('AM.view.directory.NewJobForm', {
                     xtype: 'container',
                     layout: 'hbox',
                     margin: '10 0 5 0',
-                    items: [
+                    items: [{
+                        xtype: 'datefield',
+                        fieldLabel: 'End DateTime',
+                        name: 'endDate',
+                        minValue: (new Date()),
+                        emptyText: 'Select End Date',
+                        width: 220,
+                        disabled: false,
+                        itemId: 'myEndDateCombo',
+                        anchor: '100%'
+                    }, {
+                        xtype: 'timefield',
+                        name: 'endTime',
+                        minValue: '00:00',
+                        maxValue: '24:00',
+                        width: 60,
+                        format: 'H:i',
+                        increment: 1,
+                        emptyText: 'Time',
+                        disabled: false,
+                        itemId: 'myEndTimeCombo',
+                        margin: '0 10 0 0',
+                        anchor: '100%'
+                    },
                      {
                          xtype: 'checkboxfield',
                          boxLabel: 'No End Date',
                          name: 'chkBox',
-                         margin: '4 0 0 295',
-                         checked:false,
-                         //inputValue: '1',
+                         itemId: 'checkBox',
+                         margin: '4 0 0 60',
+                         checked: false,
                          listeners: {
                              change: function (cb, checked) {
                                  Ext.ComponentQuery.query('#myEndDateCombo')[0].setDisabled(checked);
                                  Ext.ComponentQuery.query('#myEndTimeCombo')[0].setDisabled(checked);
                              }
                          }
-                        }]
+                     }]
                 }]
 
 
@@ -294,8 +274,8 @@ Ext.define('AM.view.directory.NewJobForm', {
         var startTime = me.getForm().findField('startTime').getValue();
         var endDate = me.getForm().findField('endDate').getValue();
         var endTime = me.getForm().findField('endTime').getValue();
-//        var mondat = me.getForm().findField('monthdate').getValue();
-//        var ouccarance = me.getForm().findField('monthdate').getValue();
+        //        var mondat = me.getForm().findField('monthdate').getValue();
+        //        var ouccarance = me.getForm().findField('monthdate').getValue();
         var ouccaradio = me.getForm().findField('occrad').getValue();
 
         me.getForm().submit({
@@ -311,8 +291,4 @@ Ext.define('AM.view.directory.NewJobForm', {
             }
         });
     }
-
-
-
-
 });

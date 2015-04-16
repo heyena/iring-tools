@@ -592,6 +592,53 @@ namespace org.iringtools.web.controllers
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
         }
+      
+
+        public JsonResult GetNodesForCache(FormCollection form)
+        {
+            try
+            {
+                var currentNodesChildren = (List<JsonTreeNode>)((JsonResult)GetNode(form)).Data;
+
+                if (form["type"] == "ContextNode")
+                {
+                    foreach (JsonTreeNode eachApplicationNode in currentNodesChildren)
+                    {
+                        System.Collections.Specialized.NameValueCollection formNameValueCollection = new System.Collections.Specialized.NameValueCollection();
+
+                        formNameValueCollection.Add("type", "ApplicationNode");
+                        formNameValueCollection.Add("record", eachApplicationNode.record.ToString());
+
+                        FormCollection tempApplicationForm = new FormCollection(formNameValueCollection);
+
+                        var applicationChildrenNodes = (List<JsonTreeNode>)((JsonResult)GetNode(tempApplicationForm)).Data;
+
+                        eachApplicationNode.children = new List<JsonTreeNode>();
+                        eachApplicationNode.children.AddRange((List<JsonTreeNode>)applicationChildrenNodes);
+                    }
+                }
+
+                return Json(new { success = true, message = "nodesFetched", currentNodesChildren }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                //TODO: NEED TO HANDLE EXCEPTIONS PROPERLY
+                _logger.Error(e.ToString());
+                if (e.InnerException != null)
+                {
+                    string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
+                    var jsonSerialiser = new JavaScriptSerializer();
+                    CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+                    return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    _CustomErrorLog = new CustomErrorLog();
+                    _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errAddUIApplication, e, _logger);
+                    return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
 
         public JsonResult DeleteScope(FormCollection form)
         {
