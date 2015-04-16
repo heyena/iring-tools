@@ -662,15 +662,15 @@ namespace org.iringtools.services
         }
 
         [Description("Get datafilter collection for user")]
-        [WebGet(UriTemplate = "/datafilters/{userName}?resourceId={resourceId}&format={format}")]
-        public void GetDataFiltersForUser(string userName, Guid resourceId, string format)
+        [WebGet(UriTemplate = "/datafilters?resourceId={resourceId}&format={format}")]
+        public void GetDataFilters(string userName, Guid resourceId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                org.iringtools.library.DataFilters dataFilters = _applicationConfigurationProvider.GetDataFiltersForUser(userName, resourceId);
+                org.iringtools.library.DataFilters dataFilters = _applicationConfigurationProvider.GetDataFilters(resourceId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.library.DataFilters>(dataFilters, format, true);
             }
             catch (Exception ex)
