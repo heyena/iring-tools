@@ -663,7 +663,7 @@ namespace org.iringtools.services
 
         [Description("Get datafilter collection for user")]
         [WebGet(UriTemplate = "/datafilters?resourceId={resourceId}&format={format}")]
-        public void GetDataFilters(string userName, Guid resourceId, string format)
+        public void GetDataFilters(Guid resourceId, string format)
         {
             try
             {
