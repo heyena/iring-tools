@@ -1,6 +1,6 @@
 
 
-Ext.define('df.store.RelationalStoreComplete', {
+Ext.define('AM.store.RelationalStoreComplete', {
     extend: 'Ext.data.Store',
     alias: 'store.relationalCompleteStore',
 

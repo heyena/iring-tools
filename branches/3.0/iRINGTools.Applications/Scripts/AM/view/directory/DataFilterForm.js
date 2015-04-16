@@ -1,6 +1,6 @@
 
 
-Ext.define('df.view.DataFilterForm', {
+Ext.define('AM.view.DataFilterForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.dataFilterForm',
     height: 400,

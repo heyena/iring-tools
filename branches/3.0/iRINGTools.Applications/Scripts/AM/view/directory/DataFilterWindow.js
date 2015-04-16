@@ -1,6 +1,6 @@
-Ext.define('df.view.DataFilterWin', {
+Ext.define('AM.view.DataFilterWindow', {
     extend: 'Ext.window.Window',
-    alias: 'widget.dataFilterWin',
+    alias: 'widget.dataFilterWindow',
 
     autoScroll: true,
     layout: {

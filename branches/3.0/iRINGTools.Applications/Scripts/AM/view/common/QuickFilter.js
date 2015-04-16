@@ -1,4 +1,4 @@
-Ext.define('common.QuickFilter', {
+Ext.define('AM.view.common.QuickFilter', {
 	extend: 'Ext.grid.feature.Feature',
     alias: 'feature.quickfilter',
 

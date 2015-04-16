@@ -35,7 +35,7 @@ Ext.application({
         'Spreadsheet',
         'NHConfig',
         'SQLConfig',
-        'df.controller.DataFilter'
+        'DataFilter'
   ],
 
   models: [

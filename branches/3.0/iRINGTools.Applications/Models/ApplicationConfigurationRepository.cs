@@ -340,7 +340,8 @@ namespace iRINGTools.Web.Models
 
         public ApplicationSettings GetAppSettings()
         {
-            ApplicationSettings items = null;
+            ApplicationSettings items = new ApplicationSettings();
+
             logger.Debug("In ApplicatonConfigRepository GetAppSettings");
             try
             {

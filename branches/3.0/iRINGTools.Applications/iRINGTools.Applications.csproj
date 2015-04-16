@@ -418,6 +418,14 @@
     <Content Include="Scripts\AM\view\sqlconfig\SqlRelationshipsPanel.js" />
     <Content Include="Scripts\AM\view\sqlconfig\SqlTableSelectionPanel.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />
+    <Content Include="Scripts\AM\view\common\QuickFilter.js" />
+    <Content Include="Scripts\AM\controller\DataFilter.js" />
+    <Content Include="Scripts\AM\model\Names.js" />
+    <Content Include="Scripts\AM\store\ColumnNameStore.js" />
+    <Content Include="Scripts\AM\store\RelationalStoreComplete.js" />
+    <Content Include="Scripts\AM\store\RelationalStoreforTransferType.js" />
+    <Content Include="Scripts\AM\view\directory\DataFilterForm.js" />
+    <Content Include="Scripts\AM\view\directory\DataFilterWindow.js" />
     <Content Include="Scripts\extjs-4.1.1\ext-all-debug.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Scripts\USM\controller\UserSecurity.js" />

@@ -1,5 +1,5 @@
 
-Ext.define('df.controller.DataFilter', {
+Ext.define('AM.controller.DataFilter', {
     extend: 'Ext.app.Controller',
 
     id: 'dataFilter',
