@@ -230,10 +230,12 @@ Ext.define('AM.view.directory.ApplicationForm', {
                         me.setLoading(false);
 
                         if (objResponseText["message"] == "applicationAdded") {
-                            showDialog(400, 50, 'Alert', "Application added successfully!", Ext.Msg.OK, null);
+                       
+                            Ext.example.msg('Notification', 'Application added successfully!');
                         }
                         if (objResponseText["message"] == "applicationUpdated") {
-                            showDialog(400, 50, 'Alert', "Application updated successfully!", Ext.Msg.OK, null);
+                            
+                            Ext.example.msg('Notification', 'Application updated successfully!');
                         }
                     },
                     failure: function (response, request) {

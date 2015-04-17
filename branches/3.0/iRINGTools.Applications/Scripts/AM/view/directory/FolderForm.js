@@ -78,7 +78,7 @@ Ext.define('AM.view.directory.FolderForm', {
                 displayField: 'groupName',
                 autoSelect: false,
                 forceSelection: true,
-                queryMode: 'remote',
+                queryMode: 'local',
                 store: 'ResourceGroupStore',
                 valueField: 'groupId',
                 emptyText : 'Select Groups For The  User'
@@ -132,10 +132,12 @@ Ext.define('AM.view.directory.FolderForm', {
                         me.setLoading(false);
 
                         if (objResponseText["message"] == "folderadded") {
-                            showDialog(400, 50, 'Alert', "Folder added successfully!", Ext.Msg.OK, null);
+                         
+                            Ext.example.msg('Notification', 'Folder added successfully');
                         }
                         else if (objResponseText["message"] == "folderupdated") {
-                            showDialog(400, 50, 'Alert', "Folder updated successfully!", Ext.Msg.OK, null);
+                          
+                            Ext.example.msg('Notification', 'Folder updated successfully');
                         }
                         else if (objResponseText["message"] == "duplicatefolder") {
                             showDialog(400, 50, 'Alert', "Folder with this name already exists", Ext.Msg.OK, null);
