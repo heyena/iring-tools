@@ -914,7 +914,7 @@ namespace org.iringtools.web.controllers
                 AgentLibrary.Agent.Jobs result = null;
                 try
                 {
-                    result = _repository.getAllScheduleJob(2, 3);
+                    result = _repository.getAllScheduleJob(platformId, siteId,userName);
 
                 }
                 catch (Exception e)
