@@ -25,6 +25,8 @@ namespace org.iringtools.web.controllers
     {
 
         string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        //string userName = "WorldTest";
+
         int siteId = 4;
         int platformId = 2;
 
@@ -869,13 +871,14 @@ namespace org.iringtools.web.controllers
 
         public ActionResult saveSchedularData(FormCollection form)
         {
-
+            string response = null;
             try
             {
-                string success = String.Empty;
+                
+                //string success = String.Empty;
                 string displayname = form["displayName"];
                 string applications = form["applications"];
-                string dataObjects = form["dataobj"];
+                string dataObjects = form["dataobj"];;
                 string startDate = form["startDate"];
                 string occurence = form["occrad"];
                 string startTime = form["startTime"];
@@ -892,15 +895,24 @@ namespace org.iringtools.web.controllers
                 string schcontextName = form["displayName"];
 
                 //  success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), "daily", "sunday");
-                success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, startDate, endDate, occurence, 0, 0);
+                response = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, startDate, endDate, occurence, 0, 0);
+                if(response.Contains("jobadded"))
+                {response = "Job Added Successfuly";}
+                else
+                { response = "Duplicate Job"; }
+
 
             }
             catch (Exception e)
             {
                 _logger.Error(e.ToString());
+                _logger.Error("Error in saving Job for scheduler : " + e.ToString());
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIDataFilter, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + "Error in saving Job for scheduler", stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, message = response}, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult getAllJob()
