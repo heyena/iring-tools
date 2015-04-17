@@ -1485,7 +1485,7 @@ namespace iRINGTools.Web.Models
               try
               {
                   WebHttpClient client = CreateWebClient(_agentDataServiceUri);
-                  obj = client.Get<Agent.Jobs>(String.Format("/alljobs?platformId={0}&siteId={1}&format=xml", intPlatFormId, intSiteId));
+                  obj = client.Get<Agent.Jobs>(String.Format("/alljobs?platformId={0}&siteId={1}&isExchange={2}&format=xml", intPlatFormId, intSiteId,0));
               }
 
               catch (Exception ex)
