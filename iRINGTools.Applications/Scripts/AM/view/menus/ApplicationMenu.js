@@ -27,7 +27,7 @@ Ext.define('AM.view.menus.ApplicationMenu', {
             action: 'newOrEditApplication',
             itemId: 'editApplication',
             icon: 'Content/img/16x16/edit.png',
-            text: 'Edit Application23'
+            text: 'Edit Application'
         },
         {
             xtype: 'menuitem',
