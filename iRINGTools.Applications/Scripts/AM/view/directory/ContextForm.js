@@ -164,10 +164,11 @@ Ext.define('AM.view.directory.ContextForm', {
                         me.setLoading(false);
 
                         if (objResponseText["message"] == "contextadded") {
-                            showDialog(400, 50, 'Alert', "Context added successfully!", Ext.Msg.OK, null);
+                          Ext.example.msg('Notification', 'Context added successfully!');
                         }
                         if (objResponseText["message"] == "contextupdated") {
-                            showDialog(400, 50, 'Alert', "Context updated successfully!", Ext.Msg.OK, null);
+                          
+                            Ext.example.msg('Notification', 'Context updated successfully!');
                         }
                     },
                     failure: function (response, request) {
