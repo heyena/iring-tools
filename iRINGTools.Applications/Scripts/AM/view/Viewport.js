@@ -24,7 +24,7 @@ Ext.define('AM.view.Viewport', {
                       '  	 </span>' +
 					  '  	 <span style="float:right;margin-top:16px">' +
 					  '		 <input type="checkbox"  id="gridCheckbox" style="display:none;" />' +
-                      '      <a id="schedule-link" href="#" class="header-link"> Schedule Cache Upadte  </a> ' +
+                      '      <a id="schedule-link" href="#" class="header-link"> View Scheduled Jobs </a> ' +
 					  '      <a id="setting-link" href="#" class="header-link">Settings</a>' +
 					  '      <a href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank" class="header-link">Help</a>' +
 					  '      <a id="about-link" href="#" class="header-link">About</a>' +
