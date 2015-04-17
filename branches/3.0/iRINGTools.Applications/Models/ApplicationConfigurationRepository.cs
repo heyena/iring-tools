@@ -193,14 +193,14 @@ namespace iRINGTools.Web.Models
             return response;
         }
    
-        public library.Response DragAndDropEntity(string resourceType, Guid droppedEntityId, Guid destinationParentEntityId, int siteId, int platformId)
+        public library.Response DragAndDropEntity(string resourceType, Guid sourceId, Guid destinationId, int siteId, int platformId)
         {
             library.Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
-                response = client.Get<library.Response>(String.Format("/entityAfterDrop?resourceType={0}&droppedEntityId={1}&destinationParentEntityId={2}&siteId={3}&platformId={4}&format=xml", resourceType, droppedEntityId, destinationParentEntityId, siteId, platformId));
+                response = client.Get<library.Response>(String.Format("/DragAndDropEntity?resourceType={0}&SourceId={1}&DestinationId={2}&siteId={3}&platformId={4}&format=xml", resourceType, sourceId, destinationId, siteId, platformId));
             }
             catch (Exception ex)
             {

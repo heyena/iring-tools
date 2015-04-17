@@ -146,15 +146,15 @@ namespace org.iringtools.services
 
     
         [Description("Drag And Drop Entity.")]
-        [WebGet(UriTemplate = "/entityAfterDrop?resourceType={resourceType}&droppedEntityId={droppedEntityId}&destinationParentEntityId={destinationParentEntityId}&siteId={siteId}&platformId={platformId}&format={format}")]
-        public void EntityAfterDrop(string resourceType, Guid droppedEntityId, Guid destinationParentEntityId,int siteId,int platformId, string format)
+        [WebGet(UriTemplate = "/DragAndDropEntity?resourceType={resourceType}&SourceId={SourceId}&destinationId={destinationId}&siteId={siteId}&platformId={platformId}&format={format}")]
+        public void DragAndDropEntity(string resourceType, Guid SourceId, Guid destinationId, int siteId, int platformId, string format)
         {
             try
             {
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                Response response = _applicationConfigurationProvider.InsertEntityAfterDrop(resourceType, droppedEntityId, destinationParentEntityId, siteId, platformId);
+                Response response = _applicationConfigurationProvider.DragAndDropEntity(resourceType, SourceId, destinationId, siteId, platformId);
                 _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
             }
             catch (Exception ex)
