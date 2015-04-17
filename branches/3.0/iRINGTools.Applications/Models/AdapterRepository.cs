@@ -1117,18 +1117,18 @@ namespace iRINGTools.Web.Models
         //    return response;
         //}
         #region  Repository for dictionary save in database
-        public Response SaveDBDictionary( org.iringtools.library.DatabaseDictionary dictionary)
+        public Response SaveDBDictionary(org.iringtools.library.DatabaseDictionary dictionary)
         {
             Response response = null;
 
             try
             {
                 WebHttpClient client = CreateWebClient(_dictionaryServiceUri);
-              //  response = client.Post<org.iringtools.library.DatabaseDictionary, Response>("/InsertDictionary?format=xml", dictionary,true);
+                //  response = client.Post<org.iringtools.library.DatabaseDictionary, Response>("/InsertDictionary?format=xml", dictionary,true);
                 response = client.Post<org.iringtools.library.DatabaseDictionary, Response>("/InsertDictionary?format=xml", dictionary, true);
 
 
-               // response = client.Post<Folder, library.Response>(String.Format("/insertFolder?format=xml"), newFolder, true);
+                // response = client.Post<Folder, library.Response>(String.Format("/insertFolder?format=xml"), newFolder, true);
                 //  response = client.Post<Context, library.Response>(String.Format("/insertContext?format=xml"), newContext, true);
             }
             catch (Exception ex)
@@ -1146,7 +1146,7 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        #endregion 
+        #endregion
         public List<string> GetTableNames(string scope, string app, Dictionary<string, string> conElts)
         {
             var uri = String.Format("/{0}/{1}/tables", scope, app);
@@ -1415,10 +1415,8 @@ namespace iRINGTools.Web.Models
         }
 
         //scheduler
-      
-          public string AddSchedular(Guid job_Id, byte isExchange, string AgentScope, string app, string dataObject, string xid, string exchange_Url, string startDate, string endDate, string occurence, int platFormId, int siteId)
-      
-        
+
+        public string AddSchedular(Guid job_Id, byte isExchange, string AgentScope, string app, string dataObject, string xid, string exchange_Url, string startDate, string endDate, string occurence, int platFormId, int siteId)
         {
             string obj = null;
 
@@ -1428,7 +1426,7 @@ namespace iRINGTools.Web.Models
                 {
                     Created_By = "asrivas2",
                     Created_DateTime = System.DateTime.Now.ToString("d", DateTimeFormatInfo.InvariantInfo),
-                   // Created_DateTime =  "2015-03-31",
+                    // Created_DateTime =  "2015-03-31",
 
                     Occurance = occurence,
                     Start_DateTime = startDate,
@@ -1436,7 +1434,7 @@ namespace iRINGTools.Web.Models
                     Status = "Ready",
                     Weekday = null,
                     ScheduleId = Guid.Empty
-                    
+
                 };
 
                 org.iringtools.AgentLibrary.Agent.Schedules objSchedules = new Agent.Schedules();
@@ -1451,7 +1449,7 @@ namespace iRINGTools.Web.Models
                     //App = app,
                     //DataObject = dataObject,
                     //Xid = xid,
-                    Xid = "xid",
+                    Xid = null,
                     //Exchange_Url = exchange_Url,
                     //Exchange_Url = "exthange URL",
                     Cache_Page_size = "0",
@@ -1460,8 +1458,8 @@ namespace iRINGTools.Web.Models
                     SiteId = siteId,
                     DataObjectId = Guid.Empty.ToString(),
                     TotalRecords = 0,
-                    CachedRecords =0,
-                    Active =1,
+                    CachedRecords = 0,
+                    Active = 1,
                     schedules = objSchedules
 
                 };
@@ -1478,43 +1476,43 @@ namespace iRINGTools.Web.Models
             return obj;
         }
 
-          public Agent.Jobs getAllScheduleJob(int intPlatFormId, int intSiteId)
-          {
-              Agent.Jobs obj = null;
+        public Agent.Jobs getAllScheduleJob(int intPlatFormId, int intSiteId,string userName)
+        {
+            Agent.Jobs obj = null;
 
-              try
-              {
-                  WebHttpClient client = CreateWebClient(_agentDataServiceUri);
-                  obj = client.Get<Agent.Jobs>(String.Format("/alljobs?platformId={0}&siteId={1}&isExchange={2}&format=xml", intPlatFormId, intSiteId,0));
-              }
+            try
+            {
+                WebHttpClient client = CreateWebClient(_agentDataServiceUri);
+                obj = client.Get<Agent.Jobs>(String.Format("/alljobs?userName={0}platformId={1}&siteId={2}&isExchange={3}&format=xml", userName,intPlatFormId, intSiteId, 0));
+            }
 
-              catch (Exception ex)
-              {
-                  _logger.Error(ex.ToString());
-                  throw;
-              }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+            }
 
-              return obj;
-          }
+            return obj;
+        }
 
-          public Agent.Job getScheduleJob(Guid jobId)
-          {
-              Agent.Job obj = null;
+        public Agent.Job getScheduleJob(Guid jobId)
+        {
+            Agent.Job obj = null;
 
-              try
-              {
-                  WebHttpClient client = CreateWebClient(_agentDataServiceUri);
-                  obj = client.Get<Agent.Job>(String.Format("/job?jobId={0}&format=xml", jobId));
-              }
+            try
+            {
+                WebHttpClient client = CreateWebClient(_agentDataServiceUri);
+                obj = client.Get<Agent.Job>(String.Format("/job?jobId={0}&format=xml", jobId));
+            }
 
-              catch (Exception ex)
-              {
-                  _logger.Error(ex.ToString());
-                  throw;
-              }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+            }
 
-              return obj;
-          }
+            return obj;
+        }
 
 
     }
