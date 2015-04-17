@@ -533,7 +533,6 @@ Ext.define('AM.controller.Directory', {
                     var dataObjectStore = Ext.create('Ext.data.Store', {
                         fields: ['dataObjId', 'dataObjName']
                     });
-
                     while (currentNode.firstChild) {
                         currentNode.removeChild(currentNode.firstChild);
                     }
@@ -597,18 +596,18 @@ Ext.define('AM.controller.Directory', {
                     var index = 0;
 
                     Ext.each(Ext.JSON.decode(response.responseText).currentNodesChildren, function (eachChildNode) {
-                        eachChildNode.insertChild(index, eachChildNode);
+                        currentNode.insertChild(index, eachChildNode);
 
-                        if (index = 0 && eachChildNode.children != null) {
+                        if (index = 0 && eachChildNode.childNodes != null) {
                             Ext.each(eachChildNode.children, function (eachDataObjectNode) {
                                 dataObjectStore.add({
-                                    dataObjId: eachDataObjectNode.id,
-                                    dataObjName: eachDataObjectNode.text
+                                    dataObjId: eachDataObjectNode.data.id,
+                                    dataObjName: eachDataObjectNode.data.text
                                 });
                             });
                         }
 
-                        index++;
+                       index++;
                     });
 
                     form.getForm().findField('dataObjectName').bindStore(dataObjectStore);

@@ -269,16 +269,16 @@ Ext.define('AM.view.directory.NewJobForm', {
     onSave: function () {
         var me = this;
         var win = me.up('window');
-        var endpointName = me.getForm().findField('displayName').getValue();
-        var appls = me.getForm().findField('applications').getValue();
-        var dataobj = me.getForm().findField('dataobj').getValue();
+        var contextName = me.getForm().findField('contextName').getValue();
+        var applicationName = me.getForm().findField('applicationName').getValue();
+        var dataObjectName = me.getForm().findField('dataObjectName').getValue();
         var startDate = me.getForm().findField('startDate').getValue();
         var startTime = me.getForm().findField('startTime').getValue();
         var endDate = me.getForm().findField('endDate').getValue();
         var endTime = me.getForm().findField('endTime').getValue();
         //        var mondat = me.getForm().findField('monthdate').getValue();
         //        var ouccarance = me.getForm().findField('monthdate').getValue();
-        var ouccaradio = me.getForm().findField('occrad').getValue();
+        var ouccaradio = me.getForm().findField('occuranceRadio').getValue();
 
         me.getForm().submit({
             waitMsg: 'Saving Data...',
