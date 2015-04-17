@@ -876,25 +876,18 @@ namespace org.iringtools.web.controllers
             {
                 
                 //string success = String.Empty;
-                string displayname = form["displayName"];
-                string applications = form["applications"];
-                string dataObjects = form["dataobj"];;
+                string displayname = form["contextName"];
+                string applications = form["applicationName"];
+                string dataObjects = form["dataObjectName"]; ;
                 string startDate = form["startDate"];
-                string occurence = form["occrad"];
+                string occurence = form["occuranceRadio"];
                 string startTime = form["startTime"];
                 string endTime = form["endTime"];
                 string endDate = form["endDate"];
 
                 startDate = startDate + " " + startTime;
                 endDate = endDate + " " + endTime;
-
-
-                //   Guid guid = Guid.Parse("00000000-0000-0000-0000-000000000000");
                 Guid guid = Guid.Empty;
-
-                string schcontextName = form["displayName"];
-
-                //  success = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, Convert.ToDateTime(startDate), Convert.ToDateTime(endDate), "daily", "sunday");
                 response = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, startDate, endDate, occurence, 0, 0);
                 if(response.Contains("jobadded"))
                 {response = "Job Added Successfuly";}
