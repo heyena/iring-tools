@@ -114,9 +114,9 @@ Ext.define('AM.view.directory.ViewJobsForm', {
                     xtype: 'grid',
                     margin: '0 0 0 0',
                     alias: 'widget.viewjobsgrid',
-                   // store:'JobStore',
+                    store:'JobStore',
                    
-                    store: Ext.data.StoreManager.lookup('simpsonsStore'),
+                   // store: Ext.data.StoreManager.lookup('simpsonsStore'),
                    // store:'ViewJobsStore',
                     autoHeight: true,
                     autoWidth: true,
@@ -125,27 +125,33 @@ Ext.define('AM.view.directory.ViewJobsForm', {
 //                       { xtype: 'gridcolumn',
 //                        text: 'JobType', dataIndex: 'jobtype'
 //                    }, 
-                     { xtype: 'gridcolumn',
-                        text: 'Context Name', dataIndex: 'scope'
+//                     { xtype: 'gridcolumn',
+//                        text: 'Context Name', dataIndex: 'scope'
+//                    }, { xtype: 'gridcolumn',
+//                        text: 'Application Name', dataIndex: 'jobtype'
+//                    },{ xtype: 'gridcolumn',
+//                        text: 'Data Object Name ', dataIndex: 'dataobject'
+//                    },{ xtype: 'gridcolumn',
+//                        text: 'Status', dataIndex: 'Status'
+//                    }, { xtype: 'gridcolumn',
+//                        text: 'Last Executed', dataIndex: 'laststarttime'
+//                    }, 
+                      { xtype: 'gridcolumn',
+                      text: 'Status', dataIndex: 'Active'
+                     },
+                    { xtype: 'gridcolumn',
+                        text: 'Last Start Time', dataIndex: 'Last_Start_DateTime'
+                    },
+                    { xtype: 'gridcolumn',
+                        text: 'Next Start Time', dataIndex: 'Next_Start_DateTime'
+                    },
+                         { xtype: 'gridcolumn',
+                         text: 'Total Records', dataIndex: 'TotalRecords'
                     }, { xtype: 'gridcolumn',
-                        text: 'Application Name', dataIndex: 'jobtype'
-                    },{ xtype: 'gridcolumn',
-                        text: 'Data Object Name ', dataIndex: 'dataobject'
-                    },{ xtype: 'gridcolumn',
-                        text: 'Status', dataIndex: 'Status'
-                    }, { xtype: 'gridcolumn',
-                        text: 'Last Executed', dataIndex: 'laststarttime'
-                    }, { xtype: 'gridcolumn',
-                        text: 'Next Schedule', dataIndex: 'laststarttime'
-                    },{ xtype: 'gridcolumn',
-                        text: 'Start Date', dataIndex: 'laststarttime'
-                    },{ xtype: 'gridcolumn',
-                        text: 'End Date', dataIndex: 'laststarttime'
-                    },{ xtype: 'gridcolumn',
-                        text: 'Total Records', dataIndex: 'totalrecords'
-                    }, { xtype: 'gridcolumn',
-                        text: 'Cached Records', dataIndex: 'cachedrecords'
-                    }],
+                        text: 'Cached Records', dataIndex: 'CachedRecords'
+                                        }
+
+                    ],
                     listeners: {
                        
                            itemcontextmenu: function (view, record, item, index, e) {

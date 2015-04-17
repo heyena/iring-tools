@@ -18,8 +18,8 @@
             storeId: storeId,
             proxy: {
                 type: 'ajax',
-                url: '/Scripts/AM/jsonfile/Agent.json',
-               // url: 'usersecuritymanager/getGroups',
+                url: 'directory/getAllJob',
+             
                 reader: {
                     type: 'json',
                     root: 'items'
