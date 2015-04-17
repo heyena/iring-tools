@@ -65,74 +65,84 @@ Ext.define('AM.view.directory.DirectoryTree', {
         me.callParent(arguments);
     },
 
-    onBeforeNodeDrop: function(node, data, overModel, dropPosition, dropHandler, eOpts) {
+    onBeforeNodeDrop: function (node, data, overModel, dropPosition, dropHandler, eOpts) {
         var me = this;
-        if (overModel.raw.type == data.records[0].parentNode.raw.type || data.records[0].parentNode.raw.type=="SiteNode" ) {
-            var flag = true;
-            for (var i = 0; i < overModel.childNodes.length; i++) {
-                if (overModel.childNodes[i].raw.text == data.records[0].data.text) {
-                    flag = false;
-                }
-            }
-            if (flag) {
-                var parentEntityId = overModel.internalId;
-                var entityId = data.records[0].raw.id;
-                var displayName = overModel.raw.text;
-                var nodeType = overModel.raw.type;
-                var record = Ext.decode(overModel.raw.record);
-                var siteId = record.siteId;
-                var platformId = record.platformId;
-                Ext.Ajax.request({
-                    url: 'directory/DragAndDropEntity',
-                    method: 'POST',
-                    params: {
-                        parentEntityId: parentEntityId,
-                        displayName: displayName,
-                        entityId: entityId,
-                        nodeType: nodeType,
-                        siteId:siteId,
-                        platformId:platformId
+        if (overModel.raw.type == 'WorldNode') {
+            showDialog(400, 50, 'Alert', "Node can't be dropped here", Ext.Msg.OK, null);
+            return;
+        }
 
-                    },
-                    success: function(response, request) {
-                        var objResponseText = Ext.JSON.decode(response.responseText);
+        if (overModel.raw.type == data.records[0].parentNode.raw.type || data.records[0].parentNode.raw.type == "SiteNode") {
+            var parentEntityId = overModel.internalId;
+            var entityId = data.records[0].raw.id;
+            var displayName = overModel.raw.text;
+            var nodeType = data.records[0].raw.type; //overModel.raw.type;
+            var record;
+            if (overModel.raw.type == 'ContextNode')
+                record = Ext.decode(overModel.parentNode.raw.record);
+            else
+                record = Ext.decode(overModel.raw.record);
 
-//                        var currentNode;
-//                        while (currentNode.firstChild) {
-//                            currentNode.removeChild(currentNode.firstChild);
-//                        }
+            var siteId = record.siteId;
+            var platformId = record.platformId;
+            Ext.Ajax.request({
+                url: 'directory/DragAndDropEntity',
+                method: 'POST',
+                params: {
+                    parentEntityId: parentEntityId,
+                    displayName: displayName,
+                    entityId: entityId,
+                    nodeType: nodeType,
+                    siteId: siteId,
+                    platformId: platformId
 
-//                        var index = 0;
+                },
+                success: function (response, request) {
+                    var objResponseText = Ext.JSON.decode(response.responseText);
 
-//                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
-//                            currentNode.insertChild(index, newNode);
-//                            index++;
-//                        });
+                    me.setLoading(false);
 
-                        me.setLoading(false);
+                    if (objResponseText["message"] == "nodeCopied") {
+                        showDialog(400, 50, 'Alert', "Node copied successfully!", Ext.Msg.OK, null);
 
-                        if (objResponseText["message"] == "nodeCopied") {
-                            showDialog(400, 50, 'Alert', "Node copied successfully!", Ext.Msg.OK, null);
 
-             
-                            me.view.refresh();
-                        } else if (objResponseText["message"] == "duplicateNode") {
-                            showDialog(400, 50, 'Alert', "Node with this name already exists", Ext.Msg.OK, null);
-                        }
-                    },
-                    failure: function(result, request) {
-                        Ext.widget('messagepanel', { title: 'Error', msg: 'Error getting  Drag and Drop Object ' });
-                        me.setLoading(false);
+                        me.view.refresh();
+                    } else if (objResponseText["message"] == "destinationFolderDeleted") {
+                        showDialog(400, 50, 'Alert', "Destination folder deleted, please refresh", Ext.Msg.OK, null);
+
+                    } else if (objResponseText["message"] == "sourceFolderDeleted") {
+                        showDialog(400, 50, 'Alert', "Source Folder Deleted, please refresh", Ext.Msg.OK, null);
+
+                    } else if (objResponseText["message"] == "duplicateFolder") {
+                        showDialog(400, 50, 'Alert', "Folder already exists", Ext.Msg.OK, null);
+
+                    } else if (objResponseText["message"] == "sourceContextDeleted") {
+                        showDialog(400, 50, 'Alert', "Source Context Deleted, please refresh", Ext.Msg.OK, null);
+
+                    } else if (objResponseText["message"] == "duplicateContext") {
+                        showDialog(400, 50, 'Alert', "Context already exists", Ext.Msg.OK, null);
+
+                    } else if (objResponseText["message"] == "destinationContextDeleted") {
+                        showDialog(400, 50, 'Alert', "destination Context Deleted, please refresh", Ext.Msg.OK, null);
+
+                    } else if (objResponseText["message"] == "sourceApplicationDeleted") {
+                        showDialog(400, 50, 'Alert', "source Application Deleted, please refresh", Ext.Msg.OK, null);
+
+                    } else if (objResponseText["message"] == "duplicateApplication") {
+                        showDialog(400, 50, 'Alert', "Application already exists", Ext.Msg.OK, null);
+                    } else {
+                        showDialog(400, 50, 'Alert', objResponseText["message"], Ext.Msg.OK, null);
                     }
-                });
+                    
+                },
+                failure: function (result, request) {
+                    Ext.widget('messagepanel', { title: 'Error', msg: 'Error getting  Drag and Drop Object ' });
+                    me.setLoading(false);
+                }
+            });
 
-
-
-            } else {
-                showDialog(400, 50, 'Alert', "An enitiy with similar name already exit",  Ext.Msg.OK, null);          }
-            
         } else {
-            showDialog(400, 50, 'Alert', "Parent nodes are not of same type", Ext.Msg.OK, null);
+            showDialog(400, 50, 'Alert', "Node can't be dropped here", Ext.Msg.OK, null);
         }
 
         return false;

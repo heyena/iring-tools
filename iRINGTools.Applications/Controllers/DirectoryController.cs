@@ -473,15 +473,37 @@ namespace org.iringtools.web.controllers
 
         public JsonResult DragAndDropEntity(FormCollection form)
         {
-            Response response = null;
-            Guid destinationParentEntityId = Guid.Parse(form["parentEntityId"]);
-            Guid droppedEntityId = Guid.Parse(form["entityId"]);
-            string resourceType = form["nodeType"].Replace("Node", string.Empty);
-            int platformId = int.Parse(form["platformId"]);
-            int siteId = int.Parse(form["siteId"]);
-            string displayName = form["displayName"];
-            response = _appConfigRepository.DragAndDropEntity(resourceType, droppedEntityId, destinationParentEntityId, siteId, platformId);
-            return Json(new { success = true, message = "nodeCopied" }, JsonRequestBehavior.AllowGet);
+            try
+            {
+                Response response = null;
+                Guid destinationId = Guid.Parse(form["parentEntityId"]);
+                Guid sourceId = Guid.Parse(form["entityId"]);
+                string resourceType = form["nodeType"].Replace("Node", string.Empty);
+                int platformId = int.Parse(form["platformId"]);
+                int siteId = int.Parse(form["siteId"]);
+                string displayName = form["displayName"];
+                response = _appConfigRepository.DragAndDropEntity(resourceType, sourceId, destinationId, siteId, platformId);
+                return Json(new { success = true, message = response.StatusList[0].Messages[0] }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e.ToString());
+                if (e.InnerException != null)
+                {
+                    string description = ((System.Net.HttpWebResponse)(((System.Net.WebException)(e.InnerException)).Response)).StatusDescription;//;
+                    var jsonSerialiser = new JavaScriptSerializer();
+                    CustomError json = (CustomError)jsonSerialiser.Deserialize(description, typeof(CustomError));
+                    return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    _CustomErrorLog = new CustomErrorLog();
+                    _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errDragNDropEntity, e, _logger);
+                    return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
+                }
+            }
+
         }
 
         public JsonResult Application(FormCollection form)

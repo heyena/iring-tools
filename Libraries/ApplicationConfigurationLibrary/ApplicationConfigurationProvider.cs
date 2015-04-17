@@ -268,7 +268,7 @@ namespace org.iringtools.applicationConfig
             return applications;
         }
 
-        public Response InsertEntityAfterDrop(string resourceType, Guid droppedEntityId, Guid destinationParentEntityId, int siteId, int platformId)
+        public Response DragAndDropEntity(string resourceType, Guid SourceId, Guid destinationId, int siteId, int platformId)
         {
             Response response = new Response();
             response.Messages = new Messages();
@@ -277,19 +277,40 @@ namespace org.iringtools.applicationConfig
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@ResourceType ", Value = resourceType });
-                nvl.Add(new ListItem() { Name = "@DroppedEntityId", Value = droppedEntityId });
-                nvl.Add(new ListItem() { Name = "@DestinationParentEntityId", Value = destinationParentEntityId });
+                nvl.Add(new ListItem() { Name = "@SourceId", Value = SourceId });
+                nvl.Add(new ListItem() { Name = "@DestinationId", Value = destinationId });
                 nvl.Add(new ListItem() { Name = "@SiteId ", Value = siteId });
                 nvl.Add(new ListItem() { Name = "@PlatFormId", Value = platformId });
-                string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiEntityAfterDrop", nvl);
+                string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiDragAndDropEntity", nvl);
 
                 switch (output)
                 {
                     case "1":
                         PrepareSuccessResponse(response, "nodeCopied");
                         break;
-                    case "0":
-                        PrepareErrorResponse(response, "duplicateNode");
+                    case "-1":
+                        PrepareSuccessResponse(response, "destinationFolderDeleted");
+                        break;
+                    case "-2":
+                        PrepareSuccessResponse(response, "sourceFolderDeleted");
+                        break;
+                    case "-3":
+                        PrepareSuccessResponse(response, "duplicateFolder");
+                        break;
+                    case "-4":
+                        PrepareSuccessResponse(response, "sourceContextDeleted");
+                        break;
+                    case "-5":
+                        PrepareSuccessResponse(response, "duplicateContext");
+                        break;
+                    case "-6":
+                        PrepareSuccessResponse(response, "destinationContextDeleted");
+                        break;
+                    case "-7":
+                        PrepareSuccessResponse(response, "sourceApplicationDeleted");
+                        break;
+                    case "-8":
+                        PrepareSuccessResponse(response, "duplicateApplication");
                         break;
                     default:
                         PrepareErrorResponse(response, output);
@@ -298,7 +319,14 @@ namespace org.iringtools.applicationConfig
             }
             catch (Exception ex)
             {
-                _logger.Error("Error getting  Drag and Drop Object " + ex);
+                _logger.Error("Error adding Folder: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
             }
             return response;
         }
