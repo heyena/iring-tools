@@ -20,13 +20,13 @@ Ext.define('AM.view.directory.DirectoryTree', {
     stateId: 'directory-treestate',
     id: 'mytree',
     stateful: false,
-    bodyStyle: 'background:#fff;padding:4px', 
+    bodyStyle: 'background:#fff;padding:4px',
     border: false,
     store: 'DirectoryTreeStore',
 
 
     //rootVisible: false,
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         Ext.applyIf(me, {
             stateEvents: [
@@ -38,11 +38,12 @@ Ext.define('AM.view.directory.DirectoryTree', {
                     Ext.create('Ext.tree.plugin.TreeViewDragDrop', {
                         ptype: 'treeviewdragdrop',
                         dragField: 'text',
-                        ddGroup: 'propertyGroup',
-                        dragGroup: 'propertyGroup'
-//                        dragText: '{0}',
-//                        enableDrop: true,
-//                        enableDrag: true
+//                        ddGroup: 'propertyGroup',
+//                        dragGroup: 'propertyGroup',
+                        appendOnly: true
+                        //                      dragText: '{0}',
+                        //                      enableDrop: true,
+                        //                      enableDrag: true
 
                     })
                 ],
@@ -67,6 +68,8 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
     onBeforeNodeDrop: function (node, data, overModel, dropPosition, dropHandler, eOpts) {
         var me = this;
+        var destinationNode = overModel;
+
         if (overModel.raw.type == 'WorldNode') {
             showDialog(400, 50, 'Alert', "Node can't be dropped here", Ext.Msg.OK, null);
             return;
@@ -95,18 +98,15 @@ Ext.define('AM.view.directory.DirectoryTree', {
                     nodeType: nodeType,
                     siteId: siteId,
                     platformId: platformId
-
                 },
                 success: function (response, request) {
                     var objResponseText = Ext.JSON.decode(response.responseText);
-
                     me.setLoading(false);
 
                     if (objResponseText["message"] == "nodeCopied") {
                         showDialog(400, 50, 'Alert', "Node copied successfully!", Ext.Msg.OK, null);
 
 
-                        me.view.refresh();
                     } else if (objResponseText["message"] == "destinationFolderDeleted") {
                         showDialog(400, 50, 'Alert', "Destination folder deleted, please refresh", Ext.Msg.OK, null);
 
@@ -133,7 +133,11 @@ Ext.define('AM.view.directory.DirectoryTree', {
                     } else {
                         showDialog(400, 50, 'Alert', objResponseText["message"], Ext.Msg.OK, null);
                     }
-                    
+                    // me.view.refresh();
+                    //  this.getDirTree().onReload();
+                    //                    me.store.reload();
+                    destinationNode.store.reload();
+
                 },
                 failure: function (result, request) {
                     Ext.widget('messagepanel', { title: 'Error', msg: 'Error getting  Drag and Drop Object ' });
@@ -146,9 +150,10 @@ Ext.define('AM.view.directory.DirectoryTree', {
         }
 
         return false;
+
     },
 
-    onClick: function(dataview, record, item, index, e, eOpts) {
+    onClick: function (dataview, record, item, index, e, eOpts) {
         var me = this;
         try {
             var pan = dataview.up('panel').up('panel');
@@ -158,15 +163,15 @@ Ext.define('AM.view.directory.DirectoryTree', {
         }
     },
 
-    getState: function() {
+    getState: function () {
         var me = this;
         var nodes = [], state = me.callParent();
-        me.getRootNode().eachChild(function(child) {
+        me.getRootNode().eachChild(function (child) {
             // function to store state of tree recursively 
-            var storeTreeState = function(node, expandedNodes) {
+            var storeTreeState = function (node, expandedNodes) {
                 if (node.isExpanded() && node.childNodes.length > 0) {
                     expandedNodes.push(node.getPath('text'));
-                    node.eachChild(function(child) {
+                    node.eachChild(function (child) {
                         storeTreeState(child, expandedNodes);
                     });
                 }
@@ -181,16 +186,16 @@ Ext.define('AM.view.directory.DirectoryTree', {
         return state;
     },
 
-    onReload: function(options) {
+    onReload: function (options) {
         var me = this;
         var state = me.getState();
 
-        me.on('beforeload', function(store, action) {
+        me.on('beforeload', function (store, action) {
             me.getStore().getProxy().extraParams.type = 'ScopesNode';
         });
 
         var storeProxy = me.store.getProxy();
-        storeProxy.on('exception', function(proxy, response, operation) {
+        storeProxy.on('exception', function (proxy, response, operation) {
             var resp = Ext.JSON.decode(response.responseText);
             var userMsg = resp['message'];
             var detailMsg = resp['stackTraceDescription'];
@@ -203,9 +208,9 @@ Ext.define('AM.view.directory.DirectoryTree', {
 
         me.store.load({
             node: me.getRootNode(),
-            callback: function(records, options, success) {
+            callback: function (records, options, success) {
                 var nodes = state.expandedNodes || [];
-                Ext.each(nodes, function(path) {
+                Ext.each(nodes, function (path) {
                     me.expandPath(path, 'text');
                 });
                 me.getEl().unmask();
@@ -213,7 +218,7 @@ Ext.define('AM.view.directory.DirectoryTree', {
         });
     },
 
-    getSelectedNode: function() {
+    getSelectedNode: function () {
         var me = this;
         var selected = me.getSelectionModel().getSelection();
         return selected[0];
