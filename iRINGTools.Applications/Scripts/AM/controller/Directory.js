@@ -351,6 +351,7 @@ Ext.define('AM.controller.Directory', {
                     method: 'POST',
                     params: {
                         record: node.data.record,
+                        siteId: node.data.property,
                         state: 'delete'
                     },
                     success: function (response, request) {
