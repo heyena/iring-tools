@@ -243,7 +243,6 @@ Ext.define('AM.view.directory.NewJobForm', {
                     xtype: 'tbfill'
                 }, {
                     xtype: 'button',
-                    //action: 'saveNewJob',
                     handler: function (button, event) {
                         me.onSave();
                     },
@@ -251,9 +250,7 @@ Ext.define('AM.view.directory.NewJobForm', {
                 }, {
                     xtype: 'button',
                     handler: function (button, event) {
-                        this.up('.window').close();
-                        //me.down('newScopeDir').getForm().reset();
-                        //me.destroy();
+                        me.onReset();
 
 
                     },
@@ -266,31 +263,95 @@ Ext.define('AM.view.directory.NewJobForm', {
     },
 
 
-    onSave: function () {
+     onSave: function () {
         var me = this;
         var win = me.up('window');
-        var contextName = me.getForm().findField('contextName').getValue();
-        var applicationName = me.getForm().findField('applicationName').getValue();
-        var dataObjectName = me.getForm().findField('dataObjectName').getValue();
-        var startDate = me.getForm().findField('startDate').getValue();
-        var startTime = me.getForm().findField('startTime').getValue();
-        var endDate = me.getForm().findField('endDate').getValue();
-        var endTime = me.getForm().findField('endTime').getValue();
-        //        var mondat = me.getForm().findField('monthdate').getValue();
-        //        var ouccarance = me.getForm().findField('monthdate').getValue();
-        var ouccaradio = me.getForm().findField('occuranceRadio').getValue();
+        var form = me.getForm();
+        //var state = form.findField('state').getValue();
+        var node = me.node;
+         var folderSiteId;
 
-        me.getForm().submit({
-            waitMsg: 'Saving Data...',
-            success: function (response, request) {
-                //Ext.example.msg('Notification', 'Newjob saved successfully!');
-                win.fireEvent('save', me);
+           if (form.isValid()) {
+                   form.submit({
+                    waitMsg: 'Saving Data...',
+                    method: 'POST',
+                    params: {
+                        record: node.get('record')
+                    },
+                    success: function (response, request) {
+                        var objResponseText = Ext.JSON.decode(request.response.responseText);
+                        if (objResponseText["message"] == "Duplicate Job") {
+                            showDialog(400, 50, 'Alert', "Job  name already exists", Ext.Msg.OK, null);
+                            return;
+                        }
+                        
 
-                Ext.Msg.alert('Success', action.result.msg);
-            },
-            failure: function (response, request) {
-                Ext.Msg.alert('Failed', action.result.msg);
+                        win.fireEvent('save', me);
+
+                        var currentNode;
+
+                        var index = 0;
+
+                        Ext.each(Ext.JSON.decode(request.response.responseText).nodes, function (newNode) {
+                            currentNode.insertChild(index, newNode);
+                            index++;
+                        });
+
+                        me.setLoading(false);
+                        if (objResponseText["message"] == "Job Added Successfuly") {
+                            Ext.example.msg('Notification', 'Job added successfully!');
+                        }
+                        
+                    },
+                    failure: function (response, request) {
+                        var objResponseText = Ext.decode(request.response.responseText);
+                        var userMsg = objResponseText['message'];
+                        var detailMsg = objResponseText['stackTraceDescription'];
+                        var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                        Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+                        Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+
+                    }
+                });
             }
-        });
+          
+      
+        else {
+            Ext.widget('messagepanel', { title: 'Warning', msg: 'Please complete all required fields.' });
+            return;
+        }
+    },
+    onReset: function () {
+        var me = this;
+        var win = me.up('window');
+        win.fireEvent('Cancel', me);
     }
+//    onSave: function () {
+//        var me = this;
+//        var win = me.up('window');
+//        var form = me.getForm();
+//        var node = me.node;
+//        var contextName = me.getForm().findField('contextName').getValue();
+//        var applicationName = me.getForm().findField('applicationName').getValue();
+//        var dataObjectName = me.getForm().findField('dataObjectName').getValue();
+//        var startDate = me.getForm().findField('startDate').getValue();
+//        var startTime = me.getForm().findField('startTime').getValue();
+//        var endDate = me.getForm().findField('endDate').getValue();
+//        var endTime = me.getForm().findField('endTime').getValue();
+//        var ouccaradio = me.getForm().findField('occuranceRadio').getValue();
+
+//        me.getForm().submit({
+//            waitMsg: 'Saving Data...',
+//            success: function (response, request) {
+//                //Ext.example.msg('Notification', 'Newjob saved successfully!');
+//                win.fireEvent('save', me);
+
+//                Ext.Msg.alert('Success', action.result.msg);
+//            },
+//            failure: function (response, request) {
+//                Ext.Msg.alert('Failed', action.result.msg);
+//            }
+//        });
+//    }
 });
+
