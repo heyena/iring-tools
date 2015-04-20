@@ -526,7 +526,6 @@ Ext.define('AM.controller.Directory', {
                     record: currentNodeRecord
                 },
                 success: function (response, request) {
-                    //                        if (currentNodeType == 'ContextNode') {
                     var applicationStore = Ext.create('Ext.data.Store', {
                         fields: ['appId', 'appName']
                     });
@@ -559,13 +558,21 @@ Ext.define('AM.controller.Directory', {
 
                         index++;
                     });
-                    
+
+                    form.getForm().findField('contextName').setValue(currentNode.data.text);
                     form.getForm().findField('applicationName').bindStore(applicationStore);
                     form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
-                    form.getForm().findField('contextName').setValue(currentNode.data.text);
+                    
 
-                    win.on('cancel', function () {
-                        win.destroy();
+                    win.on('save', function () {
+                        win.close();
+                        tree.view.refresh();
+                        var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+                        detailGrid.setSource({});
+                    }, me);
+
+                    win.on('Cancel', function () {
+                        win.close();
                     }, me);
 
                     win.show();
@@ -598,8 +605,8 @@ Ext.define('AM.controller.Directory', {
                     Ext.each(Ext.JSON.decode(response.responseText).currentNodesChildren, function (eachChildNode) {
                         currentNode.insertChild(index, eachChildNode);
 
-                        if (index = 0 && eachChildNode.childNodes != null) {
-                            Ext.each(eachChildNode.children, function (eachDataObjectNode) {
+                        if (index == 0 && currentNode.childNodes[0].childNodes != null) {
+                            Ext.each(currentNode.childNodes[0].childNodes, function (eachDataObjectNode) {
                                 dataObjectStore.add({
                                     dataObjId: eachDataObjectNode.data.id,
                                     dataObjName: eachDataObjectNode.data.text
@@ -610,12 +617,20 @@ Ext.define('AM.controller.Directory', {
                        index++;
                     });
 
-                    form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
-                    form.getForm().findField('applicationName').setValue(currentNode.data.text);
-                    form.getForm().findField('contextName').setValue(currentNode.parentNode.data.text);
+                   form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
+                   form.getForm().findField('applicationName').setValue(currentNode.data.text);
+                   form.getForm().findField('contextName').setValue(currentNode.parentNode.data.text);
 
-                    win.on('cancel', function () {
-                        win.destroy();
+
+                    win.on('save', function () {
+                        win.close();
+                        tree.view.refresh();
+                        var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+                        detailGrid.setSource({});
+                    }, me);
+
+                    win.on('Cancel', function () {
+                        win.close();
                     }, me);
 
                     win.show();
@@ -629,13 +644,13 @@ Ext.define('AM.controller.Directory', {
                 fields: ['dataObjId', 'dataObjName']
             });
 
-            var dataObjectsNode = currentNode.children;
+            var dataObjectsNode = currentNode.childNodes;
 
             if (dataObjectsNode != null) {
-                Ext.each(dataObjectsNode, function (eachChildNode) {
+                Ext.each(dataObjectsNode, function (eachDataObjectNode) {
                     dataObjectStore.add({
-                        dataObjId: eachDataObjectNode.id,
-                        dataObjName: eachDataObjectNode.text
+                        dataObjId: eachDataObjectNode.data.id,
+                        dataObjName: eachDataObjectNode.data.text
                     });
                 });
             }
@@ -650,6 +665,7 @@ Ext.define('AM.controller.Directory', {
 
             win.show();
         } else if (currentNodeType == 'DataObjectNode') {
+
             form.getForm().findField('dataObjectName').setValue(currentNode.data.text);
             form.getForm().findField('contextName').setValue(currentNode.parentNode.parentNode.parentNode.data.text);
             form.getForm().findField('applicationName').setValue(currentNode.parentNode.parentNode.data.text);
