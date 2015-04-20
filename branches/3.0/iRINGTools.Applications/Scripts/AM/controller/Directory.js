@@ -659,6 +659,13 @@ Ext.define('AM.controller.Directory', {
             form.getForm().findField('applicationName').setValue(currentNode.parentNode.data.text);
             form.getForm().findField('contextName').setValue(currentNode.parentNode.parentNode.data.text);
 
+            win.on('save', function () {
+                win.close();
+                tree.view.refresh();
+                var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+                detailGrid.setSource({});
+            }, me);
+
             win.on('cancel', function () {
                 win.destroy();
             }, me);
