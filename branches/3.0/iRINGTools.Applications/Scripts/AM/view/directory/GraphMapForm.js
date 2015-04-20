@@ -1,7 +1,7 @@
 Ext.define('AM.view.directory.GraphMapForm', {
     extend: 'Ext.form.Panel',
     alias: 'widget.graphmapform',
-    height: 300,
+    height: 350,
     width: 490,
     node: '',
     bodyStyle: 'padding:10px 5px 0',
@@ -17,6 +17,8 @@ Ext.define('AM.view.directory.GraphMapForm', {
         );
 
         Ext.applyIf(me, {
+
+           
             items: [
                 {
                     xtype: 'label',
@@ -99,6 +101,19 @@ Ext.define('AM.view.directory.GraphMapForm', {
                     margin: '5 0 15 25',
                     style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',
                     styleHtmlContent: true
+                }, {
+                    xtype: 'checkboxlistcombo',
+                    width: 450,
+                    margin: '5 0 15 25',
+                    multiSelect: true,
+                    name: 'ResourceGroups',
+                    itemId: 'ResourceGroupId',
+                    fieldLabel: 'Groups for the User:',
+                    displayField: 'groupName',
+                    autoSelect: false,
+                    queryMode: 'remote',
+                    valueField: 'groupId',
+                    emptyText: 'Select Groups For The  User'
                 }
             ],
             listeners: {
