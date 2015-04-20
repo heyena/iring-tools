@@ -102,8 +102,35 @@ Ext.define('AM.controller.Mapping', {
         var node = tree.getSelectedNode();
         var record = Ext.decode(node.data.record);
         var delimeter, state;
+        var win = Ext.widget('graphmapwindow');
 
         var win = Ext.widget('graphmapwindow');
+        var form = win.down('form');
+        form.node = node;
+
+
+        var selectedGroups;
+        if (item.itemId == 'editGraph') {
+            selectedGroups = Ext.decode(node.parentNode.parentNode.data.record).groups;
+        } else if (item.itemId == 'newGraph') {
+            selectedGroups = Ext.decode(node.parentNode.data.record).groups;
+        }
+
+        if (selectedGroups != null) {
+            var storeObject = Ext.create('Ext.data.Store', {
+                fields: ['groupId', 'groupName']
+            });
+
+            Ext.each(selectedGroups, function (aRecord) {
+                storeObject.add({
+                    groupId: aRecord['groupId'],
+                    groupName: aRecord['groupName']
+                });
+            }, this);
+
+            form.getForm().findField('ResourceGroups').bindStore(storeObject);
+        }
+
 
         if (item.itemId == 'editGraph') {
             win.title = 'Edit Graph \"' + graphName + '\"';
@@ -111,6 +138,13 @@ Ext.define('AM.controller.Mapping', {
             delimeter = record.classTemplateMaps[0].classMap.identifierDelimiter;
             graphName = record.name;
             state = 'edit';
+            var groupArray = [];
+            Ext.each(record.groups, function (eachGroup) {
+                groupArray.push(eachGroup.groupId);
+            }, this);
+
+            form.getForm().findField('ResourceGroups').setValue(groupArray);
+
         } else {
             win.title = 'Add GraphMap';
 
@@ -630,7 +664,7 @@ Ext.define('AM.controller.Mapping', {
         var me = this;
         var state, oldValueList, contextName, endpoint, baseUrl, valueList, wintitle;
         var tree = this.getDirTree(),
-      node = tree.getSelectedNode();
+       node = tree.getSelectedNode();
 
 
         if (item.itemId == 'editvaluelist') {
