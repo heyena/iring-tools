@@ -871,7 +871,6 @@ namespace org.iringtools.applicationConfig
                         nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                         nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graph.GraphId) });
                         nvl.Add(new ListItem() { Name = "@GraphName", Value = graph.GraphName });
-                        nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(_siteID) });
                         nvl.Add(new ListItem() { Name = "@GroupList", Value = rawXml });
                         nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(graph.ApplicationId) });
 
