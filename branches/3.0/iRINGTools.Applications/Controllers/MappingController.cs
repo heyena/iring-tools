@@ -24,7 +24,7 @@ using log4net;
 using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-
+using org.iringtools.UserSecurity;
 namespace org.iringtools.web.controllers
 {
     public class MappingController : Controller
@@ -875,12 +875,14 @@ namespace org.iringtools.web.controllers
                 string delimiter = form["delimiter"];
                 string className = form["className"];
                 string classId = form["classId"];
-                Guid applicationId = Guid.Parse(form["applicationId"]); 
-                Guid contextId=Guid.Parse(form["applicationId"]);
-                
+                Guid applicationId = Guid.Parse(form["applicationId"]);
+                Guid contextId = Guid.Parse(form["applicationId"]);
+
                 string context = string.Format("{0}/{1}/Graphs", scope, app);
                 Mapping mapping = GetMapping(scope, app);
                 GraphMap graphMap = null;
+                string groups = form["ResourceGroups"];
+;
                 bool qn = false;
                 qn = _nsMap.ReduceToQName(classId, out qName);
 
@@ -982,7 +984,7 @@ namespace org.iringtools.web.controllers
                 }
                 //DoUpdateMapping(scope, app, mapping,applicationId);
 
-                DoUpdateMapping(scope, app, graphMap, applicationId);
+                insertGraph(scope, app, graphMap, applicationId, groups);
 
                 graphNode = new JsonTreeNode
                 {
@@ -1027,18 +1029,29 @@ namespace org.iringtools.web.controllers
             return DoUpdateMapping(scope, application, mapping);
         }
 
-        public JsonResult DoUpdateMapping(string scope, string application, GraphMap mapping,Guid applicationId)
+        public JsonResult insertGraph(string scope, string application, GraphMap mapping, Guid applicationId, string groups)
         {
             try
             {
 
+
+
+                Groups selectedGroups = new Groups();
+                org.iringtools.UserSecurity.Group objGroup = new UserSecurity.Group();
+                string[] groupArray = groups.Split(',');
+                for(int i =0;i<groupArray.Length;i++)
+                {
+                    objGroup.GroupId= Convert.ToInt16(groupArray[0].ToString());
+                    selectedGroups.Add(objGroup);
+                }
                 org.iringtools.applicationConfig.Graph graph = new applicationConfig.Graph()
                 {
 
                     ApplicationId = applicationId,
                     graph = ObjectToByteArray(mapping),
                     GraphId = Guid.Empty,
-                    GraphName = mapping.name.ToString()
+                    GraphName = mapping.name.ToString(),
+                    Groups = selectedGroups
                 };
                 
               //  _repository.UpdateMapping(scope, application, mapping);
@@ -1105,7 +1118,7 @@ namespace org.iringtools.web.controllers
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
-               // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
                 _CustomErrorLog = new CustomErrorLog();
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIDeletegraphMap, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
@@ -1308,6 +1321,8 @@ namespace org.iringtools.web.controllers
                 string application = form["endpoint"];//propertyCtx[1];
                 string graphName = form["graphName"];//mappingCtx[2];
                 int classIndex = Convert.ToInt16(form["classIndex"]);
+
+
                 //string parentNodeId = form["parentNodeId"];//mappingCtx[2];
 
 
@@ -1409,7 +1424,7 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIDeleteValueList, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-               // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -1513,7 +1528,7 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIValueListMap, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-               // return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
+                // return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true, node = valueListMapNode }, JsonRequestBehavior.AllowGet);
@@ -1546,13 +1561,13 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIDeleteValueMap, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-              //  return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                //  return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult CopyValueLists(string targetScope, string targetApplication,string sourceScope, string sourceApplication, string valueList)
+        public ActionResult CopyValueLists(string targetScope, string targetApplication, string sourceScope, string sourceApplication, string valueList)
         {
             try
             {
@@ -1587,7 +1602,7 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUICopyValueList, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-               // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                // return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -1708,7 +1723,7 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIValueList, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-              //  return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
+                //  return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true, node = nodes }, JsonRequestBehavior.AllowGet);
@@ -1941,6 +1956,22 @@ namespace org.iringtools.web.controllers
                 return ms.ToArray();
             }
         }
+
+        private List<org.iringtools.UserSecurity.Group> GetSelectedGroups(string Groups)
+        {
+            List<org.iringtools.UserSecurity.Group> tempGroups = new List<org.iringtools.UserSecurity.Group>();
+
+            string[] groupArray = Groups.Split(',');
+
+            for (int i = 0; i < groupArray.Length; i++)
+            {
+                tempGroups.Add(new org.iringtools.UserSecurity.Group() { GroupId = int.Parse(groupArray[i]) });
+            }
+
+            return tempGroups;
+        }
+
+
 
     }
 }
