@@ -220,8 +220,8 @@ Ext.define('AM.controller.Mapping', {
         if (item.itemId == 'editGraph') {
             win.title = 'Edit Graph \"' + graphName + '\"';
 
-            delimeter = record.classTemplateMaps[0].classMap.identifierDelimiter;
-            graphName = record.name;
+           // delimeter = record.classTemplateMaps[0].classMap.identifierDelimiter;
+            graphName = record.graphName
             state = 'edit';
             var groupArray = [];
             Ext.each(record.groups, function (eachGroup) {
