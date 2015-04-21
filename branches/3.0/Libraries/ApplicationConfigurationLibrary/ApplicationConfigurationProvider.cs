@@ -516,14 +516,18 @@ namespace org.iringtools.applicationConfig
 
         public Graphs GetGraphsForUser(string userName,  Guid applicationId)
         {
-            Graphs graphs = new Graphs();
+            Graphs graphs = null;// = new Graphs();
             try
             {
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });              
                 nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationId) });
 
+                
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgGraphByUser", nvl);
+                if(string.IsNullOrEmpty(xmlString))
+                     graphs = new Graphs();
+                else
                 graphs = utility.Utility.Deserialize<Graphs>(xmlString, true);
             }
             catch (Exception ex)
