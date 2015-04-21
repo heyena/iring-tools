@@ -40,10 +40,10 @@ Ext.define('AM.view.directory.DirectoryTree', {
                         dragField: 'text',
                         ddGroup: 'propertyGroup',
                         dragGroup: 'propertyGroup',
-                        appendOnly: true
-                        //                      dragText: '{0}',
-                        //                      enableDrop: true,
-                        //                      enableDrag: true
+                        appendOnly: true,
+                        dragText: '{0}',
+                        enableDrop: true,
+                        enableDrag: true
 
                     })
                 ],
