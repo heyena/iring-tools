@@ -79,7 +79,7 @@ Ext.define('AM.view.directory.NewJobForm', {
                             displayField: 'appName',
                             valueField: 'appId',
                             queryMode: 'local',
-                            autoSelect: false,
+                            autoSelect: true,
                             editable: false,
                             allowBlank:false,
                             listeners: {
@@ -95,6 +95,7 @@ Ext.define('AM.view.directory.NewJobForm', {
 
                                     form.getForm().findField('dataObjectName').bindStore(tempStore);
                                     form.getForm().findField('dataObjectName').getStore().filter([{ property: 'appId', value: me.getValue()}]);
+                                    form.getForm().findField('dataObjectName').setValue(tempStore.getRange());
                                 }
                             }
                         }]
