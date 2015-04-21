@@ -199,6 +199,25 @@ namespace org.iringtools.adapter
             }
         }
 
+        //Created on 21-Apr-15, took reference from GetDataMode(.,.)  
+        public string GetDataModeByApplicationId(string applicationId)
+        {
+            string dataMode = string.Empty;
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = applicationId });
+
+                dataMode = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spgDataModeByApplicationId", nvl);
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Graph by GraphID: " + ex);
+            }
+            return dataMode;
+        }
+
         public CacheInfo GetCacheInfo(string scope, string app, string graph)
         {
             CacheInfo cacheInfo = new CacheInfo()
