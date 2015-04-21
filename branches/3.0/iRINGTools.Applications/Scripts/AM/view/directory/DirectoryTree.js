@@ -36,10 +36,10 @@ Ext.define('AM.view.directory.DirectoryTree', {
             viewConfig: {
                 plugins: [
                     Ext.create('Ext.tree.plugin.TreeViewDragDrop', {
-                        ptype: 'treeviewdragdrop',
+                       // ptype: 'treeviewdragdrop',
                         dragField: 'text',
-//                        ddGroup: 'propertyGroup',
-//                        dragGroup: 'propertyGroup',
+                        ddGroup: 'propertyGroup',
+                        dragGroup: 'propertyGroup',
                         appendOnly: true
                         //                      dragText: '{0}',
                         //                      enableDrop: true,
