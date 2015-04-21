@@ -28,6 +28,8 @@ namespace org.iringtools.web.controllers
 {
     public class GridManagerController : BaseController
     {
+        private ApplicationConfigurationRepository appConfigRepository = new ApplicationConfigurationRepository();
+
         private static readonly ILog _logger = LogManager.GetLogger(typeof(GridManagerController));
         private GridRepository _repository { get; set; }
         //private Grid dataGrid;		
@@ -92,6 +94,36 @@ namespace org.iringtools.web.controllers
                 if (response != "")
                 {
                     //return Json(new { success = false, message = response }, JsonRequestBehavior.AllowGet);
+                    var jsonSerialiser = new JavaScriptSerializer();
+                    CustomError json = (CustomError)jsonSerialiser.Deserialize(response, typeof(CustomError));
+                    return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(dataGrid, JsonRequestBehavior.AllowGet);
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult DataObjectDataPages(FormCollection form)
+        {
+            try
+            {
+                string response = null;
+
+                var record = Utility.DeserializeJson<DataObject>(form["record"].ToString(), true);
+
+                dataGrid = _repository.GetGrid(record, form["start"].ToString(), form["limit"].ToString());
+
+                response = _repository.GetResponse();
+
+                if (response != null)
+                {
                     var jsonSerialiser = new JavaScriptSerializer();
                     CustomError json = (CustomError)jsonSerialiser.Deserialize(response, typeof(CustomError));
                     return Json(new { success = false, message = "[ Message Id " + json.msgId + "] - " + json.errMessage, stackTraceDescription = json.stackTraceDescription }, JsonRequestBehavior.AllowGet);

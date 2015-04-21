@@ -670,8 +670,8 @@ namespace org.iringtools.services
                 if (string.IsNullOrEmpty(format))
                 { format = "xml"; }
 
-                org.iringtools.library.DataFilters dataFilters = _applicationConfigurationProvider.GetDataFilters(resourceId);
-                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.library.DataFilters>(dataFilters, format, true);
+                DataFilters dataFilters = _applicationConfigurationProvider.GetDataFilters(resourceId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<DataFilters>(dataFilters, format, true);
             }
             catch (Exception ex)
             {

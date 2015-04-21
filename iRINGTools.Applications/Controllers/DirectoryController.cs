@@ -622,8 +622,7 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUSMGetGroupsInAUser, e, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
             }
-        }
-      
+        }      
 
         public JsonResult GetNodesForCache(FormCollection form)
         {
@@ -788,22 +787,22 @@ namespace org.iringtools.web.controllers
             }
         }
 
-        public ActionResult GetDataFilter(string scope, string app, string graph)
+        public ActionResult GetDataFilter(FormCollection form)
         {
-            string keyName = string.Format("{0}.{1}.{2}", scope, app, graph);
+            var record = Utility.DeserializeJson<DataObject>(form["record"].ToString(), true);
 
-            org.iringtools.library.DataFilter filter = (org.iringtools.library.DataFilter)Session[keyName];
+            DataFilter dataFilter = record.dataFilter;
 
-            if (filter == null)
+            if (dataFilter == null)
             {
-                filter = new org.iringtools.library.DataFilter();
-                _repository.GetFilterFile(ref filter, keyName);
+                dataFilter = _appConfigRepository.GetDataFilter(record.dataObjectId);
+                record.dataFilter = dataFilter;
             }
 
-            JsonContainer<org.iringtools.library.DataFilter> container = new JsonContainer<org.iringtools.library.DataFilter>();
-            container.items = filter;
+            JsonContainer<DataFilter> container = new JsonContainer<DataFilter>();
+            container.items = dataFilter;
             container.success = true;
-            container.total = filter.Expressions.Count + filter.OrderExpressions.Count;
+            container.total = dataFilter.Expressions.Count + dataFilter.OrderExpressions.Count;
 
             return Json(container, JsonRequestBehavior.AllowGet);
         }
