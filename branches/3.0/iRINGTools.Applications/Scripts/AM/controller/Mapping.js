@@ -95,6 +95,91 @@ Ext.define('AM.controller.Mapping', {
         });
     },
 
+
+//     //onNewOrEditGraph
+//    onNewOrEditGraph12: function (item, e, eOpts) {
+//        var me = this;
+//        var state;
+//        var tree = me.getDirTree();
+//        var node = tree.getSelectedNode();
+
+//        var win = Ext.widget('graphmapwindow');
+//        var form = win.down('form');
+//        form.node = node;
+
+//        var selectedGroups;
+
+//        if (item.itemId == 'editGraph') {
+//            selectedGroups = Ext.decode(node.parentNode.parentNode.data.record).groups;
+//        } else if (item.itemId == 'newGraph') {
+//            selectedGroups = Ext.decode(node.parentNode.data.record).groups;
+//        }
+
+//        if (selectedGroups != null) {
+//            var storeObject = Ext.create('Ext.data.Store', {
+//                fields: ['groupId', 'groupName']
+//            });
+
+//            Ext.each(selectedGroups, function (aRecord) {
+//                storeObject.add({
+//                    groupId: aRecord['groupId'],
+//                    groupName: aRecord['groupName']
+//                });
+//            }, this);
+
+//            form.getForm().findField('ResourceGroups').bindStore(storeObject);
+//        }
+
+//        if (item.itemId == 'editGraph' && node.data.record !== undefined) {
+//            win.title = 'Edit Graph';
+//            var state = 'edit';
+
+//            var record = Ext.decode(node.data.record);
+//            form.getForm().findField('graphName').setValue(record.displayName);
+//            form.getForm().findField('delimiter').setValue(record.internalName);
+////            form.getForm().findField('internalName').readOnly = true;
+////            form.getForm().findField('description').setValue(record.description);
+////            form.getForm().findField('cacheDBConnStr').setValue(record.cacheConnStr);
+
+//            var groupArray = [];
+//            Ext.each(record.groups, function (eachGroup) {
+//                groupArray.push(eachGroup.groupId);
+//            }, this);
+
+//            form.getForm().findField('ResourceGroups').setValue(groupArray);
+//        } else {
+//            var state = 'new';
+//            win.title = 'Add Graph';
+//        }
+
+////        var formRecord = {
+////            'graphName': graphName,
+////            'delimiter': delimeter
+////        };
+
+////        var form = win.down('form').getForm();
+////        win.down('form').node = node;
+////        form.setValues(formRecord);
+//        win.down('form').updateDDContainers(record);
+
+//        win.on('save', function () {
+//            win.destroy();
+//            tree.view.refresh();
+//            tree.expandPath(tree.getRootNode().getPath());
+//            var detailGrid = tree.up('panel').down('propertypanel');
+//            detailGrid.setSource({});
+//        }, me);
+
+//        win.on('cancel', function () {
+//            win.destroy();
+//        }, me);
+
+//        form.getForm().findField('state').setValue(state);
+//        win.show();
+//    },
+
+
+
     onNewOrEditGraph: function (item, e, eOpts) {
         var me = this;
         var graphName;
@@ -157,11 +242,10 @@ Ext.define('AM.controller.Mapping', {
             'delimiter': delimeter
         };
 
-        var form = win.down('form').getForm();
-        win.down('form').node = node;
-        form.setValues(formRecord);
-
-        win.down('form').updateDDContainers(record);
+//        var form = win.down('form').getForm();
+//        win.down('form').node = node;
+//        form.setValues(formRecord);
+//        win.down('form').updateDDContainers(record);
 
         win.on('save', function () {
             win.close();
