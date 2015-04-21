@@ -186,6 +186,20 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets resource items with filter.  Valid formats are XML, JSON, DTO, RDF.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/getDataForDataObject?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
+    public void GetDataForDataObject(string format, int start, int limit, string indexStyle, Stream stream)
+    {
+        try
+        {
+            _commonService.GetDataForDataObject(format, start, limit, indexStyle, stream);
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler(ex);
+        }
+    }
+
     [Description("Gets an XML projection of the specified scope and resource in the format (json, dto, rdf) specified.")]
     [WebGet(UriTemplate = "/{app}/{project}/{resource}/search?q={query}&format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
     public void Search(string project, string app, string resource, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)

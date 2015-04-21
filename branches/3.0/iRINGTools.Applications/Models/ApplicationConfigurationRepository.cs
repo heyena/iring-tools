@@ -16,7 +16,7 @@ using org.iringtools.library;
 
 namespace iRINGTools.Web.Models
 {
-    internal class ApplicationConfigurationRepository : IApplicationConfigurationRepository
+    public class ApplicationConfigurationRepository : IApplicationConfigurationRepository
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ApplicationConfigurationRepository));
         //private library.CustomError _CustomError = null;
@@ -375,6 +375,29 @@ namespace iRINGTools.Web.Models
             }
 
             return dataLayers;
+        }
+
+        public DataFilter GetDataFilter(Guid DataObjectOrGraphId)
+        {
+            DataFilter datafilter = new DataFilter();
+
+            try
+            {
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+                DataFilters datafilters = client.Get<DataFilters>(String.Format("/datafilters?resourceId={0}&format=xml", DataObjectOrGraphId));
+
+                if (datafilters.Count > 0)
+                {
+                    datafilter = datafilters[0];
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+                throw;
+            }
+
+            return datafilter;
         }
 
         #region Protected Member Functions

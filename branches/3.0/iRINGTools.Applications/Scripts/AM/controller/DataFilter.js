@@ -29,13 +29,6 @@ Ext.define('AM.controller.DataFilter', {
 
     init: function (application) {
         this.control({
-        /*"menuitem[action=dataFiltersMenuItem]": {
-        click: this.dataFiltersMenuItem
-        },
-        "button[action=saveDataFilter]": {
-        click: this.saveDataFilter
-        }*/
-
     });
 },
 
@@ -43,40 +36,7 @@ abc: function () {
 
 },
 
-//dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, filterFor, oeUrl) {
-//    var me = this;
-//    var view = Ext.widget('dataFilterWin');
-//    view.setTitle("Configure Data Filter");
-//    // getting propertiesName...
-
-//    var propertyComboBoxList = Ext.ComponentQuery.query('#propertyName_1', view);
-//    var propertyComboBox = propertyComboBoxList[0];
-//    var propertyStore = propertyComboBox.getStore();
-
-//    var propertyProxy = propertyStore.getProxy();
-//    var url = getColsUrl;
-//    var respObj;
-//    Ext.Ajax.request({
-//        url: "Scripts/datafilter/Test.json",
-//        method: 'POST',
-//        timeout: 86400000, // 24 hours
-//        success: function (response, request) {
-//            var respObj = Ext.JSON.decode(response.responseText);
-//            propertyStore.loadData(respObj.metaData.columns);
-//        },
-//        failure: function (response, request) {
-//            centerPanel.getEl().unmask();
-//            Ext.Msg.alert("Error fetching data to fill form");
-//        }
-//    });
-
-//    if (respObj !== null) {
-//        centerPanel.getEl().unmask();
-//        view.show();
-//    }
-//},
-
-dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, filterFor, oeUrl) {
+dataFiltersMenuItem: function (centerPanel, node, getDataFilterUri, reqParam, getColsUrl, filterFor, oeUrl) {
     var me = this;
     var view = Ext.widget('dataFilterWindow');
     view.setTitle("Configure Data Filter");
@@ -89,30 +49,27 @@ dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, 
     var url = getColsUrl;
     var obj = me.getDataFilter();
     var respObj;
+//    Ext.Ajax.request({
+//        url: url,
+//        params: reqParam,
+//        method: 'POST',
+//        timeout: 86400000, // 24 hours
+//        success: function (response, request) {
+//            var respObj = Ext.JSON.decode(response.responseText);
+//            propertyStore.loadData(respObj.metaData.columns);
+//        },
+//        failure: function (response, request) {
+//            centerPanel.getEl().unmask();
+//            Ext.Msg.alert("Error fetching data to fill form");
+//        }
+//    });
     Ext.Ajax.request({
-        //url: "Scripts/datafilter/Test.json",
-        url: url,
+        url: getDataFilterUri,
         params: reqParam,
         method: 'POST',
         timeout: 86400000, // 24 hours
         success: function (response, request) {
             var respObj = Ext.JSON.decode(response.responseText);
-            propertyStore.loadData(respObj.metaData.columns);
-        },
-        failure: function (response, request) {
-            centerPanel.getEl().unmask();
-            Ext.Msg.alert("Error fetching data to fill form");
-        }
-    });
-    Ext.Ajax.request({
-        //url: "Scripts/datafilter/TestOE.json",
-        url: relURI,
-        params: reqParam,
-        method: 'POST',
-        timeout: 86400000, // 24 hours
-        success: function (response, request) {
-            var respObj = Ext.JSON.decode(response.responseText);
-            //propertyStore.loadData(respObj.metaData.columns);
             if (respObj.items !== null) {
                 var resp = respObj.items;
                 if (resp.Expressions.length > 0) {
@@ -162,9 +119,6 @@ dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, 
                         var arrCloseList = Ext.ComponentQuery.query('#closeGroup_' + (i + 1), obj);
                         arrCloseList[0].setValue(close);
                         obj.getForm().findField('exprCount').setValue(i + 1);
-                        //}
-                        //centerPanel.getEl().unmask();
-                        //view.show();
                     }
                 }
                 if (resp.OrderExpressions.length > 0) {
@@ -187,9 +141,9 @@ dataFiltersMenuItem: function (centerPanel, node, relURI, reqParam, getColsUrl, 
                         obj.getForm().findField('oeExprCount').setValue(i + 1);
                     }
                 }
-                obj.getForm().findField('isAdmin').setValue(resp.isAdmin);
+//                obj.getForm().findField('isAdmin').setValue(resp.isAdmin);
 
-                obj.getForm().findField('filterFor').setValue(filterFor);
+//                obj.getForm().findField('filterFor').setValue(filterFor);
             }
 
         },
@@ -214,7 +168,7 @@ saveDataFilter: function (node, reqParams, ctx, relURI, button) {
     if (isAdmin == 'On') {
         isAdmin = true;
     }
-    //var reqParam = Ext.JSON.encode(reqParams);
+    
     var reqParam2 = reqParams['scope'] + '.' + reqParams['app'] + '.' + reqParams['graph'];
     form.submit({
         url: relURI,
@@ -231,12 +185,6 @@ saveDataFilter: function (node, reqParams, ctx, relURI, button) {
                     gridStore.reload();
             }
 
-
-
-            /*Ext.Ajax.request({
-            url: 'directory/reset?dtoContext=' + escape(ctx.substring(1)),
-            method: 'POST'
-            });*/
             button.up('.window').close();
             panelEnable();
         },

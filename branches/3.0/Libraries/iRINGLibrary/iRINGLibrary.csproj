@@ -116,6 +116,7 @@
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AdapterSettings.cs" />
+    <Compile Include="Application.cs" />
     <Compile Include="BaseConfigurableDataLayer.cs" />
     <Compile Include="BaseDataLayer.cs" />
     <Compile Include="BaseSQLDataLayer.cs" />
@@ -178,6 +179,7 @@
     <Compile Include="SPARQLResults.cs" />
     <Compile Include="SessionState.cs" />
     <Compile Include="TipMapping.cs" />
+    <Compile Include="UserSecurity.cs" />
     <Compile Include="VersionInfo.cs" />
   </ItemGroup>
   <ItemGroup>

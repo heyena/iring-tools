@@ -97,6 +97,44 @@ namespace org.iringtools.adapter
             }
         }
 
+        public DataLayerGateway(IKernel kernel, string serviceName)
+        {
+            _settings = kernel.Get<AdapterSettings>();
+            _dataPath = Path.Combine(_settings["BaseDirectoryPath"], _settings["AppDataPath"]);
+            _cacheConnStr = _settings[BaseProvider.CACHE_CONNSTR];
+
+            string loadingType = _settings["http-header-LoadingType"];
+            if (loadingType != null && loadingType.ToUpper() == "EAGER")
+                _loadingType = LoadingType.Eager;
+
+            if (Utility.IsBase64Encoded(_cacheConnStr))
+            {
+                string keyFile = (_settings[BaseProvider.CACHE_CONNSTR_LEVEL] == "Scope")
+                ? string.Format("{0}{1}.key", _settings["AppDataPath"], _scope)
+                : string.Format("{0}adapter.key", _settings["AppDataPath"]);
+
+                _cacheConnStr = EncryptionUtility.Decrypt(_cacheConnStr, keyFile);
+            }
+
+            if (serviceName.Replace(" ", "").ToLower()
+              == (typeof(IDataLayer).FullName + "," + typeof(IDataLayer).Assembly.GetName().Name).ToLower())
+            {
+                _dataLayer = kernel.Get<IDataLayer>();
+            }
+            else
+            {
+                if (serviceName == "org.iringtools.library.ILightweightDataLayer, iRINGLibrary")
+                {
+                    _lwDataLayer = kernel.Get<ILightweightDataLayer>();
+                }
+                else if (serviceName == "org.iringtools.library.ILightweightDataLayer2, iRINGLibrary")
+                {
+
+                    _lwDataLayer2 = kernel.Get<ILightweightDataLayer2>();
+                }
+            }
+        }
+
         public DataDictionary GetDictionary()
         {
             try

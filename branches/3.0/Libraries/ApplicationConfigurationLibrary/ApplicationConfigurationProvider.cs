@@ -17,6 +17,9 @@ using System.Web;
 using System.Data;
 using System.Globalization;
 using org.iringtools.mapping;
+using System.Net;
+using org.iringtools.adapter.projection;
+using org.iringtools.library.tip;
 
 
 namespace org.iringtools.applicationConfig
@@ -24,8 +27,18 @@ namespace org.iringtools.applicationConfig
     public class ApplicationConfigurationProvider : BaseProvider
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(ApplicationConfigurationProvider));
+        private static readonly int DEFAULT_PAGE_SIZE = 25;
         private string _connSecurityDb;
         private int _siteID;
+        private mapping.GraphMap _graphMap = null;
+        private IProjectionLayer _projectionEngine = null;
+        private bool _isResourceGraph = false;
+        private List<IDataObject> _dataObjects = new List<IDataObject>();
+        private bool _isProjectionPart7 = false;
+        private bool _isFormatExpected = true;
+
+        private string[] arrSpecialcharlist;
+        private string[] arrSpecialcharValue;
 
         [Inject]
         public ApplicationConfigurationProvider(NameValueCollection settings)
@@ -36,6 +49,19 @@ namespace org.iringtools.applicationConfig
                 // We have _settings collection available here.
                 _connSecurityDb = settings["SecurityConnection"];
                 _siteID = Convert.ToInt32(settings["SiteId"]);
+
+
+                if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
+                {
+                    arrSpecialcharlist = _settings["SpCharList"].ToString().Split(',');
+                    arrSpecialcharValue = _settings["SpCharValue"].ToString().Split(',');
+                }
+
+                if (_settings["LdapConfiguration"] != null && _settings["LdapConfiguration"].ToLower() == "true")
+                {
+                    utility.Utility.isLdapConfigured = true;
+                    utility.Utility.InitializeConfigurationRepository(new Type[] { typeof(DataDictionary), typeof(DatabaseDictionary), typeof(XElementClone), typeof(AuthorizedUsers), typeof(Mapping) });
+                }
             }
             catch (Exception e)
             {
@@ -1106,21 +1132,23 @@ namespace org.iringtools.applicationConfig
             }
         }
 
-        public org.iringtools.library.DataFilters GetDataFilters(Guid resourceId)
+        public DataFilters GetDataFilters(Guid resourceId)
         {
-            org.iringtools.library.DataFilters datafilters = new org.iringtools.library.DataFilters();
+            DataFilters datafilters = new DataFilters();
+
             try
             {
                 NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@ResourceId", Value = Convert.ToString(resourceId) });
+                nvl.Add(new ListItem() { Name = "@ResourceId", Value = resourceId });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDataFilter", nvl);
-                datafilters = utility.Utility.Deserialize<org.iringtools.library.DataFilters>(xmlString, true);
+                datafilters = utility.Utility.Deserialize<DataFilters>(xmlString, true);
             }
             catch (Exception ex)
             {
                 _logger.Error("Error getting  Contexts: " + ex);
             }
+
             return datafilters;
         }
 
@@ -1686,6 +1714,90 @@ namespace org.iringtools.applicationConfig
             return settings;
         }
 
+        public XDocument GetDataForDataObject(DataObject dataObject, ref string format, int start, int limit, bool fullIndex)
+        {
+            try
+            {
+                Application parentApplicationOfDataObject = GetApplicationForDataObject(dataObject.dataObjectId);
+
+                AddURIsInSettingCollection(dataObject);
+
+
+                //if (_dataObjDef != null)
+                //    dataObject.AppendFilter(_dataObjDef.dataFilter);
+
+                //_logger.DebugFormat("Initializing Scope: {0}.{1}", project, application);
+                //InitializeScope(project, application);
+
+                _mapping = new mapping.Mapping();
+
+                //if (format.Equals("jsonld"))
+                //{
+                //    _kernel.Bind<TipMapping>().ToConstant(_tipMapping).InThreadScope();
+                //}
+                //else
+                //{
+                //    _kernel.Bind<mapping.Mapping>().ToConstant(_mapping).InThreadScope();
+                //}
+
+                _logger.Debug("Initializing DataLayer.");
+                InitializeDataLayer(parentApplicationOfDataObject);
+
+                _logger.DebugFormat("Initializing Projection: {0} as {1}", dataObject.objectName, format);
+                InitializeProjection(dataObject, ref format, false);
+
+                _projectionEngine.Start = start;
+                _projectionEngine.Limit = limit;
+
+                IList<string> index = new List<string>();
+
+                if (limit == 0)
+                {
+                    limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
+                }
+
+                _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
+                _dataObjects = _dataLayerGateway.Get(dataObject, dataObject.dataFilter, start, limit);
+
+                _projectionEngine.Count = _dataLayerGateway.GetCount(dataObject, dataObject.dataFilter);
+                _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
+
+                _projectionEngine.FullIndex = fullIndex;
+
+                if (_isProjectionPart7)
+                {
+                    return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
+                }
+                else
+                {
+                    return _projectionEngine.ToXml(dataObject.objectName, ref _dataObjects);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+                throw ex;
+            }
+        }
+
+        public Application GetApplicationForDataObject(Guid dataObjectID)
+        {
+            Application application = new Application();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@DataObjectId", Value = Convert.ToString(dataObjectID) });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgApplicationForDataObject", nvl);
+                application = utility.Utility.Deserialize<Application>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Application By ApplicationID: " + ex);
+            }
+            return application;
+        }
+
         /// <summary>
         /// insert job
         /// </summary>
@@ -1793,6 +1905,140 @@ namespace org.iringtools.applicationConfig
                     application.Binding.Service = (typeof(ILightweightDataLayer2)).AssemblyQualifiedName;
                     application.ApplicationDataMode = applicationConfig.DataMode.Cache;
                 }
+            }
+        }
+
+        private void AddURIsInSettingCollection(DataObject dataObject, string resourceIdentifier = null, string relatedresource = null, string relatedId = null)
+        {
+            try
+            {
+                _logger.Debug("Adding URI in setting Collection.");
+
+                if (dataObject.keyProperties.Count > 0)
+                {
+                    string keyPropertyName = dataObject.keyProperties[0].keyPropertyName;
+
+                    string genericURI = "/" + dataObject.objectName;
+                    string specificURI = "/" + dataObject.objectName;
+
+                    if (resourceIdentifier != null)
+                    {
+                        genericURI = dataObject + "/{" + keyPropertyName + "}";
+                        specificURI = dataObject + "/" + resourceIdentifier;
+                    }
+
+                    if (relatedresource != null)
+                    {
+                        genericURI = dataObject.objectName + "/{" + keyPropertyName + "}/" + relatedresource;
+                        specificURI = dataObject.objectName + "/" + resourceIdentifier + "/" + relatedresource;
+                    }
+                    if (relatedId != null)
+                    {
+                        DataObject releteddataObject = _dictionary.dataObjects.Find(x => x.objectName.ToUpper() == relatedresource.ToUpper());
+
+                        if (releteddataObject != null)
+                        {
+                            string reletedKeyPropertyName = releteddataObject.keyProperties[0].keyPropertyName;
+
+                            genericURI = dataObject.objectName + "/{" + keyPropertyName + "}/" + reletedKeyPropertyName + "/{" + reletedKeyPropertyName + "}";
+                            specificURI = dataObject.objectName + "/" + resourceIdentifier + "/" + reletedKeyPropertyName + "/" + relatedId;
+                        }
+                    }
+
+                    _settings["GenericURI"] = genericURI;
+                    _settings["SpecificURI"] = specificURI;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug(string.Format("Exception in Adding URI in setting Collection: {0}", ex));
+                throw ex;
+            }
+        }
+
+        private void InitializeProjection(DataObject dataObject, ref string format, bool isIndividual)
+        {
+            try
+            {
+                string[] expectedFormats = { 
+              "rdf", 
+              "dto",
+              "xml",
+              "json"
+            };
+
+                //_graphMap = _mapping.FindGraphMap(dataObject.objectName);
+
+                //if (_graphMap != null)
+                //{
+                //    _isResourceGraph = true;
+                //    dataObject = _dictionary.dataObjects.Find(o => o.objectName.ToUpper() == _graphMap.dataObjectName.ToUpper());
+
+                //    if (dataObject == null || dataObject.isRelatedOnly)
+                //    {
+                //        _logger.Warn("Data object [" + _graphMap.dataObjectName + "] not found.");
+                //        throw new WebFaultException(HttpStatusCode.NotFound);
+                //    }
+                //}
+                //else
+                //{
+                    //dataObject = _dictionary.dataObjects.Find(o => o.objectName.ToUpper() == dataObject.objectName.ToUpper());
+
+                    //if (dataObject == null || dataObject.isRelatedOnly)
+                    //{
+                    //    _logger.Warn("Resource [" + dataObject + "] not found.");
+                    //    throw new WebFaultException(HttpStatusCode.NotFound);
+                    //}
+                //}
+
+                if (format == null)
+                {
+                    if (isIndividual && !String.IsNullOrEmpty(dataObject.defaultProjectionFormat))
+                    {
+                        format = dataObject.defaultProjectionFormat;
+                    }
+                    else if (!String.IsNullOrEmpty(dataObject.defaultListProjectionFormat))
+                    {
+                        format = dataObject.defaultListProjectionFormat;
+                    }
+                    else if (!String.IsNullOrEmpty(_settings["DefaultProjectionFormat"]))
+                    {
+                        format = _settings["DefaultProjectionFormat"];
+                    }
+                    else
+                    {
+                        format = "json";
+                    }
+                }
+                _isFormatExpected = expectedFormats.Contains(format.ToLower());
+
+                if (format != null && _isFormatExpected)
+                {
+                    _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+
+                    if (_projectionEngine.GetType().BaseType == typeof(BasePart7ProjectionEngine))
+                    {
+                        _isProjectionPart7 = true;
+                        if (_graphMap == null)
+                        {
+                            throw new FileNotFoundException("Requested resource [" + dataObject + "] cannot be rendered as Part7.");
+                        }
+                    }
+                }
+                else if (format == _settings["DefaultProjectionFormat"] && _isResourceGraph)
+                {
+                    format = "dto";
+                    _projectionEngine = _kernel.Get<IProjectionLayer>("dto");
+                    _isProjectionPart7 = true;
+                }
+
+                if (_projectionEngine != null && typeof(BasePart7ProjectionEngine).IsAssignableFrom(_projectionEngine.GetType()))
+                    ((BasePart7ProjectionEngine)_projectionEngine).dataLayerGateway = _dataLayerGateway;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(string.Format("Error initializing application: {0}", ex));
+                throw ex;
             }
         }
 

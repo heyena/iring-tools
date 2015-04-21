@@ -39,12 +39,10 @@ Ext.define('AM.store.DataGridStore', {
                         read: 'POST'
                     },
                     extraParams: {
-                        scope: null,
-                        app: null,
-                        graph: null,
-                        baseUrl: null
+                        record: null
                     },
-                    url: 'GridManager/Pages',
+//                    url: 'GridManager/Pages',
+                    url: 'GridManager/DataObjectDataPages',
                     timeout: 1000000,
                     reader: {
                         type: 'json',
@@ -61,22 +59,19 @@ Ext.define('AM.store.DataGridStore', {
                 remoteSort: true,
                 storeId: 'DataGridStore',
                 pageSize: 25,
-                //buffered: false,
                 proxy: {
                     type: 'ajax',
                     actionMethods: {
                         read: 'POST'
                     },
                     extraParams: {
-                        scope: null,
                         start: 0,
                         limit: 25,
-                        app: null,
-                        graph: null,
-                        baseUrl: null
+                        record: null
                     },
                     timeout: 1000000,
-                    url: 'GridManager/Pages',
+//                    url: 'GridManager/Pages',
+                    url: 'GridManager/DataObjectDataPages',
                     reader: {
                         type: 'json',
                         root: 'data'

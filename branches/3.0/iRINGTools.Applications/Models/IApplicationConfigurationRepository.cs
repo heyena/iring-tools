@@ -41,5 +41,7 @@ namespace iRINGTools.Web.Models
         ValueListMaps GetValueListMaps(string userName, Guid applicationId);
 
         DataLayers GetDataLayers(int siteId, int platformId);
+
+        DataFilter GetDataFilter(Guid DataObjectOrGraphId);
     }
 }
