@@ -48,6 +48,13 @@ Ext.define('AM.view.menus.AppDataMenu', {
 		  icon: 'Content/img/16x16/file-table.png',
           hidden:false,
 		  text: 'Configure Filter'
+       },
+		{
+		    xtype: 'menuitem',
+		    action: 'cacheupdate',
+		    icon: 'Content/img/16x16/document-new.png',
+		    itemId: 'cacheupscreen',
+		    text: 'Cache Update'
 		}
       ]
     });
