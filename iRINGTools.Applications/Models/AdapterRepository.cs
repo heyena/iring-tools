@@ -39,6 +39,8 @@ namespace iRINGTools.Web.Models
         protected string _servicesBasePath = string.Empty;
         protected string _agentDataServiceUri = string.Empty;
         protected string _dictionaryServiceUri = string.Empty;
+        protected string _applicationConfigServiceUri = string.Empty;
+
         public IDictionary<string, string> AuthHeaders { get; set; }
 
         public AdapterRepository()
@@ -80,8 +82,9 @@ namespace iRINGTools.Web.Models
             if (_dictionaryServiceUri.EndsWith("/"))
                 _dictionaryServiceUri = _dictionaryServiceUri.Remove(_dictionaryServiceUri.Length - 1);
 
-
-
+            _applicationConfigServiceUri = _settings["ApplicationConfigServiceUri"];
+            if (_applicationConfigServiceUri.EndsWith("/"))
+                _applicationConfigServiceUri = _dictionaryServiceUri.Remove(_applicationConfigServiceUri.Length - 1);
 
         }
 
@@ -425,6 +428,30 @@ namespace iRINGTools.Web.Models
             return dictionary;
         }
 
+        //  public Mapping GetMapping(string userName, string applicationId)
+        public Graphs GetMappingOnAppId(string userName, Guid applicationId)
+        {
+            //Mapping obj = null;
+            Graphs obj = null;
+
+            try
+            {
+                WebHttpClient client = CreateWebClient(_applicationConfigServiceUri);
+                // obj = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
+
+                obj = client.Get<Graphs>(String.Format("/graphs/{0}?applicationId={1}&format=xml", userName, applicationId), true);
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+            }
+
+            return obj;
+        }
+
         public Mapping GetMapping(string scopeName, string applicationName)
         {
             Mapping obj = null;
@@ -442,6 +469,7 @@ namespace iRINGTools.Web.Models
 
             return obj;
         }
+
 
         public org.iringtools.library.Configuration GetConfig(string scope, string application)
         {
@@ -1476,7 +1504,7 @@ namespace iRINGTools.Web.Models
             return obj;
         }
 
-        public Agent.Jobs getAllScheduleJob(int intPlatFormId, int intSiteId,string userName)
+        public Agent.Jobs getAllScheduleJob(int intPlatFormId, int intSiteId, string userName)
         {
             Agent.Jobs obj = null;
 
@@ -1484,7 +1512,7 @@ namespace iRINGTools.Web.Models
             {
                 WebHttpClient client = CreateWebClient(_agentDataServiceUri);
                 obj = client.Get<Agent.Jobs>(String.Format("/alljobs?userName={0}&siteId={1}&platformId={2}&isExchange={3}&format=xml", userName, intSiteId, intPlatFormId, 0));
-                
+
 
             }
 
