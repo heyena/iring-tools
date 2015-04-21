@@ -527,12 +527,10 @@ Ext.define('AM.controller.Directory', {
                     record: currentNodeRecord
                 },
                 success: function (response, request) {
-                    var applicationStore = Ext.create('Ext.data.Store', {
-                        fields: ['appId', 'appName']
-                    });
-                    var dataObjectStore = Ext.create('Ext.data.Store', {
-                        fields: ['dataObjId', 'dataObjName']
-                    });
+                    var applicationStore = Ext.StoreManager.lookup('applicationStoreId');
+                    var dataObjectStore = Ext.StoreManager.lookup('dataObjectStoreId');
+                    var filteredStore = Ext.getStore(dataObjectStore);
+
                     while (currentNode.firstChild) {
                         currentNode.removeChild(currentNode.firstChild);
                     }
@@ -551,6 +549,7 @@ Ext.define('AM.controller.Directory', {
                         if (dataObjectsNode != null) {
                             Ext.each(dataObjectsNode.childNodes, function (eachDataObjectNode) {
                                 dataObjectStore.add({
+                                    appId: eachChildNode.id,
                                     dataObjId: eachDataObjectNode.data.id,
                                     dataObjName: eachDataObjectNode.data.text
                                 });
@@ -563,7 +562,10 @@ Ext.define('AM.controller.Directory', {
                     form.getForm().findField('contextName').setValue(currentNode.data.text);
                     form.getForm().findField('applicationName').bindStore(applicationStore);
                     form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
+                    form.getForm().findField('applicationName').setValue(applicationStore.getAt(0));
+                    form.getForm().findField('dataObjectName').setValue(dataObjectStore.getAt(0));
                     
+
 
                     win.on('save', function () {
                         win.close();
@@ -593,9 +595,7 @@ Ext.define('AM.controller.Directory', {
                 },
                 success: function (response, request) {
 
-                    var dataObjectStore = Ext.create('Ext.data.Store', {
-                        fields: ['dataObjId', 'dataObjName']
-                    });
+                    var dataObjectStore = Ext.StoreManager.lookup('dataObjectStoreId');
 
                     while (currentNode.firstChild) {
                         currentNode.removeChild(currentNode.firstChild);
@@ -615,12 +615,13 @@ Ext.define('AM.controller.Directory', {
                             });
                         }
 
-                       index++;
+                        index++;
                     });
 
-                   form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
-                   form.getForm().findField('applicationName').setValue(currentNode.data.text);
-                   form.getForm().findField('contextName').setValue(currentNode.parentNode.data.text);
+                    form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
+                    form.getForm().findField('applicationName').setValue(currentNode.data.text);
+                    form.getForm().findField('contextName').setValue(currentNode.parentNode.data.text);
+                    form.getForm().findField('dataObjectName').setValue(dataObjectStore.getAt(0));
 
 
                     win.on('save', function () {
@@ -641,9 +642,8 @@ Ext.define('AM.controller.Directory', {
                 }
             })
         } else if (currentNodeType == 'DataObjectsNode') {
-            var dataObjectStore = Ext.create('Ext.data.Store', {
-                fields: ['dataObjId', 'dataObjName']
-            });
+            
+            var dataObjectStore = Ext.StoreManager.lookup('dataObjectStoreId');
 
             var dataObjectsNode = currentNode.childNodes;
 
@@ -659,6 +659,7 @@ Ext.define('AM.controller.Directory', {
             form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
             form.getForm().findField('applicationName').setValue(currentNode.parentNode.data.text);
             form.getForm().findField('contextName').setValue(currentNode.parentNode.parentNode.data.text);
+            form.getForm().findField('dataObjectName').setValue(dataObjectStore.getAt(0));
 
             win.on('save', function () {
                 win.close();
@@ -667,9 +668,10 @@ Ext.define('AM.controller.Directory', {
                 detailGrid.setSource({});
             }, me);
 
-            win.on('cancel', function () {
-                win.destroy();
+            win.on('Cancel', function () {
+                win.close();
             }, me);
+
 
             win.show();
         } else if (currentNodeType == 'DataObjectNode') {
@@ -678,8 +680,14 @@ Ext.define('AM.controller.Directory', {
             form.getForm().findField('contextName').setValue(currentNode.parentNode.parentNode.parentNode.data.text);
             form.getForm().findField('applicationName').setValue(currentNode.parentNode.parentNode.data.text);
 
-            win.on('cancel', function () {
-                win.destroy();
+            win.on('save', function () {
+                win.close();
+                tree.view.refresh();
+                var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+                detailGrid.setSource({});
+            }, me);
+            win.on('Cancel', function () {
+                win.close();
             }, me);
 
             win.show();
@@ -707,168 +715,168 @@ Ext.define('AM.controller.Directory', {
     },
     //End onEditrow
 
-//    newOrEditScope: function (item, e, eOpts) {
+    //    newOrEditScope: function (item, e, eOpts) {
 
-//        var me = this;
-//        var path, state, context, description, wintitle, displayName;
-//        var tree = me.getDirTree();
-//        var node = tree.getSelectedNode();
-//        var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
-//        context = node.data.record.context;
+    //        var me = this;
+    //        var path, state, context, description, wintitle, displayName;
+    //        var tree = me.getDirTree();
+    //        var node = tree.getSelectedNode();
+    //        var cacheDBConnStr = 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}';
+    //        context = node.data.record.context;
 
-//        if (node.parentNode) {
-//            path = node.internalId;
-//        } else {
-//            path = '';
-//        }
+    //        if (node.parentNode) {
+    //            path = node.internalId;
+    //        } else {
+    //            path = '';
+    //        }
 
-//        var conf = {
-//            id: 'tab-' + node.data.id,
-//            title: wintitle,
-//            iconCls: 'tabsScope'
-//        };
+    //        var conf = {
+    //            id: 'tab-' + node.data.id,
+    //            title: wintitle,
+    //            iconCls: 'tabsScope'
+    //        };
 
-//        var win = Ext.widget('scopewindow', conf);
-//        var form = win.down('form');
-//        form.node = node;
+    //        var win = Ext.widget('scopewindow', conf);
+    //        var form = win.down('form');
+    //        form.node = node;
 
-//        if (item.itemId == 'editfolder' && node.data.record !== undefined) {
-//            var name = node.data.record.Name;
-//            var displayName = node.data.record.DisplayName;
-//            var description = node.data.record.Description;
-//            var internalName = node.data.record.Name;
-//            win.title = 'Edit Scope';
-//            var state = 'edit';
+    //        if (item.itemId == 'editfolder' && node.data.record !== undefined) {
+    //            var name = node.data.record.Name;
+    //            var displayName = node.data.record.DisplayName;
+    //            var description = node.data.record.Description;
+    //            var internalName = node.data.record.Name;
+    //            win.title = 'Edit Scope';
+    //            var state = 'edit';
 
-//            if (node.data.record.Configuration != null && node.data.record.Configuration.AppSettings != null &&
-//                node.data.record.Configuration.AppSettings.Settings != null) {
-//                Ext.each(node.data.record.Configuration.AppSettings.Settings, function (settings, index) {
-//                    if (settings.Key == "iRINGCacheConnStr") {
-//                        form.getForm().findField('cacheDBConnStr').setValue(settings.Value);
-//                    }
-//                });
-//            }
-//            form.getForm().findField('internalName').setReadOnly(true);
+    //            if (node.data.record.Configuration != null && node.data.record.Configuration.AppSettings != null &&
+    //                node.data.record.Configuration.AppSettings.Settings != null) {
+    //                Ext.each(node.data.record.Configuration.AppSettings.Settings, function (settings, index) {
+    //                    if (settings.Key == "iRINGCacheConnStr") {
+    //                        form.getForm().findField('cacheDBConnStr').setValue(settings.Value);
+    //                    }
+    //                });
+    //            }
+    //            form.getForm().findField('internalName').setReadOnly(true);
 
-//        } else {
-//            var name = '';
-//            var state = 'new';
-//            win.title = 'Add Scope';
-//        }
+    //        } else {
+    //            var name = '';
+    //            var state = 'new';
+    //            win.title = 'Add Scope';
+    //        }
 
-//        win.on('save', function () {
-//            win.destroy();
-//            tree.view.refresh();
-//            tree.expandPath(tree.getRootNode().getPath());
-//            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
-//            detailGrid.setSource({});
-//        }, me);
+    //        win.on('save', function () {
+    //            win.destroy();
+    //            tree.view.refresh();
+    //            tree.expandPath(tree.getRootNode().getPath());
+    //            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+    //            detailGrid.setSource({});
+    //        }, me);
 
-//        win.on('cancel', function () {
-//            win.destroy();
-//        }, me);
-//        if (utilsObj.isSecEnable == "False") {
-//            form.getForm().findField('permissions').hide();
-//        }
-//        form.getForm().findField('path').setValue(path);
-//        form.getForm().findField('state').setValue(state);
-//        form.getForm().findField('oldContext').setValue(context);
-//        form.getForm().findField('description').setValue(description);
-//        form.getForm().findField('name').setValue(name);
-//        form.getForm().findField('internalName').setValue(internalName);
-//        form.getForm().findField('displayName').setValue(displayName);
-//        form.getForm().findField('contextName').setValue(name);
-//        form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
+    //        win.on('cancel', function () {
+    //            win.destroy();
+    //        }, me);
+    //        if (utilsObj.isSecEnable == "False") {
+    //            form.getForm().findField('permissions').hide();
+    //        }
+    //        form.getForm().findField('path').setValue(path);
+    //        form.getForm().findField('state').setValue(state);
+    //        form.getForm().findField('oldContext').setValue(context);
+    //        form.getForm().findField('description').setValue(description);
+    //        form.getForm().findField('name').setValue(name);
+    //        form.getForm().findField('internalName').setValue(internalName);
+    //        form.getForm().findField('displayName').setValue(displayName);
+    //        form.getForm().findField('contextName').setValue(name);
+    //        form.getForm().findField('permissions').setValue(node.data.record.PermissionGroup);
 
-//        win.show();
-//    },
+    //        win.show();
+    //    },
 
-//    deleteScope: function (item, e, eOpts) {
-//        var me = this;
-//        var tree = this.getDirTree();
-//        var parent, path;
-//        var node = tree.getSelectedNode();
+    //    deleteScope: function (item, e, eOpts) {
+    //        var me = this;
+    //        var tree = this.getDirTree();
+    //        var parent, path;
+    //        var node = tree.getSelectedNode();
 
-//        Ext.Ajax.request({
-//            url: 'directory/DeleteScope', //'directory/deleteEntry', 
-//            method: 'POST',
-//            params: {
-//                'nodeid': node.data.id
-//            },
-//            success: function (response, request) {
-//                var resp = Ext.decode(response.responseText);
-//                if (resp.success) {
-//                    var parentNode = node.parentNode;
-//                    parentNode.removeChild(node);
-//                    tree.getSelectionModel().select(parentNode);
-//                    tree.view.refresh();
-//                } else {
-//                    var userMsg = resp['message'];
-//                    var detailMsg = resp['stackTraceDescription'];
-//                    var expPanel = Ext.widget('exceptionpanel', {
-//                        title: 'Error Notification'
-//                    });
-//                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-//                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-//                }
+    //        Ext.Ajax.request({
+    //            url: 'directory/DeleteScope', //'directory/deleteEntry', 
+    //            method: 'POST',
+    //            params: {
+    //                'nodeid': node.data.id
+    //            },
+    //            success: function (response, request) {
+    //                var resp = Ext.decode(response.responseText);
+    //                if (resp.success) {
+    //                    var parentNode = node.parentNode;
+    //                    parentNode.removeChild(node);
+    //                    tree.getSelectionModel().select(parentNode);
+    //                    tree.view.refresh();
+    //                } else {
+    //                    var userMsg = resp['message'];
+    //                    var detailMsg = resp['stackTraceDescription'];
+    //                    var expPanel = Ext.widget('exceptionpanel', {
+    //                        title: 'Error Notification'
+    //                    });
+    //                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+    //                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+    //                }
 
-//                //tree.onReload();
-//            },
-//            failure: function (response, request) {
-//                var resp = Ext.decode(response.responseText);
-//                var userMsg = resp['message'];
-//                var detailMsg = resp['stackTraceDescription'];
-//                var expPanel = Ext.widget('exceptionpanel', {
-//                    title: 'Error Notification'
-//                });
-//                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-//                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-//            }
-//        });
-//    },
+    //                //tree.onReload();
+    //            },
+    //            failure: function (response, request) {
+    //                var resp = Ext.decode(response.responseText);
+    //                var userMsg = resp['message'];
+    //                var detailMsg = resp['stackTraceDescription'];
+    //                var expPanel = Ext.widget('exceptionpanel', {
+    //                    title: 'Error Notification'
+    //                });
+    //                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+    //                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+    //            }
+    //        });
+    //    },
 
-//    deleteEndpoint: function (item, e, eOpts) {
-//        var me = this;
+    //    deleteEndpoint: function (item, e, eOpts) {
+    //        var me = this;
 
-//        var tree = me.getDirTree();
-//        var node = tree.getSelectedNode();
-//        Ext.Ajax.request({
-//            url: 'directory/deleteapplication',
-//            method: 'POST',
-//            params: {
-//                nodeid: node.data.id
-//            },
-//            success: function (response, request) {
-//                var resp = Ext.decode(response.responseText);
-//                if (resp.success) {
-//                    var parentNode = node.parentNode;
-//                    parentNode.removeChild(node);
-//                    tree.getSelectionModel().select(parentNode);
-//                    tree.view.refresh();
-//                } else {
-//                    var userMsg = resp['message'];
-//                    var detailMsg = resp['stackTraceDescription'];
-//                    var expPanel = Ext.widget('exceptionpanel', {
-//                        title: 'Error Notification'
-//                    });
-//                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-//                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-//                }
+    //        var tree = me.getDirTree();
+    //        var node = tree.getSelectedNode();
+    //        Ext.Ajax.request({
+    //            url: 'directory/deleteapplication',
+    //            method: 'POST',
+    //            params: {
+    //                nodeid: node.data.id
+    //            },
+    //            success: function (response, request) {
+    //                var resp = Ext.decode(response.responseText);
+    //                if (resp.success) {
+    //                    var parentNode = node.parentNode;
+    //                    parentNode.removeChild(node);
+    //                    tree.getSelectionModel().select(parentNode);
+    //                    tree.view.refresh();
+    //                } else {
+    //                    var userMsg = resp['message'];
+    //                    var detailMsg = resp['stackTraceDescription'];
+    //                    var expPanel = Ext.widget('exceptionpanel', {
+    //                        title: 'Error Notification'
+    //                    });
+    //                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+    //                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+    //                }
 
-//                //tree.onReload();
-//            },
-//            failure: function (response, request) {
-//                var resp = Ext.decode(response.responseText);
-//                var userMsg = resp['message'];
-//                var detailMsg = resp['stackTraceDescription'];
-//                var expPanel = Ext.widget('exceptionpanel', {
-//                    title: 'Error Notification'
-//                });
-//                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-//                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-//            }
-//        });
-//    },
+    //                //tree.onReload();
+    //            },
+    //            failure: function (response, request) {
+    //                var resp = Ext.decode(response.responseText);
+    //                var userMsg = resp['message'];
+    //                var detailMsg = resp['stackTraceDescription'];
+    //                var expPanel = Ext.widget('exceptionpanel', {
+    //                    title: 'Error Notification'
+    //                });
+    //                Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
+    //                Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
+    //            }
+    //        });
+    //    },
 
     onNewDataLayer: function (item, e, eOpts) {
         var me = this;
