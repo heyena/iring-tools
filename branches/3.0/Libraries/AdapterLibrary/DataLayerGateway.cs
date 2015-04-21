@@ -1360,36 +1360,37 @@ namespace org.iringtools.adapter
                                 string key = sdo.Dictionary.Keys.ElementAt(i);
                                 object value = sdo.Dictionary[key];
 
-
                                 if (value != null && value != "")
                                 {
                                     DataProperty prop = localObjectType.dataProperties.Find(x => x.propertyName.ToLower() == key.ToLower());
 
-                                    if (prop == null)
+                                    if (prop != null)
                                     {
-                                        throw new Exception("Property [" + key + "] not found in data dictionary.");
-                                    }
+                                        //  throw new Exception("Property [" + key + "] not found in data dictionary.");
+                                        // }
 
-                                    if (prop.dataType == DataType.Date || prop.dataType == DataType.DateTime)
-                                    {
-                                        if (value.ToString() != string.Empty)
+                                        if (prop.dataType == DataType.Date || prop.dataType == DataType.DateTime)
                                         {
-                                            value = Utility.ToXsdDateTime(value.ToString());
+                                            if (value.ToString() != string.Empty)
+                                            {
+                                                value = Utility.ToXsdDateTime(value.ToString());
+                                            }
+                                            else
+                                            {
+                                                value = null;
+                                            }
                                         }
-                                        else
+                                        else if (prop.dataType != DataType.String)
                                         {
-                                            value = null;
+                                            decimal decValue = 0;
+                                            Decimal.TryParse(value.ToString(), out decValue);
+                                            value = decValue;
                                         }
-                                    }
-                                    else if (prop.dataType != DataType.String)
-                                    {
-                                        decimal decValue = 0;
-                                        Decimal.TryParse(value.ToString(), out decValue);
-                                        value = decValue;
+
+                                        idataObject.SetPropertyValue(key, value);
                                     }
                                 }
 
-                                idataObject.SetPropertyValue(key, value);
                             }
 
                             if (sdo.HasContent)
