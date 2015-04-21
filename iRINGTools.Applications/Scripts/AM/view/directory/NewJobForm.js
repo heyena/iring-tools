@@ -32,9 +32,10 @@ Ext.define('AM.view.directory.NewJobForm', {
             fields: ['appId', 'dataObjId', 'dataObjName'], storeId: 'dataObjectStoreId'
         });
 
-        
+
         //Ext.ComponentQuery.query('#myradiobutton').setValue(true);
-                         
+//        var radios = Ext.getCmp("myradiobutton");
+//        radios.setValue({checked:true});            
 
         Ext.applyIf(me, {
 
@@ -111,6 +112,7 @@ Ext.define('AM.view.directory.NewJobForm', {
                             xtype: 'checkboxlistcombo',
                             multiSelect: true,
                             name: 'dataObjectName',
+                            emptyText:'No Data Objects',
                             itemId: 'dataObjCombo',
                             store: dataObjectStore,
                             queryMode: 'local',
@@ -138,11 +140,14 @@ Ext.define('AM.view.directory.NewJobForm', {
                     items: [{
                         boxLabel: 'Immediate',
                         inputValue: 'Immediate',
-                        checked:true,
+                        //checked:true,
                         name: 'occuranceRadio',
                         margin: '4 80 0 0 ',
-                        itemId:'myradiobutton',
+                        //itemId:'myradiobutton',
+                        id:'myradiobutton',
                         allowBlank: false,
+                        scope: this,
+                       // handler: this.onChange,
                         listeners: {
                             change: function (cb, checked) {
                                 Ext.ComponentQuery.query('#fldContainer')[0].setDisabled(checked);
@@ -192,6 +197,7 @@ Ext.define('AM.view.directory.NewJobForm', {
                         minValue: (new Date()),
                         emptyText: 'Select Start Date',
                         width: 220,
+                        disabled: false,
                         anchor: '100%',
                         allowBlank:false
                     }, {
@@ -291,7 +297,12 @@ Ext.define('AM.view.directory.NewJobForm', {
         me.callParent(arguments);
     },
 
-
+    onChange: function (box, checked) {
+              alert("in radio")
+                var radios = Ext.getCmp("myradiobutton");
+                radios.setDisabled(checked);
+          
+    },
     onSave: function () {
         var me = this;
         var win = me.up('window');
