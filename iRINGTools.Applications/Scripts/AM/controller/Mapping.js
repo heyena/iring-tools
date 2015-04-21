@@ -229,6 +229,7 @@ Ext.define('AM.controller.Mapping', {
             }, this);
 
             form.getForm().findField('ResourceGroups').setValue(groupArray);
+            form.getForm().findField('graphName').setValue(graphName);
 
         } else {
             win.title = 'Add GraphMap';
