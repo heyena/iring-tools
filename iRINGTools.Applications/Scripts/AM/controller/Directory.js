@@ -568,9 +568,8 @@ Ext.define('AM.controller.Directory', {
                         form.getForm().findField('contextName').setValue(currentNode.data.text);
                         form.getForm().findField('applicationName').bindStore(applicationStore);
                         form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
-                        form.getForm().findField('applicationName').setValue(applicationStore.getAt(0));
-                        form.getForm().findField('dataObjectName').setValue(dataObjectStore.getAt(0));
-
+                        form.getForm().findField('applicationName').select(applicationStore.getAt(0));
+                        form.getForm().findField('applicationName').fireEvent('select', form.getForm().findField('applicationName'), applicationStore.getAt(0));
 
 
                         win.on('save', function () {
