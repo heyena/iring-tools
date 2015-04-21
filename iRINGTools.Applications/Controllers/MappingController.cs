@@ -43,8 +43,8 @@ namespace org.iringtools.web.controllers
         private CustomErrorLog _CustomErrorLog = null;
 
 
-        //string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
-        string userName = "WorldTest";
+        string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
+        //string userName = "WorldTest";
 
 
         public MappingController() : this(new MappingRepository()) { }
@@ -1037,11 +1037,12 @@ namespace org.iringtools.web.controllers
 
 
                 Groups selectedGroups = new Groups();
-                org.iringtools.UserSecurity.Group objGroup = new UserSecurity.Group();
+                
                 string[] groupArray = groups.Split(',');
                 for(int i =0;i<groupArray.Length;i++)
                 {
-                    objGroup.GroupId= Convert.ToInt16(groupArray[0].ToString());
+                    org.iringtools.UserSecurity.Group objGroup = new UserSecurity.Group();
+                    objGroup.GroupId= Convert.ToInt16(groupArray[i].ToString());
                     selectedGroups.Add(objGroup);
                 }
                 org.iringtools.applicationConfig.Graph graph = new applicationConfig.Graph()
@@ -1052,9 +1053,10 @@ namespace org.iringtools.web.controllers
                     GraphId = Guid.Empty,
                     GraphName = mapping.name.ToString(),
                     Groups = selectedGroups
+                    
                 };
-                
-              //  _repository.UpdateMapping(scope, application, mapping);
+
+                //  _repository.UpdateMapping(scope, application, mapping)
 
                 _repository.UpdateMapping(scope, application, graph, userName);
 
