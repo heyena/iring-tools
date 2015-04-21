@@ -25,7 +25,7 @@ namespace org.iringtools.web.controllers
     {
 
         string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
-        //string userName = "WorldTest";
+       // string userName = "WorldTest";
 
         int siteId = 4;
         int platformId = 2;
@@ -218,44 +218,51 @@ namespace org.iringtools.web.controllers
 
                     //        return Json(nodes, JsonRequestBehavior.AllowGet);
                     //    }
-                    //case "GraphsNode":
-                    //    {
 
-                    //        string context = form["node"];
-                    //        string scopeName = context.Split('/')[0];
-                    //        string applicationName = context.Split('/')[1];
 
-                    //        Mapping mapping = GetMapping(scopeName, applicationName);
 
-                    //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                    case "GraphsNode":
+                        {
 
-                    //        foreach (GraphMap graph in mapping.graphMaps)
-                    //        {
-                    //            JsonTreeNode node = new JsonTreeNode
-                    //            {
-                    //                nodeType = "async",
-                    //                type = "GraphNode",
-                    //                iconCls = "treeGraph",
-                    //                id = context + "/Graph/" + graph.name,
-                    //                text = graph.name,
-                    //                expanded = true,
-                    //                leaf = true,
-                    //                children = new List<JsonTreeNode>(),
-                    //                record = graph
+                            string context = form["node"];
+                            // string scopeName = context.Split('/')[0];
+                            // string applicationName = context.Split('/')[1];
+                            //var record = Utility.DeserializeJson<Graph>(form["record"].ToString(), true);
+                            //   Graphs mapping = GetMappingOnAppId(userName, Guid.Parse("4771d145-6f5d-4835-8dc3-e48c1a765d57"));
 
-                    //            };
+                            Guid applicationId = Guid.Parse(form["applicationId"]); 
 
-                    //            ClassMap classMap = graph.classTemplateMaps[0].classMap;
+                            
+                            org.iringtools.applicationConfig.Graphs mapping = _appConfigRepository.GetGraphs(userName, applicationId);
+                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-                    //            node.property = new Dictionary<string, string>();
-                    //            node.property.Add("Data Object", graph.dataObjectName);
-                    //            node.property.Add("Root Class", classMap.name);
-                    //            nodes.Add(node);
-                    //        }
+                            foreach (Graph graph in mapping)
+                            {
+                                JsonTreeNode node = new JsonTreeNode
+                                {
+                                    nodeType = "async",
+                                    type = "GraphNode",
+                                    iconCls = "treeGraph",
+                                    id = context + "/Graph/" + graph.GraphName,
+                                    text = graph.GraphName,
+                                    expanded = true,
+                                    leaf = true,
+                                    children = new List<JsonTreeNode>(),
+                                    record = graph
 
-                    //        return Json(nodes, JsonRequestBehavior.AllowGet);
+                                };
 
-                    //    }
+                                //ClassMap classMap = graph.classTemplateMaps[0].classMap;
+
+                                //node.property = new Dictionary<string, string>();
+                                //node.property.Add("Data Object", graph);
+                                //node.property.Add("Root Class", classMap.name);
+                                nodes.Add(node);
+                            }
+
+                            return Json(nodes, JsonRequestBehavior.AllowGet);
+
+                        }
                     default:
                         {
                             return Json(new { success = false }, JsonRequestBehavior.AllowGet);
@@ -968,16 +975,32 @@ namespace org.iringtools.web.controllers
 
         #region Private Methods
 
+
         private Mapping GetMapping(string scope, string application)
         {
             string key = string.Format(_keyFormat, scope, application);
 
             if (Session[key] == null)
             {
-                Session[key] = _repository.GetMapping(scope, application);
+               Session[key] = _repository.GetMapping(scope, application);
             }
 
             return (Mapping)Session[key];
+        }
+
+
+
+   //     private Mapping GetMapping(string scope, string application)
+            private Graphs GetMappingOnAppId(string userName, Guid applicationId)
+        {
+            string key = string.Format(_keyFormat, userName, applicationId);
+
+            if (Session[key] == null)
+            {
+                Session[key] = _repository.GetMappingOnAppId(userName, applicationId);
+            }
+
+            return (Graphs)Session[key];
         }
 
         private string GetClassLabel(string classId)
