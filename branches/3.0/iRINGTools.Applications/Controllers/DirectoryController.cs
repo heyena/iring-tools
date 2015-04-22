@@ -1184,7 +1184,8 @@ namespace org.iringtools.web.controllers
                     expanded = false,
                     leaf = false,
                     children = null,
-                    record = Utility.SerializeJson<org.iringtools.applicationConfig.Graph>(graph, true)
+                    record = Utility.SerializeJson<org.iringtools.applicationConfig.Graph>(graph, true),
+                    GraphMap = (GraphMap)DeserializeObject(graph.graph)   
                 };
 
                 GraphMap graphMap = (GraphMap)DeserializeObject(graph.graph);
@@ -1192,6 +1193,7 @@ namespace org.iringtools.web.controllers
                 node.property = new Dictionary<string, string>();
                 node.property.Add("Data Object", graphMap.dataObjectName);
                 node.property.Add("Root Class", classMap.name);
+                
                 graphsNode.children.Add(node);
             }
 
