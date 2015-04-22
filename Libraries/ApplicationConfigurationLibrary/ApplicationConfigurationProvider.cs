@@ -1722,30 +1722,26 @@ namespace org.iringtools.applicationConfig
             try
             {
                 Application parentApplicationOfDataObject = GetApplicationForDataObject(dataObject.dataObjectId);
+                Context parentContextOfDataObject = GetContextForDataObject(dataObject.dataObjectId);
+                DatabaseDictionary tempDatabaseDictionary = GetDictionary(parentApplicationOfDataObject.ApplicationId);
+
+                _settings["ProjectName"] = parentApplicationOfDataObject.InternalName;
+                _settings["ApplicationName"] = parentContextOfDataObject.InternalName;
+
+                //DataDictionary dictionaryFromDB = new DataDictionary();
+                //dictionaryFromDB.dataObjects = tempDatabaseDictionary.dataObjects;
+
+                DataDictionary dictionaryFromDB = (DataDictionary)tempDatabaseDictionary;
 
                 AddURIsInSettingCollection(dataObject);
 
-                //DataDictionary dictionary = GetDictionary(parentApplicationOfDataObject);
-                //_dataObjDef = dictionary.GetDataObject(dataObject.objectName);
-                //if (_dataObjDef != null)
-                //    dataObject.AppendFilter(_dataObjDef.dataFilter);
-
-                //_logger.DebugFormat("Initializing Scope: {0}.{1}", project, application);
-                //InitializeScope(project, application);
-
                 _mapping = new mapping.Mapping();
 
-                //if (format.Equals("jsonld"))
-                //{
-                //    _kernel.Bind<TipMapping>().ToConstant(_tipMapping).InThreadScope();
-                //}
-                //else
-                //{
-                //    _kernel.Bind<mapping.Mapping>().ToConstant(_mapping).InThreadScope();
-                //}
-
                 _logger.Debug("Initializing DataLayer.");
-                InitializeDataLayer(parentApplicationOfDataObject);
+                InitializeDataLayer(parentApplicationOfDataObject, ref dictionaryFromDB);
+
+                //InsertDictionary(XDocument.Parse(Utility.Serialize<DataDictionary>(dictionaryFromDB, true)));
+                InsertDictionary(XDocument.Parse(Utility.Serialize<DatabaseDictionary>((DatabaseDictionary)dictionaryFromDB, true)));
 
                 _logger.DebugFormat("Initializing Projection: {0} as {1}", dataObject.objectName, format);
                 InitializeProjection(dataObject, ref format, false);
@@ -1761,7 +1757,7 @@ namespace org.iringtools.applicationConfig
                 }
 
                 _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
-                _dataObjects = _dataLayerGateway.Get(dataObject, dataObject.dataFilter, start, limit);
+                _dataObjects = _dataLayerGateway.Get(dataObject, parentApplicationOfDataObject.ApplicationDataMode, dataObject.dataFilter, start, limit);
 
                 _projectionEngine.Count = _dataLayerGateway.GetCount(dataObject, dataObject.dataFilter);
                 _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
@@ -1800,6 +1796,88 @@ namespace org.iringtools.applicationConfig
                 _logger.Error("Error getting  Application By ApplicationID: " + ex);
             }
             return application;
+        }
+
+        public Context GetContextForDataObject(Guid dataObjectID)
+        {
+            Context context = new Context();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@DataObjectId", Value = Convert.ToString(dataObjectID) });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgContextForDataObject", nvl);
+                context = utility.Utility.Deserialize<Context>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Application By ApplicationID: " + ex);
+            }
+            return context;
+        }
+
+        public DatabaseDictionary GetDictionary(Guid applicationId)
+        {
+            org.iringtools.library.DatabaseDictionary dataDictionary = new org.iringtools.library.DatabaseDictionary();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ApplicationID", Value = applicationId });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl);
+
+
+
+                dataDictionary = utility.Utility.Deserialize<org.iringtools.library.DatabaseDictionary>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  dictionary: " + ex);
+            }
+            return dataDictionary;
+        }
+
+        public Response InsertDictionary(XDocument xml)
+        {
+            Response response = new Response();
+            response.Messages = new Messages();
+
+            try
+            {
+                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@rawXml", Value = rawXml });
+
+                    string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiDictionary", nvl);
+
+                    switch (output)
+                    {
+                        case "1":
+                            PrepareSuccessResponse(response, "dictionaryadded");
+                            break;
+                        default:
+                            PrepareErrorResponse(response, output);
+                            break;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding dictionary: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
         }
 
         /// <summary>
