@@ -18,7 +18,7 @@ using System.Web.Script.Serialization;
 using System.Xml;
 using org.iringtools.applicationConfig;
 using org.iringtools.UserSecurity;
-
+using System.Runtime.Serialization.Formatters.Binary;
 namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
@@ -221,48 +221,48 @@ namespace org.iringtools.web.controllers
 
 
 
-                    case "GraphsNode":
-                        {
+                    //case "GraphsNode":
+                    //    {
 
-                            string context = form["node"];
-                            // string scopeName = context.Split('/')[0];
-                            // string applicationName = context.Split('/')[1];
-                            //var record = Utility.DeserializeJson<Graph>(form["record"].ToString(), true);
-                            //   Graphs mapping = GetMappingOnAppId(userName, Guid.Parse("4771d145-6f5d-4835-8dc3-e48c1a765d57"));
+                    //        string context = form["node"];
+                    //        // string scopeName = context.Split('/')[0];
+                    //        // string applicationName = context.Split('/')[1];
+                    //        //var record = Utility.DeserializeJson<Graph>(form["record"].ToString(), true);
+                    //        //   Graphs mapping = GetMappingOnAppId(userName, Guid.Parse("4771d145-6f5d-4835-8dc3-e48c1a765d57"));
 
-                            Guid applicationId = Guid.Parse(form["applicationId"]); 
+                    //        Guid applicationId = Guid.Parse(form["applicationId"]); 
 
                             
-                            org.iringtools.applicationConfig.Graphs mapping = _appConfigRepository.GetGraphs(userName, applicationId);
-                            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                    //        org.iringtools.applicationConfig.Graphs mapping = _appConfigRepository.GetGraphs(userName, applicationId);
+                    //        List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-                            foreach (Graph graph in mapping)
-                            {
-                                JsonTreeNode node = new JsonTreeNode
-                                {
-                                    nodeType = "async",
-                                    type = "GraphNode",
-                                    iconCls = "treeGraph",
-                                    id = context + "/Graph/" + graph.GraphName,
-                                    text = graph.GraphName,
-                                    expanded = true,
-                                    leaf = true,
-                                    children = new List<JsonTreeNode>(),
-                                    record = graph
+                    //        foreach (Graph graph in mapping)
+                    //        {
+                    //            JsonTreeNode node = new JsonTreeNode
+                    //            {
+                    //                nodeType = "async",
+                    //                type = "GraphNode",
+                    //                iconCls = "treeGraph",
+                    //                id = context + "/Graph/" + graph.GraphName,
+                    //                text = graph.GraphName,
+                    //                expanded = true,
+                    //                leaf = true,
+                    //                children = new List<JsonTreeNode>(),
+                    //                record = graph
 
-                                };
+                    //            };
 
-                                //ClassMap classMap = graph.classTemplateMaps[0].classMap;
+                    //            //ClassMap classMap = graph.classTemplateMaps[0].classMap;
 
-                                //node.property = new Dictionary<string, string>();
-                                //node.property.Add("Data Object", graph);
-                                //node.property.Add("Root Class", classMap.name);
-                                nodes.Add(node);
-                            }
+                    //            //node.property = new Dictionary<string, string>();
+                    //            //node.property.Add("Data Object", graph);
+                    //            //node.property.Add("Root Class", classMap.name);
+                    //            nodes.Add(node);
+                    //        }
 
-                            return Json(nodes, JsonRequestBehavior.AllowGet);
+                    //        return Json(nodes, JsonRequestBehavior.AllowGet);
 
-                        }
+                    //    }
                     default:
                         {
                             return Json(new { success = false }, JsonRequestBehavior.AllowGet);
@@ -1098,6 +1098,10 @@ namespace org.iringtools.web.controllers
                     record = Utility.SerializeJson<Application>(application, true)
                 };
 
+
+
+
+
                 nodes.Add(node);
             }
 
@@ -1183,6 +1187,11 @@ namespace org.iringtools.web.controllers
                     record = Utility.SerializeJson<org.iringtools.applicationConfig.Graph>(graph, true)
                 };
 
+                GraphMap graphMap = (GraphMap)DeserializeObject(graph.graph);
+                ClassMap classMap = graphMap.classTemplateMaps[0].classMap;
+                node.property = new Dictionary<string, string>();
+                node.property.Add("Data Object", graphMap.dataObjectName);
+                node.property.Add("Root Class", classMap.name);
                 graphsNode.children.Add(node);
             }
 
@@ -1320,7 +1329,15 @@ namespace org.iringtools.web.controllers
                 }
             }
         }
+        public object DeserializeObject(byte[] bytes)
+        {
+            //byte[] bytes = Convert.FromBase64String(str);
 
+            using (MemoryStream stream = new MemoryStream(bytes))
+            {
+                return new BinaryFormatter().Deserialize(stream);
+            }
+        }
         #endregion
     }
 }
