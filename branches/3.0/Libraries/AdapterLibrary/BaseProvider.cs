@@ -221,12 +221,12 @@ namespace org.iringtools.adapter
             }
         }
 
-        protected void InitializeDataLayer(Application application)
+        protected void InitializeDataLayer(Application application, ref DataDictionary dictionaryFromDB)
         {
-            InitializeDataLayer(true, application);
+            InitializeDataLayer(true, application, ref dictionaryFromDB);
         }
 
-        protected void InitializeDataLayer(bool setDictionary, Application application)
+        protected void InitializeDataLayer(bool setDictionary, Application application, ref DataDictionary dictionaryFromDB)
         {
             try
             {
@@ -243,12 +243,13 @@ namespace org.iringtools.adapter
                             application.ApplicationSettings.Settings.Add(new Setting() { Key = key, Value = _settings[key] });
                         }
                     }
+                    XElement applicationBindingInfoXml = CreateBindingInfoXml(application.Binding);
 
-                    _dataLayerGateway = new DataLayerGateway(_kernel, application.Binding.Service);
+                    _dataLayerGateway = new DataLayerGateway(_kernel, applicationBindingInfoXml);
 
                     if (setDictionary)
                     {
-                        _dictionary = _dataLayerGateway.GetDictionary();
+                        _dictionary = _dataLayerGateway.GetDictionary(ref dictionaryFromDB);
                         _kernel.Rebind<DataDictionary>().ToConstant(_dictionary);
                     }
 
@@ -260,6 +261,16 @@ namespace org.iringtools.adapter
                 _logger.Error(string.Format("Error initializing application: {0}", ex));
                 throw ex;
             }
+        }
+
+        private XElement CreateBindingInfoXml(org.iringtools.applicationConfig.ApplicationBinding applicationBindingInfo)
+        {
+            System.Text.StringBuilder bindingInfoXmlBuilder = new System.Text.StringBuilder();
+            bindingInfoXmlBuilder.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<module name=\"DataLayerBinding." + applicationBindingInfo.ModuleName + "\">\n");
+            bindingInfoXmlBuilder.Append("<bind name=\"" + applicationBindingInfo.BindName + "\" service=\"" + applicationBindingInfo.Service + "\" to=\"" + applicationBindingInfo.To + "\" />");
+            bindingInfoXmlBuilder.Append("\n</module>");
+
+            return XElement.Parse(bindingInfoXmlBuilder.ToString());
         }
 
         protected void InitializeIdentity()

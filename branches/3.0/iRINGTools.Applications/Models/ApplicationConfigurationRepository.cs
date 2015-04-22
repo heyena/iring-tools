@@ -283,15 +283,15 @@ namespace iRINGTools.Web.Models
             return response;
         }
 
-        public org.iringtools.library.DataDictionary GetDictionary(Guid applicationId)
+        public DataDictionary GetDictionary(Guid applicationId)
         {
-            org.iringtools.library.DataDictionary dataDictionary = new org.iringtools.library.DataDictionary();
+            DataDictionary dataDictionary = new DataDictionary();
 
             try
             {
                 WebHttpClient client = CreateWebClient(dictionaryServiceUri);
-                org.iringtools.library.DatabaseDictionary databaseDictionary = client.Get<org.iringtools.library.DatabaseDictionary>(String.Format("/GetDictionary?applicationId={0}&format=xml", applicationId));
-                dataDictionary = Utility.Deserialize<org.iringtools.library.DataDictionary>((Utility.Serialize<org.iringtools.library.DatabaseDictionary>(databaseDictionary)).ToString(), true);
+                DatabaseDictionary databaseDictionary = client.Get<DatabaseDictionary>(String.Format("/GetDictionary?applicationId={0}&format=xml", applicationId));
+                dataDictionary = Utility.Deserialize<DataDictionary>((Utility.Serialize<DatabaseDictionary>(databaseDictionary)).ToString(), true);
             }
             catch (Exception ex)
             {

@@ -17,9 +17,9 @@ using org.iringtools.utility;
 
 namespace org.iringtools.adapter
 {
-    //
-    // this class determines the appropriate data layer (cache, actual, or both) to call
-    //
+    /// <summary>
+    /// this class determines the appropriate data layer (cache, actual, or both) to call
+    /// </summary>
     public class DataLayerGateway
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(DataLayerGateway));
@@ -97,9 +97,11 @@ namespace org.iringtools.adapter
             }
         }
 
-        public DataLayerGateway(IKernel kernel, string serviceName)
+        public DataLayerGateway(IKernel kernel, XElement datalayerBindingInfo)
         {
             _settings = kernel.Get<AdapterSettings>();
+            _scope = _settings["ProjectName"].ToLower();
+            _app = _settings["ApplicationName"].ToLower();
             _dataPath = Path.Combine(_settings["BaseDirectoryPath"], _settings["AppDataPath"]);
             _cacheConnStr = _settings[BaseProvider.CACHE_CONNSTR];
 
@@ -116,23 +118,52 @@ namespace org.iringtools.adapter
                 _cacheConnStr = EncryptionUtility.Decrypt(_cacheConnStr, keyFile);
             }
 
-            if (serviceName.Replace(" ", "").ToLower()
+            string tempPath = Path.GetTempPath() + datalayerBindingInfo.FirstAttribute.Value + ".xml";
+
+            if (File.Exists(tempPath))
+            {
+                File.Delete(tempPath);
+            }
+
+            datalayerBindingInfo.Save(tempPath);
+            kernel.Load(tempPath);
+
+            if (datalayerBindingInfo.Element("bind").Attribute("service").Value.Replace(" ", "").ToLower()
               == (typeof(IDataLayer).FullName + "," + typeof(IDataLayer).Assembly.GetName().Name).ToLower())
             {
                 _dataLayer = kernel.Get<IDataLayer>();
             }
             else
             {
-                if (serviceName == "org.iringtools.library.ILightweightDataLayer, iRINGLibrary")
+                ////  //if (System.Configuration.ConfigurationManager.AppSettings["CachePageSize"] == null)
+                if (datalayerBindingInfo.Element("bind").Attribute("service").Value == "org.iringtools.library.ILightweightDataLayer, iRINGLibrary")
                 {
                     _lwDataLayer = kernel.Get<ILightweightDataLayer>();
                 }
-                else if (serviceName == "org.iringtools.library.ILightweightDataLayer2, iRINGLibrary")
+                else if (datalayerBindingInfo.Element("bind").Attribute("service").Value == "org.iringtools.library.ILightweightDataLayer2, iRINGLibrary")
                 {
 
                     _lwDataLayer2 = kernel.Get<ILightweightDataLayer2>();
                 }
             }
+
+            //if (applicationBindingInfo.Service.Replace(" ", "").ToLower()
+            //  == (typeof(IDataLayer).FullName + "," + typeof(IDataLayer).Assembly.GetName().Name).ToLower())
+            //{
+            //    _dataLayer = kernel.Get<IDataLayer>();
+            //}
+            //else
+            //{
+            //    if (applicationBindingInfo.Service == "org.iringtools.library.ILightweightDataLayer, iRINGLibrary")
+            //    {
+            //        _lwDataLayer = kernel.Get<ILightweightDataLayer>();
+            //    }
+            //    else if (applicationBindingInfo.Service == "org.iringtools.library.ILightweightDataLayer2, iRINGLibrary")
+            //    {
+
+            //        _lwDataLayer2 = kernel.Get<ILightweightDataLayer2>();
+            //    }
+            //}
         }
 
         public DataDictionary GetDictionary()
@@ -232,6 +263,123 @@ namespace org.iringtools.adapter
                         }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error getting data dictionary: " + e);
+                throw e;
+            }
+
+            return dictionary;
+        }
+
+        public DataDictionary GetDictionary(ref DataDictionary dictionaryFromDB)
+        {
+            try
+            {
+                return GetDictionary(false, ref dictionaryFromDB);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error getting data dictionary: " + e);
+                throw e;
+            }
+        }
+
+        public DataDictionary GetDictionary(bool refresh, ref DataDictionary dictionaryFromDB)
+        {
+            try
+            {
+                return GetDictionary(refresh, null, ref dictionaryFromDB);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error getting data dictionary: " + e);
+                throw e;
+            }
+        }
+
+        public DataDictionary GetDictionary(bool refresh, string objectType, ref DataDictionary dictionaryFromDB)
+        {
+            try
+            {
+                DataFilter filter = null;
+                return GetDictionary(refresh, objectType, out filter, ref dictionaryFromDB);
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error getting data dictionary: " + e);
+                throw e;
+            }
+        }
+
+        public DataDictionary GetDictionary(bool refresh, string objectType, out DataFilter filter, ref DataDictionary dictionaryFromDB)
+        {
+            DataDictionary dictionary = null;
+            filter = null;
+
+            try
+            {
+                if (_lwDataLayer != null)
+                {
+                    dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
+                }
+                if (_lwDataLayer2 != null)
+                {
+                    dictionary = _lwDataLayer2.Dictionary(refresh, objectType, out filter);
+                }
+                else if (_dataLayer != null)
+                {
+                    if (refresh)
+                    {
+                        if (!string.IsNullOrEmpty(objectType))
+                        {
+                            Response response = ((IDataLayer2)_dataLayer).Refresh(objectType);
+
+                            if (response.Level != StatusLevel.Success)
+                            {
+                                throw new Exception("Error refreshing dictionary for object type " +
+                                  objectType + ": " + response.Messages);
+                            }
+                        }
+                        else
+                        {
+                            Response response = ((IDataLayer2)_dataLayer).Refresh(objectType);
+
+                            if (response.Level != StatusLevel.Success)
+                            {
+                                throw new Exception("Error refreshing dictionary: " + response.Messages);
+                            }
+                        }
+                    }
+
+                    dictionary = _dataLayer.GetDictionary();
+                }
+
+                if (dictionary == null)
+                {
+                    dictionary = dictionaryFromDB;
+                }
+                else
+                {
+                    dictionaryFromDB = dictionary;
+                }
+
+                //TODO: Verify the need for this
+                //// injecting external filters to dictionary
+                //if (dictionary != null && dictionary.dataObjects != null)
+                //{
+                //    foreach (DataObject dataObject in dictionary.dataObjects)
+                //    {
+                //        string filterPath = string.Format("{0}Filter.{1}.{2}.{3}.xml", _dataPath, _scope, _app, dataObject.objectName);
+
+                //        if (File.Exists(filterPath))
+                //        {
+                //            DataFilter dataFilter = Utility.Read<DataFilter>(filterPath);
+                //            dataObject.dataFilter = dataFilter;
+                //        }
+                //    }
+                //}
             }
             catch (Exception e)
             {
@@ -898,6 +1046,59 @@ namespace org.iringtools.adapter
             return count;
         }
 
+        public long GetCount(DataObject objectType, org.iringtools.applicationConfig.DataMode applicationDataMode, DataFilter filter)
+        {
+            long count = 0;
+            string cacheId = string.Empty;
+
+            try
+            {
+                if (applicationDataMode == org.iringtools.applicationConfig.DataMode.Cache || _lwDataLayer != null || _lwDataLayer2 != null)
+                {
+                    cacheId = CheckCache();
+
+                    if (string.IsNullOrEmpty(cacheId))
+                    {
+                        throw new Exception(NO_CACHE_ERROR);
+                    }
+                }
+                else if (_dataLayer != null)
+                {
+                    return _dataLayer.GetCount(objectType.objectName, filter);
+                }
+
+                DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
+
+                if (filter == null) filter = new DataFilter();
+                filter.AppendFilter(cachedObjectType.dataFilter);
+
+                string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
+
+                int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
+
+                if (orderByIndex != -1)
+                {
+                    whereClause = whereClause.Remove(orderByIndex);
+                }
+
+                string query = string.Format(BaseLightweightDataLayer.SELECT_COUNT_SQL_TPL, cachedObjectType.tableName, whereClause);
+
+                DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, query);
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    count = long.Parse(Convert.ToString(dt.Rows[0][0]));
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error getting data objects count for type [" + objectType.objectName + "]: " + e.Message);
+                throw e;
+            }
+
+            return count;
+        }
+
         public List<IDataObject> Get(DataObject objectType, DataFilter filter, int start, int limit)
         {
             List<IDataObject> dataObjects = new List<IDataObject>();
@@ -987,6 +1188,145 @@ namespace org.iringtools.adapter
                 string cacheId = string.Empty;
 
                 if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null || _lwDataLayer2 != null)
+                {
+                    cacheId = CheckCache();
+
+                    if (string.IsNullOrEmpty(cacheId))
+                    {
+                        throw new Exception(NO_CACHE_ERROR);
+                    }
+                }
+                else if (_dataLayer != null)
+                {
+                    IList<IDataObject> iDataObjects = _dataLayer.Get(objectType.objectName, identifiers);
+
+                    if (iDataObjects != null)
+                    {
+                        dataObjects = iDataObjects.ToList();
+                    }
+
+                    if (_loadingType == LoadingType.Eager) // include related object in collection
+                    {
+                        List<IDataObject> relatedObjects = GetRelatedObjects(objectType, dataObjects);
+                        dataObjects.AddRange(relatedObjects);
+                    }
+
+                    return dataObjects;
+                }
+
+                string tableName = GetCacheTableName(cacheId, objectType.objectName);
+
+                string whereClause = BaseLightweightDataLayer.FormWhereClause(objectType, identifiers);
+                string query = "SELECT * FROM " + tableName + whereClause;
+
+                DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, query);
+                dataObjects = BaseLightweightDataLayer.ToDataObjects(objectType, dt);
+
+                if (_loadingType == LoadingType.Eager) // include related object in collection
+                {
+                    List<IDataObject> relatedObjects = GetRelatedObjects(objectType, dataObjects);
+                    dataObjects.AddRange(relatedObjects);
+                }
+
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error getting data objects for type [" + objectType.objectName + "]: " + e.Message);
+                throw e;
+            }
+
+            return dataObjects;
+        }
+
+        public List<IDataObject> Get(DataObject objectType, org.iringtools.applicationConfig.DataMode applicationDataMode, DataFilter filter, int start, int limit)
+        {
+            List<IDataObject> dataObjects = new List<IDataObject>();
+
+            try
+            {
+                string cacheId = string.Empty;
+
+
+                //    if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
+                if (applicationDataMode == org.iringtools.applicationConfig.DataMode.Cache || _lwDataLayer != null || _lwDataLayer2 != null)
+                {
+                    cacheId = CheckCache();
+
+                    if (string.IsNullOrEmpty(cacheId))
+                    {
+                        throw new Exception(NO_CACHE_ERROR);
+                    }
+                }
+                else if (_dataLayer != null)
+                {
+                    IList<IDataObject> iDataObjects = _dataLayer.Get(objectType.objectName, filter, limit, start);
+
+                    if (iDataObjects != null)
+                    {
+                        dataObjects = iDataObjects.ToList();
+                    }
+
+                    if (_loadingType == LoadingType.Eager) // include related object in collection
+                    {
+                        List<IDataObject> relatedObjects = GetRelatedObjects(objectType, dataObjects);
+                        dataObjects.AddRange(relatedObjects);
+                    }
+                    return dataObjects;
+                }
+
+                DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
+
+                if (filter == null) filter = new DataFilter();
+                filter.AppendFilter(cachedObjectType.dataFilter);
+
+                string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
+
+                int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
+                string orderByClause = "ORDER BY current_timestamp";
+
+                if (orderByIndex != -1)
+                {
+                    orderByClause = whereClause.Substring(orderByIndex);
+                    whereClause = whereClause.Remove(orderByIndex);
+                }
+
+                string query = string.Format(@"
+            SELECT * FROM (SELECT row_number() OVER ({2}) as __rn, * 
+            FROM {0} {1}) as __t",
+                    cachedObjectType.tableName, whereClause, orderByClause);
+
+                if (!(start == 0 && limit == 0))
+                {
+                    query += string.Format(" WHERE __rn between {0} and {1}", start + 1, start + limit);
+                }
+
+                DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, query);
+                dataObjects = BaseLightweightDataLayer.ToDataObjects(cachedObjectType, dt);
+
+                if (_loadingType == LoadingType.Eager) // include related object in collection
+                {
+                    List<IDataObject> relatedObjects = GetRelatedObjects(objectType, dataObjects);
+                    dataObjects.AddRange(relatedObjects);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error getting a page of data objects for type [" + objectType.objectName + "]: " + e.Message);
+                throw e;
+            }
+
+            return dataObjects;
+        }
+
+        public List<IDataObject> Get(DataObject objectType, org.iringtools.applicationConfig.DataMode applicationDataMode, List<string> identifiers)
+        {
+            List<IDataObject> dataObjects = new List<IDataObject>();
+
+            try
+            {
+                string cacheId = string.Empty;
+
+                if (applicationDataMode == org.iringtools.applicationConfig.DataMode.Cache || _lwDataLayer != null || _lwDataLayer2 != null)
                 {
                     cacheId = CheckCache();
 
@@ -1538,7 +1878,6 @@ namespace org.iringtools.adapter
             throw new Exception("Data layer is not bound or related object type does not have IsRelatedOnly set.");
         }
 
-
         public Picklists GetPicklist(string picklistName, int start, int limit)
         {
             if (_dataLayer == null)
@@ -1841,7 +2180,6 @@ namespace org.iringtools.adapter
             }
         }
 
-
         protected Response DoRefreshCacheWithIdentifier(string cacheId, DataObject objectType, int CachePageSize)
         {
             Response response = new Response();
@@ -1938,14 +2276,7 @@ namespace org.iringtools.adapter
 
             return response;
         }
-
     }
-
-
 
     public enum CacheState { Dirty, Busy, Ready }
 }
-
-
-
-
