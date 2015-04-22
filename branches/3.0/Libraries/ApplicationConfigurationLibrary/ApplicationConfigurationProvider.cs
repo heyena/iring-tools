@@ -29,8 +29,9 @@ namespace org.iringtools.applicationConfig
         private static readonly ILog _logger = LogManager.GetLogger(typeof(ApplicationConfigurationProvider));
         private static readonly int DEFAULT_PAGE_SIZE = 25;
         private string _connSecurityDb;
-        private int _siteID;
+        //private int _siteID;
         private mapping.GraphMap _graphMap = null;
+        private DataObject _dataObjDef = null;
         private IProjectionLayer _projectionEngine = null;
         private bool _isResourceGraph = false;
         private List<IDataObject> _dataObjects = new List<IDataObject>();
@@ -47,8 +48,8 @@ namespace org.iringtools.applicationConfig
             try
             {
                 // We have _settings collection available here.
-                _connSecurityDb = settings["SecurityConnection"];
-                _siteID = Convert.ToInt32(settings["SiteId"]);
+            _connSecurityDb = settings["SecurityConnection"];
+            //    _siteID = Convert.ToInt32(settings["SiteId"]);
 
 
                 if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
@@ -74,10 +75,10 @@ namespace org.iringtools.applicationConfig
             Contexts contexts = new Contexts();
             try
             {
-                if (siteId == 0)
-                {
-                    siteId = _siteID;
-                }
+                //if (siteId == 0)
+                //{
+                //    siteId = _siteID;
+                //}
 
                 List<Context> lstContext = new List<Context>();
 
@@ -592,8 +593,10 @@ namespace org.iringtools.applicationConfig
 
                 using (var dc = new DataContext(_connSecurityDb))
                 {
-                    lstApplication = dc.ExecuteQuery<Application>("spgApplication @ScopeInternalName = {0}, @SiteId = {1}",
-                                                                  scopeInternalName, _siteID).ToList();
+                    //TODO: Need to identify the usage of commented old code as the _siteID will not be present in the provider and rather has to be send from application if required.
+                    //lstApplication = dc.ExecuteQuery<Application>("spgApplication @ScopeInternalName = {0}, @SiteId = {1}",
+                    //                                              scopeInternalName, _siteID).ToList();
+                    lstApplication = dc.ExecuteQuery<Application>("spgApplication @ScopeInternalName = {0}", scopeInternalName).ToList();
                 }
    
                 applications.AddRange(lstApplication);
@@ -1722,7 +1725,8 @@ namespace org.iringtools.applicationConfig
 
                 AddURIsInSettingCollection(dataObject);
 
-
+                //DataDictionary dictionary = GetDictionary(parentApplicationOfDataObject);
+                //_dataObjDef = dictionary.GetDataObject(dataObject.objectName);
                 //if (_dataObjDef != null)
                 //    dataObject.AppendFilter(_dataObjDef.dataFilter);
 
@@ -1882,12 +1886,13 @@ namespace org.iringtools.applicationConfig
             {
                 string typeName = application.Assembly.Split(new string[] { ", " }, StringSplitOptions.None)[0];
                 string dataLayerName = application.Assembly.Split(new string[] { ", " }, StringSplitOptions.None)[1];
+                string assemblyQualifiedName = (typeof(IDataLayer)).AssemblyQualifiedName;
 
                 application.Binding = new ApplicationBinding();
                 application.Binding.ModuleName = "DataLayerBinding";
                 application.Binding.BindName = "DataLayer";
                 application.Binding.To = application.Assembly;
-                application.Binding.Service = (typeof(IDataLayer)).AssemblyQualifiedName;
+                application.Binding.Service = assemblyQualifiedName.Remove(assemblyQualifiedName.IndexOf(", Version"));
                 application.ApplicationDataMode = applicationConfig.DataMode.Live;
 
                 System.Reflection.Assembly dataLayerAssembly = System.Reflection.Assembly.Load(dataLayerName);
