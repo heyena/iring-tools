@@ -80,7 +80,6 @@ namespace iRINGTools.Web.Models
         {
             try
             {
-
                 this.graph = graph;
 
                 if (start == "0" || start == "1")
@@ -107,11 +106,9 @@ namespace iRINGTools.Web.Models
             }
             catch (Exception ex)
             {
-                //response = response + " " + ex.Message.ToString();
                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
                 _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, ex, _logger);
                 response = response + " " + throwJsonResponse(_CustomError);
-
             }
 
             return dataGrid;
@@ -126,7 +123,7 @@ namespace iRINGTools.Web.Models
                 if (response != "")
                     return null;
 
-                GetDataGrid();
+                GetDataGrid(dataObject);
 
                 if (response != "")
                     return null;
@@ -136,7 +133,6 @@ namespace iRINGTools.Web.Models
                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
                 _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errUIGridPages, ex, _logger);
                 response = response + " " + throwJsonResponse(_CustomError);
-
             }
 
             return dataGrid;
@@ -490,6 +486,92 @@ namespace iRINGTools.Web.Models
 
         }
 
+        private void GetDataGrid(DataObject dataObject)
+        {
+            Dictionary<string, string>[] gridData = new Dictionary<string, string>[dataItems.limit];
+
+            List<ColumnViewModel> columns = new List<ColumnViewModel>();
+            List<FieldViewModel> fields = new List<FieldViewModel>();
+
+            CreateFieldsAndColumn(dataObject, gridData, columns, fields);
+
+            dataGrid.data = gridData;
+            dataGrid.metaData = new MetaDataViewModel();
+            dataGrid.metaData.columns = columns;
+            dataGrid.metaData.fields = fields;
+            dataGrid.total = dataItems.total;
+            dataGrid.success = true;
+            dataGrid.message = "";
+        }
+
+        private void CreateFieldsAndColumn(DataObject dataObject, Array gridData, List<ColumnViewModel> columns, List<FieldViewModel> fields)
+        {
+            foreach (DataProperty dataProp in dataObject.dataProperties)
+            {
+                FieldViewModel field = new FieldViewModel();
+                ColumnViewModel column = new ColumnViewModel();
+
+                string fieldName = dataProp.propertyName;
+                column.dataIndex = fieldName;
+                column.text = fieldName;
+                column.filterable = true;
+                column.sortable = true;
+                field.name = fieldName;
+                field.type = ToExtJsType(dataProp.dataType);
+
+                fields.Add(field);
+                columns.Add(column);
+            }
+
+            //Extension Properties_____Starts
+            if (dataObject.extensionProperties != null)
+                foreach (ExtensionProperty dataProp in dataObject.extensionProperties)
+                {
+                    FieldViewModel field = new FieldViewModel();
+                    ColumnViewModel column = new ColumnViewModel();
+
+                    string fieldName = dataProp.propertyName;
+                    column.dataIndex = fieldName;
+                    column.text = fieldName;
+                    column.filterable = true;
+                    column.sortable = true;
+                    field.name = fieldName;
+                    field.type = ToExtJsType(dataProp.dataType);
+
+                    fields.Add(field);
+                    columns.Add(column);
+                }
+            //Extension Properties_____Ends
+
+            int index = 0;
+            foreach (DataItem dataItem in dataItems.items)
+            {
+                Dictionary<string, string> rowData = new Dictionary<string, string>();
+
+                foreach (FieldViewModel field in fields)
+                {
+                    bool found = false;
+
+                    foreach (KeyValuePair<string, object> property in dataItem.properties)
+                    {
+                        if (field.name.ToLower() == property.Key.ToLower())
+                        {
+                            rowData.Add(field.name, property.Value.ToString());
+
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        rowData.Add(field.name, "");
+                    }
+                }
+                gridData.SetValue(rowData, index++);
+            }
+        }
+
         private void CreateFields(ref List<Field> fields, ref List<List<string>> gridData)
         {
             foreach (DataObject dataObj in dataDict.dataObjects)
@@ -500,8 +582,6 @@ namespace iRINGTools.Web.Models
                 {
                     foreach (DataProperty dataProp in dataObj.dataProperties)
                     {
-                        //if (!dataProp.isHidden)
-                        //{
                         Field field = new Field();
                         string fieldName = dataProp.propertyName;
                         field.dataIndex = fieldName;
@@ -524,7 +604,6 @@ namespace iRINGTools.Web.Models
                             field.keytype = "key";
 
                         fields.Add(field);
-                        //}
                     }
                 }
             }
