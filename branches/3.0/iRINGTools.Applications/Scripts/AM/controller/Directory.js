@@ -427,14 +427,23 @@ Ext.define('AM.controller.Directory', {
 
             form.getForm().findField('internalName').setReadOnly(true);
 
-            //            if (node.data.record.Configuration.AppSettings.Settings[i].Key != "iRINGCacheConnStr") {
-            //                key = node.data.record.Configuration.AppSettings.Settings[i].Key;
-            //                value = node.data.record.Configuration.AppSettings.Settings[i].Value;
-            //                var newSetting = me.addSettings();
-            //                newSetting[0].items[0].allowBlank = false;
-            //                if (component.items.map['settingfieldset'])
-            //                    component.items.map['settingfieldset'].add(newSetting);
-            //            }
+            var appSettings = Ext.decode(node.data.record).applicationSettings.add;
+
+            if (appSettings != null || appSettings != '') {
+                Ext.each(appSettings, function (appSetting) {
+                    key = appSetting.key;
+                    value = appSetting.value;
+
+                    var newSetting = me.addSettings();
+                    var myFieldSet = Ext.getCmp('settingfieldset');
+
+                    myFieldSet.add(newSetting);
+                    myFieldSet.doLayout();
+                    myFieldSet.items.items[myFieldSet.items.length - 1].items.items[1].allowBlank = false;
+                    myFieldSet.items.items[myFieldSet.items.length - 1].items.items[0].setValue(key);
+                    myFieldSet.items.items[myFieldSet.items.length - 1].items.items[1].setValue(value);
+                }, this);
+            }
 
             var groupArray = [];
             Ext.each(record.groups, function (eachGroup) {
