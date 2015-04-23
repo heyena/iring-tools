@@ -344,6 +344,7 @@ namespace iRINGAgentService
             string platformId = string.Empty;
             string sSql = string.Empty;
             DataTable agentConfig;
+            AdapterSettings adapterSettings;
 
             try
             {
@@ -353,9 +354,13 @@ namespace iRINGAgentService
                 //_agentConnStr = EncryptionUtility.Decrypt(_agentConnStr);
                 _agentConnStr = settings.Get("SecurityConnection");
 
+                adapterSettings = new AdapterSettings();
+                adapterSettings.AppendSettings(settings);
+
+
                 //get platformd and site id from webconfig
-                siteId = "2";
-                platformId = "2";
+                siteId = "1";
+                platformId = "3";
 
                 //get job schedule configuration info
                 string sConfigSql = "select SsoUri, ClientId, ClientSecret, GrantType, RequestTimeout, ExchangeManagerUri from GlobalSettings where siteid = " + siteId + " and platformId = " + platformId;
@@ -375,12 +380,19 @@ namespace iRINGAgentService
               
                 _configList.Clear();
                 // gat cache related info
-                sSql = "select a.jobid,a.is_exchange,f.internalname as context,e.internalname as app,c.objectname,a.xid,a.cache_page_size, " +
+                //sSql = "select a.jobid,a.is_exchange,f.internalname as context,e.internalname as app,c.objectname,a.xid,a.cache_page_size, " +
+                //            "b.scheduleid,b.occurance,b.weekday,b.start_datetime,b.end_datetime,b.status, " +
+                //            "a.next_start_datetime,a.last_start_datetime,a.active " +
+                //            "from job a, schedule b, DataObjects c, Dictionary d, Applications e, contexts f " +
+                //            "where a.scheduleid = b.scheduleid and a.dataobjectid = c.dataobjectid and c.dictionaryid = d.dictionaryid " +
+                //            "and d.applicationid = e.applicationid and e.contextid = f.contextid and a.active = 1 and a.is_exchange = 0 and a.siteid = " + siteId + " and a.platformid = " + platformId;
+
+                sSql = "select a.jobid,a.dataobjectid,a.is_exchange,a.cache_page_size, " +
                             "b.scheduleid,b.occurance,b.weekday,b.start_datetime,b.end_datetime,b.status, " +
                             "a.next_start_datetime,a.last_start_datetime,a.active " +
-                            "from job a, schedule b, DataObjects c, Dictionary d, Applications e, contexts f " +
-                            "where a.scheduleid = b.scheduleid and a.dataobjectid = c.dataobjectid and c.dictionaryid = d.dictionaryid " +
-                            "and d.applicationid = e.applicationid and e.contextid = f.contextid and a.is_exchange = 0 and a.siteid = " + siteId + " and a.platformid = " + platformId;
+                            "from job a, schedule b " +
+                            "where a.scheduleid = b.scheduleid  " +
+                            "and a.active = 1 and a.is_exchange = 0 and a.siteid = " + siteId + " and a.platformid = " + platformId;
 
                 agentConfig = DBManager.Instance.ExecuteQuery(_agentConnStr, sSql);
                 if (agentConfig != null && agentConfig.Rows.Count > 0)
@@ -394,9 +406,9 @@ namespace iRINGAgentService
 
                                 JobId = dataRow["JobId"].ToString(),
                                 IsExchange = Convert.ToInt32(dataRow["is_exchange"]),
-                                Scope = dataRow["context"].ToString(),
-                                App = dataRow["app"].ToString(),
-                                DataObject = dataRow["objectname"].ToString(),
+                                Scope = "",
+                                App = "",
+                                DataObject = dataRow["dataobjectid"].ToString(),
                                 ExchangeId = dataRow["xid"] != DBNull.Value ? dataRow["xid"].ToString() : null,
                                 ExchangeUrl = exchangeUrl,
                                 CachePageSize = dataRow["cache_page_size"].ToString(),
@@ -424,12 +436,12 @@ namespace iRINGAgentService
                     }
                 }
 
-                sSql = "select a.jobid,a.is_exchange,f.internalname as context,e.internalname as app,c.objectname,a.xid,a.cache_page_size, " +
+                sSql = "select a.jobid,a.is_exchange,a.xid, " +
                             "b.scheduleid,b.occurance,b.weekday,b.start_datetime,b.end_datetime,b.status, " +
                             "a.next_start_datetime,a.last_start_datetime,a.active " +
-                            "from job a, schedule b, DataObjects c, Dictionary d, Applications e, contexts f " +
-                            "where a.scheduleid = b.scheduleid and a.dataobjectid = c.dataobjectid and c.dictionaryid = d.dictionaryid " +
-                            "and d.applicationid = e.applicationid and e.contextid = f.contextid and a.is_exchange = 1 and a.siteid = " + siteId;
+                            "from job a, schedule b " +
+                            "where a.scheduleid = b.scheduleid  " +
+                            "and a.active = 1 and a.is_exchange = 1 and a.siteid = " + siteId + " and platformId = 3" ;
 
                 agentConfig = DBManager.Instance.ExecuteQuery(_agentConnStr, sSql);
                 if (agentConfig != null && agentConfig.Rows.Count > 0)
@@ -443,12 +455,12 @@ namespace iRINGAgentService
 
                                 JobId = dataRow["JobId"].ToString(),
                                 IsExchange = Convert.ToInt32(dataRow["is_exchange"]),
-                                Scope = dataRow["context"].ToString(),
-                                App = dataRow["app"].ToString(),
-                                DataObject = dataRow["objectname"].ToString(),
+                                Scope = "",
+                                App = "",
+                                DataObject = "",
                                 ExchangeId = dataRow["xid"] != DBNull.Value ? dataRow["xid"].ToString() : null,
                                 ExchangeUrl = exchangeUrl,
-                                CachePageSize = dataRow["cache_page_size"].ToString(),
+                                CachePageSize = "",
                                 SsoUrl = ssoUrl,
                                 ClientId = clientId,
                                 ClientSecret = clientSecret,

@@ -499,58 +499,116 @@ CREATE PROCEDURE [dbo].[spiJob]
 )
 AS
 BEGIN TRY
-	BEGIN			
-		-- loop through dataobjectids to create seperate entry
-		DECLARE @pos INT
-		DECLARE @len INT
-		DECLARE @DataObjectId nvarchar(1000)
-		
-		set @pos = 0
-		set @len = 0
-		
-		set @DataObjectIds = @DataObjectIds + ','
-		WHILE CHARINDEX(',', @DataObjectIds, @pos+1) > 0
-		BEGIN
-			set @len = CHARINDEX(',', @DataObjectIds, @pos+1) - @pos
-			set @DataObjectId = SUBSTRING(@DataObjectIds, @pos, @len)
+	Declare @Occurance nvarchar(50)
+	Declare @Next_Start_DateTime datetime
+	Declare @JobId uniqueidentifier = NewID() 
+	Declare @ScheduleId uniqueidentifier = NewID()
+	Declare @Start_DateTime datetime
+	Declare @End_DateTime datetime
+	
+	SET @Start_DateTime =  (SELECT  convert(datetime, T.N.value('(start_DateTime)[1]', 'NVARCHAR(100)'), 121) as Start_DateTime from @Schedules.nodes('schedules/schedule') as T(N))
+	SET @End_DateTime =  (SELECT  convert(datetime, T.N.value('(end_DateTime)[1]', 'NVARCHAR(100)'), 121) as End_DateTime from @Schedules.nodes('schedules/schedule') as T(N))
+	
+	SET @Occurance =  (SELECT  T.N.value('(occurance)[1]', 'NVARCHAR(50)') as Occurance from @Schedules.nodes('schedules/schedule') as T(N))
+	If @Occurance = 'Immediate'
+		Begin
+			SET @Start_DateTime =  convert(varchar, getdate(), 121)
+		End
+	
+	If (@End_DateTime = convert(varchar, '1900-01-01 00:00:00.000',121) or @End_DateTime = '' or @End_DateTime = NULL)
+		Begin
+			SET @End_DateTime = (select dateadd(year, 10, @Start_DateTime) )
+		End
+				
+	If @Is_Exchange = 0
+		BEGIN			
+			-- loop through dataobjectids to create seperate entry
+			DECLARE @pos INT
+			DECLARE @len INT
+			DECLARE @DataObjectId nvarchar(1000)
 			
-			If not Exists(Select top 1 * from Job Where DataObjectId = @DataObjectId and Is_Exchange = @Is_Exchange)
-			  Begin
-		
-				Declare @JobId uniqueidentifier = NewID() 
-				Declare @ScheduleId uniqueidentifier = NewID()
+			set @pos = 0
+			set @len = 0
+			
+			set @DataObjectIds = @DataObjectIds + ','
+			WHILE CHARINDEX(',', @DataObjectIds, @pos+1) > 0
+			BEGIN
+				set @len = CHARINDEX(',', @DataObjectIds, @pos+1) - @pos
+				set @DataObjectId = SUBSTRING(@DataObjectIds, @pos, @len)
 				
-				--insert into schedule table
-				Insert into schedule (ScheduleId, Created_DateTime, Created_By, Occurance, Weekday, Start_DateTime, End_DateTime, Status)
-				select 
-				@ScheduleId,
-				convert(varchar, getdate(), 121),
-				T.N.value('(created_By)[1]', 'NVARCHAR(250)') as Created_By,
-				T.N.value('(occurance)[1]', 'NVARCHAR(50)') as Occurance,
-				T.N.value('(weekday)[1]', 'NVARCHAR(50)') as Weekday,
-				convert(datetime, T.N.value('(start_DateTime)[1]', 'NVARCHAR(100)'), 121) ,
-				convert(datetime, T.N.value('(end_DateTime)[1]', 'NVARCHAR(100)'), 121),
-				'Ready'
-				from @Schedules.nodes('schedules/schedule') as T(N)
-				
-				-- insert into job table
-				Declare @Next_Start_DateTime datetime
-				SET @Next_Start_DateTime =  (SELECT  convert(datetime, T.N.value('(start_DateTime)[1]', 'NVARCHAR(100)'), 121) as Next_Start_DateTime from @Schedules.nodes('schedules/schedule') as T(N))
-				
-				INSERT INTO  Job (JobId,ScheduleId,DataObjectId,Is_Exchange,Xid,Cache_Page_Size,PlatformId,SiteId,Next_Start_DateTime,Active)
-				VALUES (@JobId,@ScheduleId,@DataObjectId,@Is_Exchange,@Xid,@Cache_Page_Size,@PlatformId,@SiteId,@Next_Start_DateTime,@Active)
+				If not Exists(Select top 1 * from Job a, schedule b Where a.scheduleid = b.scheduleid and DataObjectId = @DataObjectId and b.start_datetime = @Start_DateTime)
+				  Begin
+					--insert into schedule table
+					Insert into schedule (ScheduleId, Created_DateTime, Created_By, Occurance, Weekday, Start_DateTime, End_DateTime, Status)
+					select 
+					@ScheduleId,
+					convert(varchar, getdate(), 121),
+					T.N.value('(created_By)[1]', 'NVARCHAR(250)') as Created_By,
+					T.N.value('(occurance)[1]', 'NVARCHAR(50)') as Occurance,
+					T.N.value('(weekday)[1]', 'NVARCHAR(50)') as Weekday,
+					convert(datetime, T.N.value('(start_DateTime)[1]', 'NVARCHAR(100)'), 121) ,
+					@End_DateTime,
+					'Ready'
+					from @Schedules.nodes('schedules/schedule') as T(N)
 					
+					
+					SET @Occurance =  (SELECT  T.N.value('(occurance)[1]', 'NVARCHAR(50)') as Occurance from @Schedules.nodes('schedules/schedule') as T(N))
+					
+					-- insert into job table
+					If @Occurance = 'Immediate'
+						Begin
+							SET @Next_Start_DateTime =  convert(varchar, getdate(), 121)
+						End
+					Else
+						SET @Next_Start_DateTime =  (SELECT  convert(datetime, T.N.value('(start_DateTime)[1]', 'NVARCHAR(100)'), 121) as Next_Start_DateTime from @Schedules.nodes('schedules/schedule') as T(N))
+					
+					INSERT INTO  Job (JobId,ScheduleId,DataObjectId,Is_Exchange,Xid,Cache_Page_Size,PlatformId,SiteId,Next_Start_DateTime,Active)
+					VALUES (@JobId,@ScheduleId,@DataObjectId,@Is_Exchange,@Xid,@Cache_Page_Size,@PlatformId,@SiteId,@Next_Start_DateTime,@Active)
+						
+					set @pos = CHARINDEX(',', @DataObjectIds, @pos+@len) +1
+					
+					Select '1'--'Job added successfully!'
+				  End
+			Else
 				set @pos = CHARINDEX(',', @DataObjectIds, @pos+@len) +1
-				
-				
-				Select '1'--'Job added successfully!'
-			  End
-		Else
-			set @pos = CHARINDEX(',', @DataObjectIds, @pos+@len) +1
-			Select '0'--'Job with this dataobject already exists!'
+				Select '0'--'Job with this dataobject already exists!'
+			END
+			
 		END
-		
-	END
+	Else
+		BEGIN			
+			If not Exists(Select top 1 * from Job a, schedule b Where a.scheduleid = b.scheduleid and Xid = @Xid and b.start_datetime = @Start_DateTime)
+				  Begin
+			
+					--insert into schedule table
+					Insert into schedule (ScheduleId, Created_DateTime, Created_By, Occurance, Weekday, Start_DateTime, End_DateTime, Status)
+					select 
+					@ScheduleId,
+					convert(varchar, getdate(), 121),
+					T.N.value('(created_By)[1]', 'NVARCHAR(250)') as Created_By,
+					T.N.value('(occurance)[1]', 'NVARCHAR(50)') as Occurance,
+					T.N.value('(weekday)[1]', 'NVARCHAR(50)') as Weekday,
+					convert(datetime, T.N.value('(start_DateTime)[1]', 'NVARCHAR(100)'), 121) ,
+					@End_DateTime,
+					'Ready'
+					from @Schedules.nodes('schedules/schedule') as T(N)
+
+					-- insert into job table
+					If @Occurance = 'Immediate'
+						Begin
+							SET @Next_Start_DateTime =  convert(varchar, getdate(), 121)
+						End
+					Else
+						SET @Next_Start_DateTime =  (SELECT  convert(datetime, T.N.value('(start_DateTime)[1]', 'NVARCHAR(100)'), 121) as Next_Start_DateTime from @Schedules.nodes('schedules/schedule') as T(N))
+					
+					INSERT INTO  Job (JobId,ScheduleId,DataObjectId,Is_Exchange,Xid,Cache_Page_Size,PlatformId,SiteId,Next_Start_DateTime,Active)
+					VALUES (@JobId,@ScheduleId,@DataObjectId,@Is_Exchange,@Xid,@Cache_Page_Size,@PlatformId,@SiteId,@Next_Start_DateTime,@Active)
+											
+					Select '1'--'Job added successfully!'
+				  End
+			Else
+				Select '0'--'Job with this exchange id already exists!'
+		END
 END TRY
 
 BEGIN CATCH
