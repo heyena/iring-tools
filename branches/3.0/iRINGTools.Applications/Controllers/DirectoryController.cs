@@ -19,6 +19,7 @@ using System.Xml;
 using org.iringtools.applicationConfig;
 using org.iringtools.UserSecurity;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Configuration;
 namespace org.iringtools.web.controllers
 {
     public class DirectoryController : BaseController
@@ -27,8 +28,8 @@ namespace org.iringtools.web.controllers
         string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
         //string userName = "WorldTest";
 
-        int siteId = 4;
-        int platformId = 2;
+        int siteId;
+        int platformId;
 
         private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
         private CustomError _CustomError = null;
@@ -43,6 +44,8 @@ namespace org.iringtools.web.controllers
         public DirectoryController(AdapterRepository repository)
             : base()
         {
+            platformId = int.Parse(ConfigurationManager.AppSettings["PlatformId"]);
+            siteId = int.Parse(ConfigurationManager.AppSettings["SiteId"]);
             _repository = repository;
             _repository.AuthHeaders = _authHeaders;
         }
