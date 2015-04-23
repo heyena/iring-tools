@@ -96,91 +96,94 @@ Ext.define('AM.controller.Mapping', {
     },
 
 
-//     //onNewOrEditGraph
-//    onNewOrEditGraph12: function (item, e, eOpts) {
-//        var me = this;
-//        var state;
-//        var tree = me.getDirTree();
-//        var node = tree.getSelectedNode();
+    //     //onNewOrEditGraph
+    //    onNewOrEditGraph12: function (item, e, eOpts) {
+    //        var me = this;
+    //        var state;
+    //        var tree = me.getDirTree();
+    //        var node = tree.getSelectedNode();
 
-//        var win = Ext.widget('graphmapwindow');
-//        var form = win.down('form');
-//        form.node = node;
+    //        var win = Ext.widget('graphmapwindow');
+    //        var form = win.down('form');
+    //        form.node = node;
 
-//        var selectedGroups;
+    //        var selectedGroups;
 
-//        if (item.itemId == 'editGraph') {
-//            selectedGroups = Ext.decode(node.parentNode.parentNode.data.record).groups;
-//        } else if (item.itemId == 'newGraph') {
-//            selectedGroups = Ext.decode(node.parentNode.data.record).groups;
-//        }
+    //        if (item.itemId == 'editGraph') {
+    //            selectedGroups = Ext.decode(node.parentNode.parentNode.data.record).groups;
+    //        } else if (item.itemId == 'newGraph') {
+    //            selectedGroups = Ext.decode(node.parentNode.data.record).groups;
+    //        }
 
-//        if (selectedGroups != null) {
-//            var storeObject = Ext.create('Ext.data.Store', {
-//                fields: ['groupId', 'groupName']
-//            });
+    //        if (selectedGroups != null) {
+    //            var storeObject = Ext.create('Ext.data.Store', {
+    //                fields: ['groupId', 'groupName']
+    //            });
 
-//            Ext.each(selectedGroups, function (aRecord) {
-//                storeObject.add({
-//                    groupId: aRecord['groupId'],
-//                    groupName: aRecord['groupName']
-//                });
-//            }, this);
+    //            Ext.each(selectedGroups, function (aRecord) {
+    //                storeObject.add({
+    //                    groupId: aRecord['groupId'],
+    //                    groupName: aRecord['groupName']
+    //                });
+    //            }, this);
 
-//            form.getForm().findField('ResourceGroups').bindStore(storeObject);
-//        }
+    //            form.getForm().findField('ResourceGroups').bindStore(storeObject);
+    //        }
 
-//        if (item.itemId == 'editGraph' && node.data.record !== undefined) {
-//            win.title = 'Edit Graph';
-//            var state = 'edit';
+    //        if (item.itemId == 'editGraph' && node.data.record !== undefined) {
+    //            win.title = 'Edit Graph';
+    //            var state = 'edit';
 
-//            var record = Ext.decode(node.data.record);
-//            form.getForm().findField('graphName').setValue(record.displayName);
-//            form.getForm().findField('delimiter').setValue(record.internalName);
-////            form.getForm().findField('internalName').readOnly = true;
-////            form.getForm().findField('description').setValue(record.description);
-////            form.getForm().findField('cacheDBConnStr').setValue(record.cacheConnStr);
+    //            var record = Ext.decode(node.data.record);
+    //            form.getForm().findField('graphName').setValue(record.displayName);
+    //            form.getForm().findField('delimiter').setValue(record.internalName);
+    ////            form.getForm().findField('internalName').readOnly = true;
+    ////            form.getForm().findField('description').setValue(record.description);
+    ////            form.getForm().findField('cacheDBConnStr').setValue(record.cacheConnStr);
 
-//            var groupArray = [];
-//            Ext.each(record.groups, function (eachGroup) {
-//                groupArray.push(eachGroup.groupId);
-//            }, this);
+    //            var groupArray = [];
+    //            Ext.each(record.groups, function (eachGroup) {
+    //                groupArray.push(eachGroup.groupId);
+    //            }, this);
 
-//            form.getForm().findField('ResourceGroups').setValue(groupArray);
-//        } else {
-//            var state = 'new';
-//            win.title = 'Add Graph';
-//        }
+    //            form.getForm().findField('ResourceGroups').setValue(groupArray);
+    //        } else {
+    //            var state = 'new';
+    //            win.title = 'Add Graph';
+    //        }
 
-////        var formRecord = {
-////            'graphName': graphName,
-////            'delimiter': delimeter
-////        };
+    ////        var formRecord = {
+    ////            'graphName': graphName,
+    ////            'delimiter': delimeter
+    ////        };
 
-////        var form = win.down('form').getForm();
-////        win.down('form').node = node;
-////        form.setValues(formRecord);
-//        win.down('form').updateDDContainers(record);
+    ////        var form = win.down('form').getForm();
+    ////        win.down('form').node = node;
+    ////        form.setValues(formRecord);
+    //        win.down('form').updateDDContainers(record);
 
-//        win.on('save', function () {
-//            win.destroy();
-//            tree.view.refresh();
-//            tree.expandPath(tree.getRootNode().getPath());
-//            var detailGrid = tree.up('panel').down('propertypanel');
-//            detailGrid.setSource({});
-//        }, me);
+    //        win.on('save', function () {
+    //            win.destroy();
+    //            tree.view.refresh();
+    //            tree.expandPath(tree.getRootNode().getPath());
+    //            var detailGrid = tree.up('panel').down('propertypanel');
+    //            detailGrid.setSource({});
+    //        }, me);
 
-//        win.on('cancel', function () {
-//            win.destroy();
-//        }, me);
+    //        win.on('cancel', function () {
+    //            win.destroy();
+    //        }, me);
 
-//        form.getForm().findField('state').setValue(state);
-//        win.show();
-//    },
+    //        form.getForm().findField('state').setValue(state);
+    //        win.show();
+    //    },
 
 
 
     onNewOrEditGraph: function (item, e, eOpts) {
+
+        var nodeId, contextName, endpoint, baseUrl, graphName,
+		objectName, classLabel, classUrl, identifier, wintitle;
         var me = this;
         var graphName;
         var tree = me.getDirTree();
@@ -216,20 +219,45 @@ Ext.define('AM.controller.Mapping', {
             form.getForm().findField('ResourceGroups').bindStore(storeObject);
         }
 
+        if (node.raw.GraphMap)
+            delimeter = node.raw.GraphMap.classTemplateMaps[0].classMap.identifierDelimiter;
+        else
+            delimeter = '~';
+
+        if (node.raw.GraphMap) {
+            identifier = node.raw.GraphMap.classTemplateMaps[0].classMap.identifiers[0];
+            if (node.raw.GraphMap.classTemplateMaps[0].classMap.identifiers.length > 1) {
+                for (var i = 1; i < node.raw.GraphMap.classTemplateMaps[0].classMap.identifiers.length; i++) {
+                    identifier = identifier + ',' + node.raw.GraphMap.classTemplateMaps[0].classMap.identifiers[i];
+                }
+            }
+
+
+            delimeter = node.raw.GraphMap.classTemplateMaps[0].classMap.identifierDelimiter;
+            objectName = node.raw.property['Data Object'];
+            graphName = record.graphName;
+            classUrl = node.raw.GraphMap.classTemplateMaps[0].classMap.id;
+            var graphId = record.graphId;
+            classLabel = node.raw.GraphMap.classTemplateMaps[0].classMap.name;
+            var identifiers = node.raw.GraphMap.classTemplateMaps[0].classMap.identifiers[0];
+
+
+        }
+        else {
+            contextName = Ext.decode(node.parentNode.data.record).internalName;
+            endpoint = Ext.decode(node.parentNode.parentNode.data.record).internalName;
+        }
+
 
         if (item.itemId == 'editGraph') {
             win.title = 'Edit Graph \"' + graphName + '\"';
-
-           // delimeter = record.classTemplateMaps[0].classMap.identifierDelimiter;
-            graphName = record.graphName
-            state = 'edit';
+               state = 'edit';
             var groupArray = [];
             Ext.each(record.groups, function (eachGroup) {
                 groupArray.push(eachGroup.groupId);
             }, this);
 
-            form.getForm().findField('ResourceGroups').setValue(groupArray);
-            form.getForm().findField('graphName').setValue(graphName);
+
 
         } else {
             win.title = 'Add GraphMap';
@@ -238,15 +266,24 @@ Ext.define('AM.controller.Mapping', {
             state = 'new';
         }
 
+
         var formRecord = {
+            'scope': contextName,
+            'app': endpoint,
+            'oldGraphName': graphName,
             'graphName': graphName,
-            'delimiter': delimeter
+            'objectName': objectName,
+            'classId': classUrl,
+            'identifier': identifier,
+            'classLabel': classLabel,
+            'delimiter': delimeter,
+            'graphId': graphId
         };
 
-//        var form = win.down('form').getForm();
-//        win.down('form').node = node;
-//        form.setValues(formRecord);
-//        win.down('form').updateDDContainers(record);
+        var form = win.down('form').getForm();
+        win.down('form').node = node;
+        form.setValues(formRecord);
+        win.down('form').updateDDContainers(record);
 
         win.on('save', function () {
             win.close();
