@@ -25,6 +25,7 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using org.iringtools.UserSecurity;
+using System.IO;
 namespace org.iringtools.web.controllers
 {
     public class MappingController : Controller
@@ -875,8 +876,11 @@ namespace org.iringtools.web.controllers
                 string delimiter = form["delimiter"];
                 string className = form["className"];
                 string classId = form["classId"];
-                Guid applicationId = Guid.Parse(form["applicationId"]);
-                Guid contextId = Guid.Parse(form["applicationId"]);
+                Guid applicationId = Guid.Empty;
+                Guid contextId = Guid.Empty; ;
+                //applicationId = Guid.Parse(form["applicationId"]);
+                //contextId = Guid.Parse(form["applicationId"]);
+                
 
                 string context = string.Format("{0}/{1}/Graphs", scope, app);
                 Mapping mapping = GetMapping(scope, app);
@@ -886,8 +890,12 @@ namespace org.iringtools.web.controllers
                 bool qn = false;
                 qn = _nsMap.ReduceToQName(classId, out qName);
 
-                if (string.IsNullOrEmpty(oldGraphName))
+             //   if (string.IsNullOrEmpty(oldGraphName))
+                if (!string.IsNullOrEmpty(form["applicationId"].ToString().Trim()) || !string.IsNullOrWhiteSpace(form["applicationId"].ToString().Trim()))
                 {
+                    applicationId = Guid.Parse(form["applicationId"]);
+                    contextId = Guid.Parse(form["applicationId"]);
+                    
                     if (mapping.graphMaps == null)
                         mapping.graphMaps = new GraphMaps();
 
@@ -923,10 +931,18 @@ namespace org.iringtools.web.controllers
                     graphMap.AddClassMap(null, classMap);
 
                     mapping.graphMaps.Add(graphMap);
+                    insertGraph(scope, app, graphMap, applicationId, groups);
                 }
                 else // Edit existing graph
                 {
-                    graphMap = mapping.FindGraphMap(oldGraphName);//Get graph with old name
+                   // graphMap = mapping.FindGraphMap(oldGraphName);//Get graph with old name
+                  // Guid graphId = Guid.Parse("E7513986-5FB9-48A9-B7BC-07005A5FD9E1");
+                    Guid graphId = Guid.Parse(form["graphId"]);
+                    
+                    org.iringtools.applicationConfig.Graph graph = _repository.GetGraphByGrapgId(userName, graphId);
+
+                   graphMap = (GraphMap) DeserializeObject(graph.graph);
+
 
                     if (graphMap == null)
                         graphMap = new GraphMap();
@@ -981,10 +997,14 @@ namespace org.iringtools.web.controllers
                         graphMap.AddClassMap(null, classMap);
                         mapping.graphMaps.Add(graphMap);
                     }
+                    UpdatetGraph(scope, app, graphMap, applicationId, groups, graphId.ToString());
+
+
+
                 }
                 //DoUpdateMapping(scope, app, mapping,applicationId);
 
-                insertGraph(scope, app, graphMap, applicationId, groups);
+               // insertGraph(scope, app, graphMap, applicationId, groups);
 
                 graphNode = new JsonTreeNode
                 {
@@ -1033,8 +1053,7 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-
-
+               
 
                 Groups selectedGroups = new Groups();
                 
@@ -1058,7 +1077,7 @@ namespace org.iringtools.web.controllers
 
                 //  _repository.UpdateMapping(scope, application, mapping)
 
-                _repository.UpdateMapping(scope, application, graph, userName);
+                _repository.UpdateMapping(scope, application, graph, userName,true);
 
 
                 string key = string.Format(_keyFormat, scope, application);
@@ -1959,6 +1978,17 @@ namespace org.iringtools.web.controllers
             }
         }
 
+        public object DeserializeObject(byte[] bytes)
+        {
+            //byte[] bytes = Convert.FromBase64String(str);
+
+            using (MemoryStream stream = new MemoryStream(bytes))
+            {
+                return new BinaryFormatter().Deserialize(stream);
+            }
+        }
+
+
         private List<org.iringtools.UserSecurity.Group> GetSelectedGroups(string Groups)
         {
             List<org.iringtools.UserSecurity.Group> tempGroups = new List<org.iringtools.UserSecurity.Group>();
@@ -1972,6 +2002,60 @@ namespace org.iringtools.web.controllers
 
             return tempGroups;
         }
+
+
+        public JsonResult UpdatetGraph(string scope, string application, GraphMap mapping, Guid applicationId, string groups,string graphId)
+        {
+            try
+            {
+
+
+                Groups selectedGroups = new Groups();
+
+                string[] groupArray = groups.Split(',');
+                for (int i = 0; i < groupArray.Length; i++)
+                {
+                    org.iringtools.UserSecurity.Group objGroup = new UserSecurity.Group();
+                    objGroup.GroupId = Convert.ToInt16(groupArray[i].ToString());
+                    selectedGroups.Add(objGroup);
+                }
+                org.iringtools.applicationConfig.Graph graph = new applicationConfig.Graph()
+                {
+
+                    ApplicationId = applicationId,
+                    graph = ObjectToByteArray(mapping),
+                    GraphId = Guid.Parse(graphId),
+                    GraphName = mapping.name.ToString(),
+                    Groups = selectedGroups
+
+                };
+
+                //  _repository.UpdateMapping(scope, application, mapping)
+
+                _repository.UpdateMapping(scope, application, graph, userName, false, graphId);
+
+
+                string key = string.Format(_keyFormat, scope, application);
+                Session.Remove(key);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                //return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIUpdateMap, ex, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+
+                //return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+            }
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+
+
+
 
 
 
