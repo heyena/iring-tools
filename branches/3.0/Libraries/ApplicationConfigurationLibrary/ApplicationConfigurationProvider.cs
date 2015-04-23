@@ -1759,7 +1759,7 @@ namespace org.iringtools.applicationConfig
                 _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
                 _dataObjects = _dataLayerGateway.Get(dataObject, parentApplicationOfDataObject.ApplicationDataMode, dataObject.dataFilter, start, limit);
 
-                _projectionEngine.Count = _dataLayerGateway.GetCount(dataObject, dataObject.dataFilter);
+                _projectionEngine.Count = _dataLayerGateway.GetCount(dataObject, parentApplicationOfDataObject.ApplicationDataMode, dataObject.dataFilter);
                 _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
 
                 _projectionEngine.FullIndex = fullIndex;

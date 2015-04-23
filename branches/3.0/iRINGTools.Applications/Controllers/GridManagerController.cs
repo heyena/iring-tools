@@ -122,7 +122,7 @@ namespace org.iringtools.web.controllers
 
                 response = _repository.GetResponse();
 
-                if (response != null)
+                if (response != "")
                 {
                     var jsonSerialiser = new JavaScriptSerializer();
                     CustomError json = (CustomError)jsonSerialiser.Deserialize(response, typeof(CustomError));
