@@ -38,7 +38,7 @@ namespace org.iringtools.AgentLibrary
             [DataMember(Name = "dataObjectId", Order = 2)]
             public string DataObjectId { get; set; }
 
-            [DataMember(Name = "isExchange", Order = 3, EmitDefaultValue = false)]
+            [DataMember(Name = "isExchange", Order = 3)]
             public Byte Is_Exchange { get; set; }
 
             [DataMember(Name = "xid", Order = 4, EmitDefaultValue = false)]

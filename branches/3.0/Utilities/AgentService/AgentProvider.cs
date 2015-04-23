@@ -111,7 +111,7 @@ namespace iRINGAgentService
                 }
                 else
                 {
-                    string url = string.Format("{0}?scope={1}&xid={2}", baseUrl, scope, exchangeId);
+                    string url = string.Format("{0}?xid={1}", baseUrl, exchangeId);
                     WebRequest request = CreateWebRequest(url);
 
                     if (!string.IsNullOrEmpty(clientToken))
