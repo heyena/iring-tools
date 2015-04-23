@@ -538,8 +538,8 @@ Ext.define('AM.controller.Directory', {
                     var index = 0;
 
                     var contextChildrens = Ext.JSON.decode(response.responseText).currentNodesChildren
-                   // if (contextChildrens.length == 0 || contextChildrens[0].children[0].children == null) {
-                    if (contextChildrens.length == 0 ) {
+                    // if (contextChildrens.length == 0 || contextChildrens[0].children[0].children == null) {
+                    if (contextChildrens.length == 0) {
                         Ext.Msg.alert('This Context not contain applications !');
                     }
                     else {
@@ -565,19 +565,19 @@ Ext.define('AM.controller.Directory', {
                             index++;
                         });
 
-                    form.getForm().findField('contextName').setValue(currentNode.data.text);
-                    form.getForm().findField('applicationName').bindStore(applicationStore);
-                    form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
+                        form.getForm().findField('contextName').setValue(currentNode.data.text);
+                        form.getForm().findField('applicationName').bindStore(applicationStore);
+                        form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
                         form.getForm().findField('applicationName').select(applicationStore.getAt(0));
                         form.getForm().findField('applicationName').fireEvent('select', form.getForm().findField('applicationName'), applicationStore.getAt(0));
 
 
-                    win.on('save', function () {
-                        win.close();
-                        tree.view.refresh();
-                        var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
-                        detailGrid.setSource({});
-                    }, me);
+                        win.on('save', function () {
+                            win.close();
+                            tree.view.refresh();
+                            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+                            detailGrid.setSource({});
+                        }, me);
 
                         win.on('Cancel', function () {
                             win.close();
@@ -626,12 +626,12 @@ Ext.define('AM.controller.Directory', {
                                 });
                             }
 
-                        index++;
-                    });
+                            index++;
+                        });
 
-                    form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
-                    form.getForm().findField('applicationName').setValue(currentNode.data.text);
-                    form.getForm().findField('contextName').setValue(currentNode.parentNode.data.text);
+                        form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
+                        form.getForm().findField('applicationName').setValue(currentNode.data.text);
+                        form.getForm().findField('contextName').setValue(currentNode.parentNode.data.text);
                         form.getForm().findField('dataObjectName').setValue(dataObjectStore.getAt(0));
 
 
@@ -661,7 +661,7 @@ Ext.define('AM.controller.Directory', {
             if (dataObjectsNode.length == 0) {
                 Ext.Msg.alert('This Dataobject not contain DataobjectParameters !');
             }
-            
+
             else if (dataObjectsNode != null) {
                 Ext.each(dataObjectsNode, function (eachDataObjectNode) {
                     dataObjectStore.add({
@@ -669,27 +669,27 @@ Ext.define('AM.controller.Directory', {
                         dataObjName: eachDataObjectNode.data.text
                     });
                 });
-          
-
-            form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
-            form.getForm().findField('applicationName').setValue(currentNode.parentNode.data.text);
-            form.getForm().findField('contextName').setValue(currentNode.parentNode.parentNode.data.text);
-            form.getForm().findField('dataObjectName').setValue(dataObjectStore.getAt(0));
-
-            win.on('save', function () {
-                win.close();
-                tree.view.refresh();
-                var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
-                detailGrid.setSource({});
-            }, me);
-
-            win.on('Cancel', function () {
-                win.close();
-            }, me);
 
 
-            win.show();
-        }
+                form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
+                form.getForm().findField('applicationName').setValue(currentNode.parentNode.data.text);
+                form.getForm().findField('contextName').setValue(currentNode.parentNode.parentNode.data.text);
+                form.getForm().findField('dataObjectName').setValue(dataObjectStore.getAt(0));
+
+                win.on('save', function () {
+                    win.close();
+                    tree.view.refresh();
+                    var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+                    detailGrid.setSource({});
+                }, me);
+
+                win.on('Cancel', function () {
+                    win.close();
+                }, me);
+
+
+                win.show();
+            }
         } else if (currentNodeType == 'DataObjectNode') {
 
             form.getForm().findField('dataObjectName').setValue(currentNode.data.text);
@@ -798,8 +798,9 @@ Ext.define('AM.controller.Directory', {
         var node = tree.getSelectedNode();
         var content = me.getMainContent();
         var record = node.data.record;
+        var applicationNode = node.parentNode.parentNode;
 
-        var title = node.parentNode.parentNode.parentNode.data.text + '.' + node.parentNode.parentNode.data.text + '.' + node.data.text;
+        var title = node.parentNode.parentNode.parentNode.data.text + '.' + applicationNode.data.text + '.' + node.data.text;
         var gridPanel = content.down('dynamicgrid[title=' + title + ']');
         var checkboxForGrid = Ext.getElementById('gridCheckbox').checked;
         if (!gridPanel) {
@@ -840,7 +841,40 @@ Ext.define('AM.controller.Directory', {
                 callback: function (records, response) {
                     if (records != undefined) {
                         if (records[0]) {
-                            gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
+
+                            Ext.Ajax.request({
+                                url: 'directory/GetNode',
+                                method: 'POST',
+                                params: {
+                                    type: 'ApplicationNode',
+                                    record: applicationNode.data.record
+                                },
+                                success: function (response, request) {
+
+                                    gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
+
+                                    while (applicationNode.hasChildNodes()) {
+                                        applicationNode.removeChild(applicationNode.firstChild);
+                                    }
+
+
+                                    var index = 0;
+
+                                    Ext.each(Ext.JSON.decode(response.responseText), function (newNode) {
+                                        applicationNode.insertChild(index, newNode);
+                                        index++;
+                                    });
+
+                                    tree.onReload();
+                                },
+                                failure: function (response, request) {
+                                    tree.getEl().unmask();
+                                    Ext.widget('messagepanel', {
+                                        title: 'Warning',
+                                        msg: 'Error Refreshing Facade!!!'
+                                    });
+                                }
+                            });
                         } else {
                             if (response) { }
                             return true;

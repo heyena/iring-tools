@@ -1728,9 +1728,6 @@ namespace org.iringtools.applicationConfig
                 _settings["ProjectName"] = parentApplicationOfDataObject.InternalName;
                 _settings["ApplicationName"] = parentContextOfDataObject.InternalName;
 
-                //DataDictionary dictionaryFromDB = new DataDictionary();
-                //dictionaryFromDB.dataObjects = tempDatabaseDictionary.dataObjects;
-
                 DataDictionary dictionaryFromDB = (DataDictionary)tempDatabaseDictionary;
 
                 AddURIsInSettingCollection(dataObject);
@@ -1740,7 +1737,6 @@ namespace org.iringtools.applicationConfig
                 _logger.Debug("Initializing DataLayer.");
                 InitializeDataLayer(parentApplicationOfDataObject, ref dictionaryFromDB);
 
-                //InsertDictionary(XDocument.Parse(Utility.Serialize<DataDictionary>(dictionaryFromDB, true)));
                 InsertDictionary(XDocument.Parse(Utility.Serialize<DatabaseDictionary>((DatabaseDictionary)dictionaryFromDB, true)));
 
                 _logger.DebugFormat("Initializing Projection: {0} as {1}", dataObject.objectName, format);
@@ -1786,7 +1782,7 @@ namespace org.iringtools.applicationConfig
             try
             {
                 NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@DataObjectId", Value = Convert.ToString(dataObjectID) });
+                nvl.Add(new ListItem() { Name = "@DataObjectId", Value = dataObjectID });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgApplicationForDataObject", nvl);
                 application = utility.Utility.Deserialize<Application>(xmlString, true);
@@ -1804,7 +1800,7 @@ namespace org.iringtools.applicationConfig
             try
             {
                 NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@DataObjectId", Value = Convert.ToString(dataObjectID) });
+                nvl.Add(new ListItem() { Name = "@DataObjectId", Value = dataObjectID });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgContextForDataObject", nvl);
                 context = utility.Utility.Deserialize<Context>(xmlString, true);

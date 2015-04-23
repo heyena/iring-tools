@@ -146,24 +146,6 @@ namespace org.iringtools.adapter
                     _lwDataLayer2 = kernel.Get<ILightweightDataLayer2>();
                 }
             }
-
-            //if (applicationBindingInfo.Service.Replace(" ", "").ToLower()
-            //  == (typeof(IDataLayer).FullName + "," + typeof(IDataLayer).Assembly.GetName().Name).ToLower())
-            //{
-            //    _dataLayer = kernel.Get<IDataLayer>();
-            //}
-            //else
-            //{
-            //    if (applicationBindingInfo.Service == "org.iringtools.library.ILightweightDataLayer, iRINGLibrary")
-            //    {
-            //        _lwDataLayer = kernel.Get<ILightweightDataLayer>();
-            //    }
-            //    else if (applicationBindingInfo.Service == "org.iringtools.library.ILightweightDataLayer2, iRINGLibrary")
-            //    {
-
-            //        _lwDataLayer2 = kernel.Get<ILightweightDataLayer2>();
-            //    }
-            //}
         }
 
         public DataDictionary GetDictionary()
@@ -208,18 +190,17 @@ namespace org.iringtools.adapter
 
         public DataDictionary GetDictionary(bool refresh, string objectType, out DataFilter filter)
         {
-            DataDictionary dictionary = null;
             filter = null;
 
             try
             {
                 if (_lwDataLayer != null)
                 {
-                    dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
+                    _dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
                 }
                 if (_lwDataLayer2 != null)
                 {
-                    dictionary = _lwDataLayer2.Dictionary(refresh, objectType, out filter);
+                    _dictionary = _lwDataLayer2.Dictionary(refresh, objectType, out filter);
                 }
                 else if (_dataLayer != null)
                 {
@@ -246,13 +227,13 @@ namespace org.iringtools.adapter
                         }
                     }
 
-                    dictionary = _dataLayer.GetDictionary();
+                    _dictionary = _dataLayer.GetDictionary();
                 }
 
                 // injecting external filters to dictionary
-                if (dictionary != null && dictionary.dataObjects != null)
+                if (_dictionary != null && _dictionary.dataObjects != null)
                 {
-                    foreach (DataObject dataObject in dictionary.dataObjects)
+                    foreach (DataObject dataObject in _dictionary.dataObjects)
                     {
                         string filterPath = string.Format("{0}Filter.{1}.{2}.{3}.xml", _dataPath, _scope, _app, dataObject.objectName);
 
@@ -270,7 +251,7 @@ namespace org.iringtools.adapter
                 throw e;
             }
 
-            return dictionary;
+            return _dictionary;
         }
 
         public DataDictionary GetDictionary(ref DataDictionary dictionaryFromDB)
@@ -315,18 +296,17 @@ namespace org.iringtools.adapter
 
         public DataDictionary GetDictionary(bool refresh, string objectType, out DataFilter filter, ref DataDictionary dictionaryFromDB)
         {
-            DataDictionary dictionary = null;
             filter = null;
 
             try
             {
                 if (_lwDataLayer != null)
                 {
-                    dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
+                    _dictionary = _lwDataLayer.Dictionary(refresh, objectType, out filter);
                 }
                 if (_lwDataLayer2 != null)
                 {
-                    dictionary = _lwDataLayer2.Dictionary(refresh, objectType, out filter);
+                    _dictionary = _lwDataLayer2.Dictionary(refresh, objectType, out filter);
                 }
                 else if (_dataLayer != null)
                 {
@@ -353,33 +333,17 @@ namespace org.iringtools.adapter
                         }
                     }
 
-                    dictionary = _dataLayer.GetDictionary();
+                    _dictionary = _dataLayer.GetDictionary();
                 }
 
-                if (dictionary == null)
+                if (_dictionary == null)
                 {
-                    dictionary = dictionaryFromDB;
+                    _dictionary = dictionaryFromDB;
                 }
                 else
                 {
-                    dictionaryFromDB = dictionary;
+                    dictionaryFromDB = _dictionary;
                 }
-
-                //TODO: Verify the need for this
-                //// injecting external filters to dictionary
-                //if (dictionary != null && dictionary.dataObjects != null)
-                //{
-                //    foreach (DataObject dataObject in dictionary.dataObjects)
-                //    {
-                //        string filterPath = string.Format("{0}Filter.{1}.{2}.{3}.xml", _dataPath, _scope, _app, dataObject.objectName);
-
-                //        if (File.Exists(filterPath))
-                //        {
-                //            DataFilter dataFilter = Utility.Read<DataFilter>(filterPath);
-                //            dataObject.dataFilter = dataFilter;
-                //        }
-                //    }
-                //}
             }
             catch (Exception e)
             {
@@ -387,7 +351,7 @@ namespace org.iringtools.adapter
                 throw e;
             }
 
-            return dictionary;
+            return _dictionary;
         }
 
         public Response RefreshCache(bool updateDictionary)
@@ -1246,8 +1210,6 @@ namespace org.iringtools.adapter
             {
                 string cacheId = string.Empty;
 
-
-                //    if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null)
                 if (applicationDataMode == org.iringtools.applicationConfig.DataMode.Cache || _lwDataLayer != null || _lwDataLayer2 != null)
                 {
                     cacheId = CheckCache();
@@ -1380,11 +1342,11 @@ namespace org.iringtools.adapter
         private List<IDataObject> GetRelatedObjects(DataObject parentObjectType, List<IDataObject> parentDataObjects)
         {
             List<IDataObject> relatedObjects = new List<IDataObject>();
-            _dictionary = GetDictionary();
+            
             foreach (DataRelationship relationship in parentObjectType.dataRelationships)
             {
-
                 DataObject relatedObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == relationship.relatedObjectName.ToLower());
+
                 if (relatedObject != null)
                 {
                     foreach (IDataObject parentDataObject in parentDataObjects)
@@ -1406,6 +1368,7 @@ namespace org.iringtools.adapter
                     }
                 }
             }
+
             return relatedObjects;
         }
 
