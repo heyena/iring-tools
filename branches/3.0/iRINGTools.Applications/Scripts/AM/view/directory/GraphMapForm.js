@@ -24,6 +24,11 @@ Ext.define('AM.view.directory.GraphMapForm', {
                     xtype: 'label',
                     text: 'Graph Name:'
                 },
+                 {
+                     xtype: 'hiddenfield',
+                     itemId: 'state',
+                     name: 'state'
+                 },
                 {
                     xtype: 'hiddenfield',
                     name: 'identifier'
@@ -34,7 +39,11 @@ Ext.define('AM.view.directory.GraphMapForm', {
               }, {
                   xtype: 'hiddenfield',
                   name: 'classId'
-              }, 
+              },
+              {
+                  xtype: 'hiddenfield',
+                  name: 'graphId'
+              },
               
               {
                   xtype: 'hiddenfield',
@@ -84,6 +93,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
                     anchor: '100%',
                     html: 'Drop a Property Node here.',
                     itemId: 'gmfpcontainer',
+//                    name: 'PropertyNode',
                     margin: '5 0 15 25',
                     style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',
                     styleHtmlContent: true
@@ -98,6 +108,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
                     anchor: '100%',
                     html: 'Drop a Class Node here.',
                     itemId: 'gmfccontainer',
+//                    name: 'ClassNode',
                     margin: '5 0 15 25',
                     style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',
                     styleHtmlContent: true
@@ -258,19 +269,21 @@ Ext.define('AM.view.directory.GraphMapForm', {
 
     updateDDContainers: function (record) {
         var me = this;
+
+        var node = me.node;
         var pcon = me.down('#gmfpcontainer');
         var ccon = me.down('#gmfccontainer');
         var identifier = 'Drop property node(s) here.';
         var classlabel = 'Drop a class node here.';
-        if (record.length > 0 && record.classTemplateMaps[0]) {
-            identifier = record.classTemplateMaps[0].classMap.identifiers[0];
-            if (record.classTemplateMaps[0].classMap.identifiers.length > 1) {
-                for (var i = 1; i < record.classTemplateMaps[0].classMap.identifiers.length; i++) {
-                    identifier = identifier + ',' + record.classTemplateMaps[0].classMap.identifiers[i];
+        if (node.raw.GraphMap != null && node.raw.GraphMap.classTemplateMaps[0]) {
+            identifier = node.raw.GraphMap.classTemplateMaps[0].classMap.identifiers[0];
+            if (node.raw.GraphMap.classTemplateMaps[0].classMap.identifiers.length > 1) {
+                for (var i = 1; i < node.raw.GraphMap.classTemplateMaps[0].classMap.identifiers.length; i++) {
+                    identifier = identifier + ',' + node.raw.GraphMap.classTemplateMaps[0].classMap.identifiers[i];
                 }
             }
 
-            classlabel = record.classTemplateMaps[0].classMap.name;
+            classlabel = node.raw.GraphMap.classTemplateMaps[0].classMap.name;
         }
 
         pcon.update(identifier);
