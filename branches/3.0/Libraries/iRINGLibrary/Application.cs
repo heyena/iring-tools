@@ -221,7 +221,7 @@ namespace org.iringtools.applicationConfig
     [DataContract(Name = "exchange", Namespace = "http://www.iringtools.org/library")]
     public class Exchange
     {
-        Exchange()
+        public Exchange()
         {
             Permissions = new Permissions();
             Groups = new Groups();

@@ -1876,6 +1876,25 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
+        public Exchange GetExchangeByExchangeID(string userName, Guid exchangeID)
+        {
+            Exchange exchange = new Exchange();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ExchangeId", Value = Convert.ToString(exchangeID) });
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgExchangeByExchangeID", nvl);
+                exchange = utility.Utility.Deserialize<Exchange>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Exchange By ExchangeID: " + ex);
+            }
+            return exchange;
+        }
+
         /// <summary>
         /// insert job
         /// </summary>
