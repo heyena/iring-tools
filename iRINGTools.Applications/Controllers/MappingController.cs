@@ -1125,7 +1125,7 @@ namespace org.iringtools.web.controllers
             try
             {
 
-                Guid graphId = Guid.Parse("E7513986-5FB9-48A9-B7BC-07005A5FD9E1");
+                Guid graphId = Guid.Parse(form["graphId"]);
                 string scope = form["scope"];
                 string application = form["application"];
                 Mapping mapping = GetMapping(scope, application);
