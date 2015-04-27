@@ -1895,6 +1895,31 @@ namespace org.iringtools.applicationConfig
             return exchange;
         }
 
+        public string GetDataModeByDataObjectId(Guid dataObjectId)
+        {
+
+            string output = string.Empty;
+
+            try
+            {
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@DataObjectId", Value = dataObjectId });
+
+                    output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spgDataModeByDataObjectId", nvl);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error Getting DataMode By DataObjectId: " + ex);
+            
+            }
+
+            return output;
+        }
+
         /// <summary>
         /// insert job
         /// </summary>
