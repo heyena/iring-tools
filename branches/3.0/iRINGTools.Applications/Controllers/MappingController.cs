@@ -880,22 +880,22 @@ namespace org.iringtools.web.controllers
                 Guid contextId = Guid.Empty; ;
                 //applicationId = Guid.Parse(form["applicationId"]);
                 //contextId = Guid.Parse(form["applicationId"]);
-                
+
 
                 string context = string.Format("{0}/{1}/Graphs", scope, app);
                 Mapping mapping = GetMapping(scope, app);
                 GraphMap graphMap = null;
                 string groups = form["ResourceGroups"];
-;
+                ;
                 bool qn = false;
                 qn = _nsMap.ReduceToQName(classId, out qName);
 
-             //   if (string.IsNullOrEmpty(oldGraphName))
+                //   if (string.IsNullOrEmpty(oldGraphName))
                 if (!string.IsNullOrEmpty(form["applicationId"].ToString().Trim()) || !string.IsNullOrWhiteSpace(form["applicationId"].ToString().Trim()))
                 {
                     applicationId = Guid.Parse(form["applicationId"]);
                     contextId = Guid.Parse(form["applicationId"]);
-                    
+
                     if (mapping.graphMaps == null)
                         mapping.graphMaps = new GraphMaps();
 
@@ -935,13 +935,13 @@ namespace org.iringtools.web.controllers
                 }
                 else // Edit existing graph
                 {
-                   // graphMap = mapping.FindGraphMap(oldGraphName);//Get graph with old name
-                  // Guid graphId = Guid.Parse("E7513986-5FB9-48A9-B7BC-07005A5FD9E1");
+                    // graphMap = mapping.FindGraphMap(oldGraphName);//Get graph with old name
+                    // Guid graphId = Guid.Parse("E7513986-5FB9-48A9-B7BC-07005A5FD9E1");
                     Guid graphId = Guid.Parse(form["graphId"]);
-                    
+
                     org.iringtools.applicationConfig.Graph graph = _repository.GetGraphByGrapgId(userName, graphId);
 
-                   graphMap = (GraphMap) DeserializeObject(graph.graph);
+                    graphMap = (GraphMap)DeserializeObject(graph.graph);
 
 
                     if (graphMap == null)
@@ -1004,7 +1004,7 @@ namespace org.iringtools.web.controllers
                 }
                 //DoUpdateMapping(scope, app, mapping,applicationId);
 
-               // insertGraph(scope, app, graphMap, applicationId, groups);
+                // insertGraph(scope, app, graphMap, applicationId, groups);
 
                 graphNode = new JsonTreeNode
                 {
@@ -1053,15 +1053,15 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-               
+
 
                 Groups selectedGroups = new Groups();
-                
+
                 string[] groupArray = groups.Split(',');
-                for(int i =0;i<groupArray.Length;i++)
+                for (int i = 0; i < groupArray.Length; i++)
                 {
                     org.iringtools.UserSecurity.Group objGroup = new UserSecurity.Group();
-                    objGroup.GroupId= Convert.ToInt16(groupArray[i].ToString());
+                    objGroup.GroupId = Convert.ToInt16(groupArray[i].ToString());
                     selectedGroups.Add(objGroup);
                 }
                 org.iringtools.applicationConfig.Graph graph = new applicationConfig.Graph()
@@ -1072,12 +1072,12 @@ namespace org.iringtools.web.controllers
                     GraphId = Guid.Empty,
                     GraphName = mapping.name.ToString(),
                     Groups = selectedGroups
-                    
+
                 };
 
                 //  _repository.UpdateMapping(scope, application, mapping)
 
-                _repository.UpdateMapping(scope, application, graph, userName,true);
+                _repository.UpdateMapping(scope, application, graph, userName, true);
 
 
                 string key = string.Format(_keyFormat, scope, application);
@@ -1124,6 +1124,8 @@ namespace org.iringtools.web.controllers
         {
             try
             {
+
+                Guid graphId = Guid.Parse("E7513986-5FB9-48A9-B7BC-07005A5FD9E1");
                 string scope = form["scope"];
                 string application = form["application"];
                 Mapping mapping = GetMapping(scope, application);
@@ -1132,8 +1134,10 @@ namespace org.iringtools.web.controllers
                 Guid applicationId = Guid.Parse(form["applicationId"]);
                 if (graphMap != null)
                 {
-                    mapping.graphMaps.Remove(graphMap);
-                    DoUpdateMapping(scope, application, mapping);
+
+                    _repository.DeleteGraphByGrapgId(userName, graphId);
+                    //mapping.graphMaps.Remove(graphMap);
+                 //   DoUpdateMapping(scope, application, mapping);
                 }
             }
             catch (Exception ex)
@@ -2004,7 +2008,7 @@ namespace org.iringtools.web.controllers
         }
 
 
-        public JsonResult UpdatetGraph(string scope, string application, GraphMap mapping, Guid applicationId, string groups,string graphId)
+        public JsonResult UpdatetGraph(string scope, string application, GraphMap mapping, Guid applicationId, string groups, string graphId)
         {
             try
             {
