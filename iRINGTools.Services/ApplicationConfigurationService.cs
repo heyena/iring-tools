@@ -1097,6 +1097,26 @@ namespace org.iringtools.services
             }
         }
 
+         [Description("Get exchange by exchange id")]
+         [WebGet(UriTemplate = "/GetExchangeByExchangeID?userName={UserName}&exchangeId={exchangeId}&format={format}")]
+         public void GetExchangeByExchangeID(string userName, Guid exchangeId, string format)
+         {
+             try
+             {
+                 if (string.IsNullOrEmpty(format))
+                 { format = "xml"; }
+
+                org.iringtools.applicationConfig.Exchange application = _applicationConfigurationProvider.GetExchangeByExchangeID(userName, exchangeId);
+                _applicationConfigurationProvider.FormatOutgoingMessage<org.iringtools.applicationConfig.Exchange>(application, format, true);
+             }
+             catch (Exception ex)
+             {
+                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                 _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetExchangeByExchangeID, ex, _logger);
+                 objCustomErrorLog.throwJsonResponse(_CustomError);
+             }
+         }
+
         //[Description("Insert schedular details to the data base.")]
         //[WebInvoke(Method = "POST", UriTemplate = "/insertJob?format={format}")]
         //public void insertJob(string format, Stream stream)

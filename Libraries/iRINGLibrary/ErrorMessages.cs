@@ -124,5 +124,9 @@ namespace org.iringtools.library
         public static readonly string errUSMSaveGroupsInARole = "There is an error occured while saving groups in a role";
 
         #endregion
+
+        #region Application Configuration Services
+        public static readonly string errGetExchangeByExchangeID = "There is an error occured while getting exchange by exchange id";
+        #endregion
     }
 }
