@@ -116,6 +116,25 @@ namespace iRINGTools.Web.Models
         }
 
 
+        public void DeleteGraphByGrapgId(string userName, Guid graphId)
+        {
+            Graph graph = new Graph();
+
+            try
+            {
+               _appConfigServiceClient.Delete<org.iringtools.applicationConfig.Graph>(String.Format("/deleteGraph/{0}?format=xml", graphId), graph, true);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+            }
+
+            
+        }
+
+
 
     }
 }
