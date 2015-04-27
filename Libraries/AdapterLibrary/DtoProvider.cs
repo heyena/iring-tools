@@ -1425,7 +1425,7 @@ namespace org.iringtools.adapter
             }
         }
 
-        public DataTransferIndices GetPagedDataTransferIndicesByGraphID(string userName, string graphId, string siteId, DataFilter filter, int start, int limit)
+        public DataTransferIndices GetPagedDataTransferIndicesByGraphID(string userName, string graphId, DataFilter filter, int start, int limit)
         {
             DataTransferIndices dataTransferIndices = new DataTransferIndices();
 
@@ -1434,40 +1434,48 @@ namespace org.iringtools.adapter
 
                 NameValueList nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
-                System.Data.DataRow dr = DBManager.Instance.ExecuteStoredProcedure(_connSecurityDb, "spgNames", nvl).Rows[0];
+                System.Data.DataTable dt = DBManager.Instance.ExecuteStoredProcedure(_connSecurityDb, "spgNames", nvl);
 
-                string graphName = string.Empty,
-                     appId = string.Empty,
-                   scopeName = string.Empty,
-                  appName = string.Empty;
+                string graph = string.Empty; string scope = string.Empty;
+                string appName = string.Empty; Guid applicationId;
 
+                System.Data.DataRow row = dt.Rows[0];
 
-
-                graphName = Convert.ToString(dr["GraphName"]);
-                appId = Convert.ToString(dr["AppId"]);
-
-                scopeName = Convert.ToString(dr["ScopeName"]);
-                appName = Convert.ToString(dr["AppName"]);
-
-                InitializeScope(scopeName, appName);
-                InitializeDataLayer();
+                graph = Convert.ToString(row["GraphName"]);
+                scope = Convert.ToString(row["ScopeName"]);
+                appName = Convert.ToString(row["AppName"]);
+                applicationId = Guid.Parse(Convert.ToString(row["AppId"]));
 
                 nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
-                nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(siteId) });
+                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = applicationId });
+
+                //string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgValuelistforManifest", nvl);
+                //ValueListMaps valueListMaps = utility.Utility.Deserialize<ValueListMaps>(xmlString, true);
+
+                nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
                 nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
 
                 byte[] xmlbyte = DBManager.Instance.ExecuteBytesQuery(_connSecurityDb, "spgGraphBinary", nvl);
                 string bytesToXml = System.Text.Encoding.Default.GetString(xmlbyte);
+                //mapping.Mapping _mapping = utility.Utility.Deserialize<mapping.Mapping>(bytesToXml, true); ;
+                bytesToXml = bytesToXml.Replace("<graphMap>", "<graphMap xmlns=\"http://www.iringtools.org/mapping\">");
+                 _graphMap = utility.Utility.Deserialize<GraphMap>(bytesToXml, true); ;
 
-                //Reinitializing the values from database
-                _mapping = utility.Utility.Deserialize<mapping.Mapping>(bytesToXml, true); ;
-                _dictionary = dictionaryProvider.GetDictionary(Guid.Parse(appId));
-                _graphMap = _mapping.FindGraphMap(graphName);
+                 
+
+                DataDictionary dataDictionary = dictionaryProvider.GetDictionary(applicationId);
+
+                org.iringtools.applicationConfig.Application objApplication = GetApplicationByApplicationID(userName, applicationId);
+                _settings["ProjectName"] = scope;
+                _settings["ApplicationName"] = appName;
+
+                InitializeDataLayer(objApplication, ref dataDictionary);
 
                 if (_graphMap == null)
                 {
-                    throw new Exception("Graph [" + graphName + "] not found.");
+                    throw new Exception("Graph [" + _graphMap + "] not found.");
                 }
 
 
@@ -1486,12 +1494,12 @@ namespace org.iringtools.adapter
                     filter = GetPresetFilters(dtoProjectionEngine);
                 }
 
-                List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, filter, start, limit);
+                List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject,objApplication.ApplicationDataMode, filter, start, limit);
 
                 if (dataObjects != null && dataObjects.Count > 0)
                 {
                     dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, string.Empty);
-                    dataTransferIndices.TotalCount = _dataLayerGateway.GetCount(dataObject, filter);
+                    dataTransferIndices.TotalCount = _dataLayerGateway.GetCount(dataObject, objApplication.ApplicationDataMode, filter);
                 }
 
                 return dataTransferIndices;
@@ -1503,6 +1511,24 @@ namespace org.iringtools.adapter
             }
         }
 
+        public org.iringtools.applicationConfig.Application GetApplicationByApplicationID(string userName, Guid applicationID)
+        {
+            org.iringtools.applicationConfig.Application application = new org.iringtools.applicationConfig.Application();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ApplicationId", Value = Convert.ToString(applicationID) });
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgApplicationByApplicationID", nvl);
+                application = utility.Utility.Deserialize<org.iringtools.applicationConfig.Application>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Application By ApplicationID: " + ex);
+            }
+            return application;
+        }
 
         // get single data transfer object (but wrap it in a list!)
         public DataTransferObjects GetDataTransferObject(string scope, string app, string graph, string id)
