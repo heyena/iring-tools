@@ -1135,14 +1135,14 @@ namespace org.iringtools.web.controllers
                 //string graphName = form["mappingNode"].Split('/')[4];
                 string graphName = form["graphName"];
                 GraphMap graphMap = mapping.FindGraphMap(graphName);
-       
-                //if (graphMap != null)
-                //{
+
+                if (graphId != null)
+                {
 
                     _repository.DeleteGraphByGrapgId(userName, graphId);
                     //mapping.graphMaps.Remove(graphMap);
-                 //   DoUpdateMapping(scope, application, mapping);
-                //}
+                    DoUpdateMapping(scope, application, mapping);
+                }
             }
             catch (Exception ex)
             {
