@@ -314,26 +314,41 @@ namespace org.iringtools.web.controllers
 
                 Mapping mapping = GetMapping(scope, application);
                 List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                
+                org.iringtools.applicationConfig.Graph graph = _repository.GetGraphByGrapgId(userName, graphId);
 
-                if (!string.IsNullOrEmpty(graphName))
-                    graphMap = mapping.graphMaps.FirstOrDefault<GraphMap>(o => o.name == graphName);
+                graphMap = (GraphMap)DeserializeObject(graph.graph);
+                
+
+                //if (!string.IsNullOrEmpty(graphName))
+                //    graphMap = mapping.graphMaps.FirstOrDefault<GraphMap>(o => o.name == graphName);
 
                 if (graphMap != null)
                 {
                     graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
+                    //if (form["type"] == "MappingNode")
+                    //{
+                    //    foreach (var graph in mapping.graphMaps)
+                    //    {
+                    //        if (graphMap != null && graphMap.name != graph.name)
+                    //            continue;
+
+                    //        JsonTreeNode graphNode = CreateGraphNode(context, graph, graphClassMap);
+                    //        nodes.Add(graphNode);
+                    //        graphNode.children = new List<JsonTreeNode>();
+                    //        CreateGraphMapNode(graphMap, graphClassMap, graphNode.id, graphNode.children);
+                    //    }
+                    //}
+
+
                     if (form["type"] == "MappingNode")
                     {
-                        foreach (var graph in mapping.graphMaps)
-                        {
-                            if (graphMap != null && graphMap.name != graph.name)
-                                continue;
-
-                            JsonTreeNode graphNode = CreateGraphNode(context, graph, graphClassMap);
-                            nodes.Add(graphNode);
-                            graphNode.children = new List<JsonTreeNode>();
-                            CreateGraphMapNode(graphMap, graphClassMap, graphNode.id, graphNode.children);
-                        }
+                        JsonTreeNode graphNode = CreateGraphNode(context, graphMap, graphClassMap);
+                        nodes.Add(graphNode);
+                        graphNode.children = new List<JsonTreeNode>();
+                        CreateGraphMapNode(graphMap, graphClassMap, graphNode.id, graphNode.children);
                     }
+
                 }
                 return Json(nodes, JsonRequestBehavior.AllowGet);
             }
