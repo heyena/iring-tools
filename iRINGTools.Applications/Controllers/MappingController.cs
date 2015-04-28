@@ -304,6 +304,7 @@ namespace org.iringtools.web.controllers
                 ClassMap graphClassMap = null;
                 string format = String.Empty;
                 string context = form["node"];
+                Guid graphId = Guid.Parse(form["graph"]);
                 string[] formgraph = form["graph"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 string[] variables = context.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 string scope = form["context"];//= variables[0];

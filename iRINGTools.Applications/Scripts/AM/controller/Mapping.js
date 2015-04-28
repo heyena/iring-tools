@@ -317,6 +317,7 @@ Ext.define('AM.controller.Mapping', {
         var context = node.data.id.split('/')[0];
         var endpoint = node.data.id.split('/')[1];
         var graphName = node.internalId;
+        var graphId=node.internalId;
         var title = 'Graph.' + context + "." + endpoint + '.' + node.data.text;
         var panelItemId = 'GraphMap.' + context + "." + endpoint + '.' + node.data.text;
         var templateTypes = ['Qualification', 'Definition']
@@ -328,8 +329,9 @@ Ext.define('AM.controller.Mapping', {
                 'title': title,
                 'contextName': context,
                 'graph': graphName,
+                'graphId':graphId,
                 'endpoint': endpoint,
-                'itemId': panelItemId
+                'itemId': panelItemId,
             });
             var mapProp = mapPanel.down('propertypanel');
 
