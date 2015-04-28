@@ -266,6 +266,12 @@ namespace org.iringtools.web.controllers
 
                     graphMap.AddTemplateMap(selectedClassMap, newTemplateMap);
 
+                    //saving in session new code
+                    System.Web.HttpContext.Current.Session["graphMap"] = graphMap;
+
+                    // end of saving
+
+
                     nodes = CreateTemplateNode(newTemplateMap);
                     foreach (RoleMap roleMap in newTemplateMap.roleMaps)
                     {
@@ -288,6 +294,8 @@ namespace org.iringtools.web.controllers
 
 
             }
+        
+            
             return Json(new { success = true, node = nodes }, JsonRequestBehavior.AllowGet);
         }
 
@@ -1063,7 +1071,10 @@ namespace org.iringtools.web.controllers
             //return DoUpdateMapping(scope, application, mapping);
             Guid graphId = Guid.Parse(form["graphId"]);
             org.iringtools.applicationConfig.Graph graph = _repository.GetGraphByGrapgId(userName, graphId);
-            GraphMap graphMap = (GraphMap)DeserializeObject(graph.graph);
+          //  GraphMap graphMap = (GraphMap)DeserializeObject(graph.graph);
+            GraphMap graphMap = System.Web.HttpContext.Current.Session["graphMap"] as GraphMap;
+
+
             graphMap.RearrangeIndexAndPath();
             string groups=string.Empty;
             foreach (org.iringtools.UserSecurity.Group group in graph.Groups)

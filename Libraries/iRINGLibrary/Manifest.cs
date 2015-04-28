@@ -1145,6 +1145,7 @@ namespace org.iringtools.mapping
     }
 
     [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "roleMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "roleMap")]
+    [Serializable]
     public class RoleMaps : System.Collections.Generic.List<org.iringtools.mapping.RoleMap>
     {
     }
