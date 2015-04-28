@@ -1055,12 +1055,26 @@ namespace org.iringtools.web.controllers
         {
             string scope = form["scope"];
             string application = form["application"];
-            Mapping mapping = GetMapping(scope, application);
-            Guid applicationId = Guid.Parse(form["applicationId"]);
-            foreach (var graph in mapping.graphMaps)
-                graph.RearrangeIndexAndPath();
+            //Mapping mapping = GetMapping(scope, application);
+            //Guid applicationId = Guid.Parse(form["applicationId"]);
+            //foreach (var graph in mapping.graphMaps)
+            //    graph.RearrangeIndexAndPath();
 
-            return DoUpdateMapping(scope, application, mapping);
+            //return DoUpdateMapping(scope, application, mapping);
+            Guid graphId = Guid.Parse(form["graphId"]);
+            org.iringtools.applicationConfig.Graph graph = _repository.GetGraphByGrapgId(userName, graphId);
+            GraphMap graphMap = (GraphMap)DeserializeObject(graph.graph);
+            graphMap.RearrangeIndexAndPath();
+            string groups=string.Empty;
+            foreach (org.iringtools.UserSecurity.Group group in graph.Groups)
+            {
+                groups = groups + group.GroupId + ",";
+            }
+            int index = groups.LastIndexOf(",");
+            groups = groups.Substring(0,(index-1));
+            return UpdatetGraph(scope, application, graphMap, Guid.Empty, groups, graphId.ToString());
+
+
         }
 
         public JsonResult insertGraph(string scope, string application, GraphMap mapping, Guid applicationId, string groups)
