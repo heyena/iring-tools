@@ -20,7 +20,9 @@ Ext.define('AM.controller.Directory', {
         'PermissionsS',
         'ResourceGroupStore',
         'AppSettingsStore',
-        'JobStore'
+        'JobStore',
+        'ApplicationStore',
+        'DataObjectStore'
 
     ],
 
@@ -514,6 +516,7 @@ Ext.define('AM.controller.Directory', {
     },
     // Start onCacheUpdate
     onCacheUpdate: function (item, e, eOpts) {
+        var menuitem = item;
         var me = this;
         var contextName, applicationName, dataObjectName;
         var tree = me.getDirTree();
@@ -526,79 +529,29 @@ Ext.define('AM.controller.Directory', {
         var form = win.down('form');
         form.node = currentNode;
 
+
         if (currentNodeType == 'ContextNode') {
-            Ext.Ajax.request({
-                url: 'directory/GetNodesForCache',
-                form: me.form,
-                method: 'POST',
-                params: {
-                    type: currentNodeType,
-                    record: currentNodeRecord
-                },
-                success: function (response, request) {
-                    var applicationStore = Ext.StoreManager.lookup('applicationStoreId');
-                    var dataObjectStore = Ext.StoreManager.lookup('dataObjectStoreId');
-                    var filteredStore = Ext.getStore(dataObjectStore);
+            var applicationStore = Ext.StoreManager.lookup('ApplicationStore');
 
-                    while (currentNode.firstChild) {
-                        currentNode.removeChild(currentNode.firstChild);
-                    }
-
-                    var index = 0;
-
-                    var contextChildrens = Ext.JSON.decode(response.responseText).currentNodesChildren
-                    // if (contextChildrens.length == 0 || contextChildrens[0].children[0].children == null) {
-                    if (contextChildrens.length == 0) {
-                        Ext.Msg.alert('This Context not contain applications !');
-                    }
-                    else {
-                        Ext.each(Ext.JSON.decode(response.responseText).currentNodesChildren, function (eachChildNode) {
-                            currentNode.insertChild(index, eachChildNode);
-                            applicationStore.add({
-                                appId: eachChildNode.id,
-                                appName: eachChildNode.text
-                            });
-
-                            var dataObjectsNode = currentNode.childNodes[index].childNodes[0];
-
-                            if (dataObjectsNode != null) {
-                                Ext.each(dataObjectsNode.childNodes, function (eachDataObjectNode) {
-                                    dataObjectStore.add({
-                                        appId: eachChildNode.id,
-                                        dataObjId: eachDataObjectNode.data.id,
-                                        dataObjName: eachDataObjectNode.data.text
-                                    });
-                                });
-                            }
-
-                            index++;
-                        });
-
-                        form.getForm().findField('contextName').setValue(currentNode.data.text);
-                        form.getForm().findField('applicationName').bindStore(applicationStore);
-                        form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
-                        form.getForm().findField('applicationName').select(applicationStore.getAt(0));
-                        form.getForm().findField('applicationName').fireEvent('select', form.getForm().findField('applicationName'), applicationStore.getAt(0));
+            form.getForm().findField('contextName').setValue(currentNode.data.text);
+            form.getForm().findField('applicationName').bindStore(applicationStore);
+            form.getForm().findField('dataObjectName').bindStore('DataObjectStore');
+            form.getForm().findField('applicationName').select(applicationStore.getAt(0));
+            form.getForm().findField('applicationName').fireEvent('select', form.getForm().findField('applicationName'), applicationStore.getAt(0));
 
 
-                        win.on('save', function () {
-                            win.close();
-                            tree.view.refresh();
-                            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
-                            detailGrid.setSource({});
-                        }, me);
+            win.on('save', function () {
+                win.close();
+                tree.view.refresh();
+                var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+                detailGrid.setSource({});
+            }, me);
 
-                        win.on('Cancel', function () {
-                            win.close();
-                        }, me);
+            win.on('Cancel', function () {
+                win.close();
+            }, me);
 
-                        win.show();
-                    }
-                },
-                failure: function (response, request) {
-                    //TODO:
-                }
-            })
+            win.show();
         } else if (currentNodeType == 'ApplicationNode') {
             Ext.Ajax.request({
                 url: 'directory/GetNodesForCache',
@@ -610,7 +563,7 @@ Ext.define('AM.controller.Directory', {
                 },
                 success: function (response, request) {
 
-                    var dataObjectStore = Ext.StoreManager.lookup('dataObjectStoreId');
+                    var dataObjectStore = Ext.StoreManager.lookup('DataObjectStoreId');
 
                     while (currentNode.firstChild) {
                         currentNode.removeChild(currentNode.firstChild);
@@ -664,7 +617,7 @@ Ext.define('AM.controller.Directory', {
             })
         } else if (currentNodeType == 'DataObjectsNode') {
 
-            var dataObjectStore = Ext.StoreManager.lookup('dataObjectStoreId');
+            var dataObjectStore = Ext.StoreManager.lookup('DataObjectStoreId');
 
             var dataObjectsNode = currentNode.childNodes;
             if (dataObjectsNode.length == 0) {
@@ -717,6 +670,7 @@ Ext.define('AM.controller.Directory', {
 
             win.show();
         }
+
     },
     //End onCacheUpdate
 

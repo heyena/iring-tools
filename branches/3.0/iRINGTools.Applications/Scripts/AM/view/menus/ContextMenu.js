@@ -14,37 +14,39 @@
  */
 
 Ext.define('AM.view.menus.ContextMenu', {
-  extend: 'Ext.menu.Menu',
-  alias: 'widget.contextmenu',
+    extend: 'Ext.menu.Menu',
+    alias: 'widget.contextmenu',
+//    requires: [
+//    'AM.view.directory.NewJobForm'
+//  ],
+    initComponent: function () {
+        var me = this;
 
-  initComponent: function() {
-    var me = this;
-
-    Ext.applyIf(me, {
-      items: [
+        Ext.applyIf(me, {
+            items: [
         {
-          xtype: 'menuitem',
-          action: 'newOrEditContext',
-          itemId: 'editContext',
-          icon: 'Content/img/16x16/edit.png',
-          text: 'Edit Context'
+            xtype: 'menuitem',
+            action: 'newOrEditContext',
+            itemId: 'editContext',
+            icon: 'Content/img/16x16/edit.png',
+            text: 'Edit Context'
         },
         {
-          xtype: 'menuitem',
-          action: 'deleteContext',
-          icon: 'Content/img/16x16/delete.png',
-          text: 'Delete Context'
+            xtype: 'menuitem',
+            action: 'deleteContext',
+            icon: 'Content/img/16x16/delete.png',
+            text: 'Delete Context'
         },
         {
-          xtype: 'menuseparator'
+            xtype: 'menuseparator'
         },
         {
-          xtype: 'menuitem',
-          action: 'newOrEditApplication',
-          itemId: 'newApplication',
-          icon: 'Content/img/16x16/document-new.png',
-          text: 'New Application'
-      },
+            xtype: 'menuitem',
+            action: 'newOrEditApplication',
+            itemId: 'newApplication',
+            icon: 'Content/img/16x16/document-new.png',
+            text: 'New Application'
+        },
         {
             xtype: 'menuseparator'
         },
@@ -53,12 +55,77 @@ Ext.define('AM.view.menus.ContextMenu', {
             action: 'cacheupdate',
             icon: 'Content/img/16x16/document-new.png',
             itemId: 'cacheupscreen',
+            disabled:true,
             text: 'Cache Update'
         }
       ]
-    });
+        });
 
-    me.callParent(arguments);
-  }
+        me.callParent(arguments);
+    },
+
+    listeners:
+{
+    beforeshow: function (me, eOpts) {
+        var contextName, applicationName, dataObjectName;
+        //        var tree = me.getDirTree();
+        //        var currentNode = Ext.fly('mytree').getSelectionModel().getSelectedNode();
+        var currentNode = Ext.getCmp('mytree').getSelectionModel().getSelection()[0];
+
+        var currentNodeRecord = currentNode.data.record;
+        var currentNodeType = currentNode.data.type;
+        var objResponseText;
+        
+        Ext.Ajax.request({
+            url: 'directory/GetNodesForCache',
+            form: me.form,
+            method: 'POST',
+            params: {
+                type: currentNodeType,
+                record: currentNodeRecord
+            },
+            success: function (response, request) {
+                var applicationStore = Ext.StoreManager.lookup('ApplicationStore');
+                var dataObjectStore = Ext.StoreManager.lookup('DataObjectStore');
+
+//                while (currentNode.firstChild) {
+//                    currentNode.removeChild(currentNode.firstChild);
+//                }
+
+                var index = 0;
+
+                var contextChildrens = Ext.JSON.decode(response.responseText).currentNodesChildren
+
+                if (contextChildrens.length > 0) {
+                    me.items.map['cacheupscreen'].setDisabled(false);
+
+                    Ext.each(Ext.JSON.decode(response.responseText).currentNodesChildren, function (eachChildNode) {
+                        applicationStore.add({
+                            appId: eachChildNode.id,
+                            appName: eachChildNode.text
+                        });
+
+                        var dataObjectsNode = eachChildNode.children;
+
+                        if (dataObjectsNode != null) {
+                            Ext.each(dataObjectsNode[0].children, function (eachDataObjectNode) {
+                                dataObjectStore.add({
+                                    appId: eachChildNode.id,
+                                    dataObjId: eachDataObjectNode.id,
+                                    dataObjName: eachDataObjectNode.text
+                                });
+                            });
+                        }
+
+                        index++;
+                    });
+                }
+            },
+            failure: function (response, request) {
+                //TODO:
+            }
+        })
+    }
+}
 
 });
