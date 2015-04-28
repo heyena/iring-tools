@@ -18,7 +18,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
 
         Ext.applyIf(me, {
 
-           
+
             items: [
                 {
                     xtype: 'label',
@@ -44,7 +44,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
                   xtype: 'hiddenfield',
                   name: 'graphId'
               },
-              
+
               {
                   xtype: 'hiddenfield',
                   name: 'contextId'
@@ -52,7 +52,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
                   xtype: 'hiddenfield',
                   name: 'applicationId'
               },
-                           
+
                 {
                     xtype: 'hiddenfield',
                     name: 'objectName'
@@ -93,7 +93,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
                     anchor: '100%',
                     html: 'Drop a Property Node here.',
                     itemId: 'gmfpcontainer',
-//                    name: 'PropertyNode',
+                    //                    name: 'PropertyNode',
                     margin: '5 0 15 25',
                     style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',
                     styleHtmlContent: true
@@ -108,7 +108,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
                     anchor: '100%',
                     html: 'Drop a Class Node here.',
                     itemId: 'gmfccontainer',
-//                    name: 'ClassNode',
+                    //                    name: 'ClassNode',
                     margin: '5 0 15 25',
                     style: 'border:1px silver solid;margin:5px;padding:8px;height:40px',
                     styleHtmlContent: true
@@ -257,7 +257,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
                         me.getForm().findField('oldClassUrl').setValue(tempClassUrl);
                     }
                     me.getForm().findField('className').setValue(data.records[0].data.record.Label);
-                     me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
+                    me.getForm().findField('classId').setValue(data.records[0].data.record.Uri);
                     var msg = 'Class Label: ' + data.records[0].data.record.Label;
                     //ctarget.update(msg);
                     ctarget.update(data.records[0].data.record.Label);
@@ -337,6 +337,7 @@ Ext.define('AM.view.directory.GraphMapForm', {
                         parentNode.removeChild(node);
                         parentNode.insertChild(nodeIndex, Ext.JSON.decode(request.response.responseText).node);
                     }
+
                     me.setLoading(false);
                 } else {
                     Ext.widget('messagepanel', { title: 'Error', msg: res.message });
