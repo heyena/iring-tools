@@ -26,7 +26,9 @@ Ext.define('AM.controller.Mapping', {
     'mapping.MapValueListWindow',
     'mapping.MapValueListForm',
     'mapping.LiteralForm',
-    'mapping.LiteralWindow'
+    'mapping.LiteralWindow',
+    'menus.GraphsMenu',
+    'menus.GraphMenu'
   ],
 
     refs: [
@@ -251,13 +253,12 @@ Ext.define('AM.controller.Mapping', {
 
         if (item.itemId == 'editGraph') {
             win.title = 'Edit Graph \"' + graphName + '\"';
-               state = 'edit';
+            state = 'edit';
             var groupArray = [];
             Ext.each(record.groups, function (eachGroup) {
                 groupArray.push(eachGroup.groupId);
             }, this);
-
-
+            form.getForm().findField('ResourceGroups').setValue(groupArray);
 
         } else {
             win.title = 'Add GraphMap';
@@ -275,7 +276,7 @@ Ext.define('AM.controller.Mapping', {
             'objectName': objectName,
             'classId': classUrl,
             'identifier': identifier,
-            'classLabel': classLabel,
+            'className': classLabel,
             'delimiter': delimeter,
             'graphId': graphId
         };
@@ -283,18 +284,28 @@ Ext.define('AM.controller.Mapping', {
         var form = win.down('form').getForm();
         win.down('form').node = node;
         form.setValues(formRecord);
-        win.down('form').updateDDContainers(record);
+
+
 
         win.on('save', function () {
             win.close();
-            tree.view.refresh();
+            var tree = me.getDirTree();
+            var node = tree.getSelectedNode();
+            if (node.get('expanded') === false)
+                node.expand()
+            tree.store.load();
+            ;
         }, me);
-
         win.on('reset', function () {
             win.close();
         }, me);
 
+        win.on('cancel', function () {
+            win.destroy();
+        }, me);
 
+
+        win.down('form').updateDDContainers(record);
         win.show();
     },
 
@@ -897,28 +908,27 @@ Ext.define('AM.controller.Mapping', {
             url: 'mapping/deletegraphmap',
             method: 'POST',
             params: {
-                scope: node.parentNode.parentNode.parentNode.data.property['Internal Name'], //node.data.property.context,
-                application: node.parentNode.parentNode.data.property['Internal Name'], //node.data.property.endpoint,
-                baseUrl: node.data.property.baseUrl,
-                mappingNode: node.id,
-                graphName: getLastXString(node.id, 1)
+                scope: Ext.decode(node.parentNode.parentNode.parentNode.data.record).internalName, //node.data.property.context,
+                application: Ext.decode(node.parentNode.parentNode.data.record).internalName, //node.data.property.endpoint,
+                //                baseUrl: node.data.property.baseUrl,
+                //                mappingNode: node.id,
+                //                graphName: getLastXString(node.id, 1)
+                graphName: Ext.decode(node.data.record).graphName,
+                graphId: Ext.decode(node.data.record).graphId
             },
             success: function (response, request) {
 
-                var res = Ext.decode(response.responseText);
-                if (res.success) {
+                   var objResponseText = Ext.decode(response.responseText);
                     var parentNode = node.parentNode;
                     parentNode.removeChild(node);
                     tree.getSelectionModel().select(parentNode);
-                    //tree.onReload();
                     tree.view.refresh();
-                } else {
-                    var userMsg = res.message;
-                    var detailMsg = res.stackTraceDescription;
-                    var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
-                    Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
-                    Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
-                }
+                   // me.getDirTree().onReload();
+
+                    var currentNode;
+                    Ext.example.msg('Notification', 'Graph deleted successfully!');
+
+
             },
             failure: function (response, request) {
                 Ext.widget('messagepanel', { title: 'Error', msg: 'An error has occurred while deleting Graph Map.' });
@@ -1165,8 +1175,9 @@ Ext.define('AM.controller.Mapping', {
             "menuitem[action=makepossessor]": {
                 click: this.onMakePossessor
             },
-            "menuitem[action=deletegraph]": {
+            "menuitem[action=deleteGraph]": {
                 click: this.onDeleteGraphMap
+
             },
             "menuitem[action=deletevaluelist]": {
                 click: this.onDeleteValueList

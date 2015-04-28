@@ -1037,6 +1037,9 @@ namespace org.iringtools.web.controllers
             return Json(new { success = true, node = graphNode }, JsonRequestBehavior.AllowGet);
         }
 
+
+
+
         public JsonResult UpdateMapping(FormCollection form)
         {
             string scope = form["scope"];
@@ -1129,16 +1132,17 @@ namespace org.iringtools.web.controllers
                 string scope = form["scope"];
                 string application = form["application"];
                 Mapping mapping = GetMapping(scope, application);
-                string graphName = form["mappingNode"].Split('/')[4];
+                //string graphName = form["mappingNode"].Split('/')[4];
+                string graphName = form["graphName"];
                 GraphMap graphMap = mapping.FindGraphMap(graphName);
-                Guid applicationId = Guid.Parse(form["applicationId"]);
-                if (graphMap != null)
-                {
+       
+                //if (graphMap != null)
+                //{
 
                     _repository.DeleteGraphByGrapgId(userName, graphId);
                     //mapping.graphMaps.Remove(graphMap);
                  //   DoUpdateMapping(scope, application, mapping);
-                }
+                //}
             }
             catch (Exception ex)
             {
