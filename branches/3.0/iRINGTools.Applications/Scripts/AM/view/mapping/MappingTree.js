@@ -353,6 +353,7 @@ Ext.define('AM.view.mapping.MappingTree', {
             method: 'POST',
             params: {
                 scope: mapPanel.contextName,
+                graphId: mapPanel.graphId,
                 application: mapPanel.endpoint,
                 baseUrl: mapPanel.baseUrl
             },
