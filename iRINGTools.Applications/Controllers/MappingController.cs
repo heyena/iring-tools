@@ -1127,21 +1127,12 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-
                 Guid graphId = Guid.Parse(form["graphId"]);
-                string scope = form["scope"];
-                string application = form["application"];
-                Mapping mapping = GetMapping(scope, application);
-                //string graphName = form["mappingNode"].Split('/')[4];
-                string graphName = form["graphName"];
-                GraphMap graphMap = mapping.FindGraphMap(graphName);
-
                 if (graphId != null)
                 {
-
                     _repository.DeleteGraphByGrapgId(userName, graphId);
                     //mapping.graphMaps.Remove(graphMap);
-                    DoUpdateMapping(scope, application, mapping);
+                   // DoUpdateMapping(scope, application, mapping);
                 }
             }
             catch (Exception ex)
