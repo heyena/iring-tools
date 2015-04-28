@@ -177,24 +177,19 @@ namespace org.iringtools.web.controllers
                 string qName = string.Empty;
 
                 string format = String.Empty;
-                // string propertyCtx = form["ctx"];
                 string nodeType = form["nodetype"];
                 string parentType = form["parentType"];
                 string parentId = form["parentId"];
                 string identifier = form["id"];
                 int classMapIndex = int.Parse(form["classMapIndex"]);
-
-                // if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
-
-                //string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 string scope = form["contextName"];//dataObjectVars[0];
                 string application = form["endpoint"];//dataObjectVars[1];
-                string graph = form["graphName"];//dataObjectVars[2];
                 string context = string.Format("{0}/{1}", scope, application);
-
+                Guid graph = Guid.Parse(form["graphName"]);//dataObjectVars[2];
                 ClassTemplateMap selectedCtm = null;
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graph);
+                org.iringtools.applicationConfig.Graph Objgraph = _repository.GetGraphByGrapgId(userName, graph);
+                GraphMap graphMap = (GraphMap)DeserializeObject(Objgraph.graph);
+                
                 ClassMap graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
                 QMXF templateQmxf = _refdata.GetTemplate(identifier);
 
