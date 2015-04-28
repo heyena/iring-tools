@@ -25,14 +25,6 @@ Ext.define('AM.view.directory.NewJobForm', {
             url: 'directory/saveSchedularData'
         }, me.initialConfig);
 
-        var applicationStore = Ext.create('Ext.data.Store', {
-            fields: ['appId', 'appName'],
-            storeId: 'applicationStoreId'
-        });
-        var dataObjectStore = Ext.create('Ext.data.Store', {
-            fields: ['appId', 'dataObjId', 'dataObjName'],
-            storeId: 'dataObjectStoreId'
-        });
         Ext.applyIf(me, {
 
             items: [{
@@ -71,7 +63,7 @@ Ext.define('AM.view.directory.NewJobForm', {
                             xtype: 'combobox',
                             name: 'applicationName',
                             itemId: 'appCombo',
-                            store: applicationStore,
+                            store: 'ApplicationStore',
                             displayField: 'appName',
                             valueField: 'appId',
                             queryMode: 'local',
@@ -83,7 +75,7 @@ Ext.define('AM.view.directory.NewJobForm', {
                                     var me = this;
                                     var form = me.up('form');
 
-                                    var dataObjStore = Ext.getStore(dataObjectStore);
+                                    var dataObjStore = Ext.getStore('DataObjectStore');
                                     var tempStore = new Ext.create('Ext.data.Store', {
                                         fields: ['appId', 'dataObjId', 'dataObjName']
                                     });
@@ -114,7 +106,7 @@ Ext.define('AM.view.directory.NewJobForm', {
                             name: 'dataObjectName',
                             emptyText: 'No Data Objects',
                             itemId: 'dataObjCombo',
-                            store: dataObjectStore,
+                            store: 'DataObjectStore',
                             queryMode: 'local',
                             valueField: 'dataObjId',
                             displayField: 'dataObjName',
@@ -143,7 +135,6 @@ Ext.define('AM.view.directory.NewJobForm', {
                         checked: true,
                         name: 'occuranceRadio',
                         margin: '4 80 0 0 ',
-                        //itemId:'myradiobutton',
                         allowBlank: false,
                         listeners: {
                             change: function (cb, checked) {
@@ -270,8 +261,6 @@ Ext.define('AM.view.directory.NewJobForm', {
                     }]
                 }]
 
-
-
             }],
 
             dockedItems: [{
@@ -303,7 +292,6 @@ Ext.define('AM.view.directory.NewJobForm', {
         var me = this;
         var win = me.up('window');
         var form = me.getForm();
-        //var state = form.findField('state').getValue();
         var node = me.node;
         var folderSiteId;
 
