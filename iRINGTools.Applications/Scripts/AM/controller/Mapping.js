@@ -331,7 +331,7 @@ Ext.define('AM.controller.Mapping', {
                 'graph': graphName,
                 'graphId':graphId,
                 'endpoint': endpoint,
-                'itemId': panelItemId,
+                'itemId': panelItemId
             });
             var mapProp = mapPanel.down('propertypanel');
 
