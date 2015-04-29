@@ -51,8 +51,8 @@ namespace org.iringtools.utility
     {
         File,
         FormData,
-        RawFile,
-        RawData
+        Base64File,
+        Data
     }
 
     public class WebHttpClient : IWebHttpClient
@@ -63,6 +63,9 @@ namespace org.iringtools.utility
         private string _baseUri = String.Empty;
         private NetworkCredential _credentials = null;
         private IWebProxy _proxy = null;
+        private string _proxyHost = null;
+        private int _proxyPort = 8080;
+        private string _proxyCredentialToken = null;
         private string _appKey = String.Empty;
         private string _accessToken = String.Empty;
         private string _contentType = String.Empty;
@@ -86,6 +89,18 @@ namespace org.iringtools.utility
             object appKey = ConfigurationManager.AppSettings["AppKey"];
             if (appKey != null)
                 _appKey = appKey.ToString();
+
+            object proxyHost = ConfigurationManager.AppSettings["ProxyHost"];
+            if (proxyHost != null)
+                _proxyHost = proxyHost.ToString();
+
+            object proxyPort = ConfigurationManager.AppSettings["ProxyPort"];
+            if (proxyPort != null)
+                int.TryParse(proxyPort.ToString(), out _proxyPort);
+
+            object proxyCredentialToken = ConfigurationManager.AppSettings["ProxyCredentialToken"];
+            if (proxyCredentialToken != null)
+                _proxyCredentialToken = proxyCredentialToken.ToString();
         }
 
         public WebHttpClient(string baseUri, string userName, string password)
@@ -322,6 +337,16 @@ namespace org.iringtools.utility
 
         private void PrepareCredentials(WebRequest request)
         {
+            if (!string.IsNullOrEmpty(_proxyHost))
+            {
+                WebCredentials proxyCreds = new WebCredentials(_proxyCredentialToken);
+                if (proxyCreds.isEncrypted) proxyCreds.Decrypt();
+
+                WebProxy proxy = new WebProxy(_proxyHost, _proxyPort);
+                proxy.Credentials = proxyCreds.GetNetworkCredential();
+                request.Proxy = proxy;
+            }
+
             if (_credentials == null)
             {
                 request.Credentials = CredentialCache.DefaultCredentials;
@@ -336,7 +361,17 @@ namespace org.iringtools.utility
             if (_proxy != null)
             {
                 request.Proxy = _proxy;
-                _logger.Debug("Use proxy.");
+                _logger.Debug("Use passed in proxy.");
+            }
+            else if (!string.IsNullOrEmpty(_proxyHost))
+            {
+                _logger.Debug("Use proxy settings.");
+                WebCredentials proxyCreds = new WebCredentials(_proxyCredentialToken);
+                if (proxyCreds.isEncrypted) proxyCreds.Decrypt();
+
+                WebProxy proxy = new WebProxy(_proxyHost, _proxyPort);
+                proxy.Credentials = proxyCreds.GetNetworkCredential();
+                request.Proxy = proxy;
             }
         }
 
@@ -1152,12 +1187,12 @@ namespace org.iringtools.utility
                 _logger.Debug(string.Format("Performing POST multipart message to URL [{0}]...", uri));
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-                request.ContentType = "multipart/form-data; boundary=" + _boundary;
+                request.AllowWriteStreamBuffering = false;
                 request.Method = "POST";
                 request.Timeout = Timeout;
                 MemoryStream stream = new MemoryStream();
-                string header = string.Empty;
-
+                string header = String.Empty;
+                bool isFormData = false;
                 foreach (MultiPartMessage requestMessage in requestMessages)
                 {
                     Stream fileData = null;
@@ -1166,9 +1201,6 @@ namespace org.iringtools.utility
                         case MultipartMessageType.File:
                             header = string.Format("--{0}\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
                             stream.Write(encoding.GetBytes(header), 0, header.Length);
-
-                            //byte[] fileData = (byte[])requestMessage.message;
-                            //stream.Write(fileData, 0, fileData.Length);
 
                             fileData = (Stream)requestMessage.message;
                             fileData.CopyTo(stream);
@@ -1179,20 +1211,15 @@ namespace org.iringtools.utility
                         case MultipartMessageType.FormData:
                             header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n", _boundary, requestMessage.name, requestMessage.message);
                             stream.Write(encoding.GetBytes(header), 0, header.Length);
+                            isFormData = true;
                             break;
 
-                        case MultipartMessageType.RawFile:
-                            header = string.Format("--{0}\r\nX-Filename=\"{1}\"\r\n\r\n", _boundary, requestMessage.fileName);
-                            stream.Write(encoding.GetBytes(header), 0, header.Length);
-
-                            fileData = (Stream)requestMessage.message;
-                            fileData.CopyTo(stream);
-
-                            //add linefeed to enable multiple posts
-                            stream.Write(encoding.GetBytes("\r\n"), 0, 2);
+                        case MultipartMessageType.Base64File:
+                            header = string.Format("--{0}\r\nX-Filename: {1}\r\n\r\n{2}\r\n", _boundary, requestMessage.fileName, requestMessage.message);
+                            stream.Write(encoding.GetBytes(header.ToString()), 0, header.Length);
                             break;
 
-                        case MultipartMessageType.RawData:
+                        case MultipartMessageType.Data:
                             header = string.Format("--{0}\r\n\r\n{1}\r\n", _boundary, requestMessage.message);
                             stream.Write(encoding.GetBytes(header), 0, header.Length);
                             break;
@@ -1202,9 +1229,18 @@ namespace org.iringtools.utility
                 header = string.Format("--{0}--\r\n", _boundary);
                 stream.Write(encoding.GetBytes(header), 0, header.Length);
 
+                if (isFormData)
+                {
+                    request.ContentType = "multipart/form-data; boundary=" + _boundary;
+                }
+                else
+                {
+                    request.ContentType = "multipart/mixed; boundary=" + _boundary;
+                }
+
                 PrepareCredentials(request);
                 PrepareHeaders(request);
-
+                
                 request.ContentLength = stream.Length;
                 request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
 
