@@ -480,7 +480,7 @@ Ext.define('AM.controller.Mapping', {
         var formRecord = {
             //            'scope': mapPanel.contextName,
             //            'app': mapPanel.endpoint,
-            'graphId':graphId,
+            'graphId': graphId,
             'graph': graph, //mapPanel.graph,
             'templateIndex': index,
             'roleName': roleName, //node.data.text,
@@ -511,6 +511,7 @@ Ext.define('AM.controller.Mapping', {
         var mappingNode = node.parentNode.data.parentId + '/' + id[id.length - 1] + '/' + node.data.record.name;
         var rootNodeId = tree.getRootNode().childNodes[0].internalId;
         var graph = rootNodeId.split('/')[1];
+        var graphId = content.getActiveTab().graphId;
         var mapPanel = content.items.map[itemId]; //content.items.map['GraphMap-' + graph];
         win = Ext.widget('propertymapwindow', {
             'classId': node.parentNode.parentNode.data.identifier,
@@ -520,9 +521,10 @@ Ext.define('AM.controller.Mapping', {
         var index = node.parentNode.parentNode.indexOf(node.parentNode);
 
         var formRecord = {
-            'contextName': mapPanel.contextName,
-            'endpoint': mapPanel.endpoint,
+            // 'contextName': mapPanel.contextName,
+            //'endpoint': mapPanel.endpoint,
             'graphName': graph,
+            'graphId': graphId,
             'index': index,
             'mappingNode': mappingNode,
             'classId': node.parentNode.parentNode.data.identifier,
