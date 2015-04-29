@@ -337,15 +337,15 @@ namespace org.iringtools.utility
 
         private void PrepareCredentials(WebRequest request)
         {
-            if (!string.IsNullOrEmpty(_proxyHost))
-            {
-                WebCredentials proxyCreds = new WebCredentials(_proxyCredentialToken);
-                if (proxyCreds.isEncrypted) proxyCreds.Decrypt();
+            //if (!string.IsNullOrEmpty(_proxyHost))
+            //{
+            //    WebCredentials proxyCreds = new WebCredentials(_proxyCredentialToken);
+            //    if (proxyCreds.isEncrypted) proxyCreds.Decrypt();
 
-                WebProxy proxy = new WebProxy(_proxyHost, _proxyPort);
-                proxy.Credentials = proxyCreds.GetNetworkCredential();
-                request.Proxy = proxy;
-            }
+            //    WebProxy proxy = new WebProxy(_proxyHost, _proxyPort);
+            //    proxy.Credentials = proxyCreds.GetNetworkCredential();
+            //    request.Proxy = proxy;
+            //}
 
             if (_credentials == null)
             {
