@@ -366,7 +366,7 @@ namespace org.iringtools.web.controllers
                 }
 
                 ClassTemplateMap classTemplateMap =
-                  graphMap.classTemplateMaps.Find(ctm => ctm.classMap.name == className);
+                graphMap.classTemplateMaps.Find(ctm => ctm.classMap.name == className);
 
                 if (classTemplateMap == null) { return; }
                 TemplateMap templateMap =
@@ -1179,10 +1179,10 @@ namespace org.iringtools.web.controllers
                 int classIndex = Convert.ToInt16(form["classIndex"]);
                 string roleName = mappingCtx[mappingCtx.Length - 1];
                 int index = Convert.ToInt16(form["index"]);
-               // Guid graphId = Guid.Parse(form["graphId"]);
+                Guid graphId = Guid.Parse(form["graphId"]);
 
                 GraphMap graphMap = null;
-                Guid graphId = Guid.Parse("1162f454-700e-4766-83c0-c36b2bfb43c1");
+               
                 if (System.Web.HttpContext.Current.Session["graphMap"] != null)
                 {
                     graphMap = System.Web.HttpContext.Current.Session["graphMap"] as GraphMap;
