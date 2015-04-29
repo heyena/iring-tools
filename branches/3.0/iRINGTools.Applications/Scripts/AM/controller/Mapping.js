@@ -317,7 +317,7 @@ Ext.define('AM.controller.Mapping', {
         var context = node.data.id.split('/')[0];
         var endpoint = node.data.id.split('/')[1];
         var graphName = node.internalId;
-        var graphId=node.internalId;
+        var graphId = node.internalId;
         var title = 'Graph.' + context + "." + endpoint + '.' + node.data.text;
         var panelItemId = 'GraphMap.' + context + "." + endpoint + '.' + node.data.text;
         var templateTypes = ['Qualification', 'Definition']
@@ -329,7 +329,7 @@ Ext.define('AM.controller.Mapping', {
                 'title': title,
                 'contextName': context,
                 'graph': graphName,
-                'graphId':graphId,
+                'graphId': graphId,
                 'endpoint': endpoint,
                 'itemId': panelItemId
             });
@@ -434,6 +434,7 @@ Ext.define('AM.controller.Mapping', {
         var tree = content.getActiveTab().items.items[0];
         var endPoint = content.getActiveTab().endpoint;
         var contextName = content.getActiveTab().contextName;
+        var graphId = content.getActiveTab().graph;
         var tempGraph = content.getActiveTab().graph.split('/');
         var graph = tempGraph[tempGraph.length - 1];
         var itemId = 'GraphMap.' + contextName + '.' + endPoint + '.' + graph;
@@ -477,8 +478,9 @@ Ext.define('AM.controller.Mapping', {
         }, me);
 
         var formRecord = {
-//            'scope': mapPanel.contextName,
-//            'app': mapPanel.endpoint,
+            //            'scope': mapPanel.contextName,
+            //            'app': mapPanel.endpoint,
+            'graphId':graphId,
             'graph': graph, //mapPanel.graph,
             'templateIndex': index,
             'roleName': roleName, //node.data.text,
@@ -920,15 +922,15 @@ Ext.define('AM.controller.Mapping', {
             },
             success: function (response, request) {
 
-                   var objResponseText = Ext.decode(response.responseText);
-                    var parentNode = node.parentNode;
-                    parentNode.removeChild(node);
-                    tree.getSelectionModel().select(parentNode);
-                    tree.view.refresh();
-                   // me.getDirTree().onReload();
+                var objResponseText = Ext.decode(response.responseText);
+                var parentNode = node.parentNode;
+                parentNode.removeChild(node);
+                tree.getSelectionModel().select(parentNode);
+                tree.view.refresh();
+                // me.getDirTree().onReload();
 
-                    var currentNode;
-                    Ext.example.msg('Notification', 'Graph deleted successfully!');
+                var currentNode;
+                Ext.example.msg('Notification', 'Graph deleted successfully!');
 
 
             },
