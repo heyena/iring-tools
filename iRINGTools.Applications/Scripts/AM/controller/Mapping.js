@@ -453,8 +453,8 @@ Ext.define('AM.controller.Mapping', {
         me.getParentClass(node);
         var index = node.parentNode.parentNode.indexOf(node.parentNode);
         var win = Ext.widget('classmapwindow', {
-            mappingNode: node,
-            formid: 'propertytarget-' + mapPanel.contextName + '-' + mapPanel.endpoint
+            mappingNode: node
+            //formid: 'propertytarget-' + mapPanel.contextName + '-' + mapPanel.endpoint
         });
 
         win.on('save', function (arg) {
@@ -477,8 +477,8 @@ Ext.define('AM.controller.Mapping', {
         }, me);
 
         var formRecord = {
-            'scope': mapPanel.contextName,
-            'app': mapPanel.endpoint,
+//            'scope': mapPanel.contextName,
+//            'app': mapPanel.endpoint,
             'graph': graph, //mapPanel.graph,
             'templateIndex': index,
             'roleName': roleName, //node.data.text,
