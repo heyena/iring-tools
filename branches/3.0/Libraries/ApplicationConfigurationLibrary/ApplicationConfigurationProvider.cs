@@ -21,7 +21,6 @@ using System.Net;
 using org.iringtools.adapter.projection;
 using org.iringtools.library.tip;
 
-
 namespace org.iringtools.applicationConfig
 {
     public class ApplicationConfigurationProvider : BaseProvider
@@ -1737,7 +1736,7 @@ namespace org.iringtools.applicationConfig
                 _logger.Debug("Initializing DataLayer.");
                 InitializeDataLayer(parentApplicationOfDataObject, ref dictionaryFromDB);
 
-                InsertDictionary(XDocument.Parse(Utility.Serialize<DatabaseDictionary>((DatabaseDictionary)dictionaryFromDB, true)));
+                UpdateDictionary(XDocument.Parse(Utility.Serialize<DatabaseDictionary>((DatabaseDictionary)dictionaryFromDB, true)));
 
                 _logger.DebugFormat("Initializing Projection: {0} as {1}", dataObject.objectName, format);
                 InitializeProjection(dataObject, ref format, false);
@@ -1876,6 +1875,49 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
+        public Response UpdateDictionary(XDocument xml)
+        {
+            Response response = new Response();
+            response.Messages = new Messages();
+
+            try
+            {
+                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@rawXml", Value = rawXml });
+
+                    string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuDictionary", nvl);
+
+                    switch (output)
+                    {
+                        case "1":
+                            PrepareSuccessResponse(response, "dictionaryUpdated");
+                            break;
+                        default:
+                            PrepareErrorResponse(response, output);
+                            break;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding dictionary: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
         public Exchange GetExchangeByExchangeID(string userName, Guid exchangeID)
         {
             Exchange exchange = new Exchange();
@@ -1897,12 +1939,10 @@ namespace org.iringtools.applicationConfig
 
         public string GetDataModeByDataObjectId(Guid dataObjectId)
         {
-
             string output = string.Empty;
 
             try
             {
-
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     NameValueList nvl = new NameValueList();
