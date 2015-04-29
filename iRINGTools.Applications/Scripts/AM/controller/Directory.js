@@ -804,51 +804,19 @@ Ext.define('AM.controller.Directory', {
                 callback: function (records, response) {
                     if (records != undefined) {
                         if (records[0]) {
-
-                            Ext.Ajax.request({
-                                url: 'directory/GetNode',
-                                method: 'POST',
-                                params: {
-                                    type: 'ApplicationNode',
-                                    record: applicationNode.data.record
-                                },
-                                success: function (response, request) {
-
-                                    gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
-
-                                    while (applicationNode.hasChildNodes()) {
-                                        applicationNode.removeChild(applicationNode.firstChild);
-                                    }
-
-
-                                    var index = 0;
-
-                                    Ext.each(Ext.JSON.decode(response.responseText), function (newNode) {
-                                        applicationNode.insertChild(index, newNode);
-                                        index++;
-                                    });
-
-                                    tree.onReload();
-                                },
-                                failure: function (response, request) {
-                                    tree.getEl().unmask();
-                                    Ext.widget('messagepanel', {
-                                        title: 'Warning',
-                                        msg: 'Error Refreshing Facade!!!'
-                                    });
-                                }
-                            });
+                            gridPanel.reconfigure(gridStore, records[0].store.proxy.reader.metaData.columns);
                         } else {
                             if (response) { }
                             return true;
                         }
                     }
-
                 }
             });
+
             content.getEl().unmask();
             content.add(gridPanel);
         }
+
         content.setActiveTab(gridPanel);
     },
 

@@ -342,7 +342,7 @@ namespace org.iringtools.adapter
                 }
                 else
                 {
-                    dictionaryFromDB = _dictionary;
+                    CreateDictonaryForDatabase(ref dictionaryFromDB);
                 }
             }
             catch (Exception e)
@@ -352,6 +352,255 @@ namespace org.iringtools.adapter
             }
 
             return _dictionary;
+        }
+
+        private void CreateDictonaryForDatabase(ref DataDictionary dictionaryFromDB)
+        {
+            //TODO: removal of object from collection under iteration might not happen. So, need to be handled accordingly before release.
+            foreach (DataObject dataObjectFromDB in dictionaryFromDB.dataObjects)
+            {
+                DataObject dataObject = _dictionary.dataObjects.Find(dObj => dObj.objectName == dataObjectFromDB.objectName);
+
+                if (dataObject == null)
+                {
+                    dictionaryFromDB.dataObjects.Remove(dataObjectFromDB);
+                }
+            }
+
+            foreach (DataObject dataObject in _dictionary.dataObjects)
+            {
+                DataObject dataObjectFromDB = dictionaryFromDB.dataObjects.Find(dObj => dObj.objectName == dataObject.objectName);
+
+                if (dataObjectFromDB == null)
+                {
+                    dataObject.dataObjectId = new Guid();
+
+                    dataObject.dataFilter.DataFilterId = new Guid();
+
+                    foreach (DataProperty dataProperty in dataObject.dataProperties)
+                    {
+                        dataProperty.dataPropertyId = new Guid();
+                        dataProperty.dataObjectId = dataObject.dataObjectId;
+                    }
+
+                    foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+                    {
+                        dataRelationship.relationshipId = new Guid();
+                        dataRelationship.dataObjectId = dataObject.dataObjectId;
+                    }
+
+                    foreach (ExtensionProperty extensionProperty in dataObject.extensionProperties)
+                    {
+                        extensionProperty.extensionPropertyId = new Guid();
+                        extensionProperty.dataObjectId = dataObject.dataObjectId;
+                    }
+
+                    dictionaryFromDB.dataObjects.Add(dataObject);
+                }
+                else
+                {
+                    dataObjectFromDB.dataFilter.Active = 1;
+                    dataObjectFromDB.dataFilter.isAdmin = dataObject.dataFilter.isAdmin;
+                    dataObjectFromDB.dataFilter.ResourceId = dataObjectFromDB.dataObjectId;
+                    dataObjectFromDB.dataFilter.DataFilterTypeId = 3;
+
+                    foreach (Expression expressionFromDB in dataObjectFromDB.dataFilter.Expressions)
+                    {
+                        Expression expression = dataObject.dataFilter.Expressions.Find(expr => expr.PropertyName == expressionFromDB.PropertyName);
+
+                        if (expression == null)
+                        {
+                            dataObjectFromDB.dataFilter.Expressions.Remove(expressionFromDB);
+                        }
+                    }
+
+                    foreach (OrderExpression orderExpressionFromDB in dataObjectFromDB.dataFilter.OrderExpressions)
+                    {
+                        OrderExpression orderExpression = dataObject.dataFilter.OrderExpressions.Find(dRel => dRel.PropertyName == orderExpressionFromDB.PropertyName);
+
+                        if (orderExpression == null)
+                        {
+                            dataObjectFromDB.dataFilter.OrderExpressions.Remove(orderExpressionFromDB);
+                        }
+                    }
+
+                    foreach (Expression expression in dataObject.dataFilter.Expressions)
+                    {
+                        Expression expressionFromDB = dataObjectFromDB.dataFilter.Expressions.Find(expr => expr.PropertyName == expression.PropertyName);
+
+                        if (expressionFromDB == null)
+                        {
+                            expression.ExpressionId = new Guid();
+
+                            expression.DataFilterId = dataObjectFromDB.dataFilter.DataFilterId;
+
+                            dataObjectFromDB.dataFilter.Expressions.Add(expression);
+                        }
+                        else
+                        {
+                            expressionFromDB.CloseGroupCount = expression.CloseGroupCount;
+                            expressionFromDB.IsCaseSensitive = expression.IsCaseSensitive;
+                            expressionFromDB.LogicalOperator = expression.LogicalOperator;
+                            expressionFromDB.OpenGroupCount = expression.OpenGroupCount;
+                            expressionFromDB.RelationalOperator = expression.RelationalOperator;
+                            expressionFromDB.Values = expression.Values;
+                        }
+                    }
+
+                    foreach (OrderExpression orderExpression in dataObject.dataFilter.OrderExpressions)
+                    {
+                        OrderExpression orderExpressionFromDB = dataObjectFromDB.dataFilter.OrderExpressions.Find(dRel => dRel.PropertyName == orderExpression.PropertyName);
+
+                        if (orderExpressionFromDB == null)
+                        {
+                            orderExpression.OrderExpressionId = new Guid();
+
+                            orderExpression.DataFilterId = dataObjectFromDB.dataFilter.DataFilterId;
+
+                            dataObjectFromDB.dataFilter.OrderExpressions.Add(orderExpression);
+                        }
+                        else
+                        {
+                            orderExpressionFromDB.SortOrder = orderExpression.SortOrder;
+                        }
+                    }
+
+                    //TODO: RollupExpressions are created new everytime as of now
+                    foreach (RollupExpression rollupExpression in dataObject.dataFilter.RollupExpressions)
+                    {
+                        rollupExpression.RollupExpressionId = new Guid();
+
+                        foreach (Rollup rollup in rollupExpression.Rollups)
+                        {
+                            rollup.RollupId = new Guid();
+
+                            rollup.RollupExpressionId = rollupExpression.RollupExpressionId;
+                        }
+                    }
+
+                    dataObjectFromDB.dataFilter.RollupExpressions = dataObject.dataFilter.RollupExpressions;
+
+                    foreach (DataProperty dataPropertyFromDB in dataObjectFromDB.dataProperties)
+                    {
+                        DataProperty dataProperty = dataObject.dataProperties.Find(dProp => dProp.propertyName == dataPropertyFromDB.propertyName);
+
+                        if (dataProperty == null)
+                        {
+                            dataObjectFromDB.dataProperties.Remove(dataPropertyFromDB);
+                        }
+                    }
+
+                    foreach (DataRelationship dataRelationshipFromDB in dataObjectFromDB.dataRelationships)
+                    {
+                        DataRelationship dataRelationship = dataObject.dataRelationships.Find(dRel => dRel.relationshipName == dataRelationshipFromDB.relationshipName);
+
+                        if (dataRelationship == null)
+                        {
+                            dataObjectFromDB.dataRelationships.Remove(dataRelationshipFromDB);
+                        }
+                    }
+
+                    foreach (ExtensionProperty extensionPropertyFromDB in dataObjectFromDB.extensionProperties)
+                    {
+                        ExtensionProperty extensionProperty = dataObjectFromDB.extensionProperties.Find(eProp => eProp.propertyName == extensionPropertyFromDB.propertyName);
+
+                        if (extensionProperty == null)
+                        {
+                            dataObjectFromDB.extensionProperties.Remove(extensionPropertyFromDB);
+                        }
+                    }
+
+                    foreach (DataProperty dataProperty in dataObject.dataProperties)
+                    {
+                        DataProperty dataPropertyFromDB = dataObjectFromDB.dataProperties.Find(dProp => dProp.propertyName == dataProperty.propertyName);
+
+                        if (dataPropertyFromDB == null)
+                        {
+                            dataProperty.dataPropertyId = new Guid();
+                            //dataProperty.pickListId
+
+                            dataProperty.dataObjectId = dataObjectFromDB.dataObjectId;
+
+                            dataObjectFromDB.dataProperties.Add(dataProperty);
+                        }
+                        else
+                        {
+                            dataPropertyFromDB.aliasDictionary = dataProperty.aliasDictionary;
+                            dataPropertyFromDB.columnName = dataProperty.columnName;
+                            dataPropertyFromDB.dataLength = dataProperty.dataLength;
+                            dataPropertyFromDB.dataType = dataProperty.dataType;
+                            dataPropertyFromDB.description = dataProperty.description;
+                            dataPropertyFromDB.isHidden = dataProperty.isHidden;
+                            dataPropertyFromDB.isNullable = dataProperty.isNullable;
+                            dataPropertyFromDB.isReadOnly = dataProperty.isReadOnly;
+                            dataPropertyFromDB.isVirtual = dataProperty.isVirtual;
+                            dataPropertyFromDB.keyType = dataProperty.keyType;
+                            dataPropertyFromDB.numberOfDecimals = dataProperty.numberOfDecimals;
+                            dataPropertyFromDB.precision = dataProperty.precision;
+                            dataPropertyFromDB.referenceType = dataProperty.referenceType;
+                            dataPropertyFromDB.scale = dataProperty.scale;
+                            dataPropertyFromDB.showOnIndex = dataProperty.showOnIndex;
+                            dataPropertyFromDB.showOnSearch = dataProperty.showOnSearch;
+                        }
+                    }
+
+                    foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+                    {
+                        DataRelationship dataRelationshipFromDB = dataObjectFromDB.dataRelationships.Find(dRel => dRel.relationshipName == dataRelationship.relationshipName);
+                        
+                        if (dataRelationshipFromDB == null)
+                        {
+                            dataRelationship.relationshipId = new Guid();
+
+                            dataRelationship.dataObjectId = dataObjectFromDB.dataObjectId;
+
+                            dataObjectFromDB.dataRelationships.Add(dataRelationship);
+                        }
+                        else
+                        {
+                            dataRelationshipFromDB.propertyMaps = dataRelationship.propertyMaps;
+                            dataRelationshipFromDB.relatedObjectName = dataRelationship.relatedObjectName;
+                            dataRelationshipFromDB.relationshipType = dataRelationship.relationshipType;
+                        }
+                    }
+
+                    foreach (ExtensionProperty extensionProperty in dataObject.extensionProperties)
+                    {
+                        ExtensionProperty extensionPropertyFromDB = dataObjectFromDB.extensionProperties.Find(eProp => eProp.propertyName == extensionProperty.propertyName);
+
+                        if (extensionPropertyFromDB == null)
+                        {
+                            extensionProperty.extensionPropertyId = new Guid();
+
+                            extensionProperty.dataObjectId = dataObjectFromDB.dataObjectId;
+
+                            dataObjectFromDB.extensionProperties.Add(extensionProperty);
+                        }
+                        else
+                        {
+                            extensionPropertyFromDB.dataType = extensionProperty.dataType;
+                            extensionPropertyFromDB.definition = extensionProperty.definition;
+                            extensionPropertyFromDB.columnName = extensionProperty.columnName;
+                            extensionPropertyFromDB.dataLength = extensionProperty.dataLength;
+                            extensionPropertyFromDB.isNullable = extensionProperty.isNullable;
+                            extensionPropertyFromDB.keyType = extensionProperty.keyType;
+                            extensionPropertyFromDB.numberOfDecimals = extensionProperty.numberOfDecimals;
+                            extensionPropertyFromDB.precision = extensionProperty.precision;
+                            extensionPropertyFromDB.scale = extensionProperty.scale;
+                            extensionPropertyFromDB.showOnIndex = extensionProperty.showOnIndex;
+                        }
+                    }
+
+                }
+            }
+
+            dictionaryFromDB.dataVersion = _dictionary.dataVersion;
+            dictionaryFromDB.description = _dictionary.description;
+            dictionaryFromDB.enableSearch = _dictionary.enableSearch;
+            dictionaryFromDB.enableSummary = _dictionary.enableSummary;
+            dictionaryFromDB.isDBDictionary = _dictionary.isDBDictionary;
+
+            //TODO: Might need to handle PickList too over here
         }
 
         public Response RefreshCache(bool updateDictionary)
