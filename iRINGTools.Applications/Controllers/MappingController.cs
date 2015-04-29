@@ -45,9 +45,7 @@ namespace org.iringtools.web.controllers
 
 
         string userName = System.Web.HttpContext.Current.Session["userName"].ToString();
-        //string userName = "WorldTest";
-
-
+        
         public MappingController() : this(new MappingRepository()) { }
 
         public MappingController(IMappingRepository repository)
@@ -104,9 +102,20 @@ namespace org.iringtools.web.controllers
                 string newEdit = form["newEdit"];
                 int parentClassIndex = int.Parse(form["parentClassIndex"]);
                 int classIndex = int.Parse(form["classIndex"]);
+                GraphMap graphMap = null;
+                Guid graphId = Guid.Parse(form["graphId"]);
+                //Guid graphId = Guid.Parse("1162f454-700e-4766-83c0-c36b2bfb43c1");
+                if (System.Web.HttpContext.Current.Session["graphMap"] != null)
+                {
+                    graphMap = System.Web.HttpContext.Current.Session["graphMap"] as GraphMap;
+                }
 
-                Mapping mapping = GetMapping(scope, app);
-                GraphMap graphMap = mapping.FindGraphMap(graph);
+                else
+                {
+                    org.iringtools.applicationConfig.Graph Objgraph = _repository.GetGraphByGrapgId(userName, graphId);
+                    graphMap = (GraphMap)DeserializeObject(Objgraph.graph);
+                }
+
                 ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId, parentClassIndex);
 
                 if (ctm != null)
@@ -149,7 +158,7 @@ namespace org.iringtools.web.controllers
                             classMapNode = CreateClassNode(classMap);
                             roleMapeNode.children.Add(classMapNode);
                             CreateClassMapNode(graphMap, classMap, classMapNode);
-
+                            System.Web.HttpContext.Current.Session["graphMap"] = graphMap;
                             break;
                         }
                     }
@@ -158,7 +167,6 @@ namespace org.iringtools.web.controllers
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
-                //return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
                 _CustomErrorLog = new CustomErrorLog();
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIAddClassMap, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
@@ -267,6 +275,7 @@ namespace org.iringtools.web.controllers
                     graphMap.AddTemplateMap(selectedClassMap, newTemplateMap);
 
                     //saving in session new code
+                                        
                     System.Web.HttpContext.Current.Session["graphMap"] = graphMap;
 
                     // end of saving
@@ -284,18 +293,12 @@ namespace org.iringtools.web.controllers
             }
             catch (Exception ex)
             {
-                //string msg = ex.ToString();
-                //_logger.Error(msg);
-                //return Json(new { success = false, message = msg }, JsonRequestBehavior.AllowGet);
                 _logger.Error(ex.ToString());
                 _CustomErrorLog = new CustomErrorLog();
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIAddTemplateMap, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
-
-
             }
         
-            
             return Json(new { success = true, node = nodes }, JsonRequestBehavior.AllowGet);
         }
 
@@ -321,29 +324,15 @@ namespace org.iringtools.web.controllers
                 org.iringtools.applicationConfig.Graph graph = _repository.GetGraphByGrapgId(userName, graphId);
 
                 graphMap = (GraphMap)DeserializeObject(graph.graph);
-                
-
-                //if (!string.IsNullOrEmpty(graphName))
-                //    graphMap = mapping.graphMaps.FirstOrDefault<GraphMap>(o => o.name == graphName);
-
+                if (System.Web.HttpContext.Current.Session["graphMap"] != null)
+                {
+                    System.Web.HttpContext.Current.Session["graphMap"] = null;
+                }
+                             
                 if (graphMap != null)
                 {
                     graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
-                    //if (form["type"] == "MappingNode")
-                    //{
-                    //    foreach (var graph in mapping.graphMaps)
-                    //    {
-                    //        if (graphMap != null && graphMap.name != graph.name)
-                    //            continue;
-
-                    //        JsonTreeNode graphNode = CreateGraphNode(context, graph, graphClassMap);
-                    //        nodes.Add(graphNode);
-                    //        graphNode.children = new List<JsonTreeNode>();
-                    //        CreateGraphMapNode(graphMap, graphClassMap, graphNode.id, graphNode.children);
-                    //    }
-                    //}
-
-
+                   
                     if (form["type"] == "MappingNode")
                     {
                         JsonTreeNode graphNode = CreateGraphNode(context, graphMap, graphClassMap);
@@ -361,7 +350,6 @@ namespace org.iringtools.web.controllers
                 _CustomErrorLog = new CustomErrorLog();
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIGetMappingNode, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
-
 
             }
         }
@@ -897,26 +885,24 @@ namespace org.iringtools.web.controllers
                 string classId = form["classId"];
                 Guid applicationId = Guid.Empty;
                 Guid contextId = Guid.Empty; ;
-                //applicationId = Guid.Parse(form["applicationId"]);
-                //contextId = Guid.Parse(form["applicationId"]);
+                
 
 
                 string context = string.Format("{0}/{1}/Graphs", scope, app);
-                Mapping mapping = GetMapping(scope, app);
+             
                 GraphMap graphMap = null;
                 string groups = form["ResourceGroups"];
-                ;
+                
                 bool qn = false;
                 qn = _nsMap.ReduceToQName(classId, out qName);
 
-                //   if (string.IsNullOrEmpty(oldGraphName))
+                
                 if (!string.IsNullOrEmpty(form["applicationId"].ToString().Trim()) || !string.IsNullOrWhiteSpace(form["applicationId"].ToString().Trim()))
                 {
                     applicationId = Guid.Parse(form["applicationId"]);
                     contextId = Guid.Parse(form["applicationId"]);
 
-                    if (mapping.graphMaps == null)
-                        mapping.graphMaps = new GraphMaps();
+                   
 
                     graphMap = new GraphMap
                       {
@@ -949,13 +935,12 @@ namespace org.iringtools.web.controllers
 
                     graphMap.AddClassMap(null, classMap);
 
-                    mapping.graphMaps.Add(graphMap);
+                 
                     insertGraph(scope, app, graphMap, applicationId, groups);
                 }
                 else // Edit existing graph
                 {
-                    // graphMap = mapping.FindGraphMap(oldGraphName);//Get graph with old name
-                    // Guid graphId = Guid.Parse("E7513986-5FB9-48A9-B7BC-07005A5FD9E1");
+                    
                     Guid graphId = Guid.Parse(form["graphId"]);
 
                     org.iringtools.applicationConfig.Graph graph = _repository.GetGraphByGrapgId(userName, graphId);
@@ -1014,16 +999,14 @@ namespace org.iringtools.web.controllers
                             classMap.identifiers.Add(identifier);
                         }
                         graphMap.AddClassMap(null, classMap);
-                        mapping.graphMaps.Add(graphMap);
+                       
                     }
                     UpdatetGraph(scope, app, graphMap, applicationId, groups, graphId.ToString());
 
 
 
                 }
-                //DoUpdateMapping(scope, app, mapping,applicationId);
-
-                // insertGraph(scope, app, graphMap, applicationId, groups);
+                
 
                 graphNode = new JsonTreeNode
                 {
@@ -1051,7 +1034,7 @@ namespace org.iringtools.web.controllers
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIGraphMapping, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
 
-                //return Json(new { success = false, message = ex.ToString() }, JsonRequestBehavior.AllowGet);
+                
             }
             return Json(new { success = true, node = graphNode }, JsonRequestBehavior.AllowGet);
         }
@@ -1063,15 +1046,8 @@ namespace org.iringtools.web.controllers
         {
             string scope = form["scope"];
             string application = form["application"];
-            //Mapping mapping = GetMapping(scope, application);
-            //Guid applicationId = Guid.Parse(form["applicationId"]);
-            //foreach (var graph in mapping.graphMaps)
-            //    graph.RearrangeIndexAndPath();
-
-            //return DoUpdateMapping(scope, application, mapping);
             Guid graphId = Guid.Parse(form["graphId"]);
             org.iringtools.applicationConfig.Graph graph = _repository.GetGraphByGrapgId(userName, graphId);
-          //  GraphMap graphMap = (GraphMap)DeserializeObject(graph.graph);
             GraphMap graphMap = System.Web.HttpContext.Current.Session["graphMap"] as GraphMap;
 
 
@@ -1195,7 +1171,7 @@ namespace org.iringtools.web.controllers
                 string scope = form["contextName"];//mappingCtx[0];
                 string application = form["endpoint"];//mappingCtx[1];
                 string graphName = form["graphName"];//mappingCtx[2];
-                //string parentNodeId = form["parentNodeId"];
+                
 
                 string classId = form["classId"];
                 string[] classCtx = classId.Split(',');
@@ -1203,8 +1179,21 @@ namespace org.iringtools.web.controllers
                 int classIndex = Convert.ToInt16(form["classIndex"]);
                 string roleName = mappingCtx[mappingCtx.Length - 1];
                 int index = Convert.ToInt16(form["index"]);
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graphName);
+               // Guid graphId = Guid.Parse(form["graphId"]);
+
+                GraphMap graphMap = null;
+                Guid graphId = Guid.Parse("1162f454-700e-4766-83c0-c36b2bfb43c1");
+                if (System.Web.HttpContext.Current.Session["graphMap"] != null)
+                {
+                    graphMap = System.Web.HttpContext.Current.Session["graphMap"] as GraphMap;
+                }
+
+                else
+                {
+                    org.iringtools.applicationConfig.Graph Objgraph = _repository.GetGraphByGrapgId(userName, graphId);
+                    graphMap = (GraphMap)DeserializeObject(Objgraph.graph);
+                }
+
                 ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId, classIndex);
 
                 if (ctMap != null)
@@ -1229,14 +1218,10 @@ namespace org.iringtools.web.controllers
             }
             catch (Exception ex)
             {
-                //string msg = ex.ToString();
-                //_logger.Error(msg);
-                //return Json(new { success = false, message = msg }, JsonRequestBehavior.AllowGet);
                 _logger.Error(ex.ToString());
                 _CustomErrorLog = new CustomErrorLog();
                 _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUIMapProperty, ex, _logger);
                 return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
-
             }
 
             return Json(new { success = true, node = roleMapNode }, JsonRequestBehavior.AllowGet);
