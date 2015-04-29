@@ -179,8 +179,15 @@ namespace org.iringtools.library
                             }
                             else if (dataProp.dataType == DataType.Date || dataProp.dataType == DataType.DateTime)
                             {
-                                DateTime dateTime = Utility.FromXsdDateTime(prop.Value.ToString());
-                                builder.Append("," + prop.Key + "='" + dateTime.ToString() + "'");
+                                if (prop.Value != "")
+                                {
+                                    DateTime dateTime = Utility.FromXsdDateTime(prop.Value.ToString());
+                                    builder.Append("," + prop.Key + "='" + dateTime.ToString() + "'");
+                                }
+                                else
+                                {
+                                    builder.Append("," + prop.Key + "= null");
+                                }
                             }
                             else
                             {
