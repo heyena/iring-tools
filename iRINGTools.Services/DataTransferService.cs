@@ -365,6 +365,23 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets a page data transfer indices with filter by graphid.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{userName}/{graphId}/dti?start={start}&limit={limit}")]
+    public void GetPagedDataTransferIndicesWithFilterByGraphID(string userName, string graphId, DataFilter filter, int start, int limit)
+    {
+        try
+        {
+            DataTransferIndices dtis = _dtoProvider.GetPagedDataTransferIndicesByGraphID(userName, graphId, filter, start, limit);
+
+            HttpContext.Current.Response.ContentType = "application/xml";
+            HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+        }
+        catch (Exception ex)
+        {
+            ExceptionHander(ex);
+        }
+    }
+
     [Description("Gets data transfer objects of requested indices.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
     public void GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
