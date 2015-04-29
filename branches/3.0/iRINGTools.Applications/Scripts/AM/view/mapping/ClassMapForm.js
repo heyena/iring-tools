@@ -213,8 +213,11 @@ Ext.define('AM.view.mapping.ClassMapForm', {
                 }
                 else {
 
-                    var ident = getLastXString(data.records[0].data.id, 1);
-                    var object = getLastXString(data.records[0].data.id, 2);
+//                    var ident = getLastXString(data.records[0].data.id, 1);
+//                    var object = getLastXString(data.records[0].data.id, 2);
+
+                    var ident = Ext.decode(data.records[0].data.record).columnName;
+                    var object = Ext.decode(data.records[0].parentNode.data.record).tableName;
                     var key = object + '.' + ident; //key1+'.'+key2;
                     if (me.getForm().findField('identifier').getValue() != 'Drop property node(s) here.') {
 
@@ -244,7 +247,7 @@ Ext.define('AM.view.mapping.ClassMapForm', {
                         me.getForm().findField('identifier').setValue(key);
                     }
                     me.getForm().findField('objectName').setValue(object); //(data.records[0].data.id);
-                    me.getForm().findField('relation').setValue(data.records[0].data.property.Related);
+                  //  me.getForm().findField('relation').setValue(data.records[0].data.property.Related);
                     //var msg = 'Property: ' + data.records[0].data.id.split('/')[data.records[0].data.id.split('/').length - 1];
                     pcont.update(key);
                     return true;
