@@ -76,11 +76,15 @@ namespace org.iringtools.utility
 
         public IDictionary<string, string> Headers { get; set; }
 
+        public bool DoSSOInjection { get; set; }
+
         public WebHttpClient(string baseUri)
         {
             _baseUri = baseUri;
 
             Headers = new Dictionary<string, string>();
+
+            DoSSOInjection = true;
 
             object accessToken = ConfigurationManager.AppSettings["AccessToken"];
             if (accessToken != null)
@@ -301,12 +305,12 @@ namespace org.iringtools.utility
                 var ac = AccessToken;
                 var ak = AppKey;
 
-                if (!string.IsNullOrEmpty(ac))
+                if (DoSSOInjection && !string.IsNullOrEmpty(ac))
                 {
                     _logger.Debug("Authorization: " + AccessToken);
                     request.Headers.Add("Authorization", AccessToken);
                 }
-                if (!string.IsNullOrEmpty(ak))
+                if (DoSSOInjection && !string.IsNullOrEmpty(ak))
                 {
                     _logger.Debug("X-myPSN-AppKey: " + AppKey);
                     request.Headers.Add("X-myPSN-AppKey", AppKey);
@@ -337,15 +341,15 @@ namespace org.iringtools.utility
 
         private void PrepareCredentials(WebRequest request)
         {
-            //if (!string.IsNullOrEmpty(_proxyHost))
-            //{
-            //    WebCredentials proxyCreds = new WebCredentials(_proxyCredentialToken);
-            //    if (proxyCreds.isEncrypted) proxyCreds.Decrypt();
+            if (!string.IsNullOrEmpty(_proxyHost))
+            {
+                WebCredentials proxyCreds = new WebCredentials(_proxyCredentialToken);
+                if (proxyCreds.isEncrypted) proxyCreds.Decrypt();
 
-            //    WebProxy proxy = new WebProxy(_proxyHost, _proxyPort);
-            //    proxy.Credentials = proxyCreds.GetNetworkCredential();
-            //    request.Proxy = proxy;
-            //}
+                WebProxy proxy = new WebProxy(_proxyHost, _proxyPort);
+                proxy.Credentials = proxyCreds.GetNetworkCredential();
+                request.Proxy = proxy;
+            }
 
             if (_credentials == null)
             {
@@ -1353,6 +1357,11 @@ namespace org.iringtools.utility
 
                 throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
             }
+        }
+
+        public void PostMultipartMessage(string relativeUri, List<org.iringtools.utility.MultiPartMessage> requestMessages)
+        {
+            throw new NotImplementedException();
         }
     }
 }
