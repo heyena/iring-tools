@@ -254,7 +254,9 @@ Ext.define('AM.controller.Directory', {
                         var objResponseText = Ext.decode(response.responseText);
                         var userMsg = objResponseText['message'];
                         var detailMsg = objResponseText['stackTraceDescription'];
-                        var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                        var expPanel = Ext.widget('exceptionpanel', {
+                            title: 'Error Notification'
+                        });
                         Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                         Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                     }
@@ -370,7 +372,9 @@ Ext.define('AM.controller.Directory', {
                         var objResponseText = Ext.decode(response.responseText);
                         var userMsg = objResponseText['message'];
                         var detailMsg = objResponseText['stackTraceDescription'];
-                        var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                        var expPanel = Ext.widget('exceptionpanel', {
+                            title: 'Error Notification'
+                        });
                         Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                         Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                     }
@@ -502,7 +506,9 @@ Ext.define('AM.controller.Directory', {
                         var resp = Ext.decode(response.responseText);
                         var userMsg = resp['message'];
                         var detailMsg = resp['stackTraceDescription'];
-                        var expPanel = Ext.widget('exceptionpanel', { title: 'Error Notification' });
+                        var expPanel = Ext.widget('exceptionpanel', {
+                            title: 'Error Notification'
+                        });
                         Ext.ComponentQuery.query('#expValue', expPanel)[0].setValue(userMsg);
                         Ext.ComponentQuery.query('#expValue2', expPanel)[0].setValue(detailMsg);
                     }
@@ -553,78 +559,35 @@ Ext.define('AM.controller.Directory', {
 
             win.show();
         } else if (currentNodeType == 'ApplicationNode') {
-            Ext.Ajax.request({
-                url: 'directory/GetNodesForCache',
-                form: me.form,
-                method: 'POST',
-                params: {
-                    type: currentNodeType,
-                    record: currentNodeRecord
-                },
-                success: function (response, request) {
 
-                    var dataObjectStore = Ext.StoreManager.lookup('DataObjectStoreId');
+            var dataObjectStore = Ext.StoreManager.lookup('DataObjectStore');
 
-                    while (currentNode.firstChild) {
-                        currentNode.removeChild(currentNode.firstChild);
-                    }
-
-                    var index = 0;
-
-                    var applicatinChildrens = Ext.JSON.decode(response.responseText).currentNodesChildren
-                    if (applicatinChildrens[0].children == null) {
-                        Ext.Msg.alert('This Application not contain dataobjects !');
-                    }
-                    else {
-                        Ext.each(Ext.JSON.decode(response.responseText).currentNodesChildren, function (eachChildNode) {
-                            currentNode.insertChild(index, eachChildNode);
-
-                            if (index == 0 && currentNode.childNodes[0].childNodes != null) {
-                                Ext.each(currentNode.childNodes[0].childNodes, function (eachDataObjectNode) {
-                                    dataObjectStore.add({
-                                        dataObjId: eachDataObjectNode.data.id,
-                                        dataObjName: eachDataObjectNode.data.text
-                                    });
-                                });
-                            }
-
-                            index++;
-                        });
-
-                        form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
-                        form.getForm().findField('applicationName').setValue(currentNode.data.text);
-                        form.getForm().findField('contextName').setValue(currentNode.parentNode.data.text);
-                        form.getForm().findField('dataObjectName').setValue(dataObjectStore.getAt(0));
+            form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
+            form.getForm().findField('applicationName').setValue(currentNode.data.text);
+            form.getForm().findField('contextName').setValue(currentNode.parentNode.data.text);
+            form.getForm().findField('dataObjectName').setValue(dataObjectStore.getAt(0));
 
 
-                        win.on('save', function () {
-                            win.close();
-                            tree.view.refresh();
-                            var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
-                            detailGrid.setSource({});
-                        }, me);
+            win.on('save', function () {
+                win.close();
+                tree.view.refresh();
+                var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
+                detailGrid.setSource({});
+            }, me);
 
-                        win.on('Cancel', function () {
-                            win.close();
-                        }, me);
+            win.on('Cancel', function () {
+                win.close();
+            }, me);
 
-                        win.show();
-                    }
-                },
-                failure: function (response, request) {
-                    //TODO:
-                }
-            })
+            win.show();
         } else if (currentNodeType == 'DataObjectsNode') {
 
-            var dataObjectStore = Ext.StoreManager.lookup('DataObjectStoreId');
+            var dataObjectStore = Ext.StoreManager.lookup('DataObjectStore');
 
             var dataObjectsNode = currentNode.childNodes;
             if (dataObjectsNode.length == 0) {
                 Ext.Msg.alert('This Dataobject not contain DataobjectParameters !');
-            }
-
-            else if (dataObjectsNode != null) {
+            } else if (dataObjectsNode != null) {
                 Ext.each(dataObjectsNode, function (eachDataObjectNode) {
                     dataObjectStore.add({
                         dataObjId: eachDataObjectNode.data.id,
@@ -1717,7 +1680,9 @@ Ext.define('AM.controller.Directory', {
         var node = tree.getSelectedNode();
 
         var getDataFilterUri = "Directory/GetDataFilter";
-        var reqParam = { record: node.data.record };
+        var reqParam = {
+            record: node.data.record
+        };
         var getColsUrl = 'GridManager/pages';
         panelDisable();
         var dfcontroller = me.application.getController("AM.controller.DataFilter");
