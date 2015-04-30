@@ -584,18 +584,6 @@ Ext.define('AM.controller.Directory', {
 
             var dataObjectStore = Ext.StoreManager.lookup('DataObjectStore');
 
-            var dataObjectsNode = currentNode.childNodes;
-            if (dataObjectsNode.length == 0) {
-                Ext.Msg.alert('This Dataobject not contain DataobjectParameters !');
-            } else if (dataObjectsNode != null) {
-                Ext.each(dataObjectsNode, function (eachDataObjectNode) {
-                    dataObjectStore.add({
-                        dataObjId: eachDataObjectNode.data.id,
-                        dataObjName: eachDataObjectNode.data.text
-                    });
-                });
-
-
                 form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
                 form.getForm().findField('applicationName').setValue(currentNode.parentNode.data.text);
                 form.getForm().findField('contextName').setValue(currentNode.parentNode.parentNode.data.text);
@@ -614,7 +602,6 @@ Ext.define('AM.controller.Directory', {
 
 
                 win.show();
-            }
         } else if (currentNodeType == 'DataObjectNode') {
 
             form.getForm().findField('dataObjectName').setValue(currentNode.data.text);
