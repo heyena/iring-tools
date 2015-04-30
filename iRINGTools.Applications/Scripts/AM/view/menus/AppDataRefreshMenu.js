@@ -14,71 +14,97 @@
  */
 
 Ext.define('AM.view.menus.AppDataRefreshMenu', {
-  extend: 'Ext.menu.Menu',
-  alias: 'widget.appdatarefreshmenu',
+    extend: 'Ext.menu.Menu',
+    alias: 'widget.appdatarefreshmenu',
 
-  initComponent: function() {
-    var me = this;
+    initComponent: function () {
+        var me = this;
 
-    Ext.applyIf(me, {
-      items: [
+        Ext.applyIf(me, {
+            items: [
         {
-          xtype: 'menuitem',
-          action: 'refreshdata',
-          icon: 'Content/img/16x16/refresh_cache.gif',
-          text: 'Refresh Dictionary'
+            xtype: 'menuitem',
+            action: 'refreshdata',
+            icon: 'Content/img/16x16/refresh_cache.gif',
+            text: 'Refresh Dictionary'
         },
         {
-          xtype: 'menuitem',
-          action: 'switchToCached',
-          itemId: 'switchToCached',
-          icon: 'Content/img/16x16/switch.png',
-          text: 'Switch to Cache Mode'
+            xtype: 'menuitem',
+            action: 'switchToCached',
+            itemId: 'switchToCached',
+            icon: 'Content/img/16x16/switch.png',
+            text: 'Switch to Cache Mode'
         },
         {
-          xtype: 'menuitem',
-          action: 'switchToLive',
-          itemId: 'switchToLive',
-          icon: 'Content/img/16x16/switch.png',
-          text: 'Switch to Live-Data Mode'
+            xtype: 'menuitem',
+            action: 'switchToLive',
+            itemId: 'switchToLive',
+            icon: 'Content/img/16x16/switch.png',
+            text: 'Switch to Live-Data Mode'
         },
-        /*{
-          xtype: 'menuitem',
-          action: 'refreshcache',
-          hidden: true,
-          itemId: 'refreshCacheId',
-          icon: 'Content/img/16x16/refresh_cache.gif',
-          text: 'Refresh Cache'
-        },
-        {
-          xtype: 'menuitem',
-          action: 'importcache',
-          hidden: true,
-          itemId: 'importCacheId',
-          icon: 'Content/img/16x16/import.jpg',
-          text: 'Import Cache'
-        },*/
+            /*{
+            xtype: 'menuitem',
+            action: 'refreshcache',
+            hidden: true,
+            itemId: 'refreshCacheId',
+            icon: 'Content/img/16x16/refresh_cache.gif',
+            text: 'Refresh Cache'
+            },
+            {
+            xtype: 'menuitem',
+            action: 'importcache',
+            hidden: true,
+            itemId: 'importCacheId',
+            icon: 'Content/img/16x16/import.jpg',
+            text: 'Import Cache'
+            },*/
 		{
-          xtype: 'menuseparator'
-        },
+		xtype: 'menuseparator'
+},
 		{
-          text: 'Show/Update Cache',
-          action: 'showCacheInfo',
-		  hidden:true,
-		  itemId:'showCacheInfo',
-          icon: 'Content/img/16x16/document-save.png'
-      },
+		    text: 'Show/Update Cache',
+		    action: 'showCacheInfo',
+		    hidden: true,
+		    itemId: 'showCacheInfo',
+		    icon: 'Content/img/16x16/document-save.png'
+		},
         {
             xtype: 'menuitem',
             action: 'cacheupdate',
             icon: 'Content/img/16x16/document-new.png',
             itemId: 'cacheupscreen',
+            disabled: true,
             text: 'Cache Update'
         }
       ]
-    });
+        });
 
-    me.callParent(arguments);
-  }
+        me.callParent(arguments);
+    },
+    listeners: {
+        beforeshow: function (me, eOpts) {
+
+            var currentNode = Ext.getCmp('mytree').getSelectionModel().getSelection()[0];
+            var currentNodeRecord = currentNode.data.record;
+            var currentNodeType = currentNode.data.type;
+            var dataObjectsNode = currentNode.childNodes;
+
+            var dataObjectStore = Ext.StoreManager.lookup('DataObjectStore');
+
+            dataObjectStore.removeAll();
+
+            if (dataObjectsNode.length > 0) {
+                me.items.map['cacheupscreen'].setDisabled(false);
+
+                Ext.each(dataObjectsNode, function (eachDataObjectNode) {
+                    dataObjectStore.add({
+                        dataObjId: eachDataObjectNode.data.id,
+                        dataObjName: eachDataObjectNode.data.text
+                    });
+                });
+
+            }
+        }
+    }
 
 });

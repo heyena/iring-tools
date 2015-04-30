@@ -67,7 +67,6 @@ Ext.define('AM.view.directory.NewJobForm', {
                             displayField: 'appName',
                             valueField: 'appId',
                             queryMode: 'local',
-                            autoSelect: true,
                             editable: false,
                             allowBlank: false,
                             listeners: {
