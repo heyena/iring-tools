@@ -565,7 +565,7 @@ Ext.define('AM.controller.Directory', {
             form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
             form.getForm().findField('applicationName').setValue(currentNode.data.text);
             form.getForm().findField('contextName').setValue(currentNode.parentNode.data.text);
-            form.getForm().findField('dataObjectName').setValue(dataObjectStore.getAt(0));
+            form.getForm().findField('dataObjectName').setValue(dataObjectStore.getRange());
 
 
             win.on('save', function () {
@@ -587,7 +587,7 @@ Ext.define('AM.controller.Directory', {
                 form.getForm().findField('dataObjectName').bindStore(dataObjectStore);
                 form.getForm().findField('applicationName').setValue(currentNode.parentNode.data.text);
                 form.getForm().findField('contextName').setValue(currentNode.parentNode.parentNode.data.text);
-                form.getForm().findField('dataObjectName').setValue(dataObjectStore.getAt(0));
+                form.getForm().findField('dataObjectName').setValue(dataObjectStore.getRange());
 
                 win.on('save', function () {
                     win.close();
