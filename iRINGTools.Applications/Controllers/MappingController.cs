@@ -686,11 +686,22 @@ namespace org.iringtools.web.controllers
                 string classId = form["classId"];
                 // string parentNodeId = form["parentNodeId"];
                 string roleName = form["roleName"];
-
+                Guid graphId = Guid.Parse(form["graphId"]);
                 //string roleName = dataObjectVars[dataObjectVars.Length - 1];
                 //  string context = string.Format("{0}/{1}/{2}/{3}", scope, application, graphName, dataObjectVars[dataObjectVars.Count() - 2]);
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graphName);
+                //Mapping mapping = GetMapping(scope, application);
+                //GraphMap graphMap = mapping.FindGraphMap(graphName);
+                GraphMap graphMap = null;
+                if (System.Web.HttpContext.Current.Session["graphMap"] != null)
+                {
+                    graphMap = System.Web.HttpContext.Current.Session["graphMap"] as GraphMap;
+                }
+
+                else
+                {
+                    org.iringtools.applicationConfig.Graph Objgraph = _repository.GetGraphByGrapgId(userName, graphId);
+                    graphMap = (GraphMap)DeserializeObject(Objgraph.graph);
+                }
                 ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId, classIndex);
                 TemplateMap tMap = ctm.templateMaps[index];
                 RoleMap rMap = tMap.roleMaps.FirstOrDefault(c => c.name == roleName);
@@ -710,6 +721,7 @@ namespace org.iringtools.web.controllers
                 {
                     throw new Exception("Error Making Possessor Role...");
                 }
+                System.Web.HttpContext.Current.Session["graphMap"] = graphMap;
             }
             catch (Exception ex)
             {
@@ -722,6 +734,7 @@ namespace org.iringtools.web.controllers
             }
 
             return Json(new { success = true, node = roleNode }, JsonRequestBehavior.AllowGet);
+            
         }
 
         private JsonTreeNode CreateGraphNode(string context, GraphMap graph, ClassMap classMap)
