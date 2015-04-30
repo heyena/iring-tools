@@ -798,6 +798,41 @@ namespace org.iringtools.web.controllers
             }
         }
 
+
+        public JsonResult SwitchDataMode(FormCollection form)
+        {
+
+            try
+            {
+                Response response = null;
+
+                Application tempApplication = Utility.DeserializeJson<org.iringtools.applicationConfig.Application>(form["record"].ToString(), true);
+                 
+                tempApplication.ApplicationDataMode = tempApplication.ApplicationDataMode == applicationConfig.DataMode.Cache ? applicationConfig.DataMode.Live : applicationConfig.DataMode.Cache;
+             
+                response = _appConfigRepository.UpdateApplication(tempApplication);
+
+                var record = Utility.SerializeJson<org.iringtools.applicationConfig.Application>(tempApplication, true);
+
+                if (response.Level == StatusLevel.Success)
+                {
+                    return Json(new { success = true, message = response.StatusText, record }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, message = response.StatusText, stackTraceDescription = response.StatusText }, JsonRequestBehavior.AllowGet);
+                }
+            }
+
+            catch (Exception e)
+            {
+                _CustomErrorLog = new CustomErrorLog();
+                _CustomError = _CustomErrorLog.customErrorLogger(ErrorMessages.errUISwitchDataMode, e, _logger);
+                return Json(new { success = false, message = "[ Message Id " + _CustomError.msgId + "] - " + _CustomError.errMessage, stackTraceDescription = _CustomError.stackTraceDescription }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
         #region Private Methods
 
         private Mapping GetMapping(string scope, string application)
