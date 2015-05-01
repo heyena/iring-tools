@@ -399,6 +399,23 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets data transfer objects of requested indices by graph id")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{userName}/{graphId}/page")]
+    public void GetDataTransferObjectsByGraphId(string userName, string graphId, DataTransferIndices dataTransferIndices)
+    {
+        try
+        {
+            DataTransferObjects dtos = _dtoProvider.GetDataTransferObjectsByGraphId(userName,graphId, dataTransferIndices);
+
+            HttpContext.Current.Response.ContentType = "application/xml";
+            HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
+        }
+        catch (Exception ex)
+        {
+            ExceptionHander(ex);
+        }
+    }
+
     [Description("Gets data transfer objects of requested indices and manifest.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo?includeContent={includeContent}")]
     public void GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest, bool includeContent)

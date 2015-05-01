@@ -1611,6 +1611,104 @@ namespace org.iringtools.adapter
             return dataTransferObjects;
         }
 
+        public DataTransferObjects GetDataTransferObjectsByGraphId(string userName, string graphId, DataTransferIndices dataTransferIndices)
+        {
+            DataTransferObjects dataTransferObjects = new DataTransferObjects();
+
+            if (dataTransferIndices != null && dataTransferIndices.DataTransferIndexList.Count > 0)
+            {
+                try
+                {
+                    //InitializeScope(scope, app);
+                    //InitializeDataLayer();
+
+                    //_graphMap = _mapping.FindGraphMap(graph);
+
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
+                    System.Data.DataTable dt = DBManager.Instance.ExecuteStoredProcedure(_connSecurityDb, "spgNames", nvl);
+
+                    string graph = string.Empty; string scope = string.Empty;
+                    string appName = string.Empty; Guid applicationId;
+
+                    System.Data.DataRow row = dt.Rows[0];
+
+                    graph = Convert.ToString(row["GraphName"]);
+                    scope = Convert.ToString(row["ScopeName"]);
+                    appName = Convert.ToString(row["AppName"]);
+                    applicationId = Guid.Parse(Convert.ToString(row["AppId"]));
+
+                    //nvl = new NameValueList();
+                    //nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                    //nvl.Add(new ListItem() { Name = "@ApplicationId", Value = applicationId });
+
+                    nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+                    nvl.Add(new ListItem() { Name = "@GraphId", Value = Convert.ToString(graphId) });
+
+                    byte[] xmlbyte = DBManager.Instance.ExecuteBytesQuery(_connSecurityDb, "spgGraphBinary", nvl);
+                    string bytesToXml = System.Text.Encoding.Default.GetString(xmlbyte);
+                    //mapping.Mapping _mapping = utility.Utility.Deserialize<mapping.Mapping>(bytesToXml, true); ;
+                    bytesToXml = bytesToXml.Replace("<graphMap>", "<graphMap xmlns=\"http://www.iringtools.org/mapping\">");
+                    _graphMap = utility.Utility.Deserialize<GraphMap>(bytesToXml, true); ;
+
+                    
+
+                    DataDictionary dataDictionary = dictionaryProvider.GetDictionary(applicationId);
+
+                    _mapping = new Mapping();
+                    _mapping.graphMaps.Add(_graphMap);
+
+                    _kernel.Bind<mapping.Mapping>().ToConstant(_mapping).InThreadScope(); 
+
+                    org.iringtools.applicationConfig.Application objApplication = GetApplicationByApplicationID(userName, applicationId);
+                    _settings["ProjectName"] = scope;
+                    _settings["ApplicationName"] = appName;
+
+                    InitializeDataLayer(objApplication, ref dataDictionary);
+
+                    
+
+                    if (_graphMap == null)
+                    {
+                        throw new Exception("Graph [" + _graphMap + "] not found.");
+                    }
+
+                    DataObject dataObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == _graphMap.dataObjectName.ToLower());
+                    AddNewDataProperties(_graphMap, dataObject);
+                    List<DataTransferIndex> dataTrasferIndexList = dataTransferIndices.DataTransferIndexList;
+                    List<string> identifiers = new List<string>();
+
+                    foreach (DataTransferIndex dti in dataTrasferIndexList)
+                    {
+                        identifiers.Add(dti.InternalIdentifier);
+                    }
+
+                    if (identifiers.Count > 0)
+                    {
+                        if (_settings["MultiGetDTOs"] == null || bool.Parse(_settings["MultiGetDTOs"]))
+                        {
+                            dataTransferObjects = MultiGetDataTransferObjects(dataObject, identifiers);
+                        }
+                        else
+                        {
+                            List<IDataObject> dataObjects = _dataLayerGateway.Get(dataObject, identifiers);
+                            DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+                            dtoProjectionEngine.dataLayerGateway = _dataLayerGateway;
+                            dataTransferObjects = dtoProjectionEngine.BuildDataTransferObjects(_graphMap, ref dataObjects);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("Error getting data transfer objects: " + ex);
+                    throw ex;
+                }
+            }
+
+            return dataTransferObjects;
+        }
+
         public string AsyncGetDataTransferObjects(string scope, string app, string graph, DxoRequest dxoRequest, bool includeContent)
         {
             try
