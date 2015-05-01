@@ -2059,8 +2059,8 @@ namespace org.iringtools.applicationConfig
                 {
                     if (typeof(ILightweightDataLayer).IsAssignableFrom(dataLayerAssembly.GetType(typeName)))
                     {
-                        application.Binding.Service = (typeof(ILightweightDataLayer2)).AssemblyQualifiedName;
-                        application.ApplicationDataMode = applicationConfig.DataMode.Live;
+                        application.Binding.Service = (typeof(ILightweightDataLayer)).AssemblyQualifiedName;
+                        application.ApplicationDataMode = application.ApplicationDataMode == null ? applicationConfig.DataMode.Live : application.ApplicationDataMode;
                     }
                 }
                 else if (typeof(ILightweightDataLayer2).IsAssignableFrom(dataLayerAssembly.GetType(typeName)))
