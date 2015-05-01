@@ -1716,6 +1716,26 @@ namespace org.iringtools.applicationConfig
             return settings;
         }
 
+        public string GetNodesForCache(string nodeType, Guid nodeId, string userName)
+        {
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@NodeType", Value = nodeType });
+                nvl.Add(new ListItem() { Name = "@NodeId", Value = nodeId });
+                nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgNodesForCache", nvl);
+
+                return xmlString;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  nodesForCache: " + ex);
+                throw ex;
+            }
+        }
+
         public XDocument GetDataForDataObject(DataObject dataObject, ref string format, int start, int limit, bool fullIndex)
         {
             try

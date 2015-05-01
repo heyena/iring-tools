@@ -400,6 +400,28 @@ namespace iRINGTools.Web.Models
             return datafilter;
         }
 
+        public string GetNodesForCache(String nodeType, Guid nodeId, string userName)
+        {
+            string items = string.Empty;
+
+            logger.Debug("In ApplicatonConfigRepository GetNodesForCache");
+            try
+            {
+                WebHttpClient client = CreateWebClient(applicationConfigurationServiceUri);
+                items = client.Get<string>(string.Format("/GetNodesForCache?nodeType={0}&nodeId={1}&userName={2}&format=xml", nodeType, nodeId, userName));
+
+                logger.Debug("Successfully called Adpter Service.");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.ToString());
+                throw ex;
+
+            }
+
+            return items;
+        }
+
         #region Protected Member Functions
 
         protected WebHttpClient CreateWebClient(string baseUri)
