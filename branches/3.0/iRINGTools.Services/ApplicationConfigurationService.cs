@@ -1097,6 +1097,26 @@ namespace org.iringtools.services
             }
         }
 
+          [Description("Get NodesForCache")]
+          [WebGet(UriTemplate = "/GetNodesForCache?nodeType={nodeType}&nodeId={nodeId}&userName={userName}&format={format}")]
+        public void GetNodesForCache(string nodeType, Guid nodeId, string userName, string format)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(format))
+                    format = "xml";
+
+                string items = _applicationConfigurationProvider.GetNodesForCache(nodeType, nodeId, userName);
+                _applicationConfigurationProvider.FormatOutgoingMessage<string>(items, format, true);
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+        }
+        
          [Description("Get exchange by exchange id")]
          [WebGet(UriTemplate = "/GetExchangeByExchangeID?userName={UserName}&exchangeId={exchangeId}&format={format}")]
          public void GetExchangeByExchangeID(string userName, Guid exchangeId, string format)

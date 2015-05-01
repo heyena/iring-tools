@@ -16,9 +16,9 @@
 Ext.define('AM.view.menus.ContextMenu', {
     extend: 'Ext.menu.Menu',
     alias: 'widget.contextmenu',
-//    requires: [
-//    'AM.view.directory.NewJobForm'
-//  ],
+    //    requires: [
+    //    'AM.view.directory.NewJobForm'
+    //  ],
     initComponent: function () {
         var me = this;
 
@@ -55,7 +55,7 @@ Ext.define('AM.view.menus.ContextMenu', {
             action: 'cacheupdate',
             icon: 'Content/img/16x16/document-new.png',
             itemId: 'cacheupscreen',
-            disabled:true,
+            disabled: true,
             text: 'Cache Update'
         }
       ]
@@ -72,27 +72,24 @@ Ext.define('AM.view.menus.ContextMenu', {
         //        var currentNode = Ext.fly('mytree').getSelectionModel().getSelectedNode();
         var currentNode = Ext.getCmp('mytree').getSelectionModel().getSelection()[0];
 
-        var currentNodeRecord = currentNode.data.record;
+        var currentNodeId = currentNode.data.id;
         var currentNodeType = currentNode.data.type;
         var objResponseText;
-        
+
         Ext.Ajax.request({
             url: 'directory/GetNodesForCache',
             form: me.form,
             method: 'POST',
             params: {
                 type: currentNodeType,
-                record: currentNodeRecord
+                guid: currentNodeId
             },
             success: function (response, request) {
                 var applicationStore = Ext.StoreManager.lookup('ApplicationStore');
                 var dataObjectStore = Ext.StoreManager.lookup('DataObjectStore');
 
-//                while (currentNode.firstChild) {
-//                    currentNode.removeChild(currentNode.firstChild);
-//                }
-
-                var index = 0;
+                applicationStore.removeAll();
+                dataObjectStore.removeAll();
 
                 var contextChildrens = Ext.JSON.decode(response.responseText).currentNodesChildren
 
@@ -116,8 +113,6 @@ Ext.define('AM.view.menus.ContextMenu', {
                                 });
                             });
                         }
-
-                        index++;
                     });
                 }
             },

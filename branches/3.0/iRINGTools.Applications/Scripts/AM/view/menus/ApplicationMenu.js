@@ -65,16 +65,17 @@ Ext.define('AM.view.menus.ApplicationMenu', {
     listeners: {
         beforeshow: function (me, eOpts) {
 
-            var currentNodeApp = Ext.getCmp('mytree').getSelectionModel().getSelection()[0];
-            var currentNodeRecordApp = currentNodeApp.data.record;
-            var currentNodeTypeApp = currentNodeApp.data.type;
+            var currentNode = Ext.getCmp('mytree').getSelectionModel().getSelection()[0];
+            var currentNodeId = currentNode.data.id;
+            var currentNodeType = currentNode.data.type;
+
             Ext.Ajax.request({
                 url: 'directory/GetNodesForCache',
                 form: me.form,
                 method: 'POST',
                 params: {
-                    type: currentNodeTypeApp,
-                    record: currentNodeRecordApp
+                    type: currentNodeType,
+                    guid: currentNodeId
                 },
                 success: function (response, request) {
 

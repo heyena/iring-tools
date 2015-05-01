@@ -85,7 +85,7 @@ Ext.define('AM.view.menus.AppDataRefreshMenu', {
         beforeshow: function (me, eOpts) {
 
             var currentNode = Ext.getCmp('mytree').getSelectionModel().getSelection()[0];
-            var currentNodeRecord = currentNode.data.record;
+            var currentNodeId = currentNode.data.id;
             var currentNodeType = currentNode.data.type;
             var dataObjectsNode = currentNode.childNodes;
 
