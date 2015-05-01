@@ -48,9 +48,10 @@ Ext.define('AM.controller.Mapping', {
         var dirTree = me.getDirTree();
         var tree = content.getActiveTab().items.items[0];
         var endPoint = content.getActiveTab().endpoint;
-        var contextName = content.getActiveTab().contextName;
+       var contextName = content.getActiveTab().contextName;
         var tempGraph = content.getActiveTab().graph.split('/');
         var graph = tempGraph[tempGraph.length - 1];
+        var graphId = content.getActiveTab().graphId;
         var itemId = 'GraphMap.' + contextName + '.' + endPoint + '.' + graph;
         node = tree.getSelectedNode();
         var rootNodeId = tree.getRootNode().childNodes[0].internalId;
@@ -64,9 +65,9 @@ Ext.define('AM.controller.Mapping', {
             url: 'mapping/deleteTemplateMap',
             method: 'POST',
             params: {
-                scope: panel.contextName,
-                application: panel.endpoint,
-                baseUrl: panel.baseUrl,
+//                scope: panel.contextName,
+                graphId: graphId,
+                //baseUrl: panel.baseUrl,
                 parentIdentifier: me.parentClass,
                 identifier: node.data.identifier,
                 index: node.parentNode.indexOf(node),
