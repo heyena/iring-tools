@@ -1269,8 +1269,20 @@ namespace org.iringtools.web.controllers
 
                 string roleName = mappingCtx[mappingCtx.Length - 1];
                 int index = Convert.ToInt16(form["index"]);
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graphName);
+
+                Guid graphId = Guid.Parse(form["graphId"]);
+                GraphMap graphMap = null;
+
+                if (System.Web.HttpContext.Current.Session["graphMap"] != null)
+                {
+                    graphMap = System.Web.HttpContext.Current.Session["graphMap"] as GraphMap;
+                }
+                else
+                {
+                    org.iringtools.applicationConfig.Graph Objgraph = _repository.GetGraphByGrapgId(userName, graphId);
+                    graphMap = (GraphMap)DeserializeObject(Objgraph.graph);
+                }
+
                 ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId, classIndex);
 
                 if (ctMap != null)
@@ -1329,6 +1341,7 @@ namespace org.iringtools.web.controllers
 
                 Mapping mapping = GetMapping(scope, app);
                 GraphMap graphMap = mapping.FindGraphMap(graph);
+                
                 ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId, classIndex);
                 TemplateMap tMap = ctm.templateMaps[templateIndex];
                 RoleMap rMap = tMap.roleMaps.Find(c => c.name == roleName);
