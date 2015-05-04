@@ -104,7 +104,7 @@ namespace org.iringtools.services
             _agentProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
-        [Description("Update jobs to the data base.")]
+        [Description("Update jobs in the database.")]
         [WebInvoke(Method = "PUT", UriTemplate = "/updateJob/{jobId}?format={format}")]
         public void UpdateJob(string jobId, string format, Stream stream) // Completed.
         {
@@ -135,7 +135,38 @@ namespace org.iringtools.services
             _agentProvider.FormatOutgoingMessage<Response>(response, format, true);
         }
 
-        [Description("Delete job from the data base.")]
+        [Description("Update job Records in the database.")]
+        [WebInvoke(Method = "PUT", UriTemplate = "/updateJobRecords/{jobId}?format={format}")]
+        public void UpdateJobRecords(string jobId, string format, Stream stream) // Completed.
+        {
+            if (string.IsNullOrEmpty(format))
+            { format = "xml"; }
+
+            Response response = new Response();
+            try
+            {
+                format = MapContentType(format);
+                if (format == "raw")
+                {
+                    throw new Exception("");
+                }
+                else
+                {
+                    XElement xElement = _agentProvider.FormatIncomingMessage<org.iringtools.AgentLibrary.Agent.Jobs>(stream, format);
+                    response = _agentProvider.UpdateJobRecords(jobId, new XDocument(xElement));
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGetUISettings, ex, _logger);
+                objCustomErrorLog.throwJsonResponse(_CustomError);
+            }
+            PrepareResponse(ref response);
+            _agentProvider.FormatOutgoingMessage<Response>(response, format, true);
+        }
+
+        [Description("Delete job from the database.")]
         [WebInvoke(Method = "DELETE", UriTemplate = "/deleteJob/{jobId}?format={format}")]
         public void DeleteJob(string jobId, string format) // Completed.
         {

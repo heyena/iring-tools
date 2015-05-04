@@ -181,17 +181,22 @@ namespace org.iringtools.AgentLibrary
 
                         NameValueList nvl = new NameValueList();
                         nvl.Add(new ListItem() { Name = "@JobId", Value = jobId });
-                        nvl.Add(new ListItem() { Name = "@ScheduleId", Value = job.ScheduleId });
-                        nvl.Add(new ListItem() { Name = "@DataObjectId", Value = job.DataObjectId });
+                       
+                        if (job.DataObjectId != null)
+                            nvl.Add(new ListItem() { Name = "@DataObjectId", Value = job.DataObjectId });
+                        else
+                            nvl.Add(new ListItem() { Name = "@DataObjectId", Value = DBNull.Value });
+
                         nvl.Add(new ListItem() { Name = "@Is_exchange", Value = Convert.ToString(job.Is_Exchange) });
-                        nvl.Add(new ListItem() { Name = "@Xid", Value = Convert.ToString(job.Xid) });
+
+                        if (job.Xid != null)
+                            nvl.Add(new ListItem() { Name = "@Xid", Value = job.Xid });
+                        else
+                            nvl.Add(new ListItem() { Name = "@Xid", Value = DBNull.Value });
+
                         nvl.Add(new ListItem() { Name = "@Cache_Page_Size", Value = cachePageSize });
                         nvl.Add(new ListItem() { Name = "@PlatformId", Value = Convert.ToString(job.PlatformId) });
                         nvl.Add(new ListItem() { Name = "@SiteId", Value = Convert.ToString(job.SiteId) });
-                        nvl.Add(new ListItem() { Name = "@Next_Start_DateTime", Value = job.Next_Start_DateTime });
-                        nvl.Add(new ListItem() { Name = "@Last_Start_DateTime", Value = job.Last_Start_DateTime });
-                        nvl.Add(new ListItem() { Name = "@TotalRecords", Value = Convert.ToString(job.TotalRecords) });
-                        nvl.Add(new ListItem() { Name = "@CachedRecords", Value = Convert.ToString(job.CachedRecords) });
                         nvl.Add(new ListItem() { Name = "@Active", Value = Convert.ToString(job.Active) });
                         nvl.Add(new ListItem() { Name = "@Schedules", Value = schedulesXml });
                         string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuJob", nvl);
@@ -211,6 +216,72 @@ namespace org.iringtools.AgentLibrary
             catch (Exception ex)
             {
                 _logger.Error("Error updating Job: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public Response UpdateJobRecords(string jobId, XDocument xml)
+        {
+            Response response = new Response();
+            response.Messages = new Messages();
+            try
+            {
+                org.iringtools.AgentLibrary.Agent.Job job = Utility.DeserializeDataContract<org.iringtools.AgentLibrary.Agent.Job>(xml.ToString());
+                //string schedulesXml = job.schedules.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    if (job == null)
+                        PrepareErrorResponse(response, "Please enter Job!");
+                    else
+                    {
+                      
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@JobId", Value = jobId });
+
+                        if (job.TotalRecords > 0)
+                            nvl.Add(new ListItem() { Name = "@TotalRecords", Value = job.TotalRecords });
+                        else
+                            nvl.Add(new ListItem() { Name = "@TotalRecords", Value = DBNull.Value });
+
+                        if (job.CachedRecords > 0)
+                            nvl.Add(new ListItem() { Name = "@CachedRecords", Value = job.CachedRecords });
+                        else
+                            nvl.Add(new ListItem() { Name = "@CachedRecords", Value = DBNull.Value });
+
+                        nvl.Add(new ListItem() { Name = "@Status", Value = DBNull.Value });
+
+                        string Status = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuJobRecords", nvl);
+
+                        switch (Status)
+                        {
+                            case "Ready":
+                                PrepareSuccessResponse(response, "jobrecordsupdated");
+                                break;
+                            case "Busy":
+                                PrepareSuccessResponse(response, "jobrecordsupdated");
+                                break;
+                            case "Terminate":
+                                PrepareSuccessResponse(response, "jobrecordsupdated");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, Status);
+                                break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error updating JobRecords: " + ex);
 
                 Status status = new Status { Level = StatusLevel.Error };
                 status.Messages = new Messages { ex.Message };
