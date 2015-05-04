@@ -182,6 +182,7 @@ Ext.define('AM.view.mapping.MappingTree', {
                     app: pan.endpoint,
                     templateIndex: index,
                     graph: graphName,
+                    graphId: pan.graphId,
                     classIndex: classIndex
                 },
                 success: function (result, request) {
@@ -232,7 +233,8 @@ Ext.define('AM.view.mapping.MappingTree', {
                     parentId: parentid,
                     classMapIndex: classMapIndex,
                     id: templateId,
-                    graphName: graphName
+                    graphName: graphName,
+                    graphId: pan.graphId
                 },
                 success: function (result, request) {
                     var res = Ext.JSON.decode(result.responseText);

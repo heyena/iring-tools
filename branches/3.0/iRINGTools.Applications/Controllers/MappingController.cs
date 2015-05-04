@@ -193,7 +193,7 @@ namespace org.iringtools.web.controllers
                 string scope = form["contextName"];//dataObjectVars[0];
                 string application = form["endpoint"];//dataObjectVars[1];
                 string context = string.Format("{0}/{1}", scope, application);
-                Guid graph = Guid.Parse(form["graphName"]);//dataObjectVars[2];
+                Guid graph = Guid.Parse(form["graphId"]);//dataObjectVars[2];
                 ClassTemplateMap selectedCtm = null;
                 org.iringtools.applicationConfig.Graph Objgraph = _repository.GetGraphByGrapgId(userName, graph);
                 GraphMap graphMap = (GraphMap)DeserializeObject(Objgraph.graph);
@@ -310,7 +310,7 @@ namespace org.iringtools.web.controllers
                 ClassMap graphClassMap = null;
                 string format = String.Empty;
                 string context = form["node"];
-                Guid graphId = Guid.Parse(form["graph"]);
+                Guid graphId = Guid.Parse(form["graphId"]);
                 string[] formgraph = form["graph"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 string[] variables = context.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 string scope = form["context"];//= variables[0];
@@ -1340,7 +1340,7 @@ namespace org.iringtools.web.controllers
                 string refClassLabel = form["refClassLabel"];
                 //string parentNodeId = form["parentNodeId"];
 
-                Guid graphId = Guid.Parse(form["graph"]);
+                Guid graphId = Guid.Parse(form["graphId"]);
 
                 GraphMap graphMap = null;
 
