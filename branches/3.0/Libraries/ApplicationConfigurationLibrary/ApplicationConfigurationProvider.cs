@@ -27,7 +27,6 @@ namespace org.iringtools.applicationConfig
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(ApplicationConfigurationProvider));
         private static readonly int DEFAULT_PAGE_SIZE = 25;
-        private string _connSecurityDb;
         //private int _siteID;
         private mapping.GraphMap _graphMap = null;
         private DataObject _dataObjDef = null;
@@ -46,11 +45,6 @@ namespace org.iringtools.applicationConfig
         {
             try
             {
-                // We have _settings collection available here.
-            _connSecurityDb = settings["SecurityConnection"];
-            //    _siteID = Convert.ToInt32(settings["SiteId"]);
-
-
                 if (_settings["SpCharList"] != null && _settings["SpCharValue"] != null)
                 {
                     arrSpecialcharlist = _settings["SpCharList"].ToString().Split(',');
@@ -65,7 +59,7 @@ namespace org.iringtools.applicationConfig
             }
             catch (Exception e)
             {
-                _logger.Error("Error initializing adapter provider: " + e.Message);
+                _logger.Error("Error initializing application configuration provider: " + e.Message);
             }
         }
 
@@ -1795,149 +1789,6 @@ namespace org.iringtools.applicationConfig
             }
         }
 
-        public Application GetApplicationForDataObject(Guid dataObjectID)
-        {
-            Application application = new Application();
-            try
-            {
-                NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@DataObjectId", Value = dataObjectID });
-
-                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgApplicationForDataObject", nvl);
-                application = utility.Utility.Deserialize<Application>(xmlString, true);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error getting  Application By ApplicationID: " + ex);
-            }
-            return application;
-        }
-
-        public Context GetContextForDataObject(Guid dataObjectID)
-        {
-            Context context = new Context();
-            try
-            {
-                NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@DataObjectId", Value = dataObjectID });
-
-                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgContextForDataObject", nvl);
-                context = utility.Utility.Deserialize<Context>(xmlString, true);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error getting  Application By ApplicationID: " + ex);
-            }
-            return context;
-        }
-
-        public DatabaseDictionary GetDictionary(Guid applicationId)
-        {
-            org.iringtools.library.DatabaseDictionary dataDictionary = new org.iringtools.library.DatabaseDictionary();
-            try
-            {
-                NameValueList nvl = new NameValueList();
-                nvl.Add(new ListItem() { Name = "@ApplicationID", Value = applicationId });
-
-                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl);
-
-
-
-                dataDictionary = utility.Utility.Deserialize<org.iringtools.library.DatabaseDictionary>(xmlString, true);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error getting  dictionary: " + ex);
-            }
-            return dataDictionary;
-        }
-
-        public Response InsertDictionary(XDocument xml)
-        {
-            Response response = new Response();
-            response.Messages = new Messages();
-
-            try
-            {
-                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
-
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                    NameValueList nvl = new NameValueList();
-                    nvl.Add(new ListItem() { Name = "@rawXml", Value = rawXml });
-
-                    string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiDictionary", nvl);
-
-                    switch (output)
-                    {
-                        case "1":
-                            PrepareSuccessResponse(response, "dictionaryadded");
-                            break;
-                        default:
-                            PrepareErrorResponse(response, output);
-                            break;
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error adding dictionary: " + ex);
-
-                Status status = new Status { Level = StatusLevel.Error };
-                status.Messages = new Messages { ex.Message };
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Error;
-                response.StatusList.Add(status);
-            }
-
-            return response;
-        }
-
-        public Response UpdateDictionary(XDocument xml)
-        {
-            Response response = new Response();
-            response.Messages = new Messages();
-
-            try
-            {
-                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
-
-                using (var dc = new DataContext(_connSecurityDb))
-                {
-                    NameValueList nvl = new NameValueList();
-                    nvl.Add(new ListItem() { Name = "@rawXml", Value = rawXml });
-
-                    string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuDictionary", nvl);
-
-                    switch (output)
-                    {
-                        case "1":
-                            PrepareSuccessResponse(response, "dictionaryUpdated");
-                            break;
-                        default:
-                            PrepareErrorResponse(response, output);
-                            break;
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error adding dictionary: " + ex);
-
-                Status status = new Status { Level = StatusLevel.Error };
-                status.Messages = new Messages { ex.Message };
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Error;
-                response.StatusList.Add(status);
-            }
-
-            return response;
-        }
-
         public Exchange GetExchangeByExchangeID(string userName, Guid exchangeID)
         {
             Exchange exchange = new Exchange();
@@ -2029,34 +1880,6 @@ namespace org.iringtools.applicationConfig
 
         #region Private Methods
 
-        private void PrepareErrorResponse(Response response, string errMsg)
-        {
-            Status status = new Status { Level = StatusLevel.Error };
-            status.Messages = new Messages { errMsg };
-            response.DateTimeStamp = DateTime.Now;
-            response.Level = StatusLevel.Error;
-            response.StatusList.Add(status);
-
-        }
-
-        private void PrepareSuccessResponse(Response response, string successMsg)
-        {
-            Status status = new Status { Level = StatusLevel.Success };
-            status.Messages = new Messages { successMsg };
-            response.DateTimeStamp = DateTime.Now;
-            response.Level = StatusLevel.Success;
-            response.StatusList.Add(status);
-        }
-
-        private void PrepareWarningResponse(Response response, string errMsg)
-        {
-            Status status = new Status { Level = StatusLevel.Warning };
-            status.Messages = new Messages { errMsg };
-            response.DateTimeStamp = DateTime.Now;
-            response.Level = StatusLevel.Warning;
-            response.StatusList.Add(status);
-        }
-
         private static void ApplicationDataModeAndBindingHandling(ref Application application)
         {
             //Handling DataLayer binding
@@ -2071,7 +1894,7 @@ namespace org.iringtools.applicationConfig
                 application.Binding.BindName = "DataLayer";
                 application.Binding.To = application.Assembly;
                 application.Binding.Service = assemblyQualifiedName.Remove(assemblyQualifiedName.IndexOf(", Version"));
-                application.ApplicationDataMode = applicationConfig.DataMode.Live;
+                application.ApplicationDataMode = application.ApplicationDataMode == null ? applicationConfig.DataMode.Live : application.ApplicationDataMode;
 
                 System.Reflection.Assembly dataLayerAssembly = System.Reflection.Assembly.Load(dataLayerName);
 
@@ -2080,7 +1903,6 @@ namespace org.iringtools.applicationConfig
                     if (typeof(ILightweightDataLayer).IsAssignableFrom(dataLayerAssembly.GetType(typeName)))
                     {
                         application.Binding.Service = (typeof(ILightweightDataLayer)).AssemblyQualifiedName;
-                        application.ApplicationDataMode = application.ApplicationDataMode == null ? applicationConfig.DataMode.Live : application.ApplicationDataMode;
                     }
                 }
                 else if (typeof(ILightweightDataLayer2).IsAssignableFrom(dataLayerAssembly.GetType(typeName)))
