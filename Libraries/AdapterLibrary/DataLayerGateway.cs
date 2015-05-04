@@ -1291,7 +1291,10 @@ namespace org.iringtools.adapter
             {
                 if (applicationDataMode == org.iringtools.applicationConfig.DataMode.Cache || _lwDataLayer != null || _lwDataLayer2 != null)
                 {
-                    cacheId = CheckCache();
+                    //cacheId = CheckCache();
+
+                    cacheId = "[" + objectType.dataObjectId.ToString() + "]";
+
 
                     if (string.IsNullOrEmpty(cacheId))
                     {
@@ -1503,8 +1506,10 @@ namespace org.iringtools.adapter
                         whereClause = whereClause.Remove(orderByIndex);
                     }
 
-                    string query = string.Format(@"SELECT * FROM (SELECT row_number() OVER ({2}) as __rn, * FROM {0} {1}) as __t",
-                        cachedObjectType.tableName, whereClause, orderByClause);
+                    string query = string.Format(@"SELECT * FROM (SELECT row_number() OVER ({2}) as __rn, * FROM [{0}] {1}) as __t",
+                        cachedObjectType.dataObjectId, whereClause, orderByClause);
+
+                    
 
                     if (!(start == 0 && limit == 0))
                     {
