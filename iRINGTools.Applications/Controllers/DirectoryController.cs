@@ -501,14 +501,27 @@ namespace org.iringtools.web.controllers
             try
             { 
                 Guid nodeId = Guid.Parse(form["guid"]);
-
                 var nodeType = form["type"];
 
-                string currentNodesChildren = string.Empty;
+                string currentNodesChildren = HttpUtility.HtmlDecode(_appConfigRepository.GetNodesForCache(nodeType, nodeId, userName));
+                XDocument cacheNodesDocument = XDocument.Parse(currentNodesChildren);
+                
+                Applications applicationList = new Applications();
+                List<DatabaseDictionary> databaseDictionaryList = new List<DatabaseDictionary>();
+                
+                foreach (XElement xElement in cacheNodesDocument.Root.Elements().First().Elements())
+                {
+                    if (xElement.Name.LocalName == "application")
+                    {
+                         applicationList.Add(Utility.Deserialize<Application>(xElement.ToString(), true));
+                    }
+                    else
+                    {
+                         databaseDictionaryList.Add(Utility.Deserialize<DatabaseDictionary>(xElement.ToString(), true));
+                    }
+                }
 
-                currentNodesChildren = _appConfigRepository.GetNodesForCache(nodeType, nodeId, userName);
-
-                return Json(new { success = true, message = "nodesFetched", currentNodesChildren }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, message = "nodesFetched", applicationList, databaseDictionaryList }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
@@ -746,20 +759,18 @@ namespace org.iringtools.web.controllers
 
         public ActionResult getAllJob()
         {
+            AgentLibrary.Agent.Jobs result = null;
+            try
             {
-                AgentLibrary.Agent.Jobs result = null;
-                try
-                {
-                    result = _repository.getAllScheduleJob(platformId, siteId, userName);
+                result = _repository.getAllScheduleJob(platformId, siteId, userName);
 
-                }
-                catch (Exception e)
-                {
-                    _logger.Error(e.ToString());
-                }
-
-                return Json(result, JsonRequestBehavior.AllowGet);
             }
+            catch (Exception e)
+            {
+                _logger.Error(e.ToString());
+            }
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult getScheduleJob(FormCollection form)

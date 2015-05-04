@@ -91,9 +91,10 @@ Ext.define('AM.view.menus.ContextMenu', {
                 applicationStore.removeAll();
                 dataObjectStore.removeAll();
 
-                var contextChildrens = Ext.JSON.decode(response.responseText).currentNodesChildren
+                var applicationList = Ext.JSON.decode(response.responseText).applicationList;
+                var databaseDictionaryList = Ext.JSON.decode(response.responseText).databaseDictionaryList;
 
-                if (contextChildrens.length > 0) {
+                if (applicationList.length > 0) {
                     me.items.map['cacheupscreen'].setDisabled(false);
 
                     Ext.each(Ext.JSON.decode(response.responseText).currentNodesChildren, function (eachChildNode) {
