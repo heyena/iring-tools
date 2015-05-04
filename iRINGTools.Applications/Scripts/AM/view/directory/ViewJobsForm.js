@@ -20,141 +20,56 @@ Ext.define('AM.view.directory.ViewJobsForm', {
     border: 0,
     bodyPadding: 10,
     bodyStyle: 'padding:10px 5px 0',
-    //url: 'directory/Context',
-    //cacheConnStrTpl: 'Data Source={hostname\\dbInstance};Initial Catalog={dbName};User ID={userId};Password={password}',
-
     initComponent: function () {
         var me = this;
 
         me.initialConfig = Ext.apply({
-        // url: 'directory/Context'
-    }, me.initialConfig);
 
-    Ext.create('Ext.data.Store', {
-        storeId: 'simpsonsStore',
-        fields: ['scope', 'xid', 'dataobject', 'status', 'laststarttime', 'nextstarttime','totalrecords','cachedrecords'],
-        data: { 'items': [
-        { 'jobtype': 'Developer', "scope": "scope1", "xid": "555-111-1224", 'dataobject': 'Object1', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100'},
-         { 'jobtype': 'Developer', "scope": "scope2", "xid": "555-111-1224", 'dataobject': 'Object2', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope3", "xid": "555-111-1224", 'dataobject': 'Object3', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope4", "xid": "555-111-1224", 'dataobject': 'Object4', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope5", "xid": "555-111-1224", 'dataobject': 'Object5', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100'},
-         { 'jobtype': 'Developer', "scope": "scope6", "xid": "555-111-1224", 'dataobject': 'Object6', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope1", "xid": "555-111-1224", 'dataobject': 'Object1', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope2", "xid": "555-111-1224", 'dataobject': 'Object2', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope3", "xid": "555-111-1224", 'dataobject': 'Object3', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100'},
-         { 'jobtype': 'Developer', "scope": "scope4", "xid": "555-111-1224", 'dataobject': 'Object4', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015' ,'totalrecords': '200','cachedrecords': '100'},
-         { 'jobtype': 'Developer', "scope": "scope5", "xid": "555-111-1224", 'dataobject': 'Object5', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope6", "xid": "555-111-1224", 'dataobject': 'Object6', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope1", "xid": "555-111-1224", 'dataobject': 'Object1', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope2", "xid": "555-111-1224", 'dataobject': 'Object2', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope3", "xid": "555-111-1224", 'dataobject': 'Object3', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope4", "xid": "555-111-1224", 'dataobject': 'Object4', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope5", "xid": "555-111-1224", 'dataobject': 'Object5', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope6", "xid": "555-111-1224", 'dataobject': 'Object6', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015' ,'totalrecords': '200','cachedrecords': '100'},
-         { 'jobtype': 'Developer', "scope": "scope1", "xid": "555-111-1224", 'dataobject': 'Object1', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015' ,'totalrecords': '200','cachedrecords': '100'},
-         { 'jobtype': 'Developer', "scope": "scope2", "xid": "555-111-1224", 'dataobject': 'Object2', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope3", "xid": "555-111-1224", 'dataobject': 'Object3', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015' ,'totalrecords': '200','cachedrecords': '100'},
-         { 'jobtype': 'Developer', "scope": "scope4", "xid": "555-111-1224", 'dataobject': 'Object4', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' },
-         { 'jobtype': 'Developer', "scope": "scope5", "xid": "555-111-1224", 'dataobject': 'Object5', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015' ,'totalrecords': '200','cachedrecords': '100'},
-         { 'jobtype': 'Developer', "scope": "scope6", "xid": "555-111-1224", 'dataobject': 'Object6', 'status': 'Active', 'laststarttime': '15-Feb-2015', 'nextstarttime': '25-Mar-2015','totalrecords': '200','cachedrecords': '100' }
+        }, me.initialConfig);
 
-    ]
-        },
-        proxy: {
-            type: 'memory',
-            reader: {
-                type: 'json',
-                root: 'items'
-            }
-        }
-    });
-    Ext.applyIf(me, {
 
-        items: [{
-            xtype: 'container',
-            layout: 'hbox'
-          //  margin: '45 0 5 0',
-           /*  items: [{
-                xtype: 'label',
-                name: 'search',
-                text: 'Search',
-                margin: '4 54 0 0 ',
-                allowBlank: false
+        Ext.applyIf(me, {
+
+            items: [{
+                xtype: 'container',
+                layout: 'hbox'
+
             },
-            {
-                xtype: 'textfield',
-                width: 250,
-                margin: '4 60 0 0 ',
-                name: 'tf',
-                emptyText: 'Email Address',
-                //flex: 1,
-                margin: '4 54 0 0 ',
-                allowBlank: false,
-                listeners: {
-                    specialkey: {
-                        fn: me.onSpecialkey,
-                        scope: me
-                    }
-                }
-            },
-
-             {
-                 xtype: 'button',
-                 width: 100,
-                 margin: '4 60 0 0 ',
-                 name: 'btu',
-                 text: 'Search'
-
-
-             }] */
-        },
 
                 {
                     xtype: 'grid',
                     margin: '0 0 0 0',
                     alias: 'widget.viewjobsgrid',
-                    store:'JobStore',
-                   
-                   // store: Ext.data.StoreManager.lookup('simpsonsStore'),
-                   // store:'ViewJobsStore',
+                    store: 'JobStore',
                     autoHeight: true,
                     autoWidth: true,
                     border: 0,
                     columns: [
-//                       { xtype: 'gridcolumn',
-//                        text: 'JobType', dataIndex: 'jobtype'
-//                    }, 
-//                     { xtype: 'gridcolumn',
-//                        text: 'Context Name', dataIndex: 'scope'
-//                    }, { xtype: 'gridcolumn',
-//                        text: 'Application Name', dataIndex: 'jobtype'
-//                    },{ xtype: 'gridcolumn',
-//                        text: 'Data Object Name ', dataIndex: 'dataobject'
-//                    },{ xtype: 'gridcolumn',
-//                        text: 'Status', dataIndex: 'Status'
-//                    }, { xtype: 'gridcolumn',
-//                        text: 'Last Executed', dataIndex: 'laststarttime'
-//                    }, 
+
                       { xtype: 'gridcolumn',
-                      text: 'Status', dataIndex: 'Active'
-                     },
+                          text: 'Context Name', dataIndex: 'ContextName', width: 150, autoSizeColumn: true
+                      }, { xtype: 'gridcolumn',
+                          text: 'Application Name ', dataIndex: 'AppName', width: 150, autoSizeColumn: true
+                      },
+                      { xtype: 'gridcolumn',
+                          text: 'Status', dataIndex: 'Status', width: 150, autoSizeColumn: true
+                      },
                     { xtype: 'gridcolumn',
-                        text: 'Last Start Time', dataIndex: 'Last_Start_DateTime'
+                        text: 'Last Start Time', dataIndex: 'Last_Start_DateTime', width: 150, autoSizeColumn: true
                     },
                     { xtype: 'gridcolumn',
-                        text: 'Next Start Time', dataIndex: 'Next_Start_DateTime'
+                        text: 'Next Start Time', dataIndex: 'Next_Start_DateTime', width: 150, autoSizeColumn: true
                     },
                          { xtype: 'gridcolumn',
-                         text: 'Total Records', dataIndex: 'TotalRecords'
-                    }, { xtype: 'gridcolumn',
-                        text: 'Cached Records', dataIndex: 'CachedRecords'
-                                        }
+                             text: 'Total Records', dataIndex: 'TotalRecords'
+                         }, { xtype: 'gridcolumn',
+                             text: 'Cached Records', dataIndex: 'CachedRecords'
+                         }
 
                     ],
                     listeners: {
-                       
-                           itemcontextmenu: function (view, record, item, index, e) {
+
+                        itemcontextmenu: function (view, record, item, index, e) {
                             // Stop the browser getting the event 
                             e.preventDefault();
                             var permMenu = Ext.widget('jobsmenu');
@@ -165,23 +80,10 @@ Ext.define('AM.view.directory.ViewJobsForm', {
 
                 }
             ]
-    });
+        });
 
-    me.callParent(arguments);
-}
+        me.callParent(arguments);
+    }
 
-//onSpecialkey: function (field, e, eOpts) {
-//    var me = this;
-//    alert("search");
-//    if (e.getKey() === e.ENTER) {
-//        me.onSearch();
-//    }
-//},
-//onSearch: function () {
-
-//    var me = this;
-//    var btn = me.down('button');
-//    btn.fireEvent('click', btn);
-//}
 
 });
