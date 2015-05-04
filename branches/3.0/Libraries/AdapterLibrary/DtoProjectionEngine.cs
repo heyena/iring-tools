@@ -990,12 +990,7 @@ namespace org.iringtools.adapter.projection
                     {
                         decimal decDecimalValue = 0;
                         Decimal.TryParse(value, out decDecimalValue);
-                        value = Convert.ToString(decDecimalValue);
-                        if (value.Contains("."))
-                        {
-                            value = value.Trim('0');
-                            value = value.Trim('.');
-                        }
+                        value = decDecimalValue.ToString("0.################################");
                     }
                 }
             }
