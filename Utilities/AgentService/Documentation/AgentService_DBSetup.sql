@@ -229,9 +229,13 @@ BEGIN TRY
 		    s.[status] as status
 		    from schedule s
 		    where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
-		) as 'schedules'
-		from job j
-		where j.JobId = @JobId and Active = 1
+		) as 'schedules',
+		a.displayname as appname,
+		c.displayname as contextname
+		from job j, dataobjects as do, dictionary d, applications a, contexts c
+		where j.dataobjectid = do.dataobjectid and do.dictionaryid = d.dictionaryid and
+		d.applicationid = a.applicationid and a.contextid = c.contextid and
+		j.JobId = @JobId and j.Active = 1
 		for xml PATH('job'), type, ELEMENTS XSINIL
    END
 END TRY
@@ -314,9 +318,13 @@ BEGIN TRY
 								s.[status] as status
 								from schedule s
 								where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
-							) as 'schedules'
-							from job j
-							where j.Active = 1 and j.platformid = @PlatformId and j.Is_Exchange = 0
+							) as 'schedules',
+							a.displayname as appname,
+							c.displayname as contextname
+							from job j, dataobjects as do, dictionary d, applications a, contexts c
+							where j.dataobjectid = do.dataobjectid and do.dictionaryid = d.dictionaryid and
+							d.applicationid = a.applicationid and a.contextid = c.contextid and
+							j.Active = 1 and j.platformid = @PlatformId and j.Is_Exchange = 0
 							for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
 					END
 				ELSE
@@ -348,9 +356,13 @@ BEGIN TRY
 								s.[status] as status
 								from schedule s
 								where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
-							) as 'schedules'
-							from job j
-							where j.Active = 1 and j.platformid = 3 and j.Is_Exchange = 1
+							) as 'schedules',
+							cm.commodityname as appname,
+							c.displayname as contextname
+							from job j, exchanges e, commodity cm, contexts c, applications a
+							where j.xid = e.exchangeid and e.commodityid = cm.commodityid and
+							cm.contextid = c.contextid and c.contextid = a.contextid and
+							j.Active = 1 and j.platformid = 3 and j.Is_Exchange = 1
 							for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
 						
 			END
@@ -387,9 +399,13 @@ BEGIN TRY
 									s.[status] as status
 									from schedule s
 									where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
-								) as 'schedules'
-								from job j
-								where j.PlatformId = 1 and j.PlatformId = 2 and j.Is_Exchange = 0 and j.Active = 1 
+								) as 'schedules',
+								a.displayname as appname,
+								c.displayname as contextname
+								from job j, dataobjects as do, dictionary d, applications a, contexts c
+								where j.dataobjectid = do.dataobjectid and do.dictionaryid = d.dictionaryid and
+								d.applicationid = a.applicationid and a.contextid = c.contextid and
+								j.PlatformId = 1 and j.PlatformId = 2 and j.Is_Exchange = 0 and j.Active = 1 
 								for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
 						End
 					Else 
@@ -422,9 +438,13 @@ BEGIN TRY
 									s.[status] as status
 									from schedule s
 									where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
-								) as 'schedules'
-								from job j
-								where j.PlatformId = @PlatformId and j.Is_Exchange = 0 and j.Active = 1 
+								) as 'schedules',
+								a.displayname as appname,
+								c.displayname as contextname
+								from job j, dataobjects as do, dictionary d, applications a, contexts c
+								where j.dataobjectid = do.dataobjectid and do.dictionaryid = d.dictionaryid and
+								d.applicationid = a.applicationid and a.contextid = c.contextid and
+								j.PlatformId = @PlatformId and j.Is_Exchange = 0 and j.Active = 1 
 								for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
 						End
 				End		
@@ -460,9 +480,13 @@ BEGIN TRY
 									s.[status] as status
 									from schedule s
 									where j.scheduleid = s.scheduleid for xml PATH('schedule'), type
-								) as 'schedules'
-								from job j
-								where j.SiteId = @SiteId and j.PlatformId = @PlatformId and j.Is_Exchange = 1 and j.Active = 1 
+								) as 'schedules',
+								cm.commodityname as appname,
+								c.displayname as contextname
+								from job j, exchanges e, commodity cm, contexts c, applications a
+								where j.xid = e.exchangeid and e.commodityid = cm.commodityid and
+								cm.contextid = c.contextid and c.contextid = a.contextid and
+								j.SiteId = @SiteId and j.PlatformId = @PlatformId and j.Is_Exchange = 1 and j.Active = 1 
 								for xml PATH('job')) from job  for xml PATH('jobs') , type, ELEMENTS XSINIL
 						End	
 				
@@ -475,6 +499,7 @@ BEGIN CATCH
 END CATCH;
 
 GO
+
 
 -- =============================================
 -- Author:	<Hemant Gakhar>
@@ -626,6 +651,49 @@ GO
 -- ===========================================================
 -- Author:		<Hemant Gakhar>
 -- Create date: <3-March-2015>
+-- Description:	<updating Job Cached Total Records>
+-- ===========================================================
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spuJobRecords')
+DROP PROCEDURE spuJobRecords
+GO
+
+CREATE PROCEDURE [dbo].[spuJobRecords] 
+(
+	@JobId uniqueidentifier,
+	@TotalRecords int = NULL,
+	@CachedRecords int = NULL,
+	@Status nvarchar(50) = NULL OUTPUT
+)
+AS
+BEGIN TRY
+	Declare @ScheduleId uniqueidentifier
+	Begin
+		SET @ScheduleId = (Select ScheduleId from Job where JobId = @JobId)
+		
+		If @TotalRecords IS NOT NULL
+			Begin
+				UPDATE JOB SET TotalRecords = @TotalRecords WHERE JobId = @JobId
+			End
+		
+		
+		If @CachedRecords IS NOT NULL
+			Begin
+				UPDATE JOB SET CachedRecords = @CachedRecords WHERE JobId = @JobId
+			End
+		
+		Select @Status = Status from Schedule where ScheduleId = @ScheduleId
+		RETURN
+	End
+END TRY
+BEGIN CATCH
+    SELECT 'Error occured at database: ' + ERROR_MESSAGE() 
+END CATCH
+GO
+
+
+-- ===========================================================
+-- Author:		<Hemant Gakhar>
+-- Create date: <3-March-2015>
 -- Description:	<updating Job>
 -- ===========================================================
 IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'spuJob')
@@ -635,58 +703,74 @@ GO
 CREATE PROCEDURE [dbo].[spuJob] 
 (
 	@JobId uniqueidentifier,
-	@ScheduleId uniqueidentifier,
 	@DataObjectId uniqueidentifier,
 	@Is_Exchange INT,
 	@Xid NVARCHAR(50),
 	@Cache_Page_Size NVARCHAR(50),
 	@PlatformId int,
 	@SiteId int,
-	@Next_Start_DateTime NVARCHAR(100),
-	@Last_Start_DateTime NVARCHAR(100),
-	@TotalRecords int,
-	@CachedRecords int,
 	@Active tinyint,
 	@Schedules xml
 )	 
 AS
 BEGIN TRY
+	Declare @Occurance nvarchar(50)
+	Declare @Next_Start_DateTime datetime
+	Declare @Start_DateTime datetime
+	Declare @End_DateTime datetime
+	
 	BEGIN
-	
-	UPDATE [Job]
-	   SET 
-		  [ScheduleId] = @ScheduleId,
-		  [DataObjectId] = @DataObjectId,
-		  [Is_Exchange] = @Is_Exchange,
-		  [Xid] = @Xid,
-		  [Cache_Page_Size] = @Cache_Page_Size,
-		  [PlatformId] = @PlatformId,
-		  [SiteId] = @SiteId,
-		  [Next_Start_DateTime] = convert(datetime, @Next_Start_DateTime, 121),
-		  [Last_Start_DateTime] = convert(datetime, @Last_Start_DateTime, 121),
-		  [TotalRecords] = @TotalRecords,
-		  [CachedRecords] = @CachedRecords,
-		  [Active] = @Active
-	WHERE JobId = @JobId 
-	 
-	Declare @Schedule_Id uniqueidentifier
-	SET @ScheduleId =  (SELECT  T.N.value('(Schedule_Id)[1]', 'NVARCHAR(250)') as Schedule_Id from @Schedules.nodes('schedules/schedule') as T(N))
-	
-	 --update table schedule 
-	 UPDATE [schedule]
-		SET 
-		Created_DateTime = convert(datetime, T.N.value('(created_DateTime)[1]', 'NVARCHAR(100)'), 121),
-		Created_By = T.N.value('(created_By)[1]', 'NVARCHAR(250)'),
-		Occurance = T.N.value('(occurance)[1]', 'NVARCHAR(50)'),
-		Weekday = T.N.value('(weekday)[1]', 'NVARCHAR(50)'),
-		Start_DateTime = convert(datetime, T.N.value('(start_DateTime)[1]', 'NVARCHAR(100)'), 121), 
-		End_DateTime = convert(datetime, T.N.value('(end_DateTime)[1]', 'NVARCHAR(100)'), 121),
-		Status = T.N.value('(status)[1]', 'NVARCHAR(50)') 
-		from @Schedules.nodes('schedules/schedule') as T(N)	
-		WHERE ScheduleId = @ScheduleId 
+		SET @Start_DateTime =  (SELECT  convert(datetime, T.N.value('(start_DateTime)[1]', 'NVARCHAR(100)'), 121) as Start_DateTime from @Schedules.nodes('schedules/schedule') as T(N))
+		SET @End_DateTime =  (SELECT  convert(datetime, T.N.value('(end_DateTime)[1]', 'NVARCHAR(100)'), 121) as End_DateTime from @Schedules.nodes('schedules/schedule') as T(N))
 		
+		SET @Occurance =  (SELECT  T.N.value('(occurance)[1]', 'NVARCHAR(50)') as Occurance from @Schedules.nodes('schedules/schedule') as T(N))
+		If @Occurance = 'Immediate'
+			Begin
+				SET @Start_DateTime =  convert(varchar, getdate(), 121)
+			End
+		
+		If (@End_DateTime = convert(varchar, '1900-01-01 00:00:00.000',121) or @End_DateTime = '' or @End_DateTime = NULL)
+			Begin
+				SET @End_DateTime = (select dateadd(year, 10, @Start_DateTime) )
+			End
+			
+		If @Occurance = 'Immediate'
+			Begin
+				SET @Next_Start_DateTime =  convert(varchar, getdate(), 121)
+			End
+		Else
+			SET @Next_Start_DateTime =  (SELECT  convert(datetime, T.N.value('(start_DateTime)[1]', 'NVARCHAR(100)'), 121) as Next_Start_DateTime from @Schedules.nodes('schedules/schedule') as T(N))
+		
+		Declare @ScheduleId nvarchar(100)
+		Declare @status nvarchar(50)
+		Declare @weekday nvarchar(50)
+		SET @ScheduleId =  (SELECT  T.N.value('(scheduleId)[1]', 'NVARCHAR(100)') as scheduleId from @Schedules.nodes('schedules/schedule') as T(N))
+		SET @weekday =  (SELECT  T.N.value('(weekday)[1]', 'NVARCHAR(50)') as weekday from @Schedules.nodes('schedules/schedule') as T(N))
+		SET @status =  (SELECT  T.N.value('(status)[1]', 'NVARCHAR(50)') as status from @Schedules.nodes('schedules/schedule') as T(N))
+		
+		 --update table schedule 
+		 UPDATE [schedule]
+			SET 
+			Occurance = @Occurance,
+			Weekday = @weekday,
+			Start_DateTime = @Start_DateTime, 
+			End_DateTime = @End_DateTime,
+			Status =  @status 
+			WHERE ScheduleId = @ScheduleId 
 	
-	  Select  '1'--'Job updated successfully!'
+		UPDATE [Job]
+		   SET 
+			  [DataObjectId] = @DataObjectId,
+			  [Is_Exchange] = @Is_Exchange,
+			  [Xid] = @Xid,
+			  [Cache_Page_Size] = @Cache_Page_Size,
+			  [PlatformId] = @PlatformId,
+			  [SiteId] = @SiteId,
+			  [Next_Start_DateTime] = @Next_Start_DateTime,
+			  [Active] = @Active
+		WHERE JobId = @JobId 
+	 
+		Select  '1'--'Job updated successfully!'
 	END
 END TRY
 BEGIN CATCH

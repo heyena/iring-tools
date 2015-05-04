@@ -59,8 +59,8 @@ namespace iRINGAgentService
 
         public void ProcessTask(AgentConfig config)
         {
-            string project = string.Empty; 
-            string app = string.Empty;
+            //string project = string.Empty; 
+            //string app = string.Empty;
             string dataObject = string.Empty;
             AdapterSettings adapterSettings;
             NameValueCollection settings;
@@ -71,8 +71,8 @@ namespace iRINGAgentService
            
             try
             {
-                project = config.Scope; //config.Project;
-                app = config.App;
+                //project = config.Scope; //config.Project;
+                //app = config.App;
                 dataObject = config.DataObject;
                 baseUrl = config.ExchangeUrl;
                 scope = config.Scope;
@@ -105,9 +105,11 @@ namespace iRINGAgentService
                         _settings["UserName"] = _clientId;
                     }
                     if (string.IsNullOrEmpty(dataObject))
-                        RefreshCache(project, app, false);
-                    else
-                        RefreshCache(project, app, dataObject, false);
+                        RefreshCache(new Guid(dataObject), false);
+                    //if (string.IsNullOrEmpty(dataObject))
+                    //    RefreshCache(project, app, false);
+                    //else
+                    //    RefreshCache(project, app, dataObject, false);
                 }
                 else
                 {

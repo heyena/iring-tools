@@ -359,8 +359,8 @@ namespace iRINGAgentService
 
 
                 //get platformd and site id from webconfig
-                siteId = "1";
-                platformId = "3";
+                siteId = settings.Get("SiteId");
+                platformId = settings.Get("PlatformId"); ;
 
                 //get job schedule configuration info
                 string sConfigSql = "select SsoUri, ClientId, ClientSecret, GrantType, RequestTimeout, ExchangeManagerUri from GlobalSettings where siteid = " + siteId + " and platformId = " + platformId;
