@@ -541,13 +541,13 @@ namespace org.iringtools.services
             FormatOutgoingMessage<Response>(response, true);
         }
 
-        [Description("Creates/refreshes application cache.")]
-        [WebGet(UriTemplate = "/{scope}/{app}/cache/refresh?updatedictionary={updateDictionary}")]
-        public void RefreshCache(string scope, string app, bool updateDictionary)
-        {
-            Response response = _adapterProvider.RefreshCache(scope, app, updateDictionary);
-            FormatOutgoingMessage<Response>(response, true);
-        }
+        //[Description("Creates/refreshes application cache.")]
+        //[WebGet(UriTemplate = "/{scope}/{app}/cache/refresh?updatedictionary={updateDictionary}")]
+        //public void RefreshCache(string scope, string app, bool updateDictionary)
+        //{
+        //    Response response = _adapterProvider.RefreshCache(scope, app, updateDictionary);
+        //    FormatOutgoingMessage<Response>(response, true);
+        //}
 
         [Description("Creates/refreshes application cache.")]
         [WebGet(UriTemplate = "/{dataObjectId}/cache/refresh?updatedictionary={updateDictionary}")]
