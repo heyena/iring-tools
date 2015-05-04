@@ -10,17 +10,21 @@
             name: 'SiteId'
         },
         {
-            name: 'Scope'
+            name: 'ContextName'
           
         },
         {
-            name: 'App'
+            name: 'AppName'
         },
         {
             name: 'DataObject'   
         },
         {
-            name: 'Active'
+
+            mapping: 'schedules[0].Status',
+            name: 'Status'
+
+
             
         },
         {

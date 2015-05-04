@@ -70,6 +70,8 @@
     <Reference Include="System.DirectoryServices.Protocols" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel.DomainServices.Hosting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.ServiceModel.DomainServices.Server, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -233,6 +235,7 @@
     <Content Include="Scripts\AM\model\DirectoryModel.js" />
     <Content Include="Scripts\AM\model\DynamicModel.js" />
     <Content Include="Scripts\AM\model\FileDownloadModel.js" />
+    <Content Include="Scripts\AM\model\JobModel.js" />
     <Content Include="Scripts\AM\model\MappingModel.js" />
     <Content Include="Scripts\AM\model\MultiSelect.js" />
     <Content Include="Scripts\AM\model\NHibernateTreeModel.js" />
@@ -524,6 +527,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Scripts\AM\jsonFile\Agent.json" />
     <None Include="Scripts\USM\jsonfiles\selroles.json" />
     <None Include="Scripts\USM\jsonfiles\selgroup.json" />
     <None Include="Scripts\USM\jsonfiles\selusers.json" />
