@@ -527,7 +527,7 @@ namespace org.iringtools.adapter
         }
 
 
-        public Manifest GetManifestForUser(string userName, Guid graphId)
+        public Manifest GetManifestForUser(string userName, string graphId)
         {
             Manifest manifest = new Manifest()
             {
