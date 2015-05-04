@@ -306,10 +306,12 @@ Ext.define('AM.view.directory.GraphMapForm', {
         context = Ext.decode(node.parentNode.parentNode.data.record).internalName;
         applicationId = Ext.decode(node.parentNode.data.record).applicationId;
         contextId = Ext.decode(node.parentNode.parentNode.data.record).contextId;
+        var graphId = node.raw.id;
         me.getForm().findField('scope').setValue(context);
         me.getForm().findField('app').setValue(app);
         me.getForm().findField('applicationId').setValue(applicationId);
         me.getForm().findField('contextId').setValue(contextId);
+        me.getForm().findField('graphId').setValue(graphId);
 
         if (me.getForm().findField('objectName').getValue() === '' ||
             me.getForm().findField('graphName').getValue() === '' ||

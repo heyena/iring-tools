@@ -48,7 +48,7 @@ Ext.define('AM.controller.Mapping', {
         var dirTree = me.getDirTree();
         var tree = content.getActiveTab().items.items[0];
         var endPoint = content.getActiveTab().endpoint;
-       var contextName = content.getActiveTab().contextName;
+        var contextName = content.getActiveTab().contextName;
         var tempGraph = content.getActiveTab().graph.split('/');
         var graph = tempGraph[tempGraph.length - 1];
         var graphId = content.getActiveTab().graphId;
@@ -65,7 +65,7 @@ Ext.define('AM.controller.Mapping', {
             url: 'mapping/deleteTemplateMap',
             method: 'POST',
             params: {
-//                scope: panel.contextName,
+                //                scope: panel.contextName,
                 graphId: graphId,
                 //baseUrl: panel.baseUrl,
                 parentIdentifier: me.parentClass,
@@ -315,9 +315,11 @@ Ext.define('AM.controller.Mapping', {
         var tree = me.getDirTree();
         var node = tree.getSelectedNode();
         var content = me.getMainContent();
-        var context = node.data.id.split('/')[0];
-        var endpoint = node.data.id.split('/')[1];
-        var graphName = node.internalId;
+        //        var context = node.data.id.split('/')[0];
+        //        var endpoint = node.data.id.split('/')[1];
+        var context = Ext.decode(node.parentNode.parentNode.parentNode.raw.record).displayName;
+        var endpoint = Ext.decode(node.parentNode.parentNode.raw.record).displayName;
+        var graphName = node.raw.text;
         var graphId = node.internalId;
         var title = 'Graph.' + context + "." + endpoint + '.' + node.data.text;
         var panelItemId = 'GraphMap.' + context + "." + endpoint + '.' + node.data.text;
@@ -352,7 +354,8 @@ Ext.define('AM.controller.Mapping', {
             }, me);
             treeStore.on('beforeload', function (store, operation, eopts) {
                 params.id = operation.node.data.identifier;
-                params.graph = node.internalId;
+                params.graph = node.raw.text;
+                params.graphId = node.internalId;
                 params.context = context;
                 params.endpoint = endpoint;
             }, me);
@@ -435,7 +438,7 @@ Ext.define('AM.controller.Mapping', {
         var tree = content.getActiveTab().items.items[0];
         var endPoint = content.getActiveTab().endpoint;
         var contextName = content.getActiveTab().contextName;
-        var graphId = content.getActiveTab().graph;
+        var graphId = content.getActiveTab().graphId;
         var tempGraph = content.getActiveTab().graph.split('/');
         var graph = tempGraph[tempGraph.length - 1];
         var itemId = 'GraphMap.' + contextName + '.' + endPoint + '.' + graph;
@@ -479,8 +482,8 @@ Ext.define('AM.controller.Mapping', {
         }, me);
 
         var formRecord = {
-            //            'scope': mapPanel.contextName,
-            //            'app': mapPanel.endpoint,
+            'scope': mapPanel.contextName,
+            'app': mapPanel.endpoint,
             'graphId': graphId,
             'graph': graph, //mapPanel.graph,
             'templateIndex': index,
@@ -522,8 +525,8 @@ Ext.define('AM.controller.Mapping', {
         var index = node.parentNode.parentNode.indexOf(node.parentNode);
 
         var formRecord = {
-            // 'contextName': mapPanel.contextName,
-            //'endpoint': mapPanel.endpoint,
+            'contextName': mapPanel.contextName,
+            'endpoint': mapPanel.endpoint,
             'graphName': graph,
             'graphId': graphId,
             'index': index,
@@ -876,9 +879,9 @@ Ext.define('AM.controller.Mapping', {
             params: {
                 mappingNode: mapingNode,
                 node: node,
-                graphId:graphId,
-//                endpoint: mapPanel.endpoint,
-//                contextName: mapPanel.contextName,
+                graphId: graphId,
+                endpoint: mapPanel.endpoint,
+                contextName: mapPanel.contextName,
                 graph: graph,
                 classId: parentNode.parentNode.data.identifier,
                 index: parentNode.parentNode.indexOf(parentNode),
