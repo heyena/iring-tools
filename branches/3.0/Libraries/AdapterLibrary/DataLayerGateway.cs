@@ -1428,7 +1428,8 @@ namespace org.iringtools.adapter
 
                 if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null || _lwDataLayer2 != null)
                 {
-                    cacheId = CheckCache();
+                   // cacheId = CheckCache();
+                    cacheId = "[" + objectType.dataObjectId.ToString() + "]";
 
                     if (string.IsNullOrEmpty(cacheId))
                     {

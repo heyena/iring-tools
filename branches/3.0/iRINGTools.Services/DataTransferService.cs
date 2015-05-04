@@ -210,8 +210,8 @@ namespace org.iringtools.services
     }
 
     [Description("Get manifest for user")]
-    [WebGet(UriTemplate = "/manifest/{userName}?graphId={graphId}&format={format}")]
-    public void GetManifestForUser(string userName, Guid graphId, string format)
+    [WebGet(UriTemplate = "/manifest/{userName}/{graphId}?format={format}")] 
+    public void GetManifestForUser(string userName, string graphId, string format)
     {
         try
         {
@@ -363,23 +363,6 @@ namespace org.iringtools.services
       {
         ExceptionHander(ex);
       }
-    }
-
-    [Description("Gets a page data transfer indices with filter by graphid.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{userName}/{graphId}/dti?start={start}&limit={limit}")]
-    public void GetPagedDataTransferIndicesWithFilterByGraphID(string userName, string graphId, DataFilter filter, int start, int limit)
-    {
-        try
-        {
-            DataTransferIndices dtis = _dtoProvider.GetPagedDataTransferIndicesByGraphID(userName, graphId, filter, start, limit);
-
-            HttpContext.Current.Response.ContentType = "application/xml";
-            HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
-        }
-        catch (Exception ex)
-        {
-            ExceptionHander(ex);
-        }
     }
 
     [Description("Gets data transfer objects of requested indices.")]
