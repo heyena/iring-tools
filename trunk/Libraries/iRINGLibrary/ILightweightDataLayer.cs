@@ -443,7 +443,17 @@ namespace org.iringtools.library
                                         value = null;
                                     }
 
-                                    dataObject.SetPropertyValue(objectProperty.propertyName, value);
+                                    if (objectProperty.dataType.ToString().ToUpper() == "DECIMAL" ||
+                                        objectProperty.dataType.ToString().ToUpper() == "DOUBLE")
+                                    {
+                                        dataObject.SetPropertyNumericValue(objectProperty.propertyName, value);
+                                    }
+                                    else
+                                    {
+                                        dataObject.SetPropertyValue(objectProperty.propertyName, value);
+                                    }
+
+                                    
                                 }
                                 else
                                 {
