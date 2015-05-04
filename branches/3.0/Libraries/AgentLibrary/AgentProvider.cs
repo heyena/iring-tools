@@ -235,8 +235,6 @@ namespace org.iringtools.AgentLibrary
             try
             {
                 org.iringtools.AgentLibrary.Agent.Job job = Utility.DeserializeDataContract<org.iringtools.AgentLibrary.Agent.Job>(xml.ToString());
-                //string schedulesXml = job.schedules.ToXElement().ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
-
                 using (var dc = new DataContext(_connSecurityDb))
                 {
                     if (job == null)
@@ -264,13 +262,13 @@ namespace org.iringtools.AgentLibrary
                         switch (Status)
                         {
                             case "Ready":
-                                PrepareSuccessResponse(response, "jobrecordsupdated");
+                                PrepareSuccessResponse(response, Status);
                                 break;
                             case "Busy":
-                                PrepareSuccessResponse(response, "jobrecordsupdated");
+                                PrepareSuccessResponse(response, Status);
                                 break;
                             case "Terminate":
-                                PrepareSuccessResponse(response, "jobrecordsupdated");
+                                PrepareSuccessResponse(response, Status);
                                 break;
                             default:
                                 PrepareErrorResponse(response, Status);
