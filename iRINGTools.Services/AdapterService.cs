@@ -549,6 +549,14 @@ namespace org.iringtools.services
             FormatOutgoingMessage<Response>(response, true);
         }
 
+        [Description("Creates/refreshes application cache.")]
+        [WebGet(UriTemplate = "/{dataObjectId}/cache/refresh?updatedictionary={updateDictionary}")]
+        public void RefreshCache(Guid dataObjectId, bool updateDictionary)
+        {
+            Response response = _adapterProvider.RefreshCache(dataObjectId, updateDictionary);
+            FormatOutgoingMessage<Response>(response, true);
+        }
+
         [Description("Creates/refreshes application cache for specific object type.")]
         [WebGet(UriTemplate = "/{scope}/{app}/{objectType}/cache/refresh?updatedictionary={updateDictionary}")]
         public void RefreshObjectTypeCache(string scope, string app, string objectType, bool updateDictionary)

@@ -34,6 +34,7 @@ namespace org.iringtools.adapter
         private DataDictionary _dictionary;
         private string _dataPath;
         private string _cacheConnStr;
+        private string _applicationConfigServiceUri;
         private IDataLayer _dataLayer;
         private ILightweightDataLayer _lwDataLayer;
         public ILightweightDataLayer2 _lwDataLayer2;
@@ -104,19 +105,11 @@ namespace org.iringtools.adapter
             _app = _settings["ApplicationName"].ToLower();
             _dataPath = Path.Combine(_settings["BaseDirectoryPath"], _settings["AppDataPath"]);
             _cacheConnStr = _settings[BaseProvider.CACHE_CONNSTR];
+            _applicationConfigServiceUri = _settings["ApplicationConfigServiceUri"];
 
             string loadingType = _settings["http-header-LoadingType"];
             if (loadingType != null && loadingType.ToUpper() == "EAGER")
                 _loadingType = LoadingType.Eager;
-
-            if (Utility.IsBase64Encoded(_cacheConnStr))
-            {
-                string keyFile = (_settings[BaseProvider.CACHE_CONNSTR_LEVEL] == "Scope")
-                ? string.Format("{0}{1}.key", _settings["AppDataPath"], _scope)
-                : string.Format("{0}adapter.key", _settings["AppDataPath"]);
-
-                _cacheConnStr = EncryptionUtility.Decrypt(_cacheConnStr, keyFile);
-            }
 
             string tempPath = Path.GetTempPath() + datalayerBindingInfo.FirstAttribute.Value + ".xml";
 
@@ -134,8 +127,7 @@ namespace org.iringtools.adapter
                 _dataLayer = kernel.Get<IDataLayer>();
             }
             else
-            {
-                ////  //if (System.Configuration.ConfigurationManager.AppSettings["CachePageSize"] == null)
+            {                
                 if (datalayerBindingInfo.Element("bind").Attribute("service").Value == "org.iringtools.library.ILightweightDataLayer, iRINGLibrary")
                 {
                     _lwDataLayer = kernel.Get<ILightweightDataLayer>();
@@ -644,6 +636,42 @@ namespace org.iringtools.adapter
             return response;
         }
 
+        public Response RefreshCache(bool updateDictionary, ref DataDictionary dictionaryFromDB, Guid dataObjectId)
+        {
+            Response response = new Response();
+            response.Level = StatusLevel.Success;
+
+            string cacheId = string.Empty;
+
+            try
+            {
+                _dictionary = GetDictionary(updateDictionary, ref dictionaryFromDB);
+
+                DataObject objectType = _dictionary.dataObjects.Find(dObj => dObj.dataObjectId == dataObjectId);
+
+                if (objectType != null)
+                {
+                    cacheId = dataObjectId.ToString().Replace("-", "").ToLower();
+
+                    Response objectTypeRefresh = RefreshCache(cacheId, objectType, false);
+                }
+                else
+                {
+                    _logger.Error("Error refreshing cache: DataObject with DataObjectId " + dataObjectId + " not present in DataDictionary");
+                    response.Level = StatusLevel.Error;
+                    response.Messages.Add("DataObject with DataObjectId " + dataObjectId + " not present in DataDictionary");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error refreshing cache: " + e.Message);
+                response.Level = StatusLevel.Error;
+                response.Messages.Add(e.Message);
+            }
+
+            return response;
+        }
+
         public Response RefreshCache(bool updateDictionary, string objectType, bool includeRelated)
         {
             Response response = new Response();
@@ -693,19 +721,16 @@ namespace org.iringtools.adapter
 
         protected Response RefreshCache(string cacheId, DataObject objectType, bool includeRelated)
         {
-
             Response response = null;
 
             if (_lwDataLayer != null || _dataLayer != null)
-            // //if (cacheSize == null)
             {
-
                 response = DoRefreshCache(cacheId, objectType);
-
             }
             else
             {
                 int cacheSize = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["CachePageSize"]);
+
                 if (cacheSize != 0)
                 {
                     response = DoRefreshCacheWithIdentifier(cacheId, objectType, cacheSize);
@@ -745,21 +770,16 @@ namespace org.iringtools.adapter
 
             try
             {
-
-
-                //
-                // create new cache table
-                //
-                DeleteCacheTable(cacheId, objectType);
+                DeleteCacheTable(cacheId);
                 CreateCacheTable(cacheId, objectType);
-                string strCachetable = cacheId + "_" + objectType.objectName.Replace("_", "");
-                _logger.Debug(string.Format("{0} cache table created.", strCachetable));
+
+                _logger.Debug(string.Format("{0} cache table created.", cacheId));
 
                 Status status = new Status()
                 {
                     Identifier = objectType.tableName,
                     Level = StatusLevel.Success,
-                    Messages = new Messages() { "Cache table " + objectType.tableName + " created successfully." }
+                    Messages = new Messages() { "Cache table for " + objectType.tableName + " is created successfully." }
                 };
 
                 response.Append(status);
@@ -767,14 +787,13 @@ namespace org.iringtools.adapter
                 //
                 // populate cache data
                 //
-                string tableName = GetCacheTableName(cacheId, objectType.objectName);
-                string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
+                string tableSQL = "SELECT * FROM " + cacheId + " WHERE 0=1";
                 DataTable table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
 
                 if (_lwDataLayer != null)
                 {
                     IList<SerializableDataObject> dataObjects = _lwDataLayer.Get(objectType);
-                    _logger.Debug(string.Format("Populating  cache data for cache table {0}. Total number of rows = {1}", strCachetable, dataObjects.Count));
+                    _logger.Debug(string.Format("Populating  cache data for cache table {0}. Total number of rows = {1}", cacheId, dataObjects.Count));
 
                     if (dataObjects != null && dataObjects.Count > 0)
                     {
@@ -785,9 +804,13 @@ namespace org.iringtools.adapter
                             foreach (var pair in dataObj.Dictionary)
                             {
                                 if (pair.Value == null)
+                                {
                                     newRow[pair.Key] = DBNull.Value;
+                                }
                                 else
+                                {
                                     newRow[pair.Key] = pair.Value;
+                                }
                             }
 
                             if (dataObj.HasContent)
@@ -799,9 +822,9 @@ namespace org.iringtools.adapter
                         }
 
                         SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
-                        bulkCopy.DestinationTableName = tableName;
+                        bulkCopy.DestinationTableName = cacheId;
                         bulkCopy.WriteToServer(table);
-                        _logger.Debug(string.Format("Caching completed for cache table {0}.", strCachetable));
+                        _logger.Debug(string.Format("Caching completed for cache table {0}.", cacheId));
 
                         string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
                         status.Messages.Add(msg);
@@ -824,7 +847,7 @@ namespace org.iringtools.adapter
                     long limit = 0;
                     long nRowCounter = 0;
 
-                    _logger.Debug(string.Format("Populating  cache data for cache table {0}. Total number of rows = {1}. Cache size= {2}", strCachetable, objCount, page));
+                    _logger.Debug(string.Format("Populating  cache data for cache table {0}. Total number of rows = {1}. Cache size= {2}", cacheId, objCount, page));
                     while (start < objCount)
                     {
                         limit = page;// (start + page < objCount) ? page : objCount - start;
@@ -858,15 +881,15 @@ namespace org.iringtools.adapter
                         }
 
                         nRowCounter = (objCount <= page) ? objCount : page;
-                        _logger.Debug(string.Format("Saving rows {0} to {1}  in memory for table {2}.", start, start + nRowCounter, strCachetable));
+                        _logger.Debug(string.Format("Saving rows {0} to {1}  in memory for table {2}.", start, start + nRowCounter, cacheId));
                         start += page;
                     }
 
                     SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
-                    bulkCopy.DestinationTableName = tableName;
+                    bulkCopy.DestinationTableName = cacheId;
                     bulkCopy.WriteToServer(table);
 
-                    _logger.Debug(string.Format("Data cached for table {0}", strCachetable));
+                    _logger.Debug(string.Format("Data cached for table {0}", cacheId));
 
                     string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
                     status.Messages.Add(msg);
@@ -1461,12 +1484,35 @@ namespace org.iringtools.adapter
 
                 if (applicationDataMode == org.iringtools.applicationConfig.DataMode.Cache || _lwDataLayer != null || _lwDataLayer2 != null)
                 {
-                    cacheId = CheckCache();
+                    //cacheId = CheckCache();
+                    cacheId = objectType.dataObjectId.ToString().Replace("-", "").ToLower();
 
-                    if (string.IsNullOrEmpty(cacheId))
+                    DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
+
+                    if (filter == null) filter = new DataFilter();
+                    filter.AppendFilter(cachedObjectType.dataFilter);
+
+                    string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
+
+                    int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
+                    string orderByClause = "ORDER BY current_timestamp";
+
+                    if (orderByIndex != -1)
                     {
-                        throw new Exception(NO_CACHE_ERROR);
+                        orderByClause = whereClause.Substring(orderByIndex);
+                        whereClause = whereClause.Remove(orderByIndex);
                     }
+
+                    string query = string.Format(@"SELECT * FROM (SELECT row_number() OVER ({2}) as __rn, * FROM {0} {1}) as __t",
+                        cachedObjectType.tableName, whereClause, orderByClause);
+
+                    if (!(start == 0 && limit == 0))
+                    {
+                        query += string.Format(" WHERE __rn between {0} and {1}", start + 1, start + limit);
+                    }
+
+                    DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, query);
+                    dataObjects = BaseLightweightDataLayer.ToDataObjects(cachedObjectType, dt);
                 }
                 else if (_dataLayer != null)
                 {
@@ -1476,48 +1522,24 @@ namespace org.iringtools.adapter
                     {
                         dataObjects = iDataObjects.ToList();
                     }
-
-                    if (_loadingType == LoadingType.Eager) // include related object in collection
-                    {
-                        List<IDataObject> relatedObjects = GetRelatedObjects(objectType, dataObjects);
-                        dataObjects.AddRange(relatedObjects);
-                    }
-                    return dataObjects;
                 }
-
-                DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
-
-                if (filter == null) filter = new DataFilter();
-                filter.AppendFilter(cachedObjectType.dataFilter);
-
-                string whereClause = filter.ToSqlWhereClause("SQLServer", cachedObjectType);
-
-                int orderByIndex = whereClause.ToUpper().IndexOf("ORDER BY");
-                string orderByClause = "ORDER BY current_timestamp";
-
-                if (orderByIndex != -1)
-                {
-                    orderByClause = whereClause.Substring(orderByIndex);
-                    whereClause = whereClause.Remove(orderByIndex);
-                }
-
-                string query = string.Format(@"
-            SELECT * FROM (SELECT row_number() OVER ({2}) as __rn, * 
-            FROM {0} {1}) as __t",
-                    cachedObjectType.tableName, whereClause, orderByClause);
-
-                if (!(start == 0 && limit == 0))
-                {
-                    query += string.Format(" WHERE __rn between {0} and {1}", start + 1, start + limit);
-                }
-
-                DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, query);
-                dataObjects = BaseLightweightDataLayer.ToDataObjects(cachedObjectType, dt);
 
                 if (_loadingType == LoadingType.Eager) // include related object in collection
                 {
                     List<IDataObject> relatedObjects = GetRelatedObjects(objectType, dataObjects);
                     dataObjects.AddRange(relatedObjects);
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                if (sqlEx.Number == 208 && sqlEx.Class == 16)
+                {
+                    throw new Exception(NO_CACHE_ERROR);
+                }
+                else
+                {
+                    _logger.Error(sqlEx.Message);
+                    throw sqlEx;
                 }
             }
             catch (Exception e)
@@ -1539,12 +1561,16 @@ namespace org.iringtools.adapter
 
                 if (applicationDataMode == org.iringtools.applicationConfig.DataMode.Cache || _lwDataLayer != null || _lwDataLayer2 != null)
                 {
-                    cacheId = CheckCache();
+                    //cacheId = CheckCache();
+                    cacheId = objectType.dataObjectId.ToString().Replace("-", "").ToLower();
 
-                    if (string.IsNullOrEmpty(cacheId))
-                    {
-                        throw new Exception(NO_CACHE_ERROR);
-                    }
+                    //string tableName = GetCacheTableName(cacheId, objectType.objectName);
+
+                    string whereClause = BaseLightweightDataLayer.FormWhereClause(objectType, identifiers);
+                    string query = "SELECT * FROM " + cacheId + whereClause;
+
+                    DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, query);
+                    dataObjects = BaseLightweightDataLayer.ToDataObjects(objectType, dt);
                 }
                 else if (_dataLayer != null)
                 {
@@ -1554,23 +1580,7 @@ namespace org.iringtools.adapter
                     {
                         dataObjects = iDataObjects.ToList();
                     }
-
-                    if (_loadingType == LoadingType.Eager) // include related object in collection
-                    {
-                        List<IDataObject> relatedObjects = GetRelatedObjects(objectType, dataObjects);
-                        dataObjects.AddRange(relatedObjects);
-                    }
-
-                    return dataObjects;
                 }
-
-                string tableName = GetCacheTableName(cacheId, objectType.objectName);
-
-                string whereClause = BaseLightweightDataLayer.FormWhereClause(objectType, identifiers);
-                string query = "SELECT * FROM " + tableName + whereClause;
-
-                DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, query);
-                dataObjects = BaseLightweightDataLayer.ToDataObjects(objectType, dt);
 
                 if (_loadingType == LoadingType.Eager) // include related object in collection
                 {
@@ -1578,6 +1588,18 @@ namespace org.iringtools.adapter
                     dataObjects.AddRange(relatedObjects);
                 }
 
+            }
+            catch (SqlException sqlEx)
+            {
+                if (sqlEx.Number == 208 && sqlEx.Class == 16)
+                {
+                    throw new Exception(NO_CACHE_ERROR);
+                }
+                else
+                {
+                    _logger.Error(sqlEx.Message);
+                    throw sqlEx;
+                }
             }
             catch (Exception e)
             {
@@ -2132,8 +2154,7 @@ namespace org.iringtools.adapter
 
             if (cachedObjectType != null)
             {
-                string tableName = GetCacheTableName(cacheId, objectType.objectName);
-                cachedObjectType.tableName = tableName;
+                cachedObjectType.tableName = cacheId;
 
                 foreach (DataProperty prop in cachedObjectType.dataProperties)
                 {
@@ -2181,6 +2202,43 @@ namespace org.iringtools.adapter
             return string.Empty;
         }
 
+        //protected string GetJobId()
+        //{
+        //    return GetJobId(true);
+        //}
+
+        //protected string GetJobId(bool validateState)
+        //{
+        //    try
+        //    {
+        //        string checkCacheSQL = string.Format("SELECT * FROM Caches WHERE Context = '{0}' AND Application = '{1}'", _scope, _app);
+        //        DataTable dt = DBManager.Instance.ExecuteQuery(_cacheConnStr, checkCacheSQL);
+
+        //        if (dt.Rows.Count > 0)
+        //        {
+        //            DataRow row = dt.Rows[0];
+
+        //            if (validateState)
+        //            {
+        //                CacheState cacheState = (CacheState)Enum.Parse(typeof(CacheState), row["State"].ToString());
+
+        //                if (cacheState != CacheState.Ready)
+        //                {
+        //                    throw new Exception("Operation can't be done at this time. Other activity to this cache is underway.");
+        //                }
+        //            }
+
+        //            return row["CacheId"].ToString();
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.Error(e.Message);
+        //    }
+
+        //    return string.Empty;
+        //}
+
         protected bool DeleteCacheEntry()
         {
             string deleteCacheSQL = string.Format(
@@ -2221,6 +2279,21 @@ namespace org.iringtools.adapter
             }
         }
 
+        protected void DeleteCacheTable(string cacheId)
+        {
+            string deleteTableSQL = string.Format("DROP TABLE {0}", cacheId);
+
+            try
+            {
+                DBManager.Instance.ExecuteNonQuery(_cacheConnStr, deleteTableSQL);
+            }
+            catch (Exception e)
+            {
+                // it is OK if cache table does not exist
+                _logger.Warn("Error deleting cache table: " + e);
+            }
+        }
+
         protected string CreateCacheEntry()
         {
             string cacheId = CACHE_ID_PREFIX + Guid.NewGuid().ToString("N").Remove(0, 1);
@@ -2240,8 +2313,8 @@ namespace org.iringtools.adapter
         protected void CreateCacheTable(string cacheId, DataObject objectType)
         {
             StringBuilder tableBuilder = new StringBuilder();
-            string tableName = GetCacheTableName(cacheId, objectType.objectName);
-            tableBuilder.Append("CREATE TABLE " + tableName + "( ");
+
+            tableBuilder.Append("CREATE TABLE " + cacheId + "( ");
 
             foreach (DataProperty prop in objectType.dataProperties)
             {
@@ -2274,7 +2347,7 @@ namespace org.iringtools.adapter
             }
             catch (Exception e)
             {
-                throw new Exception("Error creating cache table [" + tableName + "]. " + e);
+                throw new Exception("Error creating cache table [" + cacheId + "]. " + e);
             }
         }
 
@@ -2399,83 +2472,79 @@ namespace org.iringtools.adapter
 
             try
             {
-                string strCachetable = cacheId + "_" + objectType.objectName.Replace("_", "");
-                //
-                // create new cache table
-                //
-                DeleteCacheTable(cacheId, objectType);
-                _logger.Debug(string.Format("{0} cache table deleted.", strCachetable));
+                DeleteCacheTable(cacheId);
+                _logger.Debug(string.Format("{0} cache table deleted.", cacheId));
 
                 CreateCacheTable(cacheId, objectType);
-                _logger.Debug(string.Format("{0} cache table created.", strCachetable));
+                _logger.Debug(string.Format("{0} cache table created.", cacheId));
 
                 Status status = new Status()
                 {
                     Identifier = objectType.tableName,
                     Level = StatusLevel.Success,
-                    Messages = new Messages() { "Cache table " + objectType.tableName + " created successfully." }
+                    Messages = new Messages() { "Cache table for " + objectType.tableName + " is created successfully." }
                 };
 
                 response.Append(status);
 
-                //
-                // populate cache data
-                //
-                string tableName = GetCacheTableName(cacheId, objectType.objectName);
-                string tableSQL = "SELECT * FROM " + tableName + " WHERE 0=1";
+                string tableSQL = "SELECT * FROM " + cacheId + " WHERE 0=1";
                 DataTable table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
-                //   int dataCount = CachePageSize;
+                
                 int pageIndex = 0;
                 int start = 0;
+
                 if (_lwDataLayer2 != null)
                 {
-                    //get all identifier from datalayer   for idatalayer2 interface
-                    List<SerializableDataObject> dataObjects2 = _lwDataLayer2.GetIndex(objectType);
-                    while (start < dataObjects2.Count)
+                    //get all identifier from datalayer for idatalayer2 interface
+                    List<SerializableDataObject> dataObjectIndexes = _lwDataLayer2.GetIndex(objectType);
+                    
+                    while (start < dataObjectIndexes.Count)
                     {
-                        List<SerializableDataObject> data = dataObjects2.Skip(CachePageSize * pageIndex).Take(CachePageSize).ToList();
-                        List<SerializableDataObject> getdataObjects2 = _lwDataLayer2.GetPage(objectType, data);
-                        foreach (SerializableDataObject dataObj in getdataObjects2)
+                        List<SerializableDataObject> batchOfIndexes = dataObjectIndexes.Skip(CachePageSize * pageIndex).Take(CachePageSize).ToList();
+                        List<SerializableDataObject> serializableDataObjectsForIndexes = _lwDataLayer2.GetPage(objectType, batchOfIndexes);
+
+                        foreach (SerializableDataObject eachRowAsSerializableDataObject in serializableDataObjectsForIndexes)
                         {
                             DataRow newRow = table.NewRow();
 
-                            foreach (var pair in dataObj.Dictionary)
+                            foreach (var pair in eachRowAsSerializableDataObject.Dictionary)
                             {
                                 if (pair.Value == null)
+                                {
                                     newRow[pair.Key] = DBNull.Value;
+                                }
                                 else
+                                {
                                     newRow[pair.Key] = pair.Value;
+                                }
                             }
 
-                            if (dataObj.HasContent)
+                            if (eachRowAsSerializableDataObject.HasContent)
                             {
                                 newRow[BaseLightweightDataLayer.HAS_CONTENT] = true;
                             }
+
                             table.Rows.Add(newRow);
                         }
 
                         SqlBulkCopy bulkCopy = new SqlBulkCopy(_cacheConnStr);
-                        bulkCopy.DestinationTableName = tableName;
+                        bulkCopy.DestinationTableName = cacheId;
                         bulkCopy.WriteToServer(table);
 
-                        _logger.Debug(string.Format("Saving rows  from table {0} to cache table {1}", objectType.objectName, strCachetable));
+                        _logger.Debug(string.Format("Saving rows  from table {0} to cache table {1}", objectType.objectName, cacheId));
 
                         start += CachePageSize;
                         pageIndex = pageIndex + 1;
                         table.Clear();
                         bulkCopy.Close();
-
                     }
 
-                    _logger.Debug(string.Format("Caching completed for cache table {0}", strCachetable));
+                    _logger.Debug(string.Format("Caching completed for cache table {0}", cacheId));
 
-                    string msg = "Cache data for [" + objectType.objectName + "] populated successfully.";
+                    string msg = "Cache data for [" + objectType.objectName + "] is populated successfully.";
                     status.Messages.Add(msg);
                     response.Messages.Add(msg);
-
                 }
-
-
             }
             catch (Exception e)
             {

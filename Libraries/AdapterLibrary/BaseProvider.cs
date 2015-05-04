@@ -19,14 +19,15 @@ using org.iringtools.utility;
 using StaticDust.Configuration;
 using org.iringtools.library.tip;
 using org.iringtools.applicationConfig;
+using System.Data.Linq;
 
 namespace org.iringtools.adapter
 {
     public abstract class BaseProvider
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseProvider));
-        public const string CACHE_CONNSTR = "iRINGCacheConnStr";
-        public const string CACHE_CONNSTR_LEVEL = "Adapter";
+        public const string CACHE_CONNSTR = "iRINGCacheConnStr"; //TODO: Need to verify its usage as, the new design should not need it here
+        public const string CACHE_CONNSTR_LEVEL = "Adapter"; // TODO: This doesn't make sense as, any information about adapter can not be in base class (BaseProvider)
 
         protected IKernel _kernel = null;
         protected AdapterSettings _settings = null;
@@ -51,6 +52,7 @@ namespace org.iringtools.adapter
         //FKM
         protected TipMapping _tipMapping = null;
         protected string format = "";
+        protected string _connSecurityDb;
 
         public BaseProvider(NameValueCollection settings)
         {
@@ -86,6 +88,7 @@ namespace org.iringtools.adapter
             _settings[CACHE_CONNSTR_LEVEL] = "Adapter";
 
             #region initialize webHttpClient for converting old mapping
+
             string proxyHost = _settings["ProxyHost"];
             string proxyPort = _settings["ProxyPort"];
             string rdsUri = _settings["RefDataServiceUri"];
@@ -101,72 +104,74 @@ namespace org.iringtools.adapter
             }
             #endregion
 
-            string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
-            _settings["ScopesPath"] = scopesPath;
+            _connSecurityDb = settings["SecurityConnection"];
 
-            if (File.Exists(scopesPath))
-            {
-                _scopes = Utility.Read<ScopeProjects>(scopesPath);
-                bool needToUpdate = false;
+            //string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
+            //_settings["ScopesPath"] = scopesPath;
 
-                foreach (ScopeProject scope in _scopes)
-                {
-                    if (string.IsNullOrEmpty(scope.DisplayName))
-                    {
-                        scope.DisplayName = scope.Name;
-                        needToUpdate = true;
-                    }
+            //if (File.Exists(scopesPath))
+            //{
+            //    _scopes = Utility.Read<ScopeProjects>(scopesPath);
+            //    bool needToUpdate = false;
 
-                    foreach (ScopeApplication app in scope.Applications)
-                    {
-                        if (string.IsNullOrEmpty(app.DisplayName))
-                        {
-                            app.DisplayName = app.Name;
-                            needToUpdate = true;
-                        }
-                    }
-                }
+            //    foreach (ScopeProject scope in _scopes)
+            //    {
+            //        if (string.IsNullOrEmpty(scope.DisplayName))
+            //        {
+            //            scope.DisplayName = scope.Name;
+            //            needToUpdate = true;
+            //        }
 
-                if (needToUpdate)
-                {
-                    Utility.Write<ScopeProjects>(_scopes, scopesPath);
-                }
-            }
-            else
-            {
-                _scopes = new ScopeProjects();
-                Utility.Write<ScopeProjects>(_scopes, scopesPath);
-            }
+            //        foreach (ScopeApplication app in scope.Applications)
+            //        {
+            //            if (string.IsNullOrEmpty(app.DisplayName))
+            //            {
+            //                app.DisplayName = app.Name;
+            //                needToUpdate = true;
+            //            }
+            //        }
+            //    }
 
-            // read scope configration file
+            //    if (needToUpdate)
+            //    {
+            //        Utility.Write<ScopeProjects>(_scopes, scopesPath);
+            //    }
+            //}
+            //else
+            //{
+            //    _scopes = new ScopeProjects();
+            //    Utility.Write<ScopeProjects>(_scopes, scopesPath);
+            //}
 
-            foreach (var scope in _scopes)
-            {
-                string scopeConfigPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope.Name);
-                if (File.Exists(scopeConfigPath))
-                    scope.Configuration = Utility.Read<Configuration>(scopeConfigPath, false);
-                else
-                    scope.Configuration = new Configuration() { AppSettings = new AppSettings() };
+            //// read scope configration file
 
-                if (scope.Configuration != null && scope.Configuration.AppSettings != null && scope.Configuration.AppSettings.Settings != null)
-                {
-                    var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
-                                             where setting.Key == CACHE_CONNSTR
-                                             select setting).SingleOrDefault();
-                    if (connectionSetting != null)
-                    {
-                        if (Utility.IsBase64Encoded(connectionSetting.Value))
-                        {
-                            _settings[CACHE_CONNSTR_LEVEL] = "Scope";
-                            string keyFile = string.Format("{0}{1}.key", _settings["AppDataPath"], scope.Name);
-                            connectionSetting.Value = EncryptionUtility.Decrypt(connectionSetting.Value, keyFile);
-                        }
-                    }
-                }
-            }
+            //foreach (var scope in _scopes)
+            //{
+            //    string scopeConfigPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope.Name);
+            //    if (File.Exists(scopeConfigPath))
+            //        scope.Configuration = Utility.Read<Configuration>(scopeConfigPath, false);
+            //    else
+            //        scope.Configuration = new Configuration() { AppSettings = new AppSettings() };
 
-            string adapterBindingPath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
-            _kernel.Load(adapterBindingPath);
+            //    if (scope.Configuration != null && scope.Configuration.AppSettings != null && scope.Configuration.AppSettings.Settings != null)
+            //    {
+            //        var connectionSetting = (from setting in scope.Configuration.AppSettings.Settings
+            //                                 where setting.Key == CACHE_CONNSTR
+            //                                 select setting).SingleOrDefault();
+            //        if (connectionSetting != null)
+            //        {
+            //            if (Utility.IsBase64Encoded(connectionSetting.Value))
+            //            {
+            //                _settings[CACHE_CONNSTR_LEVEL] = "Scope";
+            //                string keyFile = string.Format("{0}{1}.key", _settings["AppDataPath"], scope.Name);
+            //                connectionSetting.Value = EncryptionUtility.Decrypt(connectionSetting.Value, keyFile);
+            //            }
+            //        }
+            //    }
+            //}
+
+            //string adapterBindingPath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
+            //_kernel.Load(adapterBindingPath);
 
             InitializeIdentity();
             InitializeAuthorizedScopes();
@@ -476,6 +481,7 @@ namespace org.iringtools.adapter
             }
         }
 
+        //TODO: Need to verify its usage beacause based on new design it should not be required anymore
         private void ProcessSettings(string projectName, string applicationName)
         {
             // Load scope settings
@@ -709,6 +715,72 @@ namespace org.iringtools.adapter
 
             return response;
         }
+
+        public Response RefreshCache(Guid dataObjectId, bool updateDictionary)
+        {
+            Response response = new Response();
+
+            try
+            {
+
+                Application parentApplicationOfDataObject = GetApplicationForDataObject(dataObjectId);
+                org.iringtools.applicationConfig.Context parentContextOfDataObject = GetContextForDataObject(dataObjectId);
+                DatabaseDictionary tempDatabaseDictionary = GetDictionary(parentApplicationOfDataObject.ApplicationId);
+
+                _settings["ProjectName"] = parentApplicationOfDataObject.InternalName;
+                _settings["ApplicationName"] = parentContextOfDataObject.InternalName;
+
+                DataDictionary dictionaryFromDB = (DataDictionary)tempDatabaseDictionary;
+
+                Impersonate();
+                InitializeDataLayer(false, parentApplicationOfDataObject, ref dictionaryFromDB);
+
+                response = _dataLayerGateway.RefreshCache(updateDictionary, ref dictionaryFromDB, dataObjectId);
+
+                UpdateDictionary(XDocument.Parse(Utility.Serialize<DatabaseDictionary>((DatabaseDictionary)dictionaryFromDB, true)));
+
+                //TODO: Need to verify its uses before it's implementation for the new structure
+                //if (response.Level == StatusLevel.Success)
+                //{
+                //    UpdateCacheInfo(dataObjectId, null);
+                //}
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug("Error refreshing cache: ", ex);
+                response.Level = StatusLevel.Error;
+                response.Messages.Add("Error refreshing cache: " + ex.Message);
+            }
+
+            return response;
+        }
+
+        //public Response RefreshCache(Guid dataObjectId, string objectType, bool updateDictionary)
+        //{
+        //    Response response = new Response();
+
+        //    try
+        //    {
+        //        InitializeScope(scope, app, false);
+        //        Impersonate();
+        //        InitializeDataLayer(false);
+
+        //        response = _dataLayerGateway.RefreshCache(updateDictionary, objectType, true);
+
+        //        if (response.Level == StatusLevel.Success)
+        //        {
+        //            UpdateCacheInfo(scope, app, objectType);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.Debug("Error refreshing cache: ", ex);
+        //        response.Level = StatusLevel.Error;
+        //        response.Messages.Add("Error refreshing cache: " + ex.Message);
+        //    }
+
+        //    return response;
+        //}
 
         public Response ImportCache(string scope, string app, string baseUri, bool updateDictionary)
         {
@@ -1337,6 +1409,178 @@ namespace org.iringtools.adapter
                 throw ex;
             }
         }
+
+        protected Application GetApplicationForDataObject(Guid dataObjectID)
+        {
+            Application application = new Application();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@DataObjectId", Value = dataObjectID });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgApplicationForDataObject", nvl);
+                application = utility.Utility.Deserialize<Application>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Application By ApplicationID: " + ex);
+            }
+            return application;
+        }
+
+        protected org.iringtools.applicationConfig.Context GetContextForDataObject(Guid dataObjectID)
+        {
+            org.iringtools.applicationConfig.Context context = new org.iringtools.applicationConfig.Context();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@DataObjectId", Value = dataObjectID });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgContextForDataObject", nvl);
+                context = utility.Utility.Deserialize<org.iringtools.applicationConfig.Context>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  Application By ApplicationID: " + ex);
+            }
+            return context;
+        }
+
+        protected DatabaseDictionary GetDictionary(Guid applicationId)
+        {
+            org.iringtools.library.DatabaseDictionary dataDictionary = new org.iringtools.library.DatabaseDictionary();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ApplicationID", Value = applicationId });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgDictionary", nvl);
+
+
+
+                dataDictionary = utility.Utility.Deserialize<org.iringtools.library.DatabaseDictionary>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  dictionary: " + ex);
+            }
+            return dataDictionary;
+        }
+
+        protected Response InsertDictionary(XDocument xml)
+        {
+            Response response = new Response();
+            response.Messages = new Messages();
+
+            try
+            {
+                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@rawXml", Value = rawXml });
+
+                    string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiDictionary", nvl);
+
+                    switch (output)
+                    {
+                        case "1":
+                            PrepareSuccessResponse(response, "dictionaryadded");
+                            break;
+                        default:
+                            PrepareErrorResponse(response, output);
+                            break;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding dictionary: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        protected Response UpdateDictionary(XDocument xml)
+        {
+            Response response = new Response();
+            response.Messages = new Messages();
+
+            try
+            {
+                string rawXml = xml.ToString().Replace("xmlns=", "xmlns1=");//this is done, because in stored procedure it causes problem
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    NameValueList nvl = new NameValueList();
+                    nvl.Add(new ListItem() { Name = "@rawXml", Value = rawXml });
+
+                    string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuDictionary", nvl);
+
+                    switch (output)
+                    {
+                        case "1":
+                            PrepareSuccessResponse(response, "dictionaryUpdated");
+                            break;
+                        default:
+                            PrepareErrorResponse(response, output);
+                            break;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding dictionary: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        protected void PrepareErrorResponse(Response response, string errMsg)
+        {
+            Status status = new Status { Level = StatusLevel.Error };
+            status.Messages = new Messages { errMsg };
+            response.DateTimeStamp = DateTime.Now;
+            response.Level = StatusLevel.Error;
+            response.StatusList.Add(status);
+
+        }
+
+        protected void PrepareSuccessResponse(Response response, string successMsg)
+        {
+            Status status = new Status { Level = StatusLevel.Success };
+            status.Messages = new Messages { successMsg };
+            response.DateTimeStamp = DateTime.Now;
+            response.Level = StatusLevel.Success;
+            response.StatusList.Add(status);
+        }
+
+        protected void PrepareWarningResponse(Response response, string warnMsg)
+        {
+            Status status = new Status { Level = StatusLevel.Warning };
+            status.Messages = new Messages { warnMsg };
+            response.DateTimeStamp = DateTime.Now;
+            response.Level = StatusLevel.Warning;
+            response.StatusList.Add(status);
+        }
+
     }
 
     public enum PostAction { Create, Update }
