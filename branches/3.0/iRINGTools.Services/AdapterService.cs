@@ -550,7 +550,7 @@ namespace org.iringtools.services
         //}
 
         [Description("Creates/refreshes application cache.")]
-        [WebGet(UriTemplate = "/{dataObjectId}/cache/refresh?updatedictionary={updateDictionary}")]
+        [WebGet(UriTemplate = "/RefreshCacheForDataObject?dataObjectId={dataObjectId}&updatedictionary={updateDictionary}")]
         public void RefreshCache(Guid dataObjectId, bool updateDictionary)
         {
             Response response = _adapterProvider.RefreshCache(dataObjectId, updateDictionary);
