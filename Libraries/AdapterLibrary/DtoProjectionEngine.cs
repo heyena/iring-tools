@@ -190,6 +190,7 @@ namespace org.iringtools.adapter.projection
                             if (dto.transferType == TransferType.Add)
                             {
                                 ((SerializableDataObject)dataObject).State = ObjectState.Create;
+                                //((SerializableDataObject)dataObject).Id = dto.internalIdentifier;
                             }
                             else if (dto.transferType == TransferType.Change)
                             {
@@ -990,12 +991,13 @@ namespace org.iringtools.adapter.projection
                     {
                         decimal decDecimalValue = 0;
                         Decimal.TryParse(value, out decDecimalValue);
-                        value = Convert.ToString(decDecimalValue);
-                        if (value.Contains("."))
-                        {
-                            value = value.Trim('0');
-                            value = value.Trim('.');
-                        }
+                        value = decDecimalValue.ToString("0.################################");
+                        //value = Convert.ToString(decDecimalValue);
+                        //if (value.Contains("."))
+                        //{
+                        //    value = value.TrimEnd('0');
+                        //    value = value.Trim('.');
+                        //}
                     }
                 }
             }

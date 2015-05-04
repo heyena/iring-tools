@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace org.iringtools.library
 {
@@ -35,6 +36,13 @@ namespace org.iringtools.library
     public void SetPropertyValue(string propertyName, object value)
     {
       _dictionary[propertyName] = value;
+    }
+
+    public void SetPropertyNumericValue(string propertyName, object value)
+    {
+        decimal decDecimalValue = 0;
+        Decimal.TryParse(value.ToString(), out decDecimalValue);
+        _dictionary[propertyName] = decDecimalValue.ToString("0.################################");
     }
 
     public string ObjectNamespace { get; set; }
