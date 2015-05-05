@@ -757,6 +757,7 @@ Ext.define('AM.controller.Mapping', {
         var tree = content.getActiveTab().items.items[0];
         var endPoint = content.getActiveTab().endpoint;
         var contextName = content.getActiveTab().contextName;
+        var graphId = content.getActiveTab().graphId;
         var tempGraph = content.getActiveTab().graph.split('/');
         var graph = tempGraph[tempGraph.length - 1];
         var itemId = 'GraphMap.' + contextName + '.' + endPoint + '.' + graph;
@@ -774,6 +775,7 @@ Ext.define('AM.controller.Mapping', {
             'index': node.parentNode.parentNode.indexOf(node.parentNode),
             'classId': me.parentClass,
             'classIndex': me.parentClassIndex,
+            'graphId':graphId,
             'graphName': graph,
             'contextName': mapPanel.contextName,
             'endpoint': mapPanel.endpoint
