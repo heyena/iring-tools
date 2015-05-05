@@ -1416,8 +1416,9 @@ namespace org.iringtools.web.controllers
                 string classId = form["classId"];
                 string scope = form["contextName"];//propertyCtx[0];
                 string application = form["endpoint"];//propertyCtx[1];
-                string graphName = form["graphName"];//mappingCtx[2];
+                string graphName = form["graphName"];//mappingCtx[2]graphId;
                 int classIndex = Convert.ToInt16(form["classIndex"]);
+                Guid graphId = Guid.Parse(form["graphId"]);
 
 
                 //string parentNodeId = form["parentNodeId"];//mappingCtx[2];
