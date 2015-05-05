@@ -1887,14 +1887,12 @@ namespace org.iringtools.applicationConfig
             {
                 string typeName = application.Assembly.Split(new string[] { ", " }, StringSplitOptions.None)[0];
                 string dataLayerName = application.Assembly.Split(new string[] { ", " }, StringSplitOptions.None)[1];
-                string assemblyQualifiedName = (typeof(IDataLayer)).AssemblyQualifiedName;
 
                 application.Binding = new ApplicationBinding();
                 application.Binding.ModuleName = "DataLayerBinding";
                 application.Binding.BindName = "DataLayer";
                 application.Binding.To = application.Assembly;
-                application.Binding.Service = assemblyQualifiedName.Remove(assemblyQualifiedName.IndexOf(", Version"));
-                application.ApplicationDataMode = application.ApplicationDataMode == null ? applicationConfig.DataMode.Live : application.ApplicationDataMode;
+                application.Binding.Service = (typeof(IDataLayer)).AssemblyQualifiedName;
 
                 System.Reflection.Assembly dataLayerAssembly = System.Reflection.Assembly.Load(dataLayerName);
 
@@ -1910,6 +1908,8 @@ namespace org.iringtools.applicationConfig
                     application.Binding.Service = (typeof(ILightweightDataLayer2)).AssemblyQualifiedName;
                     application.ApplicationDataMode = applicationConfig.DataMode.Cache;
                 }
+
+                application.Binding.Service = application.Binding.Service.Remove(application.Binding.Service.IndexOf(", Version"));
             }
         }
 

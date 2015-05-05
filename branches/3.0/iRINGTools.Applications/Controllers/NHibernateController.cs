@@ -754,12 +754,13 @@ namespace org.iringtools.web.controllers
 
                 //  DatabaseDictionary dictionary = _repository.GetDBDictionary(scope, app);
                 DatabaseDictionary dictionary = _repository.GetDBDictionary(applicationId);
+                dictionary.ConnectionString = string.IsNullOrEmpty(dictionary.ConnectionString) ? dictionary.ConnectionString : utility.EncryptionUtility.Decrypt(dictionary.ConnectionString);
 
                 Dictionary<string, string> conElts = null;
                 if (dictionary != null && !string.IsNullOrEmpty(dictionary.ConnectionString))
                 {
                     string dbProvider = dictionary.Provider;
-                    string conStr = Utility.DecodeFrom64(dictionary.ConnectionString);
+                    string conStr = dictionary.ConnectionString;
 
                     if (connStr == "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=)(PORT=))(CONNECT_DATA=(=)));User Id=;Password=")
                     {
@@ -975,7 +976,7 @@ namespace org.iringtools.web.controllers
 
                         }
 
-
+                        //TODO: This leads to the issue of isNullable setting wrongly if the dictioanry xml is having it wrong.
                         if (dictObject != null && dictObject.dataProperties != null && dictObject.dataProperties.Count > 0)
                         {
                             foreach (DataProperty dictProperty in dictObject.dataProperties)
@@ -1156,7 +1157,6 @@ namespace org.iringtools.web.controllers
         {
             try
             {
-
                 string scope = Request.Params["scope"];
                 string app = Request.Params["app"];
                // Guid applicationId = Guid.Parse(Request.Params["applicationId"]);
@@ -1164,7 +1164,12 @@ namespace org.iringtools.web.controllers
                 var json = reader.ReadToEnd();
 
                 DatabaseDictionary dictionary = Utility.FromJson<DatabaseDictionary>(json);
-               // dictionary.applicationId = applicationId;
+                dictionary.ConnectionString = string.IsNullOrEmpty(dictionary.ConnectionString) ? dictionary.ConnectionString : utility.EncryptionUtility.Encrypt(dictionary.ConnectionString);
+
+                string appDataPath = AppDomain.CurrentDomain.BaseDirectory.Remove(AppDomain.CurrentDomain.BaseDirectory.LastIndexOf('.') + 1);
+                appDataPath += "Services\\App_Data\\";
+                System.IO.File.WriteAllText(string.Format("{0}\\DatabaseDictionary.{2}.{1}.xml", appDataPath, scope, app), Utility.Serialize<DatabaseDictionary>(dictionary, true));
+
                 Response response = _repository.SaveDBDictionary(dictionary);
 
                 if (response.Level == StatusLevel.Success)

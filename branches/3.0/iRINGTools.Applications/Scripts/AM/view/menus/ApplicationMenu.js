@@ -83,21 +83,20 @@ Ext.define('AM.view.menus.ApplicationMenu', {
 
                     dataObjectStore.removeAll();
 
-                    var applicatinChildrens = Ext.JSON.decode(response.responseText).applicationList;
                     var databaseDictionaryList = Ext.JSON.decode(response.responseText).databaseDictionaryList;
 
-                    if (applicatinChildrens.length > 0 ) {
+                    if (databaseDictionaryList != null) {
                         me.items.map['cacheupscreen'].setDisabled(false);
 
                         Ext.each(databaseDictionaryList, function (eachDictionary) {
-                        Ext.each(eachDictionary.dataObjects,function (eachDataObject){
-                            dataObjectStore.add({
-                                dataObjId: eachDataObject.dataObjectId,
-                                dataObjName: eachDataObject.objectName
+                            Ext.each(eachDictionary.dataObjects, function (eachDataObject) {
+                                dataObjectStore.add({
+                                    dataObjId: eachDataObject.dataObjectId,
+                                    dataObjName: eachDataObject.objectName
+                                });
                             });
                         });
-                        });
-                    }
+                    };
                 },
                 failure: function (response, request) {
                     //TODO:
