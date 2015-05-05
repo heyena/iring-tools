@@ -1418,7 +1418,7 @@ namespace org.iringtools.web.controllers
                 string application = form["endpoint"];//propertyCtx[1];
                 string graphName = form["graphName"];//mappingCtx[2]graphId;
                 int classIndex = Convert.ToInt16(form["classIndex"]);
-                Guid graphId = Guid.Parse(form["graphId"]);
+               
 
 
                 //string parentNodeId = form["parentNodeId"];//mappingCtx[2];
@@ -1428,8 +1428,23 @@ namespace org.iringtools.web.controllers
                 string valueListName = propertyCtx[propertyCtx.Length - 1];
                 int index = Convert.ToInt16(form["index"]);
 
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graphName);
+                //////Mapping mapping = GetMapping(scope, application);
+                //////GraphMap graphMap = mapping.FindGraphMap(graphName);
+                
+                Guid graphId = Guid.Parse(form["graphId"]);
+
+                GraphMap graphMap = null;
+
+                if (System.Web.HttpContext.Current.Session["graphMap"] != null)
+                {
+                    graphMap = System.Web.HttpContext.Current.Session["graphMap"] as GraphMap;
+                }
+
+                else
+                {
+                    org.iringtools.applicationConfig.Graph Objgraph = _repository.GetGraphByGrapgId(userName, graphId);
+                    graphMap = (GraphMap)DeserializeObject(Objgraph.graph);
+                }
                 ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId, classIndex);
 
                 if (ctm != null)
@@ -1452,6 +1467,8 @@ namespace org.iringtools.web.controllers
                     roleMapNode = CreateRoleNode(rMap);
                     roleMapNode.leaf = true;
                 }
+
+                System.Web.HttpContext.Current.Session["graphMap"] = graphMap;
             }
             catch (Exception ex)
             {
