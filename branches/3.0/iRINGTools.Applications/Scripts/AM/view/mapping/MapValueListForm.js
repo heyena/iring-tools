@@ -208,7 +208,7 @@ Ext.define('AM.view.mapping.MapValueListForm', {
                     return false;
                 }
                 //me.getForm().findField('valueListName').setValue(data.records[0].data.record.name);
-                me.getForm().findField('objectNames').setValue(data.records[0].data.id);
+                me.getForm().findField('objectNames').setValue(data.records[0].data.text);
                 var msg = 'Value List: ' + data.records[0].data.text.bold();
                 ccont.update(msg);
                 return true;
