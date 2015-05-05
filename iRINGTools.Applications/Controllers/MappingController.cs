@@ -1425,7 +1425,8 @@ namespace org.iringtools.web.controllers
 
 
                 string roleName = mappingCtx[mappingCtx.Length - 1];
-                string valueListName = propertyCtx[propertyCtx.Length - 1];
+                //string valueListName = propertyCtx[propertyCtx.Length - 1];
+                string valueListName = objectNames;
                 int index = Convert.ToInt16(form["index"]);
 
                 //////Mapping mapping = GetMapping(scope, application);
