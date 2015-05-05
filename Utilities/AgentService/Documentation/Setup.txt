@@ -7,7 +7,7 @@ C:\Windows\Microsoft.NET\Framework64\v4.0.30319>installutil  D:\Dev\svn\3.0\Util
 
 UnInstall
 
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319>installutil  /u D:\Dev\svn\iring-tools\Utilities\AgentService\bin\x64\Debug\iRINGAgentService.exe
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319>installutil  /u D:\Dev\svn\3.0\Utilities\AgentService\bin\x64\Debug\iRINGAgentService.exe
 
 
 
