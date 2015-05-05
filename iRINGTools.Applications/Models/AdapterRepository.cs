@@ -1102,11 +1102,11 @@ namespace iRINGTools.Web.Models
                 org.iringtools.library.DatabaseDictionary dbDictionary = client.Get<org.iringtools.library.DatabaseDictionary>(String.Format("/GetDictionary?applicationId={0} &format=xml", applicationId));
                 //folders = client.Get<Folders>(String.Format("/folders/{0}?siteId={1}&platformId={2}&parentFolderId={3}&format=xml", userName, siteId, platformId, parentFolderId));
 
-                string connStr = dbDictionary.ConnectionString;
-                if (!String.IsNullOrEmpty(connStr))
-                {
-                    dbDictionary.ConnectionString = Utility.EncodeTo64(connStr);
-                }
+                //string connStr = dbDictionary.ConnectionString;
+                //if (!String.IsNullOrEmpty(connStr))
+                //{
+                //    dbDictionary.ConnectionString = Utility.EncodeTo64(connStr);
+                //}
 
                 return dbDictionary;
             }

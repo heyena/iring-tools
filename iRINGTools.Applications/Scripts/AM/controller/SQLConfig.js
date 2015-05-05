@@ -769,7 +769,7 @@
                         "Value": valName
                     }]
                 }
-                if (props.isNullable == "on") {
+                if (props.isNullable == "on" || props.isNullable == true) {
                     props.isNullable = true;
                 }
                 else {

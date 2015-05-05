@@ -40,6 +40,7 @@ namespace org.iringtools.adapter
         public ILightweightDataLayer2 _lwDataLayer2;
         private LoadingType _loadingType = LoadingType.Lazy;
 
+        [Obsolete]
         public DataLayerGateway(IKernel kernel)
         {
             _settings = kernel.Get<AdapterSettings>();
@@ -127,7 +128,7 @@ namespace org.iringtools.adapter
                 _dataLayer = kernel.Get<IDataLayer>();
             }
             else
-            {                
+            {
                 if (datalayerBindingInfo.Element("bind").Attribute("service").Value == "org.iringtools.library.ILightweightDataLayer, iRINGLibrary")
                 {
                     _lwDataLayer = kernel.Get<ILightweightDataLayer>();
@@ -140,6 +141,7 @@ namespace org.iringtools.adapter
             }
         }
 
+        [Obsolete]
         public DataDictionary GetDictionary()
         {
             try
@@ -153,6 +155,7 @@ namespace org.iringtools.adapter
             }
         }
 
+        [Obsolete]
         public DataDictionary GetDictionary(bool refresh)
         {
             try
@@ -166,6 +169,7 @@ namespace org.iringtools.adapter
             }
         }
 
+        [Obsolete]
         public DataDictionary GetDictionary(bool refresh, string objectType)
         {
             try
@@ -180,6 +184,7 @@ namespace org.iringtools.adapter
             }
         }
 
+        [Obsolete]
         public DataDictionary GetDictionary(bool refresh, string objectType, out DataFilter filter)
         {
             filter = null;
@@ -391,198 +396,237 @@ namespace org.iringtools.adapter
                 }
                 else
                 {
-                    dataObjectFromDB.dataFilter.Active = 1;
-                    dataObjectFromDB.dataFilter.isAdmin = dataObject.dataFilter.isAdmin;
-                    dataObjectFromDB.dataFilter.ResourceId = dataObjectFromDB.dataObjectId;
-                    dataObjectFromDB.dataFilter.DataFilterTypeId = 3;
-
-                    foreach (Expression expressionFromDB in dataObjectFromDB.dataFilter.Expressions)
+                    if (dataObjectFromDB.dataFilter != null)
                     {
-                        Expression expression = dataObject.dataFilter.Expressions.Find(expr => expr.PropertyName == expressionFromDB.PropertyName);
+                        dataObjectFromDB.dataFilter.Active = 1;
+                        dataObjectFromDB.dataFilter.isAdmin = dataObject.dataFilter.isAdmin;
+                        dataObjectFromDB.dataFilter.ResourceId = dataObjectFromDB.dataObjectId;
+                        dataObjectFromDB.dataFilter.DataFilterTypeId = 3;
 
-                        if (expression == null)
+                        if (dataObjectFromDB.dataFilter.Expressions != null)
                         {
-                            dataObjectFromDB.dataFilter.Expressions.Remove(expressionFromDB);
+                            foreach (Expression expressionFromDB in dataObjectFromDB.dataFilter.Expressions)
+                            {
+                                Expression expression = dataObject.dataFilter.Expressions.Find(expr => expr.PropertyName == expressionFromDB.PropertyName);
+
+                                if (expression == null)
+                                {
+                                    dataObjectFromDB.dataFilter.Expressions.Remove(expressionFromDB);
+                                }
+                            }
+                        }
+
+                        if (dataObjectFromDB.dataFilter.OrderExpressions != null)
+                        {
+                            foreach (OrderExpression orderExpressionFromDB in dataObjectFromDB.dataFilter.OrderExpressions)
+                            {
+                                OrderExpression orderExpression = dataObject.dataFilter.OrderExpressions.Find(dRel => dRel.PropertyName == orderExpressionFromDB.PropertyName);
+
+                                if (orderExpression == null)
+                                {
+                                    dataObjectFromDB.dataFilter.OrderExpressions.Remove(orderExpressionFromDB);
+                                }
+                            }
                         }
                     }
 
-                    foreach (OrderExpression orderExpressionFromDB in dataObjectFromDB.dataFilter.OrderExpressions)
+                    if(dataObject.dataFilter != null)
                     {
-                        OrderExpression orderExpression = dataObject.dataFilter.OrderExpressions.Find(dRel => dRel.PropertyName == orderExpressionFromDB.PropertyName);
-
-                        if (orderExpression == null)
+                        if (dataObject.dataFilter.Expressions != null)
                         {
-                            dataObjectFromDB.dataFilter.OrderExpressions.Remove(orderExpressionFromDB);
+                            foreach (Expression expression in dataObject.dataFilter.Expressions)
+                            {
+                                Expression expressionFromDB = dataObjectFromDB.dataFilter.Expressions.Find(expr => expr.PropertyName == expression.PropertyName);
+
+                                if (expressionFromDB == null)
+                                {
+                                    expression.ExpressionId = new Guid();
+
+                                    expression.DataFilterId = dataObjectFromDB.dataFilter.DataFilterId;
+
+                                    dataObjectFromDB.dataFilter.Expressions.Add(expression);
+                                }
+                                else
+                                {
+                                    expressionFromDB.CloseGroupCount = expression.CloseGroupCount;
+                                    expressionFromDB.IsCaseSensitive = expression.IsCaseSensitive;
+                                    expressionFromDB.LogicalOperator = expression.LogicalOperator;
+                                    expressionFromDB.OpenGroupCount = expression.OpenGroupCount;
+                                    expressionFromDB.RelationalOperator = expression.RelationalOperator;
+                                    expressionFromDB.Values = expression.Values;
+                                }
+                            }
+                        }
+
+                        if (dataObject.dataFilter.OrderExpressions != null)
+                        {
+                            foreach (OrderExpression orderExpression in dataObject.dataFilter.OrderExpressions)
+                            {
+                                OrderExpression orderExpressionFromDB = dataObjectFromDB.dataFilter.OrderExpressions.Find(dRel => dRel.PropertyName == orderExpression.PropertyName);
+
+                                if (orderExpressionFromDB == null)
+                                {
+                                    orderExpression.OrderExpressionId = new Guid();
+
+                                    orderExpression.DataFilterId = dataObjectFromDB.dataFilter.DataFilterId;
+
+                                    dataObjectFromDB.dataFilter.OrderExpressions.Add(orderExpression);
+                                }
+                                else
+                                {
+                                    orderExpressionFromDB.SortOrder = orderExpression.SortOrder;
+                                }
+                            }
+                        }
+
+                        if (dataObject.dataFilter.RollupExpressions != null)
+                        {
+                            //TODO: RollupExpressions are created new everytime as of now
+                            foreach (RollupExpression rollupExpression in dataObject.dataFilter.RollupExpressions)
+                            {
+                                rollupExpression.RollupExpressionId = new Guid();
+
+                                foreach (Rollup rollup in rollupExpression.Rollups)
+                                {
+                                    rollup.RollupId = new Guid();
+
+                                    rollup.RollupExpressionId = rollupExpression.RollupExpressionId;
+                                }
+                            }
+
+                            dataObjectFromDB.dataFilter.RollupExpressions = new List<RollupExpression>();
+                            dataObjectFromDB.dataFilter.RollupExpressions = dataObject.dataFilter.RollupExpressions;
                         }
                     }
 
-                    foreach (Expression expression in dataObject.dataFilter.Expressions)
+                    if (dataObjectFromDB.dataProperties != null)
                     {
-                        Expression expressionFromDB = dataObjectFromDB.dataFilter.Expressions.Find(expr => expr.PropertyName == expression.PropertyName);
-
-                        if (expressionFromDB == null)
+                        foreach (DataProperty dataPropertyFromDB in dataObjectFromDB.dataProperties)
                         {
-                            expression.ExpressionId = new Guid();
+                            DataProperty dataProperty = dataObject.dataProperties.Find(dProp => dProp.propertyName == dataPropertyFromDB.propertyName);
 
-                            expression.DataFilterId = dataObjectFromDB.dataFilter.DataFilterId;
-
-                            dataObjectFromDB.dataFilter.Expressions.Add(expression);
-                        }
-                        else
-                        {
-                            expressionFromDB.CloseGroupCount = expression.CloseGroupCount;
-                            expressionFromDB.IsCaseSensitive = expression.IsCaseSensitive;
-                            expressionFromDB.LogicalOperator = expression.LogicalOperator;
-                            expressionFromDB.OpenGroupCount = expression.OpenGroupCount;
-                            expressionFromDB.RelationalOperator = expression.RelationalOperator;
-                            expressionFromDB.Values = expression.Values;
+                            if (dataProperty == null)
+                            {
+                                dataObjectFromDB.dataProperties.Remove(dataPropertyFromDB);
+                            }
                         }
                     }
 
-                    foreach (OrderExpression orderExpression in dataObject.dataFilter.OrderExpressions)
+                    if (dataObjectFromDB.dataRelationships != null)
                     {
-                        OrderExpression orderExpressionFromDB = dataObjectFromDB.dataFilter.OrderExpressions.Find(dRel => dRel.PropertyName == orderExpression.PropertyName);
-
-                        if (orderExpressionFromDB == null)
+                        foreach (DataRelationship dataRelationshipFromDB in dataObjectFromDB.dataRelationships)
                         {
-                            orderExpression.OrderExpressionId = new Guid();
+                            DataRelationship dataRelationship = dataObject.dataRelationships.Find(dRel => dRel.relationshipName == dataRelationshipFromDB.relationshipName);
 
-                            orderExpression.DataFilterId = dataObjectFromDB.dataFilter.DataFilterId;
-
-                            dataObjectFromDB.dataFilter.OrderExpressions.Add(orderExpression);
-                        }
-                        else
-                        {
-                            orderExpressionFromDB.SortOrder = orderExpression.SortOrder;
+                            if (dataRelationship == null)
+                            {
+                                dataObjectFromDB.dataRelationships.Remove(dataRelationshipFromDB);
+                            }
                         }
                     }
 
-                    //TODO: RollupExpressions are created new everytime as of now
-                    foreach (RollupExpression rollupExpression in dataObject.dataFilter.RollupExpressions)
+                    if (dataObjectFromDB.extensionProperties != null)
                     {
-                        rollupExpression.RollupExpressionId = new Guid();
-
-                        foreach (Rollup rollup in rollupExpression.Rollups)
+                        foreach (ExtensionProperty extensionPropertyFromDB in dataObjectFromDB.extensionProperties)
                         {
-                            rollup.RollupId = new Guid();
+                            ExtensionProperty extensionProperty = dataObjectFromDB.extensionProperties.Find(eProp => eProp.propertyName == extensionPropertyFromDB.propertyName);
 
-                            rollup.RollupExpressionId = rollupExpression.RollupExpressionId;
+                            if (extensionProperty == null)
+                            {
+                                dataObjectFromDB.extensionProperties.Remove(extensionPropertyFromDB);
+                            }
                         }
                     }
 
-                    dataObjectFromDB.dataFilter.RollupExpressions = dataObject.dataFilter.RollupExpressions;
-
-                    foreach (DataProperty dataPropertyFromDB in dataObjectFromDB.dataProperties)
+                    if (dataObject.dataProperties != null)
                     {
-                        DataProperty dataProperty = dataObject.dataProperties.Find(dProp => dProp.propertyName == dataPropertyFromDB.propertyName);
-
-                        if (dataProperty == null)
+                        foreach (DataProperty dataProperty in dataObject.dataProperties)
                         {
-                            dataObjectFromDB.dataProperties.Remove(dataPropertyFromDB);
+                            DataProperty dataPropertyFromDB = dataObjectFromDB.dataProperties.Find(dProp => dProp.propertyName == dataProperty.propertyName);
+
+                            if (dataPropertyFromDB == null)
+                            {
+                                dataProperty.dataPropertyId = new Guid();
+                                //dataProperty.pickListId
+
+                                dataProperty.dataObjectId = dataObjectFromDB.dataObjectId;
+
+                                dataObjectFromDB.dataProperties.Add(dataProperty);
+                            }
+                            else
+                            {
+                                dataPropertyFromDB.aliasDictionary = dataProperty.aliasDictionary;
+                                dataPropertyFromDB.columnName = dataProperty.columnName;
+                                dataPropertyFromDB.dataLength = dataProperty.dataLength;
+                                dataPropertyFromDB.dataType = dataProperty.dataType;
+                                dataPropertyFromDB.description = dataProperty.description;
+                                dataPropertyFromDB.isHidden = dataProperty.isHidden;
+                                dataPropertyFromDB.isNullable = dataProperty.isNullable;
+                                dataPropertyFromDB.isReadOnly = dataProperty.isReadOnly;
+                                dataPropertyFromDB.isVirtual = dataProperty.isVirtual;
+                                dataPropertyFromDB.keyType = dataProperty.keyType;
+                                dataPropertyFromDB.numberOfDecimals = dataProperty.numberOfDecimals;
+                                dataPropertyFromDB.precision = dataProperty.precision;
+                                dataPropertyFromDB.referenceType = dataProperty.referenceType;
+                                dataPropertyFromDB.scale = dataProperty.scale;
+                                dataPropertyFromDB.showOnIndex = dataProperty.showOnIndex;
+                                dataPropertyFromDB.showOnSearch = dataProperty.showOnSearch;
+                            }
                         }
                     }
 
-                    foreach (DataRelationship dataRelationshipFromDB in dataObjectFromDB.dataRelationships)
+                    if (dataObject.dataRelationships != null)
                     {
-                        DataRelationship dataRelationship = dataObject.dataRelationships.Find(dRel => dRel.relationshipName == dataRelationshipFromDB.relationshipName);
-
-                        if (dataRelationship == null)
+                        foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
                         {
-                            dataObjectFromDB.dataRelationships.Remove(dataRelationshipFromDB);
+                            DataRelationship dataRelationshipFromDB = dataObjectFromDB.dataRelationships.Find(dRel => dRel.relationshipName == dataRelationship.relationshipName);
+
+                            if (dataRelationshipFromDB == null)
+                            {
+                                dataRelationship.relationshipId = new Guid();
+
+                                dataRelationship.dataObjectId = dataObjectFromDB.dataObjectId;
+
+                                dataObjectFromDB.dataRelationships.Add(dataRelationship);
+                            }
+                            else
+                            {
+                                dataRelationshipFromDB.propertyMaps = dataRelationship.propertyMaps;
+                                dataRelationshipFromDB.relatedObjectName = dataRelationship.relatedObjectName;
+                                dataRelationshipFromDB.relationshipType = dataRelationship.relationshipType;
+                            }
                         }
                     }
 
-                    foreach (ExtensionProperty extensionPropertyFromDB in dataObjectFromDB.extensionProperties)
+                    if (dataObject.extensionProperties != null)
                     {
-                        ExtensionProperty extensionProperty = dataObjectFromDB.extensionProperties.Find(eProp => eProp.propertyName == extensionPropertyFromDB.propertyName);
-
-                        if (extensionProperty == null)
+                        foreach (ExtensionProperty extensionProperty in dataObject.extensionProperties)
                         {
-                            dataObjectFromDB.extensionProperties.Remove(extensionPropertyFromDB);
+                            ExtensionProperty extensionPropertyFromDB = dataObjectFromDB.extensionProperties.Find(eProp => eProp.propertyName == extensionProperty.propertyName);
+
+                            if (extensionPropertyFromDB == null)
+                            {
+                                extensionProperty.extensionPropertyId = new Guid();
+
+                                extensionProperty.dataObjectId = dataObjectFromDB.dataObjectId;
+
+                                dataObjectFromDB.extensionProperties.Add(extensionProperty);
+                            }
+                            else
+                            {
+                                extensionPropertyFromDB.dataType = extensionProperty.dataType;
+                                extensionPropertyFromDB.definition = extensionProperty.definition;
+                                extensionPropertyFromDB.columnName = extensionProperty.columnName;
+                                extensionPropertyFromDB.dataLength = extensionProperty.dataLength;
+                                extensionPropertyFromDB.isNullable = extensionProperty.isNullable;
+                                extensionPropertyFromDB.keyType = extensionProperty.keyType;
+                                extensionPropertyFromDB.numberOfDecimals = extensionProperty.numberOfDecimals;
+                                extensionPropertyFromDB.precision = extensionProperty.precision;
+                                extensionPropertyFromDB.scale = extensionProperty.scale;
+                                extensionPropertyFromDB.showOnIndex = extensionProperty.showOnIndex;
+                            }
                         }
                     }
-
-                    foreach (DataProperty dataProperty in dataObject.dataProperties)
-                    {
-                        DataProperty dataPropertyFromDB = dataObjectFromDB.dataProperties.Find(dProp => dProp.propertyName == dataProperty.propertyName);
-
-                        if (dataPropertyFromDB == null)
-                        {
-                            dataProperty.dataPropertyId = new Guid();
-                            //dataProperty.pickListId
-
-                            dataProperty.dataObjectId = dataObjectFromDB.dataObjectId;
-
-                            dataObjectFromDB.dataProperties.Add(dataProperty);
-                        }
-                        else
-                        {
-                            dataPropertyFromDB.aliasDictionary = dataProperty.aliasDictionary;
-                            dataPropertyFromDB.columnName = dataProperty.columnName;
-                            dataPropertyFromDB.dataLength = dataProperty.dataLength;
-                            dataPropertyFromDB.dataType = dataProperty.dataType;
-                            dataPropertyFromDB.description = dataProperty.description;
-                            dataPropertyFromDB.isHidden = dataProperty.isHidden;
-                            dataPropertyFromDB.isNullable = dataProperty.isNullable;
-                            dataPropertyFromDB.isReadOnly = dataProperty.isReadOnly;
-                            dataPropertyFromDB.isVirtual = dataProperty.isVirtual;
-                            dataPropertyFromDB.keyType = dataProperty.keyType;
-                            dataPropertyFromDB.numberOfDecimals = dataProperty.numberOfDecimals;
-                            dataPropertyFromDB.precision = dataProperty.precision;
-                            dataPropertyFromDB.referenceType = dataProperty.referenceType;
-                            dataPropertyFromDB.scale = dataProperty.scale;
-                            dataPropertyFromDB.showOnIndex = dataProperty.showOnIndex;
-                            dataPropertyFromDB.showOnSearch = dataProperty.showOnSearch;
-                        }
-                    }
-
-                    foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
-                    {
-                        DataRelationship dataRelationshipFromDB = dataObjectFromDB.dataRelationships.Find(dRel => dRel.relationshipName == dataRelationship.relationshipName);
-                        
-                        if (dataRelationshipFromDB == null)
-                        {
-                            dataRelationship.relationshipId = new Guid();
-
-                            dataRelationship.dataObjectId = dataObjectFromDB.dataObjectId;
-
-                            dataObjectFromDB.dataRelationships.Add(dataRelationship);
-                        }
-                        else
-                        {
-                            dataRelationshipFromDB.propertyMaps = dataRelationship.propertyMaps;
-                            dataRelationshipFromDB.relatedObjectName = dataRelationship.relatedObjectName;
-                            dataRelationshipFromDB.relationshipType = dataRelationship.relationshipType;
-                        }
-                    }
-
-                    foreach (ExtensionProperty extensionProperty in dataObject.extensionProperties)
-                    {
-                        ExtensionProperty extensionPropertyFromDB = dataObjectFromDB.extensionProperties.Find(eProp => eProp.propertyName == extensionProperty.propertyName);
-
-                        if (extensionPropertyFromDB == null)
-                        {
-                            extensionProperty.extensionPropertyId = new Guid();
-
-                            extensionProperty.dataObjectId = dataObjectFromDB.dataObjectId;
-
-                            dataObjectFromDB.extensionProperties.Add(extensionProperty);
-                        }
-                        else
-                        {
-                            extensionPropertyFromDB.dataType = extensionProperty.dataType;
-                            extensionPropertyFromDB.definition = extensionProperty.definition;
-                            extensionPropertyFromDB.columnName = extensionProperty.columnName;
-                            extensionPropertyFromDB.dataLength = extensionProperty.dataLength;
-                            extensionPropertyFromDB.isNullable = extensionProperty.isNullable;
-                            extensionPropertyFromDB.keyType = extensionProperty.keyType;
-                            extensionPropertyFromDB.numberOfDecimals = extensionProperty.numberOfDecimals;
-                            extensionPropertyFromDB.precision = extensionProperty.precision;
-                            extensionPropertyFromDB.scale = extensionProperty.scale;
-                            extensionPropertyFromDB.showOnIndex = extensionProperty.showOnIndex;
-                        }
-                    }
-
                 }
             }
 
@@ -593,8 +637,11 @@ namespace org.iringtools.adapter
             dictionaryFromDB.isDBDictionary = _dictionary.isDBDictionary;
 
             //TODO: Might need to handle PickList too over here
+
+            _dictionary = dictionaryFromDB;
         }
 
+        [Obsolete]
         public Response RefreshCache(bool updateDictionary)
         {
             Response response = new Response();
@@ -651,7 +698,7 @@ namespace org.iringtools.adapter
 
                 if (objectType != null)
                 {
-                    cacheId = dataObjectId.ToString().Replace("-", "").ToLower();
+                    cacheId = "[" + objectType.dataObjectId.ToString() + "]";
 
                     Response objectTypeRefresh = RefreshCache(cacheId, objectType, false);
                 }
@@ -672,6 +719,7 @@ namespace org.iringtools.adapter
             return response;
         }
 
+        [Obsolete]
         public Response RefreshCache(bool updateDictionary, string objectType, bool includeRelated)
         {
             Response response = new Response();
@@ -908,6 +956,7 @@ namespace org.iringtools.adapter
             return response;
         }
 
+        [Obsolete]
         public Response ImportCache(string baseUri, bool updateDictionary)
         {
             Response response = new Response();
@@ -952,6 +1001,7 @@ namespace org.iringtools.adapter
             return response;
         }
 
+        [Obsolete]
         public Response ImportCache(string objectType, string importURI, bool updateDictionary, bool includeRelated)
         {
             Response response = new Response();
@@ -1229,6 +1279,7 @@ namespace org.iringtools.adapter
             return response;
         }
 
+        [Obsolete]
         public long GetCount(DataObject objectType, DataFilter filter)
         {
             long count = 0;
@@ -1338,6 +1389,7 @@ namespace org.iringtools.adapter
             return count;
         }
 
+        [Obsolete]
         public List<IDataObject> Get(DataObject objectType, DataFilter filter, int start, int limit)
         {
             List<IDataObject> dataObjects = new List<IDataObject>();
@@ -1418,6 +1470,7 @@ namespace org.iringtools.adapter
             return dataObjects;
         }
 
+        [Obsolete]
         public List<IDataObject> Get(DataObject objectType, List<string> identifiers)
         {
             List<IDataObject> dataObjects = new List<IDataObject>();
@@ -1428,7 +1481,7 @@ namespace org.iringtools.adapter
 
                 if (_settings["DataMode"] == DataMode.Cache.ToString() || _lwDataLayer != null || _lwDataLayer2 != null)
                 {
-                   // cacheId = CheckCache();
+                    // cacheId = CheckCache();
                     cacheId = "[" + objectType.dataObjectId.ToString() + "]";
 
                     if (string.IsNullOrEmpty(cacheId))
@@ -1489,7 +1542,7 @@ namespace org.iringtools.adapter
                 if (applicationDataMode == org.iringtools.applicationConfig.DataMode.Cache || _lwDataLayer != null || _lwDataLayer2 != null)
                 {
                     //cacheId = CheckCache();
-                    cacheId = objectType.dataObjectId.ToString().Replace("-", "").ToLower();
+                    cacheId = "[" + objectType.dataObjectId.ToString() + "]";
 
                     DataObject cachedObjectType = GetCachedObjectType(cacheId, objectType);
 
@@ -1510,7 +1563,7 @@ namespace org.iringtools.adapter
                     string query = string.Format(@"SELECT * FROM (SELECT row_number() OVER ({2}) as __rn, * FROM [{0}] {1}) as __t",
                         cachedObjectType.dataObjectId, whereClause, orderByClause);
 
-                    
+
 
                     if (!(start == 0 && limit == 0))
                     {
@@ -1568,7 +1621,7 @@ namespace org.iringtools.adapter
                 if (applicationDataMode == org.iringtools.applicationConfig.DataMode.Cache || _lwDataLayer != null || _lwDataLayer2 != null)
                 {
                     //cacheId = CheckCache();
-                    cacheId = objectType.dataObjectId.ToString().Replace("-", "").ToLower();
+                    cacheId = "[" + objectType.dataObjectId.ToString() + "]";
 
                     //string tableName = GetCacheTableName(cacheId, objectType.objectName);
 
@@ -1619,7 +1672,7 @@ namespace org.iringtools.adapter
         private List<IDataObject> GetRelatedObjects(DataObject parentObjectType, List<IDataObject> parentDataObjects)
         {
             List<IDataObject> relatedObjects = new List<IDataObject>();
-            
+
             foreach (DataRelationship relationship in parentObjectType.dataRelationships)
             {
                 DataObject relatedObject = _dictionary.dataObjects.Find(x => x.objectName.ToLower() == relationship.relatedObjectName.ToLower());
@@ -2096,8 +2149,7 @@ namespace org.iringtools.adapter
             return contents;
         }
 
-        public List<IDataObject> GetRelatedObjects(IDataObject parentDataObject, DataObject relatedObjectType, DataFilter filter,
-          int limit, int start)
+        public List<IDataObject> GetRelatedObjects(IDataObject parentDataObject, DataObject relatedObjectType, DataFilter filter, int limit, int start)
         {
             if (_dataLayer != null && relatedObjectType.isRelatedOnly)
             {
@@ -2269,6 +2321,7 @@ namespace org.iringtools.adapter
             }
         }
 
+        [Obsolete]
         protected void DeleteCacheTable(string cacheId, DataObject objectType)
         {
             string tableName = GetCacheTableName(cacheId, objectType.objectName);
@@ -2300,6 +2353,7 @@ namespace org.iringtools.adapter
             }
         }
 
+        [Obsolete]
         protected string CreateCacheEntry()
         {
             string cacheId = CACHE_ID_PREFIX + Guid.NewGuid().ToString("N").Remove(0, 1);
@@ -2495,7 +2549,7 @@ namespace org.iringtools.adapter
 
                 string tableSQL = "SELECT * FROM " + cacheId + " WHERE 0=1";
                 DataTable table = DBManager.Instance.ExecuteQuery(_cacheConnStr, tableSQL);
-                
+
                 int pageIndex = 0;
                 int start = 0;
 
@@ -2503,7 +2557,7 @@ namespace org.iringtools.adapter
                 {
                     //get all identifier from datalayer for idatalayer2 interface
                     List<SerializableDataObject> dataObjectIndexes = _lwDataLayer2.GetIndex(objectType);
-                    
+
                     while (start < dataObjectIndexes.Count)
                     {
                         List<SerializableDataObject> batchOfIndexes = dataObjectIndexes.Skip(CachePageSize * pageIndex).Take(CachePageSize).ToList();
@@ -2565,5 +2619,6 @@ namespace org.iringtools.adapter
         }
     }
 
+    [Obsolete]
     public enum CacheState { Dirty, Busy, Ready }
 }
