@@ -409,7 +409,7 @@ namespace iRINGAgentService
                                 Scope = "",
                                 App = "",
                                 DataObject = dataRow["dataobjectid"].ToString(),
-                                ExchangeId = dataRow["xid"] != DBNull.Value ? dataRow["xid"].ToString() : null,
+                                ExchangeId = "",
                                 ExchangeUrl = exchangeUrl,
                                 CachePageSize = dataRow["cache_page_size"].ToString(),
                                 SsoUrl = ssoUrl,

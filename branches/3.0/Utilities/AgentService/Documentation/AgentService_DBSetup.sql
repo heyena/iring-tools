@@ -682,7 +682,7 @@ BEGIN TRY
 			End
 		
 		Select @Status = Status from Schedule where ScheduleId = @ScheduleId
-		RETURN
+		Select @Status
 	End
 END TRY
 BEGIN CATCH

@@ -104,7 +104,7 @@ namespace iRINGAgentService
                         _settings["ClientToken"] = clientToken;
                         _settings["UserName"] = _clientId;
                     }
-                    if (string.IsNullOrEmpty(dataObject))
+                    if (!string.IsNullOrEmpty(dataObject))
                         RefreshCache(new Guid(dataObject), false);
                     //if (string.IsNullOrEmpty(dataObject))
                     //    RefreshCache(project, app, false);
