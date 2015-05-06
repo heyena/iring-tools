@@ -22,32 +22,32 @@ namespace iRINGTools.Web.Models
         private WebHttpClient _appConfigServiceClient = null;
         public MappingRepository()
         {
-          NameValueCollection settings = ConfigurationManager.AppSettings;
-          ServiceSettings _settings = new ServiceSettings();
-          _settings.AppendSettings(settings);
+            NameValueCollection settings = ConfigurationManager.AppSettings;
+            ServiceSettings _settings = new ServiceSettings();
+            _settings.AppendSettings(settings);
 
-          #region initialize webHttpClient for converting old mapping
-          string proxyHost = _settings["ProxyHost"];
-          string proxyPort = _settings["ProxyPort"];
-          string adapterServiceUri = _settings["AdapterServiceUri"];
-          string applicationConfigServiceUri = _settings["ApplicationConfigServiceUri"];
+            #region initialize webHttpClient for converting old mapping
+            string proxyHost = _settings["ProxyHost"];
+            string proxyPort = _settings["ProxyPort"];
+            string adapterServiceUri = _settings["AdapterServiceUri"];
+            string applicationConfigServiceUri = _settings["ApplicationConfigServiceUri"];
 
-          if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
-          {
-            WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
-            _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
-            _appConfigServiceClient = new WebHttpClient(applicationConfigServiceUri, null, webProxy);
-
-
-          }
-          else
-          {
-            _adapterServiceClient = new WebHttpClient(adapterServiceUri);
-            _appConfigServiceClient = new WebHttpClient(applicationConfigServiceUri);
+            if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+            {
+                WebProxy webProxy = _settings.GetWebProxyCredentials().GetWebProxy() as WebProxy;
+                _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
+                _appConfigServiceClient = new WebHttpClient(applicationConfigServiceUri, null, webProxy);
 
 
-          }
-          #endregion
+            }
+            else
+            {
+                _adapterServiceClient = new WebHttpClient(adapterServiceUri);
+                _appConfigServiceClient = new WebHttpClient(applicationConfigServiceUri);
+
+
+            }
+            #endregion
         }
 
         public Mapping GetMapping(string scopeName, string applicationName)
@@ -81,7 +81,7 @@ namespace iRINGTools.Web.Models
 
         public void UpdateMapping(string scopeName, string applicationName, org.iringtools.applicationConfig.Graph graph, string userName, bool isAdded, string graphId = null)
         {
-          
+
             try
             {
                 if (isAdded)
@@ -122,7 +122,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-               _appConfigServiceClient.Delete<org.iringtools.applicationConfig.Graph>(String.Format("/deleteGraph/{0}?format=xml", graphId), graph, true);
+                _appConfigServiceClient.Delete<org.iringtools.applicationConfig.Graph>(String.Format("/deleteGraph/{0}?format=xml", graphId), graph, true);
 
             }
             catch (Exception ex)
@@ -131,7 +131,32 @@ namespace iRINGTools.Web.Models
                 throw;
             }
 
+
+        }
+
+
+
+       public void updateValueListMap(Guid applicationId, Guid valueListMapid, string valueListname)
+        {
             
+            ValueListMap  valuelistMap = new ValueListMap
+            {
+                ApplicationId = applicationId,
+                ValueListMapId =valueListMapid,
+                name = valueListname
+            };
+           _appConfigServiceClient.Post<ValueListMap>(String.Format("/insertValueListMap?format=xml"), valuelistMap, true);
+
+        }
+      public  void InsertValueListMap(string valueListname, Guid applicationId)
+        {
+            ValueListMap valuelistMap = new ValueListMap
+            {
+                ApplicationId = applicationId,
+                name = valueListname
+            };
+            _appConfigServiceClient.Put<ValueListMap>(String.Format("/updateValueListMap?format=xml"), valuelistMap, true);
+
         }
 
 
