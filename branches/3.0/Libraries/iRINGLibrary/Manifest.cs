@@ -1374,6 +1374,12 @@ namespace org.iringtools.mapping
                 this.valueMapsField = value;
             }
         }
+
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
+        public Guid ApplicationId { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+        public Guid ValueListMapId { get; set; }
     }
 
     [Serializable]
@@ -1429,6 +1435,9 @@ namespace org.iringtools.mapping
                 this.labelField = value;
             }
         }
+
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+        public Guid ValueListMapId { get; set; }
     }
 
     [CollectionDataContract(ItemName = "id")]
