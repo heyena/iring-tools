@@ -130,6 +130,10 @@ namespace org.iringtools.library
         public static readonly string errAddValueListMap = "There is an error occured while adding valuelistmap";
         public static readonly string errUpdateValueListMap = "There is an error occured while updating valuelistmap";
         public static readonly string errDeleteValueListMap = "There is an error occured while deleting valuelistmap";
+
+        public static readonly string errAddValueMap = "There is an error occured while adding valuemap";
+        public static readonly string errUpdateValueMap = "There is an error occured while updating valuemap";
+        public static readonly string errDeleteValueMap = "There is an error occured while deleting valuemap";
         #endregion
     }
 }
