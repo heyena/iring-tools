@@ -160,7 +160,7 @@ namespace iRINGAgentService
                                 if (!(tasks[i].Exception == null) || tasks[i].IsFaulted)
                                 {
                                     _eventLog1.WriteEntry("Error processing task " + _configList[i].JobId + " : " + tasks[i].Status);
-                                    throw new Exception("Error processing task " + _configList[i].JobId + " : " + tasks[i].Status);
+                                    //throw new Exception("Error processing task " + _configList[i].JobId + " : " + tasks[i].Status);
                                 }
                             }
                         }
