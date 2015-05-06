@@ -1438,6 +1438,9 @@ namespace org.iringtools.mapping
 
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
         public Guid ValueListMapId { get; set; }
+
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+        public Guid ValueMapId { get; set; }
     }
 
     [CollectionDataContract(ItemName = "id")]
