@@ -1,7 +1,7 @@
 ﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<dynamic>" %>
 <html>
 <head runat="server">
-  <title>iRINGTools: Adapter Manager</title>
+  <title>iRINGTools: Security Manager</title>
   
   <link rel="stylesheet" type="text/css" href="<%: Url.Content("~/Scripts/ext-4.2.1.883/resources/css/ext-all-gray.css") %>" />
   <script type="text/javascript" src="<%: Url.Content("~/Scripts/ext-4.2.1.883/ext-all.js") %>"></script>
