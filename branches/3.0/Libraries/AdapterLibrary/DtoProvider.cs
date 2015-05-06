@@ -557,7 +557,11 @@ namespace org.iringtools.adapter
                 nvl.Add(new ListItem() { Name = "@ApplicationId", Value = applicationId });
 
                 string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgValuelistforManifest", nvl);
-                ValueListMaps valueListMaps = utility.Utility.Deserialize<ValueListMaps>(xmlString, true);
+                ValueListMaps valueListMaps = new ValueListMaps();
+                if (xmlString.Length > 0)
+                {
+                    valueListMaps = utility.Utility.Deserialize<ValueListMaps>(xmlString, true);
+                }
 
                 nvl = new NameValueList();
                 nvl.Add(new ListItem() { Name = "@UserName", Value = userName });
