@@ -1886,6 +1886,61 @@ namespace org.iringtools.applicationConfig
             return response;
         }
 
+        public Response UpdateValueListMap(XDocument xml)
+        {
+            Response response = new Response();
+            response.Messages = new Messages();
+
+            try
+            {
+                ValueListMap valueListMap = Utility.DeserializeDataContract<ValueListMap>(xml.ToString());
+
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    if (valueListMap == null || string.IsNullOrEmpty(valueListMap.name))
+                        PrepareErrorResponse(response, "Please enter value list map Name!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@ApplicationId", Value = valueListMap.ApplicationId });
+                        nvl.Add(new ListItem() { Name = "@ValueListMapId", Value = valueListMap.ValueListMapId });
+                        nvl.Add(new ListItem() { Name = "@Name", Value = valueListMap.name });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spuValueListMap", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "valuelistmapupdated");
+                                break;
+                            case "0":
+                                PrepareSuccessResponse(response, "duplicatevaluelistmap");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error updating valuelistmap: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
         /// <summary>
         /// insert job
         /// </summary>
