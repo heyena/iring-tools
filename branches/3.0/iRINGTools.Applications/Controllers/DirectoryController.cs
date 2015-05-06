@@ -1077,7 +1077,7 @@ namespace org.iringtools.web.controllers
                     iconCls = "valuemap",
                     //id = valueListMap.valueMaps.ToString(),
                     text = valueListMap.name,
-                    identifier = "valuelistId-" + valueListMap.ValueListMapId.ToString(),
+                    id = "valuelistId-" + valueListMap.ValueListMapId.ToString(),
                     expanded = false,
                     leaf = false,
                     children = null,
