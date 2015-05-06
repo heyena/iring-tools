@@ -994,6 +994,7 @@ Ext.define('AM.controller.Mapping', {
         var tree = content.getActiveTab().items.items[0];
         var endPoint = content.getActiveTab().endpoint;
         var contextName = content.getActiveTab().contextName;
+        var graphId = content.getActiveTab().graphId;
         var tempGraph = content.getActiveTab().graph.split('/');
         var graph = tempGraph[tempGraph.length - 1];
         var itemId = 'GraphMap.' + contextName + '.' + endPoint + '.' + graph;
@@ -1022,6 +1023,7 @@ Ext.define('AM.controller.Mapping', {
                 contextName: mapPanel.contextName,
                 endpoint: mapPanel.endpoint,
                 graph: graph,
+                graphId:graphId,
                 templateNodeId: templateNodeId
             },
             success: function (result, request) {
@@ -1033,6 +1035,7 @@ Ext.define('AM.controller.Mapping', {
                     templateNode.removeChild(roleNode);
                     templateNode.insertChild(roleNodeIndex, res.node);
                     tree.view.refresh();
+                    Ext.example.msg('Notification', 'ClassMap deleted successfully!');
                 }
                 else {
                     var userMsg = res.message;
