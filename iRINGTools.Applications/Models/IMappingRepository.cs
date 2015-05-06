@@ -13,5 +13,7 @@ namespace iRINGTools.Web.Models
     void UpdateMapping(string scopeName, string applicationName, Graph graph, string userName, bool isAdded, string graphId = null);
     org.iringtools.applicationConfig.Graph GetGraphByGrapgId(string userName, Guid graphId);
     void DeleteGraphByGrapgId(string userName, Guid graphId);
+    void updateValueListMap(Guid applicationId,Guid valueListMapid,string valueListname);
+    void InsertValueListMap(string valueListname,Guid applicationId);
   }
 }
