@@ -194,8 +194,7 @@ Ext.define('AM.controller.Mapping', {
         var record = Ext.decode(node.data.record);
         var delimeter, state;
         var win = Ext.widget('graphmapwindow');
-
-        var win = Ext.widget('graphmapwindow');
+        //var win = Ext.widget('graphmapwindow');
         var form = win.down('form');
         form.node = node;
 
@@ -775,7 +774,7 @@ Ext.define('AM.controller.Mapping', {
             'index': node.parentNode.parentNode.indexOf(node.parentNode),
             'classId': me.parentClass,
             'classIndex': me.parentClassIndex,
-            'graphId':graphId,
+            'graphId': graphId,
             'graphName': graph,
             'contextName': mapPanel.contextName,
             'endpoint': mapPanel.endpoint
@@ -807,19 +806,21 @@ Ext.define('AM.controller.Mapping', {
 
     onEditOrNewValueList: function (item, e, eOpts) {
         var me = this;
-        var state, oldValueList, contextName, endpoint, baseUrl, valueList, wintitle;
+        var state, oldValueList, contextName, endpoint, baseUrl, valueList, wintitle, applicationId, valueListId;
         var tree = this.getDirTree(),
-       node = tree.getSelectedNode();
-
+        node = tree.getSelectedNode();
+        applicationId =Ext.decode(node.parentNode.data.record).applicationId;
 
         if (item.itemId == 'editvaluelist') {
             state = 'edit';
             nodeId = node.data.id;
             valueListName = node.data.record.name; //node.data.record.record.name;
+            applicationId: applicationId;
             wintitle = 'Edit ValueList';
         } else {
             state = 'new';
             nodeId = node.data.id;
+            applicationId: applicationId;
             valueListName = null;
             wintitle = 'Add ValueList';
         }
@@ -833,7 +834,8 @@ Ext.define('AM.controller.Mapping', {
             'state': state,
             'oldValueList': valueListName,
             'mappingNode': nodeId,
-            'valueList': valueListName
+            'valueList': valueListName,
+            'applicationId': applicationId
         };
 
         var form = win.down('form').getForm();
@@ -1023,7 +1025,7 @@ Ext.define('AM.controller.Mapping', {
                 contextName: mapPanel.contextName,
                 endpoint: mapPanel.endpoint,
                 graph: graph,
-                graphId:graphId,
+                graphId: graphId,
                 templateNodeId: templateNodeId
             },
             success: function (result, request) {
