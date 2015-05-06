@@ -1986,6 +1986,62 @@ namespace org.iringtools.applicationConfig
 
             return response;
         }
+
+        public Response InsertValueMap(XDocument xml)
+        {
+            Response response = new Response();
+            response.Messages = new Messages();
+
+            try
+            {
+                ValueMap valueMap = Utility.DeserializeDataContract<ValueMap>(xml.ToString());
+
+
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    if (valueMap == null || string.IsNullOrEmpty(valueMap.internalValue))
+                        PrepareErrorResponse(response, "Please enter value map internalvalue!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@ValueListMapId", Value = valueMap.ValueListMapId });
+                        nvl.Add(new ListItem() { Name = "@InternalValue", Value = valueMap.internalValue });
+                        nvl.Add(new ListItem() { Name = "@Label", Value = valueMap.label });
+                        nvl.Add(new ListItem() { Name = "@URI", Value = valueMap.uri });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spiValueMap", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "valuemapadded");
+                                break;
+                            case "0":
+                                PrepareSuccessResponse(response, "duplicatevaluemap");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error adding valuemap: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
         
         /// <summary>
         /// insert job
