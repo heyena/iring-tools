@@ -1766,39 +1766,48 @@ namespace org.iringtools.web.controllers
                 string oldValueList = "";
                 ValueListMap valueListMap = null;
                 Guid applicationId = Guid.Parse(form["applicationId"]);
+                Guid valueListId = Guid.Parse(form["valueListId"]);
                 string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 string scope = context[0];
 
                 if (context.Count() >= 1)
                     oldValueList = context[context.Count() - 1];
 
-                string application = context[1];
-                Mapping mapping = GetMapping(scope, application);
+                /////////string application = context[1];
+               ///////// Mapping mapping = GetMapping(scope, application);
                 string newvalueList = form["valueList"];
 
-                if (mapping.valueListMaps != null)
-                {
-                    if (oldValueList != "")
-                        valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
-                    else
-                        valueListMap = mapping.valueListMaps.Find(c => c.name == newvalueList);
-                }
-                if (valueListMap == null)
-                {
-                    ValueListMap valuelistMap = new ValueListMap
-                    {
-                        name = newvalueList
-                    };
-
-                    mapping.valueListMaps.Add(valuelistMap);
-                    DoUpdateMapping(scope, application, mapping);
-                }
+                //if (mapping.valueListMaps != null)
+                //{
+                if (oldValueList != "")
+                    _repository.updateValueListMap(applicationId, valueListId, newvalueList);
+                ////////  valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
                 else
-                {
-                    valueListMap.name = newvalueList;
-                    DoUpdateMapping(scope, application, mapping);
-                }
+                    ///////////  valueListMap = mapping.valueListMaps.Find(c => c.name == newvalueList);
+                    _repository.InsertValueListMap(newvalueList, applicationId);
+                    // }
 
+              
+
+
+                    if (valueListMap == null)
+                    {
+                        ValueListMap valuelistMap = new ValueListMap
+                        {
+                            name = newvalueList
+                        };
+
+                     /////   mapping.valueListMaps.Add(valuelistMap);
+                      //////  DoUpdateMapping(scope, application, mapping);
+                    }
+                    else
+                    {
+                        valueListMap.name = newvalueList;
+                       /////// DoUpdateMapping(scope, application, mapping);
+                    }
+
+
+                /*
                 foreach (ValueListMap valueList in mapping.valueListMaps)
                 {
                     if (form["valueList"] == valueList.name)
@@ -1864,6 +1873,7 @@ namespace org.iringtools.web.controllers
                     }
 
                 }
+                */
             }
             catch (Exception ex)
             {
