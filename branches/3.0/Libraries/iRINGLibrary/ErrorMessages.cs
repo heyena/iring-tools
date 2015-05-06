@@ -129,6 +129,7 @@ namespace org.iringtools.library
         public static readonly string errGetExchangeByExchangeID = "There is an error occured while getting exchange by exchange id";
         public static readonly string errAddValueListMap = "There is an error occured while adding valuelistmap";
         public static readonly string errUpdateValueListMap = "There is an error occured while updating valuelistmap";
+        public static readonly string errDeleteValueListMap = "There is an error occured while deleting valuelistmap";
         #endregion
     }
 }

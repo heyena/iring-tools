@@ -1220,6 +1220,36 @@ namespace org.iringtools.services
              _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
          }
 
+         [Description("delete Commodity to the data base.")]
+         [WebInvoke(Method = "DELETE", UriTemplate = "/deleteValueListMap/{valueListMapId}?format={format}")]
+         public void DeleteValueListMap(string valueListMapId, string format)
+         {
+             if (string.IsNullOrEmpty(format))
+             { format = "xml"; }
+
+             Response response = new Response();
+             try
+             {
+                 format = MapContentType(format);
+                 if (format == "raw")
+                 {
+                     throw new Exception("");
+                 }
+                 else
+                 {
+                     response = _applicationConfigurationProvider.DeleteValueListMap(valueListMapId);
+                 }
+             }
+             catch (Exception ex)
+             {
+                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                 _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errDeleteValueListMap, ex, _logger);
+                 objCustomErrorLog.throwJsonResponse(_CustomError);
+             }
+             PrepareResponse(ref response);
+             _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+         }
+
         //[Description("Insert schedular details to the data base.")]
         //[WebInvoke(Method = "POST", UriTemplate = "/insertJob?format={format}")]
         //public void insertJob(string format, Stream stream)
