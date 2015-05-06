@@ -1075,12 +1075,13 @@ namespace org.iringtools.web.controllers
                     nodeType = "async",
                     type = "ValueListNode",
                     iconCls = "valuemap",
-                    id = valueListMap.valueMaps.ToString(),
+                    //id = valueListMap.valueMaps.ToString(),
                     text = valueListMap.name,
+                    identifier = "valuelistId-" + valueListMap.ValueListMapId.ToString(),
                     expanded = false,
                     leaf = false,
                     children = null,
-                    record = Utility.SerializeJson<ValueListMap>(valueListMap, true)
+                   record = Utility.SerializeJson<ValueListMap>(valueListMap, true)
                 };
 
                 valueListMapsNode.children.Add(node);
