@@ -136,26 +136,27 @@ namespace iRINGTools.Web.Models
 
 
 
-       public void updateValueListMap(Guid applicationId, Guid valueListMapid, string valueListname)
+        public void updateValueListMap(Guid applicationId, Guid valueListMapid, string valueListname)
         {
-            
-            ValueListMap  valuelistMap = new ValueListMap
+
+            ValueListMap valuelistMap = new ValueListMap
             {
                 ApplicationId = applicationId,
-                ValueListMapId =valueListMapid,
+                ValueListMapId = valueListMapid,
                 name = valueListname
             };
-           _appConfigServiceClient.Post<ValueListMap>(String.Format("/insertValueListMap?format=xml"), valuelistMap, true);
+            _appConfigServiceClient.Put<ValueListMap>(String.Format("/updateValueListMap?format=xml"), valuelistMap, true);
 
         }
-      public  void InsertValueListMap(string valueListname, Guid applicationId)
+        public void InsertValueListMap(string valueListname, Guid applicationId)
         {
             ValueListMap valuelistMap = new ValueListMap
             {
                 ApplicationId = applicationId,
                 name = valueListname
             };
-            _appConfigServiceClient.Put<ValueListMap>(String.Format("/updateValueListMap?format=xml"), valuelistMap, true);
+            _appConfigServiceClient.Post<ValueListMap>(String.Format("/insertValueListMap?format=xml"), valuelistMap, true);
+
 
         }
 
