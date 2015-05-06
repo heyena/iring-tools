@@ -177,7 +177,7 @@ Ext.define('AM.view.directory.ApplicationForm', {
 
         Ext.each(appSettingsItems, function (appSetting) {
             var settingCombo = appSetting.items.items[0];
-            var storeIndex = settingCombo.getStore().find(settingCombo.valueField, settingCombo.getValue());
+            var storeIndex = settingCombo.getStore().find(settingCombo.displayField, settingCombo.rawValue);
 
             var appSettingName = settingCombo.getStore().getAt(storeIndex).get(settingCombo.displayField);
             var appSettingValue = appSetting.items.items[1].getValue();
@@ -230,11 +230,11 @@ Ext.define('AM.view.directory.ApplicationForm', {
                         me.setLoading(false);
 
                         if (objResponseText["message"] == "applicationAdded") {
-                       
+
                             Ext.example.msg('Notification', 'Application added successfully!');
                         }
                         if (objResponseText["message"] == "applicationUpdated") {
-                            
+
                             Ext.example.msg('Notification', 'Application updated successfully!');
                         }
                     },
