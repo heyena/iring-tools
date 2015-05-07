@@ -967,8 +967,11 @@ Ext.define('AM.controller.Mapping', {
             url: 'mapping/deletevaluelist',
             method: 'POST',
             params: {
-                valueList: valueList,
-                mappingNode: node.data.id
+                //valueList: valueList,
+                mappingNode: node.data.id,
+                applicationId: Ext.decode(node.raw.record).ApplicationId,
+                valueListId:Ext.decode(node.raw.record).ValueListMapId,
+                valueList: Ext.decode(node.raw.record).name
             },
             success: function (response, request) {
                 var res = Ext.decode(response.responseText);
