@@ -1444,7 +1444,7 @@ namespace iRINGTools.Web.Models
 
         //scheduler
 
-        public string AddSchedular(Guid job_Id, byte isExchange, string AgentScope, string app, string dataObject, string xid, string exchange_Url, string startDate, string endDate, string occurence, int platFormId, int siteId)
+        public string AddSchedular(Guid job_Id, byte isExchange, string AgentScope, string app, string dataObject, string xid, string exchange_Url, string startDate, string endDate, string occurence, int platFormId, int siteId,string createdBy)
         {
             string obj = null;
 
@@ -1452,10 +1452,8 @@ namespace iRINGTools.Web.Models
             {
                 org.iringtools.AgentLibrary.Agent.Schedule objSchedule = new Agent.Schedule()
                 {
-                    Created_By = "asrivas2",
+                    Created_By = createdBy,
                     Created_DateTime = System.DateTime.Now.ToString("d", DateTimeFormatInfo.InvariantInfo),
-                    // Created_DateTime =  "2015-03-31",
-
                     Occurance = occurence,
                     Start_DateTime = startDate,
                     End_DateTime = endDate,
@@ -1484,7 +1482,7 @@ namespace iRINGTools.Web.Models
                     ScheduleId = Guid.Empty,
                     PlatformId = platFormId,
                     SiteId = siteId,
-                    DataObjectId = Guid.Empty.ToString(),
+                    DataObjectId = dataObject,
                     TotalRecords = 0,
                     CachedRecords = 0,
                     Active = 1,
