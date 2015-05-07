@@ -737,7 +737,7 @@ namespace org.iringtools.web.controllers
                 startDate = startDate + " " + startTime;
                 endDate = endDate + " " + endTime;
                 Guid guid = Guid.Empty;
-                response = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, startDate, endDate, occurence, 0, 0);
+                response = _repository.AddSchedular(guid, 0, displayname, applications, dataObjects, null, null, startDate, endDate, occurence,platformId,siteId,userName);
                 if (response.Contains("jobadded"))
                 { response = "Job Added Successfuly"; }
                 else
@@ -1085,6 +1085,73 @@ namespace org.iringtools.web.controllers
                 };
 
                 valueListMapsNode.children.Add(node);
+
+
+                //value Map
+                
+                List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                
+                if (node.children == null)
+                {
+                    node.children = new List<JsonTreeNode>();
+                }
+
+                if (valueListMap.valueMaps != null)
+                {
+                    foreach (ValueMap valueMap in valueListMap.valueMaps)
+                    {
+                        string classLabel = String.Empty;
+
+                        if (!String.IsNullOrEmpty(valueMap.uri))
+                        {
+                            string valueMapUri = valueMap.uri.Split(':')[1];
+
+                            if (!String.IsNullOrEmpty(valueMap.label))
+                            {
+                                classLabel = valueMap.label;
+                            }
+                            else if (Session[valueMapUri] != null)
+                            {
+                                classLabel = (string)Session[valueMapUri];
+                            }
+                            else
+                            {
+                                classLabel = GetClassLabel(valueMapUri);
+                                Session[valueMapUri] = classLabel;
+                            }
+                        }
+
+                        JsonTreeNode node1 = new JsonTreeNode
+                        {
+                            nodeType = "async",
+                            type = "ListMapNode",
+                            iconCls = "valuelistmap",
+                            id = "/ValueMap/" + valueMap.ValueMapId.ToString(),
+                            text = classLabel + " [" + valueMap.internalValue + "]",
+                            expanded = false,
+                            leaf = true,
+                            children = null,
+                            record = valueMap
+                        };
+
+                        node1.property = new Dictionary<string, string>();
+                        node1.property.Add("Name", valueMap.internalValue);
+                        node1.property.Add("Class Label", classLabel);
+                        node.children.Add(node1);
+
+
+
+                    }
+                }
+
+
+
+                //end of value map
+
+
+
+
+
             }
 
             applicationNodes.Add(valueListMapsNode);
