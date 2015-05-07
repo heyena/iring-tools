@@ -1766,7 +1766,7 @@ namespace org.iringtools.web.controllers
                 string oldValueList = "";
                 ValueListMap valueListMap = null;
                 Guid applicationId = Guid.Parse(form["applicationId"]);
-               
+
                 string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 string scope = context[0];
 
@@ -1779,7 +1779,7 @@ namespace org.iringtools.web.controllers
 
                 //if (mapping.valueListMaps != null)
                 //{
-                if (oldValueList != "")
+                if (form["valueListId"] != "")
                 {
                     Guid valueListId = Guid.Parse(form["valueListId"]);
                     _repository.updateValueListMap(applicationId, valueListId, newvalueList);

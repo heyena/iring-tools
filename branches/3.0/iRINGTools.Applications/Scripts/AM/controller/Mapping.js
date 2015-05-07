@@ -809,17 +809,19 @@ Ext.define('AM.controller.Mapping', {
         var state, oldValueList, contextName, endpoint, baseUrl, valueList, wintitle, applicationId, valueListId;
         var tree = this.getDirTree(),
         node = tree.getSelectedNode();
-        applicationId =Ext.decode(node.parentNode.data.record).applicationId;
-
+        //
+ 
         if (item.itemId == 'editvaluelist') {
             state = 'edit';
             nodeId = node.data.id;
-            valueListName = node.data.record.name; //node.data.record.record.name;
-            applicationId: applicationId;
+            valueListName = Ext.decode(node.raw.record).name; //node.data.record.record.name;
+            applicationId= Ext.decode(node.raw.record).ApplicationId;
+            valueListId= Ext.decode(node.raw.record).ValueListMapId;
             wintitle = 'Edit ValueList';
         } else {
             state = 'new';
             nodeId = node.data.id;
+            applicationId = Ext.decode(node.parentNode.data.record).applicationId;
             applicationId: applicationId;
             valueListName = null;
             wintitle = 'Add ValueList';
