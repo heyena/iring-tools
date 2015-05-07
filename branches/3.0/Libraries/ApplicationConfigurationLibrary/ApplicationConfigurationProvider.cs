@@ -1974,7 +1974,7 @@ namespace org.iringtools.applicationConfig
             }
             catch (Exception ex)
             {
-                _logger.Error("Error deleting Graph: " + ex);
+                _logger.Error("Error deleting valuelistmap: " + ex);
 
                 Status status = new Status { Level = StatusLevel.Error };
                 status.Messages = new Messages { ex.Message };
@@ -2088,7 +2088,7 @@ namespace org.iringtools.applicationConfig
             }
             catch (Exception ex)
             {
-                _logger.Error("Error updating valuelistmap: " + ex);
+                _logger.Error("Error updating valuemap: " + ex);
 
                 Status status = new Status { Level = StatusLevel.Error };
                 status.Messages = new Messages { ex.Message };
@@ -2099,6 +2099,70 @@ namespace org.iringtools.applicationConfig
             }
 
             return response;
+        }
+
+        public Response DeleteValueMap(string valueMapId)
+        {
+            Response response = new Response();
+            response.Messages = new Messages();
+
+            try
+            {
+                using (var dc = new DataContext(_connSecurityDb))
+                {
+                    if (string.IsNullOrEmpty(valueMapId))
+                        PrepareErrorResponse(response, "Please enter valueListMapId!");
+                    else
+                    {
+                        NameValueList nvl = new NameValueList();
+                        nvl.Add(new ListItem() { Name = "@ValueMapid", Value = valueMapId });
+
+                        string output = DBManager.Instance.ExecuteScalarStoredProcedure(_connSecurityDb, "spdValueMap", nvl);
+
+                        switch (output)
+                        {
+                            case "1":
+                                PrepareSuccessResponse(response, "valuemapdeleted");
+                                break;
+                            default:
+                                PrepareErrorResponse(response, output);
+                                break;
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error deleting valuemap: " + ex);
+
+                Status status = new Status { Level = StatusLevel.Error };
+                status.Messages = new Messages { ex.Message };
+
+                response.DateTimeStamp = DateTime.Now;
+                response.Level = StatusLevel.Error;
+                response.StatusList.Add(status);
+            }
+
+            return response;
+        }
+
+        public ValueMap GetValueMapByValueMapId(Guid valueMapId)
+        {
+            ValueMap valueMap = new ValueMap();
+            try
+            {
+                NameValueList nvl = new NameValueList();
+                nvl.Add(new ListItem() { Name = "@ValueMapId", Value = valueMapId });
+
+                string xmlString = DBManager.Instance.ExecuteXmlQuery(_connSecurityDb, "spgValueMapByValueMapId", nvl);
+                valueMap = utility.Utility.Deserialize<ValueMap>(xmlString, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error getting  valuemap by valuemapid: " + ex);
+            }
+            return valueMap;
         }
         
         /// <summary>

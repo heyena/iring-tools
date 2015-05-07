@@ -134,6 +134,7 @@ namespace org.iringtools.library
         public static readonly string errAddValueMap = "There is an error occured while adding valuemap";
         public static readonly string errUpdateValueMap = "There is an error occured while updating valuemap";
         public static readonly string errDeleteValueMap = "There is an error occured while deleting valuemap";
+        public static readonly string errGettingValueMapByValueMapId = "There is an error occured while getting valuemap";
         #endregion
     }
 }
