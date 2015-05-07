@@ -1772,25 +1772,21 @@ namespace org.iringtools.web.controllers
 
                 if (context.Count() >= 1)
                     oldValueList = context[context.Count() - 1];
-
-                /////////string application = context[1];
-               ///////// Mapping mapping = GetMapping(scope, application);
+                
                 string newvalueList = form["valueList"];
 
-                //if (mapping.valueListMaps != null)
-                //{
-                if (form["valueListId"] != "")
+                                if (form["valueListId"] != "")
                 {
                     Guid valueListId = Guid.Parse(form["valueListId"]);
                     _repository.updateValueListMap(applicationId, valueListId, newvalueList);
                 }
-                ////////  valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
+                
                 else
-                ///////////  valueListMap = mapping.valueListMaps.Find(c => c.name == newvalueList);
+                
                 {
                     _repository.InsertValueListMap(newvalueList, applicationId);
                 }
-                    // }
+                   
 
               
 
@@ -1802,18 +1798,17 @@ namespace org.iringtools.web.controllers
                             name = newvalueList
                         };
 
-                     /////   mapping.valueListMaps.Add(valuelistMap);
-                      //////  DoUpdateMapping(scope, application, mapping);
+                     
                     }
                     else
                     {
                         valueListMap.name = newvalueList;
-                       /////// DoUpdateMapping(scope, application, mapping);
+                       
                     }
 
                     ValueListMaps valueListMaps = _appConfigRepository.GetValueListMaps(userName, applicationId);
                 
-                //foreach (ValueListMap valueList in mapping.valueListMaps)
+                
                
                 foreach (ValueListMap valueList in valueListMaps)
                 {
@@ -1824,7 +1819,6 @@ namespace org.iringtools.web.controllers
                             nodeType = "async",
                             type = "ValueListNode",
                             iconCls = "valuemap",
-                          //  id = scope + "/" + application + "/ValueLists" + "/ValueList/" + valueList.name,//context + "/ValueList/" + valueList.name,
                             id = "valuelistId-" + valueList.ValueListMapId.ToString(),
                             text = valueList.name,
                             expanded = false,
