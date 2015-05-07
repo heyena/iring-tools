@@ -837,7 +837,8 @@ Ext.define('AM.controller.Mapping', {
             'oldValueList': valueListName,
             'mappingNode': nodeId,
             'valueList': valueListName,
-            'applicationId': applicationId
+            'applicationId': applicationId,
+            'valueListId': valueListId
         };
 
         var form = win.down('form').getForm();
@@ -846,8 +847,8 @@ Ext.define('AM.controller.Mapping', {
 
         win.on('save', function () {
             win.close();
-            //tree.onReload();
             tree.view.refresh();
+            tree.store.load();
             var detailGrid = tree.up('panel').down('propertypanel'); //.down('gridview');
             detailGrid.setSource({});
         }, me);
