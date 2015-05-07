@@ -1220,7 +1220,7 @@ namespace org.iringtools.services
              _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
          }
 
-         [Description("delete Commodity to the data base.")]
+         [Description("delete ValueListmap to the data base.")]
          [WebInvoke(Method = "DELETE", UriTemplate = "/deleteValueListMap/{valueListMapId}?format={format}")]
          public void DeleteValueListMap(string valueListMapId, string format)
          {
@@ -1311,6 +1311,57 @@ namespace org.iringtools.services
              PrepareResponse(ref response);
              _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
          }
+
+         [Description("delete valuemap to the data base.")]
+         [WebInvoke(Method = "DELETE", UriTemplate = "/deleteValueMap/{valueMapId}?format={format}")]
+         public void DeleteValueMap(string valueMapId, string format)
+         {
+             if (string.IsNullOrEmpty(format))
+             { format = "xml"; }
+
+             Response response = new Response();
+             try
+             {
+                 format = MapContentType(format);
+                 if (format == "raw")
+                 {
+                     throw new Exception("");
+                 }
+                 else
+                 {
+                     response = _applicationConfigurationProvider.DeleteValueMap(valueMapId);
+                 }
+             }
+             catch (Exception ex)
+             {
+                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                 _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errDeleteValueMap, ex, _logger);
+                 objCustomErrorLog.throwJsonResponse(_CustomError);
+             }
+             PrepareResponse(ref response);
+             _applicationConfigurationProvider.FormatOutgoingMessage<Response>(response, format, true);
+         }
+
+         [Description("Get Valuemap by valuemap id")]
+         [WebGet(UriTemplate = "/GetValueMapByValueMapId?valueMapId={valueMapId}&format={format}")]
+         public void GetValueMapByValueMapId(Guid valueMapId, string format)
+         {
+             try
+             {
+                 if (string.IsNullOrEmpty(format))
+                 { format = "xml"; }
+
+                 ValueMap valueMap = _applicationConfigurationProvider.GetValueMapByValueMapId(valueMapId);
+                 _applicationConfigurationProvider.FormatOutgoingMessage<ValueMap>(valueMap, format, true);
+             }
+             catch (Exception ex)
+             {
+                 CustomErrorLog objCustomErrorLog = new CustomErrorLog();
+                 _CustomError = objCustomErrorLog.customErrorLogger(ErrorMessages.errGettingValueMapByValueMapId, ex, _logger);
+                 objCustomErrorLog.throwJsonResponse(_CustomError);
+             }
+         }
+
         //[Description("Insert schedular details to the data base.")]
         //[WebInvoke(Method = "POST", UriTemplate = "/insertJob?format={format}")]
         //public void insertJob(string format, Stream stream)
