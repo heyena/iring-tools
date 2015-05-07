@@ -1835,52 +1835,52 @@ namespace org.iringtools.web.controllers
                         valueListNode.property = new Dictionary<string, string>();
                         valueListNode.property.Add("Name", valueList.name);
 
-                        if (valueList.valueMaps != null)
-                        {
-                            foreach (var valueMap in valueList.valueMaps)
-                            {
-                                string classLabel = String.Empty;
+                        ////if (valueList.valueMaps != null)
+                        ////{
+                        ////    foreach (var valueMap in valueList.valueMaps)
+                        ////    {
+                        ////        string classLabel = String.Empty;
 
-                                if (!String.IsNullOrEmpty(valueMap.uri))
-                                {
-                                    string valueMapUri = valueMap.uri.Split(':')[1];
+                        ////        if (!String.IsNullOrEmpty(valueMap.uri))
+                        ////        {
+                        ////            string valueMapUri = valueMap.uri.Split(':')[1];
 
-                                    if (!String.IsNullOrEmpty(valueMap.label))
-                                    {
-                                        classLabel = valueMap.label;
-                                    }
-                                    else if (Session[valueMapUri] != null)
-                                    {
-                                        classLabel = (string)Session[valueMapUri];
-                                    }
-                                    else
-                                    {
-                                        classLabel = GetClassLabel(valueMapUri);
-                                        Session[valueMapUri] = classLabel;
-                                    }
-                                }
+                        ////            if (!String.IsNullOrEmpty(valueMap.label))
+                        ////            {
+                        ////                classLabel = valueMap.label;
+                        ////            }
+                        ////            else if (Session[valueMapUri] != null)
+                        ////            {
+                        ////                classLabel = (string)Session[valueMapUri];
+                        ////            }
+                        ////            else
+                        ////            {
+                        ////                classLabel = GetClassLabel(valueMapUri);
+                        ////                Session[valueMapUri] = classLabel;
+                        ////            }
+                        ////        }
 
-                                JsonTreeNode node = new JsonTreeNode
-                                {
-                                    nodeType = "async",
-                                    type = "ListMapNode",
-                                    iconCls = "valuelistmap",
-                                    id = context[0] + "/" + context[1] + "/" + context[2] + "/" + context[3] + "/" + form["valueList"] + "/ValueMap/" + valueMap.internalValue,//context + "/ValueMap/" + valueMap.internalValue,
-                                    text = classLabel + " [" + valueMap.internalValue + "]",
-                                    expanded = false,
-                                    leaf = true,
-                                    children = null,
-                                    record = valueMap
-                                };
+                        ////        JsonTreeNode node = new JsonTreeNode
+                        ////        {
+                        ////            nodeType = "async",
+                        ////            type = "ListMapNode",
+                        ////            iconCls = "valuelistmap",
+                        ////            id = context[0] + "/" + context[1] + "/" + context[2] + "/" + context[3] + "/" + form["valueList"] + "/ValueMap/" + valueMap.internalValue,//context + "/ValueMap/" + valueMap.internalValue,
+                        ////            text = classLabel + " [" + valueMap.internalValue + "]",
+                        ////            expanded = false,
+                        ////            leaf = true,
+                        ////            children = null,
+                        ////            record = valueMap
+                        ////        };
 
-                                node.property = new Dictionary<string, string>();
-                                node.property.Add("Name", valueMap.internalValue);
-                                node.property.Add("Class Label", classLabel);
-                                if (valueListNode.children == null)
-                                    valueListNode.children = new List<JsonTreeNode>();
-                                valueListNode.children.Add(node);
-                            }
-                        }
+                        ////        node.property = new Dictionary<string, string>();
+                        ////        node.property.Add("Name", valueMap.internalValue);
+                        ////        node.property.Add("Class Label", classLabel);
+                        ////        if (valueListNode.children == null)
+                        ////            valueListNode.children = new List<JsonTreeNode>();
+                        ////        valueListNode.children.Add(node);
+                        ////    }
+                        ////}
                         nodes.Add(valueListNode);
                     }
 
