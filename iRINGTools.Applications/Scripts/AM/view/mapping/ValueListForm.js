@@ -66,6 +66,10 @@ Ext.define('AM.view.mapping.ValueListForm', {
              xtype: 'hiddenfield',
              name: 'applicationId'
          },
+           {
+               xtype: 'hiddenfield',
+               name: 'valueListId'
+           },
         {
             xtype: 'hiddenfield',
             name: 'mappingNode'
